@@ -336,7 +336,10 @@
                     {% if package.main_image %}
                     <div class="ad-image">
                         <figure class="image-anime reveal" style="margin:0;">
-                            <img src="{{ package.main_image.url }}" alt="{{ package.name }}">
+                            <img src="{{ package.main_image.url }}"
+     srcset="{{ package.main_image|srcset }}"
+     sizes="(max-width: 991px) 100vw, 66vw"
+     alt="{{ package.name }}" decoding="async" fetchpriority="high">
                         </figure>
                     </div>
                     {% endif %}

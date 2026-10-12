@@ -1,5 +1,5 @@
 {% extends "frontends/base.html" %}
-{% load static %}
+{% load static image_tags %}
 
 {% block title %}{{ destination.name }} | Malabar{% endblock %}
 
@@ -350,7 +350,15 @@
                     <!-- 2. Image (full picture, not cropped) -->
                     <div class="ad-image">
                         <figure class="image-anime reveal">
-                            <img src="{% if destination.image %}{{ destination.image.url }}{% else %}{% static 'malabar-static/mr5.webp' %}{% endif %}" alt="{{ destination.name }}">
+                           {% if destination.image %}
+<img src="{{ destination.image.url }}"
+     srcset="{{ destination.image|srcset }}"
+     sizes="(max-width: 991px) 100vw, 860px"
+     alt="{{ destination.name }}"
+     loading="lazy" decoding="async">
+{% else %}
+<img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ destination.name }}" loading="lazy" decoding="async">
+{% endif %}
                         </figure>
                     </div>
 

@@ -1,6 +1,6 @@
 {% extends "frontends/base.html" %}
 {% load static %}
-
+{% load image_tags %}
 {% block title %}Packages | Malabar{% endblock %}
 
 {% comment %}
@@ -389,11 +389,17 @@
 
                     <div class="pk-card">
 
-                        <figure class="pk-img">
-                            <img src="{% if package.main_image %}{{ package.main_image.url }}{% else %}{% static 'malabar-static/mr5.webp' %}{% endif %}"
-                                 alt="{{ package.name }}">
-                        </figure>
-
+<figure class="pk-img">
+    {% if package.main_image %}
+        <img src="{{ package.main_image.url }}"
+             srcset="{{ package.main_image|srcset }}"
+             sizes="(max-width: 767px) 100vw, 50vw"
+             alt="{{ package.name }}" loading="lazy" decoding="async">
+    {% else %}
+        <img src="{% static 'malabar-static/mr5.webp' %}"
+             alt="{{ package.name }}" loading="lazy" decoding="async">
+    {% endif %}
+</figure>
                         <span class="pk-route"></span>
 
                         <div class="pk-body">

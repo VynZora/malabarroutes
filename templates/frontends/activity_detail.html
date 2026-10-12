@@ -1,5 +1,5 @@
 {% extends "frontends/base.html" %}
-{% load static %}
+{% load static image_tags %}
 
 {% block title %}{{ activity.title }} | Malabar{% endblock %}
 
@@ -9,6 +9,7 @@
     Hero = same design as the About page (inset, rounded), using the activity image.
     Book Now buttons open the booking modal from base.html (.open-booking + data-package).
     Sidebar "More Experiences" shows full names (wrapped, bold), nothing is cut.
+    The main activity image uses the `srcset` filter from templatetags/image_tags.py.
 {% endcomment %}
 
 {% block extra_css %}
@@ -329,9 +330,18 @@
                         {% endif %}
                     </div>
 
-                    <!-- 2. Image -->
+                    <!-- 2. Image (srcset filter from image_tags: phones get a small file, big screens the large one.
+                         The column is about 850px wide on desktop, full width on phones/tablets.) -->
                     <div class="ad-image wow fadeInUp" data-wow-delay="0.1s">
-                        <img src="{% if activity.image %}{{ activity.image.url }}{% else %}{% static 'malabar-static/mr5.webp' %}{% endif %}" alt="{{ activity.title }}">
+                        {% if activity.image %}
+                        <img src="{{ activity.image.url }}"
+                             srcset="{{ activity.image|srcset }}"
+                             sizes="(max-width: 991px) 100vw, 860px"
+                             alt="{{ activity.title }}"
+                             loading="lazy" decoding="async">
+                        {% else %}
+                        <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ activity.title }}" loading="lazy" decoding="async">
+                        {% endif %}
                     </div>
 
                     <!-- 3. Description -->

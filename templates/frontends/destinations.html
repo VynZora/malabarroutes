@@ -1,5 +1,5 @@
 {% extends "frontends/base.html" %}
-{% load static %}
+{% load static image_tags %}
 
 {% block title %}Destinations | Malabar{% endblock %}
 {% block meta_description %}Explore our travel destinations.{% endblock %}
@@ -407,7 +407,11 @@
                         {% if d.image %}
                         <div class="dest-media">
                             <figure class="image-anime reveal">
-                                <img src="{{ d.image.url }}" alt="{{ d.name }}">
+                                <img src="{{ d.image.url }}"
+     srcset="{{ d.image|srcset }}"
+     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
+     alt="{{ d.name }}"
+     loading="lazy" decoding="async">
                             </figure>
                         </div>
                         {% endif %}

@@ -8,6 +8,8 @@
     Colours come from base.html (--accent-color, --primary-color).
     Hero = same design and rotating background images as the Packages / About hero.
     Book Now opens the booking modal from base.html (.open-booking + data-package).
+    Card images use the `srcset` filter from templatetags/image_tags.py, so phones
+    download a small version and large screens get the big one.
 {% endcomment %}
 
 {% block extra_css %}
@@ -361,7 +363,17 @@
                     <div class="act-card-img">
                         {% if a.category %}<span class="act-badge">{{ a.category }}</span>{% endif %}
                         <figure class="image-anime reveal">
-                            <img src="{% if a.image %}{{ a.image.url }}{% else %}{% static 'malabar-static/mr5.webp' %}{% endif %}" alt="{{ a.title }}">
+                            {% if a.image %}
+                            <!-- srcset filter (image_tags): small file on phones, big file on large screens.
+                                 "sizes" = how wide the card is at each screen width, so the browser picks the right file. -->
+                            <img src="{{ a.image.url }}"
+                                 srcset="{{ a.image|srcset }}"
+                                 sizes="{% if total == 1 or total == 2 %}(max-width: 991px) 100vw, 700px{% else %}(max-width: 767px) 100vw, (max-width: 991px) 50vw, 470px{% endif %}"
+                                 alt="{{ a.title }}"
+                                 loading="lazy" decoding="async">
+                            {% else %}
+                            <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ a.title }}" loading="lazy" decoding="async">
+                            {% endif %}
                         </figure>
                     </div>
                     <div class="act-card-body">

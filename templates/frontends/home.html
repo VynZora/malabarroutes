@@ -1,6 +1,6 @@
 {% extends "frontends/base.html" %}
 {% load static %}
-
+{% load image_tags %}
 {% block title %}Home | Malabar{% endblock %}
 
 {% comment %}
@@ -1933,10 +1933,12 @@
 
                                 <div class="pk-media">
                                     <a href="{% url 'package_detail' p.slug %}" draggable="false">
-                                        {% if p.main_image %}
-                                            <img src="{{ p.main_image.url }}" alt="{{ p.name }}" draggable="false">
-                                        {% endif %}
-                                    </a>
+{% if p.main_image %}
+    <img src="{{ p.main_image.url }}"
+         srcset="{{ p.main_image|srcset }}"
+         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+         alt="{{ p.name }}" loading="lazy" decoding="async" draggable="false">
+{% endif %}                                    </a>
 
                                     {% if p.duration %}
                                     <div class="pk-meta">
@@ -2051,8 +2053,12 @@
             <article class="ac-card {% cycle 'ac-c1' 'ac-c2' 'ac-c3' %}">
                 <div class="ac-media">
                     <a href="{{ act_url }}" draggable="false">
-                        {% if a.image %}<img src="{{ a.image.url }}" alt="{{ a.title }}">{% endif %}
-                    </a>
+{% if a.image %}
+    <img src="{{ a.image.url }}"
+         srcset="{{ a.image|srcset }}"
+         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+         alt="{{ a.title }}" loading="lazy" decoding="async">
+{% endif %}                    </a>
                     {% if a.category %}<span class="ac-pill"><i class="fa-solid fa-leaf"></i>{{ a.category }}</span>{% endif %}
                 </div>
                 <div class="ac-body">
@@ -2105,7 +2111,12 @@
                         {% for d in destinations %}
                         <div class="ms-slide" data-filter="{{ d.location|slugify }}">
                             <a href="{% url 'destination_detail' d.slug %}" class="ds-card" draggable="false">
-                                {% if d.image %}<img src="{{ d.image.url }}" alt="{{ d.name }}" draggable="false">{% endif %}
+                                {% if d.image %}
+    <img src="{{ d.image.url }}"
+         srcset="{{ d.image|srcset }}"
+         sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 25vw"
+         alt="{{ d.name }}" loading="lazy" decoding="async" draggable="false">
+{% endif %}
                                 <div class="ds-overlay">
                                     <span class="ds-pin"><i class="fa-solid fa-location-dot"></i></span>
                                     <h3 class="ds-name">{{ d.name }}</h3>
@@ -2258,10 +2269,12 @@
                                     <article class="pc-card {% cycle 'pc-t1' 'pc-t2' 'pc-t3' %}">
                                         <div class="pc-photo">
                                             <div class="pc-photo-img{% if not t.image %} no-photo{% endif %}">
-                                                {% if t.image %}
-                                                    <img src="{{ t.image.url }}" alt="{{ t.name }}" draggable="false">
-                                                {% else %}
-                                                    <svg class="pc-avatar" viewBox="0 0 100 100" aria-hidden="true">
+{% if t.image %}
+    <img src="{{ t.image.url }}"
+         srcset="{{ t.image|srcset }}"
+         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 25vw"
+         alt="{{ t.name }}" loading="lazy" decoding="async" draggable="false">
+{% else %}                                                    <svg class="pc-avatar" viewBox="0 0 100 100" aria-hidden="true">
                                                         <circle cx="50" cy="36" r="15"/>
                                                         <path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/>
                                                     </svg>

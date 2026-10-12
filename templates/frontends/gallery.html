@@ -1,5 +1,5 @@
 {% extends "frontends/base.html" %}
-{% load static %}
+{% load static image_tags %}
 
 {% block title %}Gallery | Malabar{% endblock %}
 
@@ -310,7 +310,11 @@
                class="gallery-item wow fadeInUp"
                data-wow-delay="{% cycle '0s' '0.15s' '0.3s' %}"
                data-category="{{ img.category_id }}">
-                <img src="{{ img.image.url }}" alt="{{ img.title }}" loading="lazy">
+                <img src="{{ img.image.url }}"
+     srcset="{{ img.image|srcset }}"
+     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 470px"
+     alt="{{ img.title }}"
+     loading="lazy" decoding="async">
             </a>
             {% endfor %}
         </div>

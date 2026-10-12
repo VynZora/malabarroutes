@@ -4,48 +4,88 @@
 {% block title %}Contact Us | Malabar{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html.
+    Fonts are NOT set on this page: they come from base.html (except the Cinzel hero heading).
     Colours come from base.html (--accent-color, --primary-color).
-    Hero = same design as the About page (inset, rounded).
+    Hero = same design and rotating background images as the Packages / About hero.
+    Social links: edit the three hrefs in the "Follow Us" block below.
 {% endcomment %}
 
 {% block extra_css %}
 <style>
-    /* ================= HERO (same design as About page) ================= */
-    .page-header.contact-hero {
-        width: calc(100% - 32px) !important;      /* white gap on left and right */
+    /* ================= HERO (same design as Packages / About page) ================= */
+    .page-header.page-hero {
+        position: relative !important;
+        width: calc(100% - 32px) !important;
         max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;           /* white gap on top */
-        border-radius: 40px !important;           /* rounded corners */
-        overflow: hidden !important;              /* clips the image to the curve */
+        margin: 16px 16px 0 !important;
+        border-radius: 40px !important;
+        overflow: hidden !important;
         min-height: calc(80vh - 16px);
         display: flex;
         align-items: center;
         padding: 200px 0 120px !important;
-        background-color: #222 !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)),
-            url('{% static "malabar-static/mr5.webp" %}') !important;
-               background-size: cover, cover !important;
-        background-position: center, center !important;
-        background-repeat: no-repeat, no-repeat !important; /* repeats downward if the section is taller */
+        background-color: #12281f !important;
+        background-image: none !important;   /* images come from .ah-bgs below */
     }
-    .page-header.contact-hero::before,
-    .page-header.contact-hero::after { display: none !important; }
-    .page-header.contact-hero .page-header-box { text-align: center; }
-    .page-header.contact-hero h1 {
+    .page-header.page-hero::before,
+    .page-header.page-hero::after { display: none !important; }
+
+    /* ---- background images: cross-fade + zoom out ---- */
+    .page-hero .ah-bgs {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: inherit;
+    }
+    .page-hero .ah-bgs::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
+        pointer-events: none;
+    }
+    .page-hero .ah-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1);
+        transition: opacity 1.2s ease;
+    }
+    .page-hero .ah-bg.active {
+        opacity: 1;
+        animation: ahZoomOut 5.2s ease-out forwards;
+    }
+    @keyframes ahZoomOut {
+        from { transform: scale(1.2); }
+        to   { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .page-hero .ah-bg.active { animation: none; }
+    }
+    .page-header.page-hero > .container { position: relative; z-index: 2; }
+
+    .page-hero .page-header-box { text-align: center; }
+
+    .page-header.page-hero h1 {
+        font-family: 'Cinzel', serif !important;
+        font-weight: 700 !important;
         font-size: 80px;
-        letter-spacing: 4px;
+        letter-spacing: 6px;
         color: #ffffff !important;
         text-transform: none !important;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
         margin-bottom: 20px;
     }
-    .page-header.contact-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-header.contact-hero .breadcrumb-item,
-    .page-header.contact-hero .breadcrumb-item a,
-    .page-header.contact-hero .breadcrumb-item + .breadcrumb-item::before {
-       color: #ffffff !important;
+
+    .page-hero .breadcrumb { justify-content: center; margin: 0; }
+    .page-hero .breadcrumb-item,
+    .page-hero .breadcrumb-item a,
+    .page-hero .breadcrumb-item + .breadcrumb-item::before {
+        color: #ffffff !important;
         text-transform: capitalize;
     }
 
@@ -141,7 +181,7 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 24px;
-        margin-bottom: 60px;
+        margin-bottom: 40px;
     }
     .cx-info-card {
         height: 100%;
@@ -175,6 +215,67 @@
     }
     .cx-info-card a { color: inherit; word-break: break-word; transition: color .25s ease; }
     .cx-info-card a:hover { color: var(--cx-accent); }
+
+    /* ---------- Follow Us (social links) ---------- */
+    .cx-social {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 18px 26px;
+        margin-bottom: 60px;
+        padding: 22px 28px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+    }
+    .cx-social-title {
+        display: flex; align-items: center; gap: 14px;
+        margin: 0;
+        font-size: 15px; font-weight: 600;
+        letter-spacing: 1px; text-transform: uppercase;
+        color: var(--text-color, #2b2b2b);
+    }
+    .cx-social-title::before,
+    .cx-social-title::after {
+        content: ""; width: 34px; height: 1px;
+        background: var(--cx-accent); opacity: .45;
+    }
+    .cx-social-list {
+        display: flex; align-items: center; justify-content: center;
+        flex-wrap: wrap; gap: 14px;
+        margin: 0; padding: 0; list-style: none;
+    }
+    .cx-social-link {
+        --sc: var(--cx-accent);
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 7px 20px 7px 7px;
+        border: 1.5px solid var(--cx-accent);
+        border-radius: 50px;
+        background: transparent;
+        color: var(--cx-accent);
+        font-size: 14px; font-weight: 600;
+        text-decoration: none;
+        transition: all .3s ease;
+    }
+    .cx-social-link .sc-ico {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: var(--cx-accent); color: #fff;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 16px;
+        transition: all .3s ease;
+    }
+    .cx-social-link:hover {
+        background: var(--sc);
+        border-color: var(--sc);
+        color: #fff;
+        transform: translateY(-3px);
+    }
+    .cx-social-link:hover .sc-ico { background: #fff; color: var(--sc); }
+
+    .cx-social-link.sc-facebook:hover  { --sc: #1877f2; }
+    .cx-social-link.sc-x:hover         { --sc: #000000; }
+    .cx-social-link.sc-instagram:hover { --sc: #d62976; }
 
     /* ---------- Map + form row ---------- */
     .cx-main {
@@ -296,77 +397,8 @@
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 991px) {
-        .page-header.contact-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 60vh;
-            padding: 150px 0 80px !important;
-        }
-.page-header.contact-hero h1 {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 700 !important;
-    font-size: 80px;
-    letter-spacing: 6px;
-    color: #ffffff !important;
-    text-transform: none !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-    margin-bottom: 20px;
-}
-    @media (max-width: 575px) {
-        .page-header.contact-hero h1 { font-size: 36px; letter-spacing: 2px; }
-        .contact-section { padding: 60px 0 80px; }
-        .cx-form-card { padding: 28px 20px; }
-        .cx-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 400px) {
-        .cx-recaptcha .g-recaptcha { transform: scale(.85); transform-origin: 0 0; }
-    }
-        /* ================= HERO: same as About page ================= */
-    .page-header {
-        width: calc(100% - 32px) !important;
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;
-        border-radius: 40px !important;
-        overflow: hidden !important;
-        min-height: calc(80vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 120px !important;
-        background-color: #222 !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)),
-            url('{% static "malabar-static/mr5.webp" %}') !important;
-        background-size: cover, cover !important;
-        background-position: center, center !important;
-        background-repeat: no-repeat, no-repeat !important;
-    }
-    .page-header::before,
-    .page-header::after { display: none !important; }
-
-    .page-header .page-header-box { text-align: center; }
-    .page-header h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        font-size: 80px;
-        letter-spacing: 6px;
-       color: #ffffff !important;
-        text-transform: none !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-        margin-bottom: 20px;
-    }
-    .page-header .breadcrumb { justify-content: center; margin: 0; }
-    .page-header .breadcrumb-item,
-    .page-header .breadcrumb-item a,
-    .page-header .breadcrumb-item + .breadcrumb-item::before {
-        color: #f7e3d2 !important;
-        text-transform: capitalize;
-    }
-
-    /* ================= MOBILE ================= */
-    @media (max-width: 991px) {
-        .page-header {
+        /* hero: same as Packages / About on mobile */
+        .page-header.page-hero {
             width: calc(100% - 20px) !important;
             max-width: calc(100% - 20px) !important;
             margin: 10px 10px 0 !important;
@@ -374,51 +406,18 @@
             min-height: 46vh !important;
             padding: 130px 0 65px !important;
         }
-        .page-header .page-header-box,
-        .page-header h1,
-        .page-header nav {
+        .page-header.page-hero .page-header-box,
+        .page-header.page-hero h1,
+        .page-header.page-hero nav {
             text-align: center !important;
             width: 100%;
         }
-        .page-header h1 {
+        .page-header.page-hero h1 {
             font-size: 34px !important;
             letter-spacing: 2px !important;
             margin-bottom: 14px !important;
         }
-        .page-header .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-    }
-    @media (max-width: 575px) {
-        .page-header h1 {
-            font-size: 28px !important;
-            letter-spacing: 1.5px !important;
-        }
-    }
-        /* ================= RESPONSIVE ================= */
-    @media (max-width: 991px) {
-        /* hero: same as About page */
-        .page-header.contact-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.contact-hero .page-header-box,
-        .page-header.contact-hero h1,
-        .page-header.contact-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.contact-hero h1 {
-            font-size: 34px !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 14px !important;
-        }
-        .page-header.contact-hero .breadcrumb {
+        .page-header.page-hero .breadcrumb {
             justify-content: center !important;
             font-size: 14px;
         }
@@ -430,8 +429,9 @@
         .cx-info-grid {
             grid-template-columns: 1fr !important;
             gap: 16px;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
+        .cx-social { margin-bottom: 40px; }
         .cx-main {
             grid-template-columns: 1fr !important;
             gap: 24px;
@@ -444,16 +444,27 @@
     }
 
     @media (max-width: 575px) {
-        .page-header.contact-hero h1 {
+        .page-header.page-hero h1 {
             font-size: 28px !important;
             letter-spacing: 1.5px !important;
         }
+
+        .contact-section { padding: 40px 0 60px; }
 
         /* info cards */
         .cx-info-card { padding: 20px; border-radius: 18px; }
         .cx-info-head { margin-bottom: 12px; }
         .cx-info-head h3 { font-size: 14px; }
         .cx-info-card p { font-size: 14px; line-height: 1.7; }
+
+        /* social */
+        .cx-social { padding: 18px 14px; border-radius: 18px; gap: 14px; margin-bottom: 30px; }
+        .cx-social-title { font-size: 14px; width: 100%; justify-content: center; }
+        .cx-social-title::before,
+        .cx-social-title::after { width: 24px; }
+        .cx-social-list { gap: 10px; }
+        .cx-social-link { font-size: 13px; padding: 5px 14px 5px 5px; gap: 8px; }
+        .cx-social-link .sc-ico { width: 30px; height: 30px; font-size: 14px; }
 
         /* map */
         .cx-map-frame,
@@ -491,23 +502,29 @@
 
 {% block content %}
 
-<!-- Hero (same design as About page) -->
-<div class="page-header contact-hero">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-header-box">
-                    <h1 class="text-anime-style-3" data-cursor="-opaque">Contact Us</h1>
-                    <nav class="wow fadeInUp" data-wow-delay="0.2s">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">contact us</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
+<!-- Hero (same design and rotating images as the Packages / About page) -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+
+<div class="page-header page-hero">
+
+    <!-- Background images: same five as the Packages hero, same order -->
+    <div class="ah-bgs" aria-hidden="true">
+        <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
     </div>
+
+    <div class="container"><div class="row"><div class="col-lg-12">
+        <div class="page-header-box">
+            <h1 class="text-anime-style-3" data-cursor="-opaque">Contact Us</h1>
+            <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">contact us</li>
+            </ol></nav>
+        </div>
+    </div></div></div>
 </div>
 
 <!-- Contact success modal (kept outside the section so the slide-in animation can't affect it) -->
@@ -566,6 +583,28 @@
                     <p><a href="mailto:{{ info.email }}">{{ info.email }}</a></p>
                 </div>
             </div>
+        </div>
+
+        <!-- Follow Us (social links) -->
+        <div class="cx-social rv rv-up" data-reveal>
+            <h3 class="cx-social-title">Follow Us</h3>
+            <ul class="cx-social-list">
+                <li>
+                    <a href="https://www.facebook.com/Mmalabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-facebook" aria-label="Malabaroutes on Facebook">
+                        <span class="sc-ico"><i class="fa-brands fa-facebook-f"></i></span>Facebook
+                    </a>
+                </li>
+                <li>
+                    <a href="https://x.com/malabaroutes" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-x" aria-label="Malabaroutes on X">
+                        <span class="sc-ico"><i class="fa-brands fa-x-twitter"></i></span>Twitter
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/malabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-instagram" aria-label="Malabaroutes on Instagram">
+                        <span class="sc-ico"><i class="fa-brands fa-instagram"></i></span>Instagram
+                    </a>
+                </li>
+            </ul>
         </div>
 
         <!-- Map + form -->
@@ -639,6 +678,20 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Hero: background images change one by one (same effect as Packages / About) -->
+<script>
+    (function () {
+        var bgs = document.querySelectorAll('.page-hero .ah-bg');
+        if (bgs.length < 2) return;
+        var current = 0;
+        setInterval(function () {
+            bgs[current].classList.remove('active');
+            current = (current + 1) % bgs.length;
+            bgs[current].classList.add('active');   /* re-adding restarts the zoom-out */
+        }, 5000);
+    })();
+</script>
+
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
     (function () {

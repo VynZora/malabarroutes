@@ -44,20 +44,22 @@
                                     {% endif %}
                                 </div>
 
-<!-- Package Type -->
+                                <!-- Category -->
 <div class="col-md-6 mb-4">
-    <label for="package_type" class="form-label">Package Type <span class="text-danger">*</span></label>
-    <select name="package_type" id="package_type" class="form-control modern-input" required>
-        {% for value, label in form.fields.package_type.choices %}
-            <option value="{{ value }}" {% if form.package_type.value == value %}selected{% endif %}>
-                {{ label }}
-            </option>
-        {% endfor %}
-    </select>
-    <div class="invalid-feedback">Please select a package type.</div>
+    <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
+    <input type="text" name="category" id="category" class="form-control modern-input"
+        list="category-list" autocomplete="off"
+        placeholder="e.g. South Kerala"
+        value="{{ form.category.value|default:'' }}" required>
+    <datalist id="category-list">
+        {% for c in form.category_options %}<option value="{{ c }}">{% endfor %}
+    </datalist>
+    <div class="invalid-feedback">Please enter a category.</div>
+    {% if form.category.errors %}
+    <div class="text-danger small mt-1">{{ form.category.errors.0 }}</div>
+    {% endif %}
+    <div class="form-text">Type a new category or pick an existing one. Packages with the same category are grouped together.</div>
 </div>
-
-
 
                                 <!-- Duration & Price -->
                                 <div class="col-md-6 mb-4">

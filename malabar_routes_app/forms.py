@@ -25,10 +25,32 @@ class TourPackageForm(forms.ModelForm):
             "main_image",
             "duration",
             "price_from",
-            "package_type",
+            
+            "category",
             "highlights",
             "inclusions",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["category"].widget.attrs.update({
+            "list": "category-list",
+            "placeholder": "e.g. South Kerala",
+            "autocomplete": "off",
+        })
+
+    def clean_category(self):
+        # collapse extra spaces: "South   Kerala " -> "South Kerala"
+        return " ".join(self.cleaned_data.get("category", "").split())
+
+    @property
+    def category_options(self):
+        return (
+            TourPackage.objects.exclude(category="")
+            .order_by("category")
+            .values_list("category", flat=True)
+            .distinct()
+        )
 
 
 # ============================================================
@@ -46,6 +68,27 @@ class DestinationForm(forms.ModelForm):
             "location",
         ]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["location"].required = True
+        self.fields["location"].widget.attrs.update({
+            "list": "location-list",
+            "placeholder": "e.g. Kerala",
+            "autocomplete": "off",
+        })
+
+    def clean_location(self):
+        # collapse extra spaces: "South   India " -> "South India"
+        return " ".join(self.cleaned_data.get("location", "").split())
+
+    @property
+    def location_options(self):
+        return (
+            Destination.objects.exclude(location="")
+            .order_by("location")
+            .values_list("location", flat=True)
+            .distinct()
+        )
 
 # ============================================================
 # BLOG FORM

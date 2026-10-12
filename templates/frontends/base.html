@@ -501,6 +501,39 @@ background-position: center 70% !important;
             background-size: 190% auto !important;
         }
     }
+    /* ===== Packages dropdown in navbar (desktop) ===== */
+@media (min-width: 992px) {
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active { overflow: visible !important; }   /* lets the dropdown hang below the bar */
+
+    .main-header .pk-nav-dd { position: relative; }
+    .main-header .pk-nav-caret { font-size: 11px; margin-left: 4px; }
+
+    .main-header .pk-nav-menu {
+        position: absolute; top: 100%; left: 0; min-width: 230px;
+        margin: 8px 0 0; padding: 10px 0; list-style: none;
+        background: #fff; border-radius: 18px;
+        box-shadow: 0 12px 34px rgba(0,0,0,.14);
+        opacity: 0; visibility: hidden; transform: translateY(10px);
+        transition: opacity .25s ease, transform .25s ease, visibility .25s;
+        z-index: 1100;
+    }
+    /* invisible bridge so the menu doesn't close while the mouse moves down */
+    .main-header .pk-nav-menu::before {
+        content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+    }
+    .main-header .pk-nav-dd:hover .pk-nav-menu {
+        opacity: 1; visibility: visible; transform: translateY(0);
+    }
+    .main-header .pk-nav-menu li { margin: 0; }
+    .main-header .pk-nav-menu a {
+        display: block; padding: 10px 24px; white-space: nowrap;
+        font-size: 15px; font-weight: 600; color: #111 !important;
+        text-decoration: none; transition: background .2s ease, color .2s ease;
+    }
+    .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
+}
 </style>
 
     {% block extra_css %}{% endblock %}
@@ -530,9 +563,25 @@ background-position: center 70% !important;
                             <ul class="navbar-nav mr-auto" id="menu">
                                 <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'packages' %}">Packages</a></li>
+                               <li class="nav-item pk-nav-dd">
+    <a class="nav-link" href="{% url 'packages' %}">Packages <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
+    <ul class="pk-nav-menu">
+        <li><a href="{% url 'packages' %}">All Packages</a></li>
+        {% for c in nav_categories %}
+        <li><a href="{% url 'packages' %}?category={{ c.value }}">{{ c.label }}</a></li>
+        {% endfor %}
+    </ul>
+</li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'activities' %}">Experiences</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{% url 'destinations' %}">Destinations</a></li>
+                                <li class="nav-item pk-nav-dd">
+    <a class="nav-link" href="{% url 'destinations' %}">Destinations <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
+    <ul class="pk-nav-menu">
+        <li><a href="{% url 'destinations' %}">All Destinations</a></li>
+        {% for l in nav_locations %}
+        <li><a href="{% url 'destinations' %}?location={{ l.value }}">{{ l.label }}</a></li>
+        {% endfor %}
+    </ul>
+</li>
 
                                 <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
                                

@@ -854,11 +854,12 @@
 
 {% block content %}
 
-<!-- Hero (mr5.webp) -->
+<!-- Hero (same changing images as the home page hero) -->
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
 <style>
     .page-header.about-hero {
+        position: relative !important;
         width: calc(100% - 32px) !important;      /* white gap on left and right, like home hero */
         max-width: calc(100% - 32px) !important;
         margin: 16px 16px 0 !important;           /* white gap on top */
@@ -868,13 +869,8 @@
         display: flex;
         align-items: center;
         padding: 200px 0 120px !important;
-        background-color: #222 !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)),
-            url('{% static 'malabar-static/mr5.webp' %}') !important;
-        background-size: cover, cover !important;
-        background-position: center, center !important;
-        background-repeat: no-repeat, no-repeat !important;
+        background-color: #12281f !important;
+        background-image: none !important;        /* images now come from .ah-bgs below */
     }
 
     /* remove template overlay (it can have rounded corners / its own tint) */
@@ -882,6 +878,47 @@
     .page-header.about-hero::after {
         display: none !important;
     }
+
+    /* ---- background images: cross-fade + zoom out, same as the home hero ---- */
+    .about-hero .ah-bgs {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: inherit;
+    }
+    /* light dark layer so the white text stays readable */
+    .about-hero .ah-bgs::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: rgba(0, 0, 0, 0.30);
+        pointer-events: none;
+    }
+    .about-hero .ah-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1);
+        transition: opacity 1.2s ease;
+    }
+    .about-hero .ah-bg.active {
+        opacity: 1;
+        animation: ahZoomOut 5.2s ease-out forwards;   /* starts zoomed in, settles to normal size */
+    }
+    @keyframes ahZoomOut {
+        from { transform: scale(1.2); }
+        to   { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .about-hero .ah-bg.active { animation: none; }
+    }
+
+    /* keep the text above the images */
+    .page-header.about-hero > .container { position: relative; z-index: 2; }
 
     .page-header.about-hero .page-header-box { text-align: center; }
 
@@ -894,6 +931,17 @@
         text-transform: none !important;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
         margin-bottom: 20px;
+    }
+
+    /* description under the title */
+    .page-header.about-hero .about-hero-sub {
+        max-width: 700px;
+        margin: 0 auto 24px;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.7;
+        color: #ffffff !important;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
     }
 
     .page-header.about-hero .breadcrumb {
@@ -927,6 +975,11 @@
             letter-spacing: 2px !important;
             margin-bottom: 14px !important;
         }
+        .page-header.about-hero .about-hero-sub {
+            font-size: 15px;
+            margin-bottom: 18px;
+            padding: 0 8px;
+        }
         .page-header.about-hero .breadcrumb {
             justify-content: center !important;
             font-size: 14px;
@@ -935,15 +988,43 @@
 
     @media (max-width: 575px) {
         .page-header.about-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
+        .page-header.about-hero .about-hero-sub { font-size: 14px; }
     }
+    /* ================= FILTER PILLS ================= */
+.fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
+.fl-btn {
+    font-family: inherit;
+    border: 1.5px solid #dcdcdc; background: #fff; color: #2b2b2b;
+    padding: 10px 24px; border-radius: 50px;
+    font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all .3s ease;
+}
+.fl-btn:hover { border-color: #265648; color: #265648; }
+.fl-btn.active { background: #265648; border-color: #265648; color: #fff; }
+@media (max-width: 575px) {
+    .fl-filters { gap: 8px; margin-bottom: 30px; }
+    .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
+}
 </style>
 
 <div class="page-header about-hero">
+
+    <!-- Background images: same five as the home hero, same order -->
+    <div class="ah-bgs" aria-hidden="true">
+        
+        <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
+    </div>
+
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="page-header-box">
                     <h1>About us</h1>
+                    
                     <nav>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
@@ -1216,7 +1297,7 @@
                         <h3 class="wow fadeInUp">about us</h3>
                         <h2 class="text-anime-style-3" data-cursor="-opaque">Our Story</h2>
 
-                        <p class="st-text collapsed wow fadeInUp" id="stText" data-wow-delay="0.2s">We cater to the domestic travel enthusiasts in Kerala, mainly focusing on north Kerala who wishes to travel to places abroad or to unexplored destinations in Malabar region. We are committed to offering travel services of the highest quality, combining our energy and enthusiasm, with our years of experience. Our greatest satisfaction comes in serving large numbers of satisfied clients who have experienced the joys and inspiration of travel. Knowledge of our field paired with excellence in customer service is our mantra. Our goal is to exceed your expectations every time with outstanding service. We are led by an experienced management team. We will be there for you if anything unexpected occurs on your trip. We have the education and the experience to ensure you enjoy exceptional travel experiences throughout your lifetime. “when traveling with us &amp; explore the other sides of gods own country”.</p>
+                        <p class="st-text collapsed wow fadeInUp" id="stText" data-wow-delay="0.2s">We cater to the domestic travel enthusiasts in Kerala, mainly focusing on north Kerala who wishes to travel to places abroad or to unexplored destinations in Malabar region. Our main packages include All Kerala tour packages, North Kerala packages, South Kerala packages, hills, beaches and backwater packages, and family and group holiday packages. We are committed to offering travel services of the highest quality, combining our energy and enthusiasm, with our years of experience. Our greatest satisfaction comes in serving large numbers of satisfied clients who have experienced the joys and inspiration of travel. Knowledge of our field paired with excellence in customer service is our mantra. Our goal is to exceed your expectations every time with outstanding service. We are led by an experienced management team. We will be there for you if anything unexpected occurs on your trip. We have the education and the experience to ensure you enjoy exceptional travel experiences throughout your lifetime. “when traveling with us &amp; explore the other sides of gods own country”.</p>
 
                         <button type="button" class="st-more" id="stMore" aria-expanded="false" aria-controls="stText">
                             <span>Read more</span> <i class="fa-solid fa-chevron-down"></i>
@@ -1380,9 +1461,8 @@
     </div>
 </div>
 <!-- Malabaroutes Services End -->
-
 {% if featured_packages %}
-<!-- Popular Packages (all packages, 3 at a time, endless loop) -->
+<!-- Popular Packages (filter by category, endless loop) -->
 <div class="pk-section">
     <div class="container">
 
@@ -1395,6 +1475,15 @@
             </div>
         </div>
 
+        {% if nav_categories %}
+        <div class="fl-filters" id="pkFilters">
+            <button type="button" class="fl-btn active" data-filter="all">All</button>
+            {% for c in nav_categories %}
+            <button type="button" class="fl-btn" data-filter="{{ c.value }}">{{ c.label }}</button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <!-- "ms-services" re-uses the services carousel styles (viewport, track, arrows, dots) -->
         <div class="ms-services pk-carousel-wrap">
             <div class="ms-carousel" id="pkCarousel">
@@ -1402,7 +1491,7 @@
                     <div class="ms-track">
 
                         {% for p in featured_packages %}
-                        <div class="ms-slide">
+                        <div class="ms-slide" data-filter="{{ p.category|slugify }}">
                             <div class="pk-card">
 
                                 <div class="pk-media">
@@ -1743,6 +1832,20 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- About hero: background images change one by one (same effect as the home hero) -->
+<script>
+    (function () {
+        var bgs = document.querySelectorAll('.about-hero .ah-bg');
+        if (bgs.length < 2) return;
+        var current = 0;
+        setInterval(function () {
+            bgs[current].classList.remove('active');
+            current = (current + 1) % bgs.length;
+            bgs[current].classList.add('active');   /* re-adding restarts the zoom-out */
+        }, 5000);
+    })();
+</script>
+
 <!-- Our Story: Read more / Read less -->
 <script>
     (function () {
@@ -1849,17 +1952,18 @@
     })();
 </script>
 
-<!-- Carousels (services + packages + testimonials share the same code) -->
+<!-- Carousels (services + packages + testimonials) with optional filtering -->
 <script>
     function initMsCarousel(rootId, opts) {
         opts = opts || {};
         var root = document.getElementById(rootId);
-        if (!root) return;
+        if (!root) return null;
 
         var viewport = root.querySelector('.ms-viewport');
         var track = root.querySelector('.ms-track');
         var dotsBox = root.querySelector('.ms-dots');
-        var originals = Array.prototype.slice.call(track.children);
+        var allSlides = Array.prototype.slice.call(track.children);
+        var originals = allSlides.slice();      // slides currently shown (changes with the filter)
         var total = originals.length;
 
         var AUTOPLAY_MS = 3000;
@@ -1871,23 +1975,27 @@
         var nav = root.querySelector('.ms-nav');
 
         function getPerView() {
-            if (typeof opts.perView === 'function') return opts.perView();   /* custom responsive rule */
-            if (opts.perView) return opts.perView;                           /* fixed number of visible cards */
+            if (typeof opts.perView === 'function') return opts.perView();
+            if (opts.perView) return opts.perView;
             var w = window.innerWidth;
             if (w < 768) return 1;
             if (w < 992) return 2;
             return 3;
         }
 
-        originals.forEach(function (_, i) {
-            var d = document.createElement('button');
-            d.type = 'button';
-            d.className = 'ms-dot';
-            d.setAttribute('aria-label', 'Go to card ' + (i + 1));
-            d.addEventListener('click', function () { goTo(i); start(); });
-            dotsBox.appendChild(d);
-            dots.push(d);
-        });
+        function makeDots() {
+            dotsBox.innerHTML = '';
+            dots = [];
+            originals.forEach(function (_, i) {
+                var d = document.createElement('button');
+                d.type = 'button';
+                d.className = 'ms-dot';
+                d.setAttribute('aria-label', 'Go to card ' + (i + 1));
+                d.addEventListener('click', function () { goTo(i); start(); });
+                dotsBox.appendChild(d);
+                dots.push(d);
+            });
+        }
 
         function realIndex() {
             return ((index - perView) % total + total) % total;
@@ -1900,6 +2008,11 @@
 
         function build() {
             track.querySelectorAll('.ms-clone').forEach(function (c) { c.remove(); });
+
+            // show only the slides in the current filter
+            allSlides.forEach(function (s) {
+                s.style.display = originals.indexOf(s) > -1 ? '' : 'none';
+            });
 
             perView = getPerView();
             slideW = viewport.clientWidth / perView;
@@ -1921,12 +2034,14 @@
                 var before = originals[((total - 1 - i) % total + total) % total].cloneNode(true);
                 before.classList.add('ms-clone');
                 before.setAttribute('aria-hidden', 'true');
+                before.style.display = '';
                 before.style.flex = '0 0 ' + slideW + 'px';
                 track.insertBefore(before, track.firstChild);
 
                 var after = originals[i % total].cloneNode(true);
                 after.classList.add('ms-clone');
                 after.setAttribute('aria-hidden', 'true');
+                after.style.display = '';
                 after.style.flex = '0 0 ' + slideW + 'px';
                 track.appendChild(after);
             }
@@ -1979,6 +2094,21 @@
             timer = null;
         }
 
+        /* Filter: show only slides whose data-filter matches the key */
+        function setFilter(key) {
+            var next = allSlides.filter(function (s) {
+                return key === 'all' || s.getAttribute('data-filter') === key;
+            });
+            if (!next.length) return;          // never leave the carousel empty
+            stop();
+            busy = false;
+            originals = next;
+            total = originals.length;
+            makeDots();
+            build();
+            start();
+        }
+
         root.querySelector('.ms-next').addEventListener('click', function () { go(1); start(); });
         root.querySelector('.ms-prev').addEventListener('click', function () { go(-1); start(); });
 
@@ -2020,16 +2150,34 @@
             resizeTimer = setTimeout(function () { busy = false; build(); }, 200);
         });
 
+        makeDots();
         build();
         start();
+
+        return { setFilter: setFilter };
+    }
+
+    /* connects a row of filter pills to a carousel */
+    function bindFilters(pillsId, carousel) {
+        var box = document.getElementById(pillsId);
+        if (!box || !carousel) return;
+        var btns = box.querySelectorAll('.fl-btn');
+        btns.forEach(function (b) {
+            b.addEventListener('click', function () {
+                btns.forEach(function (x) { x.classList.toggle('active', x === b); });
+                carousel.setFilter(b.getAttribute('data-filter'));
+            });
+        });
     }
 
     initMsCarousel('msCarousel');
-    initMsCarousel('pkCarousel');
+    var pkCar = initMsCarousel('pkCarousel');
     initMsCarousel('pcCarousel', {
         perView: function () {
-            return window.innerWidth < 768 ? 1 : 2;   /* 1 card on mobile, 2 big cards on tablet and desktop */
+            return window.innerWidth < 768 ? 1 : 2;
         }
     });
+
+    bindFilters('pkFilters', pkCar);
 </script>
 {% endblock %}

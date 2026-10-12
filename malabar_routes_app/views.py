@@ -14,7 +14,7 @@ from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.utils.dateparse import parse_date
 from django.views.decorators.http import require_POST
-
+from django.utils.datastructures import MultiValueDict
 from .forms import (
     BlogForm,
     CategoryForm,
@@ -33,7 +33,8 @@ from .models import (
     GalleryImage,
     Testimonial,
     TourPackage,
-    Activity
+    Activity,
+    DestinationImage
 
 )
 
@@ -535,17 +536,40 @@ def admin_destination_list(request):
     )
 
 
+# ============================================================
+# DESTINATIONS
+# ============================================================
+
+def _split_hero_and_extras(request):
+    """First uploaded file = hero image, the rest = extra images."""
+    files = request.FILES.getlist("image")
+    hero_files = MultiValueDict({"image": files[:1]}) if files else None
+    return hero_files, files[1:]
+
+
+def _save_extra_destination_images(destination, extras):
+    for f in extras:
+        DestinationImage.objects.create(
+            destination=destination,
+            image=f,
+        )
+
+
 @admin_required
 def destination_create(request):
 
+    hero_files, extras = _split_hero_and_extras(request)
+
     form = DestinationForm(
         request.POST or None,
-        request.FILES or None,
+        hero_files,
     )
 
     if form.is_valid():
 
-        form.save()
+        destination = form.save()
+
+        _save_extra_destination_images(destination, extras)
 
         messages.success(
             request,
@@ -573,15 +597,28 @@ def destination_update(request, pk):
         pk=pk,
     )
 
+    hero_files, extras = _split_hero_and_extras(request)
+
     form = DestinationForm(
         request.POST or None,
-        request.FILES or None,
+        hero_files,
         instance=destination,
     )
 
     if form.is_valid():
 
         form.save()
+
+        # Remove extra images the admin ticked
+        delete_ids = request.POST.getlist("delete_images")
+        if delete_ids:
+            for img in DestinationImage.objects.filter(
+                destination=destination,
+                pk__in=delete_ids,
+            ):
+                img.delete()
+
+        _save_extra_destination_images(destination, extras)
 
         messages.success(
             request,
@@ -600,8 +637,6 @@ def destination_update(request, pk):
             "destination": destination,
         },
     )
-
-
 @admin_required
 def destination_delete(request, pk):
 
@@ -1249,17 +1284,63 @@ def activity_detail(request, slug):
         'activity': activity,
         'other_activities': other_activities,
     })
-
+from django.utils.text import slugify
 def packages(request):
     items = TourPackage.objects.order_by("-created_at")
-    return render(request, "frontends/packages.html", {"packages": items})
 
+    grouped = {}
+    other = []
+    for p in items:
+        name = " ".join((p.category or "").split())
+        if not name:
+            other.append(p)
+            continue
+        group = grouped.setdefault(
+            name.lower(),
+            {"value": slugify(name), "label": name, "packages": []},
+        )
+        group["packages"].append(p)
+
+    groups = sorted(grouped.values(), key=lambda g: g["label"].lower())
+    if other:
+        groups.append({"value": "other", "label": "Other Packages", "packages": other})
+
+    # ?category=south-kerala -> show only that category
+    selected = request.GET.get("category", "").strip()
+    if selected:
+        groups = [g for g in groups if g["value"] == selected]
+
+    return render(request, "frontends/packages.html", {
+        "groups": groups,
+        "selected": selected,
+    })
 def package_detail(request, slug):
     package = get_object_or_404(TourPackage, slug=slug)
-    other_packages = TourPackage.objects.exclude(pk=package.pk).order_by("-created_at")[:6]
+    others = TourPackage.objects.exclude(pk=package.pk).order_by("-created_at")
+
+    current = " ".join((package.category or "").split()).lower()
+
+    grouped = {}
+    other = []
+    for p in others:
+        name = " ".join((p.category or "").split())
+        if not name:
+            other.append(p)
+            continue
+        g = grouped.setdefault(name.lower(), {"key": name.lower(), "label": name, "packages": []})
+        g["packages"].append(p)
+
+    # A to Z, but the current package's category goes first
+    sidebar_groups = sorted(
+        grouped.values(),
+        key=lambda g: (g["key"] != current, g["label"].lower()),
+    )
+    if other:
+        sidebar_groups.append({"key": "other", "label": "Other Packages", "packages": other})
+
     return render(request, "frontends/package_detail.html", {
         "package": package,
-        "other_packages": other_packages,
+        "sidebar_groups": sidebar_groups,
     })
 def _save_booking_enquiry(data):
     """Save to BookingEnquiry using whichever matching fields the model has."""
@@ -1438,11 +1519,59 @@ def booking_email(request):
 
 def booking_packages(request):
     return {"booking_packages": TourPackage.objects.order_by("-created_at")}
+def booking_packages(request):
+    cats = {}
+    for c in TourPackage.objects.exclude(category="").values_list("category", flat=True):
+        label = " ".join(c.split())
+        cats.setdefault(label.lower(), label)
+
+    locs = {}
+    for l in Destination.objects.exclude(location="").values_list("location", flat=True):
+        label = " ".join(l.split())
+        locs.setdefault(label.lower(), label)
+
+    return {
+        "booking_packages": TourPackage.objects.order_by("-created_at"),
+        "nav_categories": sorted(
+            ({"label": v, "value": slugify(v)} for v in cats.values()),
+            key=lambda x: x["label"].lower(),
+        ),
+        "nav_locations": sorted(
+            ({"label": v, "value": slugify(v)} for v in locs.values()),
+            key=lambda x: x["label"].lower(),
+        ),
+    }
 
 
 def destinations(request):
     items = Destination.objects.order_by("-created_at")
-    return render(request, "frontends/destinations.html", {"destinations": items})
+
+    grouped = {}
+    other = []
+    for d in items:
+        name = " ".join((d.location or "").split())
+        if not name:
+            other.append(d)
+            continue
+        g = grouped.setdefault(
+            name.lower(),
+            {"value": slugify(name), "label": name, "destinations": []},
+        )
+        g["destinations"].append(d)
+
+    groups = sorted(grouped.values(), key=lambda g: g["label"].lower())
+    if other:
+        groups.append({"value": "other", "label": "Other Destinations", "destinations": other})
+
+    # ?location=kerala -> show only that location
+    selected = request.GET.get("location", "").strip()
+    if selected:
+        groups = [g for g in groups if g["value"] == selected]
+
+    return render(request, "frontends/destinations.html", {
+        "groups": groups,
+        "selected": selected,
+    })
 def destination_detail(request, slug):
     destination = get_object_or_404(Destination, slug=slug)
     other_destinations = Destination.objects.exclude(pk=destination.pk).order_by("-created_at")

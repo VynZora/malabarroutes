@@ -26,20 +26,37 @@
                                     <div class="invalid-feedback">Please provide a name.</div>
                                 </div>
 
+                                <!-- Location (required, groups destinations on the website) -->
                                 <div class="col-md-6 mb-4">
-                                    <label for="location" class="form-label">Location</label>
+                                    <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
                                     <input type="text" name="location" id="location" class="form-control modern-input"
-                                        placeholder="e.g. Switzerland"
-                                        value="{{ form.location.value|default_if_none:'' }}">
+                                        list="location-list" autocomplete="off"
+                                        placeholder="e.g. Kerala"
+                                        value="{{ form.location.value|default_if_none:'' }}" required>
+                                    <datalist id="location-list">
+                                        {% for l in form.location_options %}<option value="{{ l }}">{% endfor %}
+                                    </datalist>
+                                    <div class="invalid-feedback">Please enter a location.</div>
+                                    {% if form.location.errors %}
+                                    <div class="text-danger small mt-1">{{ form.location.errors.0 }}</div>
+                                    {% endif %}
+                                    <div class="form-text">Type a new location or pick an existing one. Destinations with the same location are grouped together.</div>
                                 </div>
 
+                                <!-- Images: first = hero, rest = extra images -->
                                 <div class="col-12 mb-4">
-                                    <label for="image" class="form-label">Image</label>
+                                    <label for="image" class="form-label">Images</label>
                                     <input type="file" name="image" id="image"
-                                        class="form-control modern-input activity-image-input"
-                                        data-preview-id="imagePreview" accept="image/*" {% if not destination %}required{% endif %}>
-                                    <div class="form-text">Recommended size: 800x600 pixels.</div>
+                                        class="form-control modern-input"
+                                        accept="image/*" multiple {% if not destination %}required{% endif %}>
+                                    <div class="form-text">
+                                        Select one or more images. The <strong>first one selected is the hero image</strong>;
+                                        the rest are added as extra images. Recommended size: 800x600 pixels.
+                                    </div>
                                     <div class="invalid-feedback">Please upload an image.</div>
+                                    {% if form.image.errors %}
+                                    <div class="text-danger small mt-1">{{ form.image.errors.0 }}</div>
+                                    {% endif %}
 
                                     <div id="imagePreview" class="activity-image-preview mt-3"
                                          style="{% if form.instance.image %}display:flex;{% else %}display:none;{% endif %}">
@@ -47,6 +64,24 @@
                                             <img src="{{ form.instance.image.url }}" alt="Current Image">
                                         {% endif %}
                                     </div>
+
+                                    <div id="extraPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+
+                                    {% if destination and destination.images.all %}
+                                    <div class="mt-3">
+                                        <div class="form-text mb-2">Current extra images (tick to remove on save):</div>
+                                        <div class="d-flex flex-wrap gap-3">
+                                            {% for img in destination.images.all %}
+                                            <label style="cursor:pointer;">
+                                                <img src="{{ img.image.url }}" alt="" class="extra-thumb">
+                                                <span class="d-block small text-danger mt-1">
+                                                    <input type="checkbox" name="delete_images" value="{{ img.pk }}"> Remove
+                                                </span>
+                                            </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 </div>
 
                                 <div class="col-12 mb-4">
@@ -79,6 +114,7 @@
 <style>
     .activity-image-preview { max-width: 300px; min-height: 150px; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; background-color: #f9fafb; }
     .activity-image-preview img { max-width: 100%; height: auto; object-fit: cover; }
+    .extra-thumb { width: 110px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid #d1d5db; }
     .modern-input { border: 1px solid #d1d5db; border-radius: 8px; padding: 0.85rem 1rem; font-size: 1rem; }
     .default__button { background: #4f46e5; color: #fff; padding: 0.85rem 1.6rem; border-radius: 8px; font-weight: 500; border: none; }
 </style>
@@ -92,21 +128,34 @@
             toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'undo', 'redo']
         }).catch(error => console.error(error));
 
-        document.querySelectorAll('.activity-image-input').forEach(input => {
-            input.addEventListener('change', function () {
-                const previewId = this.getAttribute('data-preview-id');
-                const preview = document.getElementById(previewId);
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        preview.style.display = 'flex';
-                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid rounded">`;
+        const imageInput = document.getElementById('image');
+        const heroPreview = document.getElementById('imagePreview');
+        const extraPreview = document.getElementById('extraPreview');
+
+        imageInput.addEventListener('change', function () {
+            extraPreview.innerHTML = '';
+            const files = Array.from(this.files);
+
+            if (!files.length) {
+                heroPreview.style.display = 'none';
+                heroPreview.innerHTML = '';
+                return;
+            }
+
+            files.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    if (i === 0) {
+                        heroPreview.style.display = 'flex';
+                        heroPreview.innerHTML = `<img src="${e.target.result}" alt="Hero preview" class="img-fluid rounded">`;
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'extra-thumb';
+                        extraPreview.appendChild(img);
                     }
-                    reader.readAsDataURL(this.files[0]);
-                } else {
-                    preview.style.display = 'none';
-                    preview.innerHTML = '';
-                }
+                };
+                reader.readAsDataURL(file);
             });
         });
     });

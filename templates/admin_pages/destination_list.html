@@ -14,7 +14,7 @@
                 <input type="text" id="activitySearchInput" class="form-control form-control-sm" placeholder="Search by name...">
             </div>
         </div>
-        
+
         <a href="{% url 'destination_create' %}" class="btn btn-success btn-sm">
             <i class="fas fa-plus"></i> New Destination
         </a>
@@ -28,7 +28,6 @@
                     <th scope="col">Image</th>
                     <th scope="col">Name</th>
                     <th scope="col">Location</th>
-                    <th scope="col">Type</th>
                     <th scope="col">Description</th>
                     <th scope="col">Date Created</th>
                     <th scope="col" class="text-center">Actions</th>
@@ -48,14 +47,6 @@
                     </td>
                     <td><strong>{{ destination.name }}</strong></td>
                     <td><span class="badge bg-info text-dark">{{ destination.location }}</span></td>
-
-                    <td>
-            {% if destination.destination_type == "international" %}
-            <span class="badge bg-primary">International</span>
-            {% else %}
-            <span class="badge bg-secondary">Domestic</span>
-            {% endif %}
-        </td>
                     <td class="description-cell">{{ destination.description|striptags|truncatechars:50 }}</td>
                     <td>{{ destination.created_at|date:"M d, Y" }}</td>
                     <td class="text-center">

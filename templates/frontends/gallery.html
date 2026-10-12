@@ -4,58 +4,92 @@
 {% block title %}Gallery | Malabar{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html.
+    Hero = same design and rotating background images as the Packages / About hero.
     Colours come from base.html (--accent-color, --primary-color).
-    Hero = same design as the About page (inset, rounded).
     Lightbox shows the full photo (no cropping).
 {% endcomment %}
 
 {% block extra_css %}
 <style>
-    /* ================= HERO (same design as About page) ================= */
-    .page-header.gallery-hero {
-        width: calc(100% - 32px) !important;      /* white gap on left and right */
+    /* ================= HERO (same design as Packages / About page) ================= */
+    .page-header.page-hero {
+        position: relative !important;
+        width: calc(100% - 32px) !important;
         max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;           /* white gap on top */
-        border-radius: 40px !important;           /* rounded corners */
-        overflow: hidden !important;              /* clips the image to the curve */
+        margin: 16px 16px 0 !important;
+        border-radius: 40px !important;
+        overflow: hidden !important;
         min-height: calc(80vh - 16px);
         display: flex;
         align-items: center;
         padding: 200px 0 120px !important;
-        background-color: #222 !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)),
-            url('{% static "malabar-static/mr5.webp" %}') !important;
-        background-size: cover, cover !important;
-        background-position: center, center !important;
-        background-repeat: no-repeat, no-repeat !important;
+        background-color: #12281f !important;
+        background-image: none !important;   /* images come from .ah-bgs below */
     }
-    .page-header.gallery-hero::before,
-    .page-header.gallery-hero::after { display: none !important; }
+    .page-header.page-hero::before,
+    .page-header.page-hero::after { display: none !important; }
 
-    .page-header.gallery-hero .page-header-box { text-align: center; }
+    /* ---- background images: cross-fade + zoom out ---- */
+    .page-hero .ah-bgs {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: inherit;
+    }
+    .page-hero .ah-bgs::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
+        pointer-events: none;
+    }
+    .page-hero .ah-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1);
+        transition: opacity 1.2s ease;
+    }
+    .page-hero .ah-bg.active {
+        opacity: 1;
+        animation: ahZoomOut 5.2s ease-out forwards;
+    }
+    @keyframes ahZoomOut {
+        from { transform: scale(1.2); }
+        to   { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .page-hero .ah-bg.active { animation: none; }
+    }
+    .page-header.page-hero > .container { position: relative; z-index: 2; }
 
-    /* No font-family: inherits the heading font from base */
-    .page-header.gallery-hero h1 {
+    .page-hero .page-header-box { text-align: center; }
+
+    .page-header.page-hero h1 {
+        font-family: 'Cinzel', serif !important;
+        font-weight: 700 !important;
         font-size: 80px;
-        letter-spacing: 4px;
+        letter-spacing: 6px;
         color: #ffffff !important;
         text-transform: none !important;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
         margin-bottom: 20px;
     }
-    .page-header.gallery-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-header.gallery-hero .breadcrumb-item,
-    .page-header.gallery-hero .breadcrumb-item a,
-    .page-header.gallery-hero .breadcrumb-item + .breadcrumb-item::before {
+
+    .page-hero .breadcrumb { justify-content: center; margin: 0; }
+    .page-hero .breadcrumb-item,
+    .page-hero .breadcrumb-item a,
+    .page-hero .breadcrumb-item + .breadcrumb-item::before {
         color: #ffffff !important;
         text-transform: capitalize;
     }
 
     /* ================= GALLERY ================= */
     .gallery-section {
-        /* colours come from base.html */
         --gal-accent: var(--accent-color, #265648);
         --gal-dark: var(--primary-color, #111111);
 
@@ -68,7 +102,7 @@
         background-position: center, center;
         background-repeat: no-repeat, no-repeat;
     }
-    .gallery-section .container { max-width: 1480px; } /* wider = bigger cards */
+    .gallery-section .container { max-width: 1480px; }
 
     /* ---------- Category pills ---------- */
     .gallery-filters {
@@ -132,7 +166,7 @@
     }
     .gallery-item:hover img { transform: scale(1.08); }
 
-    /* hover overlay with zoom icon (tinted with the base accent colour) */
+    /* hover overlay with zoom icon */
     .gallery-item::after {
         content: "\f00e"; /* Font Awesome magnifier-plus */
         font-family: "Font Awesome 6 Free";
@@ -160,14 +194,13 @@
         padding: 0 !important;
         margin: 0 auto;
         aspect-ratio: auto !important;
-        object-fit: contain !important;   /* never crop */
+        object-fit: contain !important;
         background: transparent;
         border-radius: 16px;
     }
     .gallery-popup .mfp-bottom-bar { margin-top: -44px; }
     .gallery-popup .mfp-counter { color: #f7e3d2; }
 
-    /* fade in / out for the popup */
     .gallery-popup.mfp-bg { opacity: 0; transition: opacity .2s ease; }
     .gallery-popup.mfp-bg.mfp-ready { opacity: .85; }
     .gallery-popup.mfp-bg.mfp-removing { opacity: 0; }
@@ -177,34 +210,9 @@
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1199px) { .gallery-grid { gap: 22px; } }
-    @media (max-width: 991px) {
-        .page-header.gallery-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 60vh;
-            padding: 150px 0 80px !important;
-        }
-        .page-header.gallery-hero h1 { font-size: 48px; letter-spacing: 2px; }
-        .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 575px) {
-        .page-header.gallery-hero h1 { font-size: 36px; letter-spacing: 1px; }
-        .gallery-grid { grid-template-columns: 1fr; }
-        .gallery-section { padding: 60px 0 80px; }
-        .gallery-filter-btn { padding: 10px 22px; font-size: 14px; }
-    }
-        /* ================= HERO: Cinzel font, same as About ================= */
-    .page-header.gallery-hero h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        letter-spacing: 6px;
-    }
 
-    /* ================= MOBILE: hero same as About page ================= */
     @media (max-width: 991px) {
-        .page-header.gallery-hero {
+        .page-header.page-hero {
             width: calc(100% - 20px) !important;
             max-width: calc(100% - 20px) !important;
             margin: 10px 10px 0 !important;
@@ -212,42 +220,35 @@
             min-height: 46vh !important;
             padding: 130px 0 65px !important;
         }
-        .page-header.gallery-hero .page-header-box,
-        .page-header.gallery-hero h1,
-        .page-header.gallery-hero nav {
+        .page-header.page-hero .page-header-box,
+        .page-header.page-hero h1,
+        .page-header.page-hero nav {
             text-align: center !important;
             width: 100%;
         }
-        .page-header.gallery-hero h1 {
+        .page-header.page-hero h1 {
             font-size: 34px !important;
             letter-spacing: 2px !important;
             margin-bottom: 14px !important;
         }
-        .page-header.gallery-hero .breadcrumb {
+        .page-header.page-hero .breadcrumb {
             justify-content: center !important;
             font-size: 14px;
         }
 
+        .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
         .gallery-section { padding: 50px 0 70px; }
         .gallery-filters { gap: 10px; margin-bottom: 34px; }
-        .gallery-grid { gap: 16px; }
         .gallery-item { border-radius: 20px; }
     }
 
     @media (max-width: 575px) {
-        .page-header.gallery-hero h1 {
-            font-size: 28px !important;
-            letter-spacing: 1.5px !important;
-        }
+        .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
 
+        .gallery-grid { grid-template-columns: 1fr; gap: 14px; }
         .gallery-section { padding: 40px 0 60px; }
         .gallery-filters { gap: 8px; margin-bottom: 26px; }
-        .gallery-filter-btn {
-            padding: 8px 18px;
-            font-size: 13px;
-            border-width: 1.2px;
-        }
-        .gallery-grid { gap: 14px; }
+        .gallery-filter-btn { padding: 8px 18px; font-size: 13px; border-width: 1.2px; }
         .gallery-item { border-radius: 18px; }
         .gallery-item::after { font-size: 24px; }
 
@@ -263,23 +264,29 @@
 
 {% block content %}
 
-<!-- Hero (same design as About page) -->
-<div class="page-header gallery-hero">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-header-box">
-                    <h1 class="text-anime-style-3" data-cursor="-opaque">Gallery</h1>
-                    <nav class="wow fadeInUp" data-wow-delay="0.2s">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">gallery</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
-        </div>
+<!-- Hero (same design and rotating images as the Packages / About page) -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+
+<div class="page-header page-hero">
+
+    <!-- Background images: same five as the Packages hero, same order -->
+    <div class="ah-bgs" aria-hidden="true">
+        <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
+        <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
     </div>
+
+    <div class="container"><div class="row"><div class="col-lg-12">
+        <div class="page-header-box">
+            <h1 class="text-anime-style-3" data-cursor="-opaque">Gallery</h1>
+            <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">gallery</li>
+            </ol></nav>
+        </div>
+    </div></div></div>
 </div>
 
 <!-- Gallery -->
@@ -314,6 +321,20 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Hero: background images change one by one (same effect as Packages / About) -->
+<script>
+    (function () {
+        var bgs = document.querySelectorAll('.page-hero .ah-bg');
+        if (bgs.length < 2) return;
+        var current = 0;
+        setInterval(function () {
+            bgs[current].classList.remove('active');
+            current = (current + 1) % bgs.length;
+            bgs[current].classList.add('active');   /* re-adding restarts the zoom-out */
+        }, 5000);
+    })();
+</script>
+
 <script>
     (function () {
         var buttons = document.querySelectorAll('.gallery-filter-btn');

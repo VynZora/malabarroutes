@@ -21,7 +21,12 @@ class OptimizedImageModel(models.Model):
 
 
 import re
+
+from django.db import models
 from django.utils.html import strip_tags
+from django.utils.text import slugify
+import html
+
 class TourPackage(OptimizedImageModel):
     image_fields = ["main_image"]
 
@@ -43,6 +48,14 @@ class TourPackage(OptimizedImageModel):
         default="domestic",
         help_text="Category of the tour package"
     )
+
+    # Free-text category used to group packages on the packages page
+    category = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="e.g. South Kerala. Packages with the same category are grouped together.",
+    )
+
     highlights = models.TextField(blank=True, help_text="Key highlights, one per line")
     inclusions = models.TextField(blank=True, help_text="What is included, one per line")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -61,11 +74,21 @@ class TourPackage(OptimizedImageModel):
     @property
     def inclusions_list(self):
         return [i.strip() for i in self.inclusions.splitlines() if i.strip()]
+
     @property
     def card_description(self):
         text = self.description or ""
         text = re.sub(r"<br\s*/?>|</p>|</li>", " ", text)
         return strip_tags(text).strip()
+
+    @property
+    def inclusions_short(self):
+        """First 4 inclusions as plain text, for the package card."""
+        text = self.inclusions or ""
+        text = re.sub(r"<br\s*/?>|</p>|</li>", "\n", text)
+        text = html.unescape(strip_tags(text))
+        return [line.strip() for line in text.splitlines() if line.strip()][:4]
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
@@ -201,7 +224,23 @@ class Destination(OptimizedImageModel):
         super().save(*args, **kwargs)
 
 
+class DestinationImage(OptimizedImageModel):
+    image_fields = ["image"]
 
+    destination = models.ForeignKey(
+        Destination,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(upload_to="destinations/extra/")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+        verbose_name_plural = "Destination Images"
+
+    def __str__(self):
+        return f"{self.destination.name} - image {self.pk}"
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)

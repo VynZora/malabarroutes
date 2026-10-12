@@ -17,6 +17,7 @@
     /* ================= MALABAROUTES SERVICES ================= */
     .our-services.bg-section.ms-services,
     .our-services.ms-services {
+        position: relative;
         width: 100% !important;
         max-width: 100% !important;
         margin: 0 !important;
@@ -107,110 +108,168 @@
         .ms-services .ms-dots { display: none; }
     }
 
-    /* ---- Services: photo cards ---- */
+    /* ---- Services: blob cards (same as home page) ---- */
     .ms-services .sv-card {
-        --sv-accent: var(--accent-color, #265648);
-        --sv-tint: #e4ece3;
-        --sv-tint: color-mix(in srgb, var(--sv-accent) 14%, #ffffff);
-        --sv-wash: #f3f7f2;
-        --sv-wash: color-mix(in srgb, var(--sv-accent) 7%, #ffffff);
-        --sv-halo: rgba(38, 86, 72, 0.08);
-        --sv-halo: color-mix(in srgb, var(--sv-accent) 10%, transparent);
-        --sv-shadow: rgba(38, 86, 72, 0.18);
-        --sv-shadow: color-mix(in srgb, var(--sv-accent) 22%, transparent);
-
-        position: relative;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        min-height: 500px;
-        padding: 0 28px 34px;
-        border-radius: 28px;
-        border: 1.5px solid var(--sv-accent);
-        background: linear-gradient(180deg, var(--sv-wash) 0%, #ffffff 70%);
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        --c-main: #1f6b57;
+        --c-soft: #bfe0d6;
+        position: relative; flex: 1;
+        display: flex; flex-direction: column; align-items: flex-start;
+        padding: 10px 0 0 max(0px, calc((100% - 290px) / 2));
     }
-    .ms-services .sv-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 36px var(--sv-shadow);
-    }
+    .ms-services .sv-t1 { --c-main: #1f6b57; --c-soft: #bfe0d6; }
+    .ms-services .sv-t2 { --c-main: #7fbab0; --c-soft: #cfe4f3; }
+    .ms-services .sv-t3 { --c-main: #d1ad55; --c-soft: #f6e3a8; }
+    .ms-services .sv-t4 { --c-main: #2f7f9a; --c-soft: #d3e6e0; }
 
+    /* image area */
+    .ms-services .sv-art { position: relative; width: 250px; height: 230px; margin: 0 0 22px 6px; }
+    .ms-services .sv-art::before {            /* leaf */
+        content: ""; position: absolute; left: -26px; top: 36px; width: 46px; height: 70px; z-index: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 120' fill='%236f9a7a'%3E%3Cpath d='M30 118 C28 80 30 40 34 4' stroke='%236f9a7a' stroke-width='2' fill='none'/%3E%3Cpath d='M30 104 C12 98 6 84 4 72 C18 74 28 88 30 104Z'/%3E%3Cpath d='M30 88 C48 82 54 68 56 56 C42 58 32 72 30 88Z'/%3E%3Cpath d='M31 70 C14 64 8 50 6 38 C20 40 30 54 31 70Z'/%3E%3Cpath d='M32 52 C48 46 53 34 54 24 C42 26 34 38 32 52Z'/%3E%3C/svg%3E") no-repeat center / contain;
+        transform: rotate(-20deg);
+    }
+    .ms-services .sv-back {
+        position: absolute; left: -6px; top: 4px; width: 210px; height: 196px; z-index: 0;
+        background: var(--c-soft); opacity: .9;
+        border-radius: 46% 54% 40% 60% / 55% 40% 60% 45%;
+        transition: transform .6s ease;
+    }
     .ms-services .sv-photo {
-        width: calc(100% + 56px);
-        height: 240px;
-        margin: 0 -28px;
-        overflow: hidden;
-        background: linear-gradient(180deg, var(--sv-tint), var(--sv-wash));
-        -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
-                mask-image: linear-gradient(to bottom, #000 78%, transparent 100%);
+        position: absolute; left: 14px; top: 16px; width: 206px; height: 184px; z-index: 1;
+        border-radius: 58% 42% 55% 45% / 50% 55% 45% 50%;
+        overflow: hidden; background: var(--c-soft);
+        box-shadow: 0 14px 28px rgba(20, 40, 30, .16);
+        transition: border-radius .7s ease;
     }
     .ms-services .sv-photo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center top;
-        display: block;
-        transition: transform 0.7s ease;
+        width: 100%; height: 100%; object-fit: cover; display: block;
+        transition: transform .7s ease;
     }
-    .ms-services .sv-card:hover .sv-photo img { transform: scale(1.06); }
-
-    .ms-services .sv-icon {
-        position: relative;
-        z-index: 2;
-        width: 76px;
-        height: 76px;
-        margin-top: -20px;
-        border-radius: 50%;
-        background: var(--sv-tint);
-        color: var(--sv-accent);
-        font-size: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 0 10px var(--sv-halo);
+    .ms-services .sv-badge {
+        position: absolute; right: 4px; bottom: 6px; z-index: 2;
+        width: 74px; height: 74px; border-radius: 50%;
+        background: var(--c-main); color: #fff; font-size: 28px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 0 5px #fcf7f6, 0 10px 20px rgba(20, 40, 30, .2);
+        transition: transform .4s ease;
     }
+    .ms-services .sv-card:hover .sv-back { transform: rotate(8deg) scale(1.04); }
+    .ms-services .sv-card:hover .sv-photo { border-radius: 45% 55% 42% 58% / 55% 45% 55% 45%; }
+    .ms-services .sv-card:hover .sv-photo img { transform: scale(1.08); }
+    .ms-services .sv-card:hover .sv-badge { transform: scale(1.1) rotate(-6deg); }
 
-    .ms-services .sv-go {
-        width: 44px;
-        height: 44px;
-        margin: 20px 0 16px;
-        border-radius: 50%;
-        background: var(--sv-accent);
-        color: #fff;
-        font-size: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        box-shadow: 0 8px 16px var(--sv-shadow);
-        transition: transform 0.3s ease;
+    /* number + title */
+    .ms-services .sv-head { display: flex; align-items: baseline; gap: 14px; margin: 0 0 12px; }
+    .ms-services .sv-no {
+        font-family: 'DM Serif Display', 'Marcellus', serif;
+        font-size: 54px; line-height: 1; color: #d7e2da;
     }
-    .ms-services .sv-go i { transform: rotate(-45deg); transition: transform 0.3s ease; }
-    .ms-services .sv-card:hover .sv-go { transform: scale(1.1); }
-    .ms-services .sv-card:hover .sv-go i { transform: rotate(0deg); }
-
     .ms-services .sv-card h3 {
-        font-size: 26px;
-        font-weight: 700;
-        color: #111;
-        margin: 0 0 10px;
-        text-transform: none;
+        font-family: 'DM Serif Display', 'Marcellus', serif;
+        font-size: 30px; font-weight: 400; line-height: 1.1;
+        color: #12503f; margin: 0; text-transform: none;
     }
     .ms-services .sv-card p {
-        font-size: 16px;
-        line-height: 1.7;
-        color: #5b6560;
-        margin: 0;
-        max-width: 300px;
+        font-size: 15px; line-height: 1.7; color: #5b6560;
+        margin: 0 0 22px; max-width: 290px;
+        padding-left: 4px;
     }
 
+    /* paper plane decoration (top right of the section) */
+    .ms-services .sv-plane {
+        position: absolute; right: 4%; top: 90px; width: 46px; color: #2f7f6a; opacity: .85; pointer-events: none;
+    }
+
+    /* ---- dashed flight line + flying plane ---- */
+    #msCarousel .sv-line {
+        position: absolute; left: 0; top: 0; width: 100%; height: 260px;
+        pointer-events: none;
+    }
+    #msCarousel .sv-line path {
+        fill: none; stroke: #8fb0a2; stroke-width: 1.8;
+        stroke-dasharray: 6 8; stroke-linecap: round;
+        animation: svDash 1.4s linear infinite;
+    }
+    @keyframes svDash { to { stroke-dashoffset: -28; } }
+
+    #msCarousel .sv-sky {
+        position: absolute; left: 0; top: 0; width: 100%; height: 260px;
+        overflow: hidden; pointer-events: none; z-index: 5;
+    }
+    #msCarousel .sv-flyer {
+        position: absolute; left: 0; top: 0; width: 50px; height: 38px;
+        offset-rotate: auto; offset-anchor: 50% 50%;
+        offset-distance: 0%;
+        animation: svFly 9s linear infinite;
+        filter: drop-shadow(0 4px 6px rgba(20, 60, 45, .35));
+    }
+    #msCarousel .sv-flyer svg { width: 100%; height: 100%; display: block; }
+    @keyframes svFly { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+
+    @media (max-width: 991px) {
+        .ms-services .sv-plane { display: none; }
+        #msCarousel .sv-line, #msCarousel .sv-sky { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        #msCarousel .sv-line path, #msCarousel .sv-flyer { animation: none; }
+    }
     @media (max-width: 575px) {
-        .ms-services .sv-card { min-height: 470px; padding: 0 22px 28px; }
-        .ms-services .sv-photo { width: calc(100% + 44px); margin: 0 -22px; height: 220px; }
-        .ms-services .sv-card h3 { font-size: 24px; }
+        .ms-services .sv-art { width: 230px; height: 214px; }
+        .ms-services .sv-back { width: 192px; height: 182px; }
+        .ms-services .sv-photo { width: 188px; height: 170px; }
+        .ms-services .sv-badge { width: 64px; height: 64px; font-size: 24px; }
+        .ms-services .sv-no { font-size: 44px; }
+        .ms-services .sv-card h3 { font-size: 26px; }
+    }
+
+    /* ---- Services: static 4 + 4 grid (keeps the plane line) ---- */
+    .ms-services .sv-static { position: relative; }
+
+    .ms-services .sv-static .sv-row {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+    }
+    .ms-services .sv-static .sv-row + .sv-row { margin-top: 60px; }
+
+    .ms-services .sv-static .sv-item { display: flex; min-width: 0; }
+    .ms-services .sv-static .sv-item .sv-card { flex: 1; padding-left: 0; align-items: center; }
+    .ms-services .sv-static .sv-item .sv-head,
+    .ms-services .sv-static .sv-item p,
+    .ms-services .sv-static .sv-item .sv-more { width: 250px; max-width: 100%; align-self: center; }
+
+    @media (max-width: 991px) {
+        .ms-services .sv-static .sv-row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 50px; }
+        .ms-services .sv-static .sv-row + .sv-row { margin-top: 50px; }
+    }
+    @media (max-width: 575px) {
+        .ms-services .sv-static .sv-row { grid-template-columns: 1fr; row-gap: 40px; }
+    }
+
+    /* plane + line sit BEHIND the cards */
+    #msCarousel .sv-item { position: relative; z-index: 1; }
+    #msCarousel .sv-line,
+    #msCarousel .sv-sky { z-index: 0; }
+
+    /* card highlighted while the plane is over it */
+    #msCarousel .sv-card { transition: transform .5s ease; }
+    #msCarousel .sv-card.is-active { transform: translateY(-10px); }
+    #msCarousel .sv-card.is-active .sv-back { transform: rotate(8deg) scale(1.04); }
+    #msCarousel .sv-card.is-active .sv-photo { border-radius: 45% 55% 42% 58% / 55% 45% 55% 45%; }
+    #msCarousel .sv-card.is-active .sv-photo img { transform: scale(1.08); }
+    #msCarousel .sv-card.is-active .sv-badge { transform: scale(1.1) rotate(-6deg); }
+    #msCarousel .sv-card .sv-no,
+    #msCarousel .sv-card h3 { transition: color .4s ease; }
+    #msCarousel .sv-card.is-active .sv-no { color: #8fb0a2; }
+    #msCarousel .sv-card.is-active h3 { color: #c9972b; }
+
+    /* Mobile / tablet: show services in order 1 to 8 going downwards */
+    @media (max-width: 991px) {
+        .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(1) { order: 4; } /* 08 */
+        .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(2) { order: 3; } /* 07 */
+        .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(3) { order: 2; } /* 06 */
+        .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(4) { order: 1; } /* 05 */
     }
 
     /* ================= POPULAR PACKAGES (carousel of cards) ================= */
@@ -991,27 +1050,27 @@
         .page-header.about-hero .about-hero-sub { font-size: 14px; }
     }
     /* ================= FILTER PILLS ================= */
-.fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
-.fl-btn {
-    font-family: inherit;
-    border: 1.5px solid #dcdcdc; background: #fff; color: #2b2b2b;
-    padding: 10px 24px; border-radius: 50px;
-    font-size: 15px; font-weight: 600;
-    cursor: pointer; transition: all .3s ease;
-}
-.fl-btn:hover { border-color: #265648; color: #265648; }
-.fl-btn.active { background: #265648; border-color: #265648; color: #fff; }
-@media (max-width: 575px) {
-    .fl-filters { gap: 8px; margin-bottom: 30px; }
-    .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
-}
+    .fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
+    .fl-btn {
+        font-family: inherit;
+        border: 1.5px solid #dcdcdc; background: #fff; color: #2b2b2b;
+        padding: 10px 24px; border-radius: 50px;
+        font-size: 15px; font-weight: 600;
+        cursor: pointer; transition: all .3s ease;
+    }
+    .fl-btn:hover { border-color: #265648; color: #265648; }
+    .fl-btn.active { background: #265648; border-color: #265648; color: #fff; }
+    @media (max-width: 575px) {
+        .fl-filters { gap: 8px; margin-bottom: 30px; }
+        .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
+    }
 </style>
 
 <div class="page-header about-hero">
 
     <!-- Background images: same five as the home hero, same order -->
     <div class="ah-bgs" aria-hidden="true">
-        
+
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
@@ -1024,7 +1083,7 @@
             <div class="col-lg-12">
                 <div class="page-header-box">
                     <h1>About us</h1>
-                    
+
                     <nav>
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
@@ -1343,8 +1402,15 @@
 </div>
 <!-- Our Story End -->
 
-<!-- Malabaroutes Services -->
-<div class="our-services bg-section ms-services">
+<!-- Malabaroutes Services (same design as the home page) -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<div class="our-services bg-section ms-services" style="position:relative;">
+
+    <svg class="sv-plane" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
+        <path d="M46 3 2 20l14 6 6 14 5-9 9 5L46 3Zm-8 9-17 12-3-1 20-11Z"/>
+    </svg>
+
     <div class="container">
 
         <div class="row section-row align-items-center">
@@ -1356,111 +1422,120 @@
             </div>
         </div>
 
-        <div class="ms-carousel" id="msCarousel">
-            <div class="ms-viewport">
-                <div class="ms-track">
+        <div class="ms-carousel sv-static" id="msCarousel">
 
-                    <!-- Visa -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
+            <!-- Row 1: 01 - 04 (left to right) -->
+            <div class="sv-row">
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t1">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
                             <div class="sv-photo"><img src="{% static 'malabar-static/visa-2.png' %}" alt="Visa" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-file-lines"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Visa"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Visa</h3>
-                            <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+                            <span class="sv-badge"><i class="fa-solid fa-file-lines"></i></span>
                         </div>
-                    </div>
-
-                    <!-- Passport -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-book"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Passport"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Passport</h3>
-                            <p>We help you with fast processing of passport applications, renewals and replacement.</p>
-                        </div>
-                    </div>
-
-                    <!-- Tickets -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-ticket"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Tickets"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Tickets</h3>
-                            <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
-                        </div>
-                    </div>
-
-                    <!-- Packages -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-map-location-dot"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Packages"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Packages</h3>
-                            <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
-                        </div>
-                    </div>
-
-                    <!-- Taxi Services -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-taxi"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Taxi Services"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Taxi Services</h3>
-                            <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
-                        </div>
-                    </div>
-
-                    <!-- House Boat -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-ship"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about House Boat"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>House Boat</h3>
-                            <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-                        </div>
-                    </div>
-
-                    <!-- Car Rentals -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-car"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Car Rentals"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Car Rentals</h3>
-                            <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
-                        </div>
-                    </div>
-
-                    <!-- Travel Guides -->
-                    <div class="ms-slide">
-                        <div class="sv-card">
-                            <div class="sv-photo"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" draggable="false"></div>
-                            <div class="sv-icon"><i class="fa-solid fa-people-group"></i></div>
-                            <a href="#" class="sv-go open-booking" aria-label="Enquire about Travel Guides"><i class="fa-solid fa-arrow-right"></i></a>
-                            <h3>Travel Guides</h3>
-                            <p>Local experts help you discover Malabar's culture and hidden places.</p>
-                        </div>
-                    </div>
-
+                        <div class="sv-head"><span class="sv-no">01</span><h3>Visa</h3></div>
+                        <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+                    </article>
                 </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t2">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-book"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">02</span><h3>Passport</h3></div>
+                        <p>We help you with fast processing of passport applications, renewals and replacement.</p>
+                    </article>
+                </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t3">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-plane"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">03</span><h3>Tickets</h3></div>
+                        <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
+                    </article>
+                </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t4">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-suitcase-rolling"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">04</span><h3>Packages</h3></div>
+                        <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
+                    </article>
+                </div>
+
             </div>
 
-            <div class="ms-nav">
-                <button type="button" class="ms-arrow ms-prev" aria-label="Previous"><i class="fa-solid fa-arrow-left"></i></button>
-                <div class="ms-dots"></div>
-                <button type="button" class="ms-arrow ms-next" aria-label="Next"><i class="fa-solid fa-arrow-right"></i></button>
+            <!-- Row 2: 08 - 05 (reversed, plane flies right to left) -->
+            <div class="sv-row">
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t4">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-people-group"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">08</span><h3>Travel Guides</h3></div>
+                        <p>Local experts help you discover Malabar's culture and hidden places.</p>
+                    </article>
+                </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t3">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-car"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">07</span><h3>Car Rentals</h3></div>
+                        <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
+                    </article>
+                </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t2">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-ship"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">06</span><h3>House Boat</h3></div>
+                        <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
+                    </article>
+                </div>
+
+                <div class="sv-item">
+                    <article class="sv-card sv-t1">
+                        <div class="sv-art">
+                            <span class="sv-back"></span>
+                            <div class="sv-photo"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" draggable="false"></div>
+                            <span class="sv-badge"><i class="fa-solid fa-taxi"></i></span>
+                        </div>
+                        <div class="sv-head"><span class="sv-no">05</span><h3>Taxi Services</h3></div>
+                        <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
+                    </article>
+                </div>
+
             </div>
+
         </div>
 
     </div>
 </div>
 <!-- Malabaroutes Services End -->
+
 {% if featured_packages %}
 <!-- Popular Packages (filter by category, endless loop) -->
 <div class="pk-section">
@@ -1484,7 +1559,7 @@
         </div>
         {% endif %}
 
-        <!-- "ms-services" re-uses the services carousel styles (viewport, track, arrows, dots) -->
+        <!-- "ms-services" re-uses the carousel styles (viewport, track, arrows, dots) -->
         <div class="ms-services pk-carousel-wrap">
             <div class="ms-carousel" id="pkCarousel">
                 <div class="ms-viewport">
@@ -1952,7 +2027,7 @@
     })();
 </script>
 
-<!-- Carousels (services + packages + testimonials) with optional filtering -->
+<!-- Carousels (packages + testimonials) with optional filtering -->
 <script>
     function initMsCarousel(rootId, opts) {
         opts = opts || {};
@@ -2170,7 +2245,152 @@
         });
     }
 
-    initMsCarousel('msCarousel');
+    /* ONE continuous path: row 1 -> curve 04 to 05 -> row 2. ONE plane, with a glowing trail behind it */
+    (function () {
+        var root = document.getElementById('msCarousel');
+        if (!root) return;
+        var NS = 'http://www.w3.org/2000/svg';
+        var rows = root.querySelectorAll('.sv-row');
+        if (rows.length < 2) return;
+
+        function mk(style) {
+            var el = document.createElementNS(NS, 'path');
+            el.style.fill = 'none';
+            el.style.strokeLinecap = 'round';
+            for (var k in style) el.style[k] = style[k];
+            return el;
+        }
+
+        var svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('class', 'sv-line');
+        svg.setAttribute('aria-hidden', 'true');
+
+        var base = document.createElementNS(NS, 'path');            /* dashed base line */
+        var hot  = mk({ stroke: '#1f6b57', strokeWidth: '3.5', strokeDasharray: '0 9999', animation: 'none',
+                        filter: 'drop-shadow(0 0 4px rgba(31,107,87,.55))' });   /* trail behind the plane */
+        var hotC = mk({ stroke: '#2f7f6a', strokeWidth: '7', strokeDasharray: '0 9999', animation: 'none',
+                        filter: 'drop-shadow(0 0 8px rgba(47,127,106,.85))' });  /* thick glow on the 04 -> 05 curve */
+        svg.appendChild(base);
+        svg.appendChild(hot);
+        svg.appendChild(hotC);
+        root.insertBefore(svg, root.firstChild);
+
+        var sky = document.createElement('div');
+        sky.className = 'sv-sky';
+        sky.setAttribute('aria-hidden', 'true');
+        sky.innerHTML = '<div class="sv-flyer"><svg viewBox="0 0 48 36" aria-hidden="true">' +
+            '<path d="M2 4 L46 17 L16 21 Z" fill="#5aa690"/>' +
+            '<path d="M16 21 L46 17 L26 32 L22 24 Z" fill="#2f7f6a"/>' +
+            '<path d="M16 21 L22 24 L20 32 Z" fill="#23594a"/>' +
+            '</svg></div>';
+        root.appendChild(sky);
+        var flyer = sky.firstChild;
+        flyer.style.animation = 'none';             /* the plane is moved by the script below */
+
+        var L = 1, L1 = 0, Lc = 1;
+        var activeCard = null;
+
+        function draw() {
+            var w = root.clientWidth;
+            var H = root.offsetHeight;
+            var EXTRA = 40;                         /* room on the right for the 04 -> 05 curve */
+            var p = w / 4;
+            var h = 105;
+            var y1 = rows[0].offsetTop + 125;
+            var y2 = rows[1].offsetTop + 125;
+            var ym = (y1 + y2) / 2;
+            var xe = w - p / 2;
+            var bx = w + 30;                        /* how far right the connector swings */
+            var k = ym - (y1 - h * 0.3);
+            var x, s1, sc, s2;
+
+            svg.setAttribute('viewBox', '0 0 ' + (w + EXTRA) + ' ' + H);
+            svg.style.width = (w + EXTRA) + 'px';
+            svg.style.height = H + 'px';
+            sky.style.width = (w + EXTRA) + 'px';
+            sky.style.height = H + 'px';
+
+            /* row 1: left to right, ends in the middle of card 04 */
+            x = -p / 2;
+            s1 = 'M' + x + ' ' + y1;
+            while (x < xe - 1) {
+                s1 += ' C ' + (x + p * 0.3) + ' ' + (y1 - h) + ' ' + (x + p * 0.7) + ' ' + (y1 - h) + ' ' + (x + p) + ' ' + y1;
+                x += p;
+            }
+
+            /* connector 04 -> 05: swings out to the right, outside the cards */
+            sc = ' C ' + (xe + p * 0.35) + ' ' + (y1 - h) + ' ' + bx + ' ' + (y1 - h * 0.3) + ' ' + bx + ' ' + ym +
+                 ' C ' + bx + ' ' + (ym + k) + ' ' + (xe + p * 0.35) + ' ' + (y2 - h) + ' ' + xe + ' ' + y2;
+
+            /* row 2: right to left, starts in the middle of card 05 */
+            x = xe;
+            s2 = '';
+            while (x > -p / 2 + 1) {
+                s2 += ' C ' + (x - p * 0.3) + ' ' + (y2 - h) + ' ' + (x - p * 0.7) + ' ' + (y2 - h) + ' ' + (x - p) + ' ' + y2;
+                x -= p;
+            }
+
+            var full = s1 + sc + s2;
+            base.setAttribute('d', full);
+            hot.setAttribute('d', full);
+            flyer.style.offsetPath = "path('" + full + "')";
+
+            hot.setAttribute('d', s1);
+            L1 = hot.getTotalLength();
+            hot.setAttribute('d', full);
+            L = base.getTotalLength();
+
+            var cPath = 'M' + xe + ' ' + y1 + sc;
+            hotC.setAttribute('d', cPath);
+            Lc = hotC.getTotalLength();
+        }
+
+        var DUR = 14000;                            /* one full trip, in ms (smaller = faster) */
+        var t0 = performance.now();
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function frame(now) {
+            var prog = ((now - t0) % DUR) / DUR;
+            flyer.style.offsetDistance = (prog * 100) + '%';
+
+            var dist = prog * L;
+
+            /* find which card slot the plane is over, and highlight only that card */
+            var pt = base.getPointAtLength(dist);
+            var hit = null;
+            rows.forEach(function (row) {
+                if (pt.y < row.offsetTop || pt.y > row.offsetTop + row.offsetHeight) return;
+                row.querySelectorAll('.sv-item').forEach(function (it) {
+                    if (pt.x >= it.offsetLeft && pt.x < it.offsetLeft + it.offsetWidth) {
+                        hit = it.querySelector('.sv-card');
+                    }
+                });
+            });
+            if (hit !== activeCard) {
+                if (activeCard) activeCard.classList.remove('is-active');
+                if (hit) hit.classList.add('is-active');
+                activeCard = hit;
+            }
+            hot.style.strokeDasharray = dist + ' ' + (L + 50);
+
+            var local = Math.max(0, Math.min(1, (dist - L1) / Lc));
+            hotC.style.strokeDasharray = (Lc * local) + ' ' + (Lc + 50);
+
+            var fade = prog > 0.96 ? (1 - prog) / 0.04 : 1;   /* trail fades out before the next lap */
+            hot.style.opacity = fade;
+            hotC.style.opacity = fade;
+
+            if (!reduce) requestAnimationFrame(frame);
+        }
+
+        draw();
+        window.addEventListener('load', draw);
+        var t;
+        window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(draw, 200); });
+        requestAnimationFrame(frame);
+    })();
+
+    /* services are now a static grid (no carousel), so only packages + testimonials are initialised */
     var pkCar = initMsCarousel('pkCarousel');
     initMsCarousel('pcCarousel', {
         perView: function () {

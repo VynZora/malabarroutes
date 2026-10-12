@@ -225,6 +225,41 @@ background-position: center 70% !important;
         .main-header .slicknav_nav li.highlighted-menu::after {
             display: none !important;
         }
+
+        /* ---- Mobile menu: align dropdown parents with normal links ---- */
+
+/* remove the doubled padding from the row wrapper */
+.main-header .slicknav_nav .slicknav_row,
+.main-header .slicknav_nav .slicknav_item {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* inner link takes the free space, same padding as the other links */
+.main-header .slicknav_nav .slicknav_row > a {
+    flex: 1;
+    margin: 0 !important;
+}
+
+/* hide my desktop caret, keep only SlickNav's arrow on the right */
+.main-header .slicknav_nav .pk-nav-caret { display: none !important; }
+
+.main-header .slicknav_nav .slicknav_arrow {
+    flex: 0 0 auto;
+    margin: 0 18px 0 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    color: #111111;
+}
+
+/* sub-links (All Packages, Beaches...) slightly indented under the parent */
+.main-header .slicknav_nav .slicknav_parent > ul a {
+    padding-left: 34px !important;
+    font-weight: 500;
+}
     }
 
     @media (max-width: 380px) {

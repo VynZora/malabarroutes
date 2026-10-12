@@ -2,6 +2,10 @@
 from django.utils.text import slugify
 
 
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+
 class OptimizedImageModel(models.Model):
     image_fields = []
 
@@ -9,17 +13,37 @@ class OptimizedImageModel(models.Model):
         abstract = True
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        from .utils.image_optimizer import convert_to_webp, generate_variants
+
+        converted = []
         for field in self.image_fields:
-            image_field = getattr(self, field, None)
-            if image_field and hasattr(image_field, "path"):
+            f = getattr(self, field, None)
+            if f and not getattr(f, "_committed", True):
                 try:
-                    from .utils.image_optimizer import optimize_image
-                    optimize_image(image_field.path)
+                    webp = convert_to_webp(f.file, f.name)
+                    f.save(webp.name, webp, save=False)
+                    converted.append(field)
                 except Exception:
                     pass
 
+        super().save(*args, **kwargs)
 
+        for field in converted:
+            try:
+                generate_variants(getattr(self, field))
+            except Exception:
+                pass
+
+
+@receiver(post_delete)
+def remove_image_variants(sender, instance, **kwargs):
+    if not isinstance(instance, OptimizedImageModel):
+        return
+    from .utils.image_optimizer import delete_variants
+    for field in instance.image_fields:
+        f = getattr(instance, field, None)
+        if f and f.name:
+            delete_variants(f)
 import re
 
 from django.db import models
@@ -343,7 +367,8 @@ from django.db import models
 from django.utils.text import slugify
  
  
-class Activity(models.Model):
+class Activity(OptimizedImageModel):
+    image_fields = ["image"]
     """Experiences / activities shown on the website (managed from admin)."""
  
     title = models.CharField(max_length=200)

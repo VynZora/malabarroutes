@@ -601,7 +601,7 @@ background-position: center 70% !important;
                                <li class="nav-item pk-nav-dd">
     <a class="nav-link" href="{% url 'packages' %}">Packages <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
     <ul class="pk-nav-menu">
-        <li><a href="{% url 'packages' %}">All Packages</a></li>
+        
         {% for c in nav_categories %}
         <li><a href="{% url 'packages' %}?category={{ c.value }}">{{ c.label }}</a></li>
         {% endfor %}
@@ -611,7 +611,7 @@ background-position: center 70% !important;
                                 <li class="nav-item pk-nav-dd">
     <a class="nav-link" href="{% url 'destinations' %}">Destinations <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
     <ul class="pk-nav-menu">
-        <li><a href="{% url 'destinations' %}">All Destinations</a></li>
+        
         {% for l in nav_locations %}
         <li><a href="{% url 'destinations' %}?location={{ l.value }}">{{ l.label }}</a></li>
         {% endfor %}

@@ -251,186 +251,323 @@
     }
 
     /* ================= MALABAROUTES SERVICES ================= */
-    .our-services.bg-section.ms-services,
-    .our-services.ms-services {
-        position: relative;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        border-radius: 0 !important;
-        background-color: #fcf7f6 !important;
-        background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
-            url('{% static 'malabar-static/bg7.png' %}') !important;
-        background-size: 100% 200px, 100% 200px, cover, cover !important;
-        background-position: top, bottom, center, center !important;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
-    }
+.our-services.bg-section.ms-services,
+.our-services.ms-services {
+    position: relative;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background-color: #fcf7f6 !important;
+    background-image:
+        linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+        linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+        linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+        url('{% static 'malabar-static/mr5.png' %}') !important;
+    background-size: 100% 200px, 100% 200px, cover, cover !important;
+    background-position: top, bottom, center, center !important;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
+}
 
-    /* ---- shared carousel parts ---- */
-    .ms-services .ms-carousel { position: relative; }
-    .ms-services .ms-viewport {
-        overflow: hidden;
-        padding: 20px 0 30px; margin: -20px 0 -30px;
-        cursor: grab; user-select: none;
-    }
-    .ms-services .ms-viewport.dragging { cursor: grabbing; }
-    .ms-services .ms-track { display: flex; will-change: transform; touch-action: pan-y; }
-    .ms-services .ms-slide { flex: 0 0 33.3333%; padding: 0 12px; display: flex; }
+/* ---- shared carousel parts (also used by packages, destinations, testimonials) ---- */
+.ms-services .ms-carousel { position: relative; }
 
-    .ms-services .ms-nav { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 40px; }
-    .ms-services .ms-nav button.ms-arrow {
-        width: 54px; height: 54px; border-radius: 50%;
-        border: 1px solid #111111; background: transparent; color: #111111;
-        font-size: 18px;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: all 0.3s ease;
-    }
-    .ms-services .ms-nav button.ms-arrow:hover { background: #111111; color: #ffffff; }
+.ms-services .ms-viewport {
+    overflow: hidden;
+    padding: 20px 0 30px;
+    margin: -20px 0 -30px;
+    cursor: grab;
+    user-select: none;
+}
+.ms-services .ms-viewport.dragging { cursor: grabbing; }
 
-    .ms-services .ms-dots { display: flex; align-items: center; gap: 8px; }
-    .ms-services .ms-dot {
-        width: 10px; height: 10px; padding: 0;
-        border-radius: 50%; border: none;
-        background: rgba(0, 0, 0, 0.2);
-        cursor: pointer; transition: all 0.3s ease;
-    }
-    .ms-services .ms-dot.active { width: 28px; border-radius: 10px; background: #111111; }
+.ms-services .ms-track {
+    display: flex;
+    will-change: transform;
+    touch-action: pan-y;
+}
 
-    @media (max-width: 767px) { .ms-services .ms-dots { display: none; } }
+.ms-services .ms-slide {
+    flex: 0 0 33.3333%;
+    padding: 0 12px;
+    display: flex;
+}
 
-    /* ---- Services: blob cards (reference design) ---- */
-    #msCarousel .ms-slide { padding: 0 22px; }
-    #msCarousel .ms-viewport { padding: 30px 0 20px; margin: -30px 0 -20px; }
+.ms-services .ms-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    margin-top: 40px;
+}
+.ms-services .ms-nav button.ms-arrow {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 1px solid #111111;
+    background: transparent;
+    color: #111111;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.ms-services .ms-nav button.ms-arrow:hover {
+    background: #111111;
+    color: #ffffff;
+}
 
-    .ms-services .sv-card {
-        --c-main: #1f6b57;
-        --c-soft: #bfe0d6;
-        position: relative; flex: 1;
-        display: flex; flex-direction: column; align-items: flex-start;
-        padding: 10px 0 0 max(0px, calc((100% - 290px) / 2));   /* centres the card content in its slot */
-    }
-    .ms-services .sv-t1 { --c-main: #1f6b57; --c-soft: #bfe0d6; }
-    .ms-services .sv-t2 { --c-main: #7fbab0; --c-soft: #cfe4f3; }
-    .ms-services .sv-t3 { --c-main: #d1ad55; --c-soft: #f6e3a8; }
-    .ms-services .sv-t4 { --c-main: #2f7f9a; --c-soft: #d3e6e0; }
+.ms-services .ms-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ms-services .ms-dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.ms-services .ms-dot.active {
+    width: 28px;
+    border-radius: 10px;
+    background: #111111;
+}
 
-    /* image area */
-    .ms-services .sv-art { position: relative; width: 250px; height: 230px; margin: 0 0 22px 6px; }
-    .ms-services .sv-art::before {            /* leaf */
-        content: ""; position: absolute; left: -26px; top: 36px; width: 46px; height: 70px; z-index: 0;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 120' fill='%236f9a7a'%3E%3Cpath d='M30 118 C28 80 30 40 34 4' stroke='%236f9a7a' stroke-width='2' fill='none'/%3E%3Cpath d='M30 104 C12 98 6 84 4 72 C18 74 28 88 30 104Z'/%3E%3Cpath d='M30 88 C48 82 54 68 56 56 C42 58 32 72 30 88Z'/%3E%3Cpath d='M31 70 C14 64 8 50 6 38 C20 40 30 54 31 70Z'/%3E%3Cpath d='M32 52 C48 46 53 34 54 24 C42 26 34 38 32 52Z'/%3E%3C/svg%3E") no-repeat center / contain;
-        transform: rotate(-20deg);
-    }
-    .ms-services .sv-back {
-        position: absolute; left: -6px; top: 4px; width: 210px; height: 196px; z-index: 0;
-        background: var(--c-soft); opacity: .9;
-        border-radius: 46% 54% 40% 60% / 55% 40% 60% 45%;
-        transition: transform .6s ease;
-    }
-    .ms-services .sv-photo {
-        position: absolute; left: 14px; top: 16px; width: 206px; height: 184px; z-index: 1;
-        border-radius: 58% 42% 55% 45% / 50% 55% 45% 50%;
-        overflow: hidden; background: var(--c-soft);
-        box-shadow: 0 14px 28px rgba(20, 40, 30, .16);
-        transition: border-radius .7s ease;
-    }
-    .ms-services .sv-photo img {
-        width: 100%; height: 100%; object-fit: cover; display: block;
-        transition: transform .7s ease;
-    }
-    .ms-services .sv-badge {
-        position: absolute; right: 4px; bottom: 6px; z-index: 2;
-        width: 74px; height: 74px; border-radius: 50%;
-        background: var(--c-main); color: #fff; font-size: 28px;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 0 0 5px #fcf7f6, 0 10px 20px rgba(20, 40, 30, .2);
-        transition: transform .4s ease;
-    }
-    .ms-services .sv-card:hover .sv-back { transform: rotate(8deg) scale(1.04); }
-    .ms-services .sv-card:hover .sv-photo { border-radius: 45% 55% 42% 58% / 55% 45% 55% 45%; }
-    .ms-services .sv-card:hover .sv-photo img { transform: scale(1.08); }
-    .ms-services .sv-card:hover .sv-badge { transform: scale(1.1) rotate(-6deg); }
+@media (max-width: 767px) {
+    .ms-services .ms-dots { display: none; }
+}
 
-    /* number + title */
-    .ms-services .sv-head { display: flex; align-items: baseline; gap: 14px; margin: 0 0 12px; }
-    .ms-services .sv-no {
-        font-family: 'DM Serif Display', 'Marcellus', serif;
-        font-size: 54px; line-height: 1; color: #d7e2da;
-    }
-    .ms-services .sv-card h3 {
-        font-family: 'DM Serif Display', 'Marcellus', serif;
-        font-size: 30px; font-weight: 400; line-height: 1.1;
-        color: #12503f; margin: 0; text-transform: none;
-    }
-    .ms-services .sv-card p {
-        font-size: 15px; line-height: 1.7; color: #5b6560;
-        margin: 0 0 22px; max-width: 290px;
-        padding-left: 4px;
-    }
+/* ================= Services: timeline ================= */
+.ms-services .tl-list {
+    position: relative;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+.ms-services .tl-list::before {          /* grey base line */
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent, #b9cbc0 8%, #b9cbc0 92%, transparent);
+}
 
-    /* Learn More */
-    .ms-services .sv-more {
-        display: inline-flex; align-items: center; gap: 12px;
-        margin-top: auto; padding-left: 4px;
-        font-size: 14.5px; font-weight: 600; color: #12503f; text-decoration: none;
-    }
-    .ms-services .sv-more span { padding-bottom: 6px; border-bottom: 2px solid #12503f; transition: border-color .3s ease; }
-    .ms-services .sv-more i { font-size: 14px; transition: transform .3s ease; }
-    .ms-services .sv-more:hover { color: #c9972b; }
-    .ms-services .sv-more:hover span { border-color: #c9972b; }
-    .ms-services .sv-more:hover i { transform: translateX(5px); }
+/* scroll progress line (created by the script) */
+.ms-services .tl-progress {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 3px;
+    height: 0;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, #2f7f6a, #1f6b57);
+    border-radius: 3px;
+    z-index: 1;
+    pointer-events: none;
+}
+.ms-services .tl-progress::after {       /* glowing dot at the tip */
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 12px;
+    height: 12px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: #c9972b;
+    box-shadow: 0 0 0 4px rgba(201, 151, 43, 0.25), 0 0 12px rgba(201, 151, 43, 0.7);
+}
 
-    /* paper plane decoration (top right of the section) */
-    .ms-services .sv-plane {
-        position: absolute; right: 4%; top: 90px; width: 46px; color: #2f7f6a; opacity: .85; pointer-events: none;
-    }
+.ms-services .tl-item {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 90px 1fr;
+    align-items: center;
+    margin-bottom: -80px;                /* more negative = tighter, less negative = more space */
+    pointer-events: none;                /* empty row area must not block clicks on overlapping cards */
+}
+.ms-services .tl-item:last-child { margin-bottom: 0; }
 
-    /* ---- dashed flight line + flying plane ---- */
-    #msCarousel .sv-line {
-        position: absolute; left: 0; top: 0; width: 100%; height: 260px;
-        pointer-events: none;
-    }
-    #msCarousel .sv-line path {
-        fill: none; stroke: #8fb0a2; stroke-width: 1.8;
-        stroke-dasharray: 6 8; stroke-linecap: round;
-        animation: svDash 1.4s linear infinite;
-    }
-    @keyframes svDash { to { stroke-dashoffset: -28; } }
+/* round icon node on the line */
+.ms-services .tl-node {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    position: relative;
+    z-index: 2;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #12281f;
+    color: #fff;
+    font-size: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 7px rgba(252, 247, 246, 0.9), 0 10px 22px rgba(20, 40, 30, 0.22);
+    transition: transform 0.3s ease, background 0.4s ease, box-shadow 0.4s ease;
+    pointer-events: auto;
+}
+.ms-services .tl-item:hover .tl-node { background: #265648; transform: scale(1.1); }
 
-    #msCarousel .sv-sky {
-        position: absolute; left: 0; top: 0; width: 100%; height: 260px;
-        overflow: hidden; pointer-events: none; z-index: 5;
-    }
-    #msCarousel .sv-flyer {
-       position: absolute; left: 0; top: 0; width: 50px; height: 38px;
-        offset-rotate: auto; offset-anchor: 50% 50%;
-        offset-distance: 0%;
-        animation: svFly 9s linear infinite;
-        filter: drop-shadow(0 4px 6px rgba(20, 60, 45, .35));
-    }
-    #msCarousel .sv-flyer svg { width: 100%; height: 100%; display: block; }
-    @keyframes svFly { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+/* card (white, thin dark green border) */
+.ms-services .tl-card {
+    grid-row: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    padding: 28px 30px;
+    border-radius: 22px;
+    background: #ffffff;
+    border: 1px solid #2f4a3a;
+    box-shadow: 0 14px 34px rgba(20, 40, 30, 0.12);
+    transition: transform 0.3s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    pointer-events: auto;
+}
+.ms-services .tl-card,
+.ms-services .tl-card * {
+    font-family: inherit;
+}
+.ms-services .tl-card .fa-solid,
+.ms-services .tl-card .fa-arrow-right {
+    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
+}
+.ms-services .tl-item:hover .tl-card {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 44px rgba(20, 40, 30, 0.18);
+}
+.ms-services .tl-item:nth-child(odd)  .tl-card { grid-column: 1; }
+.ms-services .tl-item:nth-child(even) .tl-card { grid-column: 3; flex-direction: row-reverse; }
 
-    @media (max-width: 991px) {
-        .ms-services .sv-plane { display: none; }
-        #msCarousel .sv-line, #msCarousel .sv-sky { display: none; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        #msCarousel .sv-line path, #msCarousel .sv-flyer { animation: none; }
-    }
-    @media (max-width: 575px) {
-        #msCarousel .ms-slide { padding: 0 14px; }
-        .ms-services .sv-art { width: 230px; height: 214px; }
-        .ms-services .sv-back { width: 192px; height: 182px; }
-        .ms-services .sv-photo { width: 188px; height: 170px; }
-        .ms-services .sv-badge { width: 64px; height: 64px; font-size: 24px; }
-        .ms-services .sv-no { font-size: 44px; }
-        .ms-services .sv-card h3 { font-size: 26px; }
-    }
+/* dashed connector from card to node */
+.ms-services .tl-card::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 34px;
+    border-top: 2px dashed #b9cbc0;
+    pointer-events: none;
+}
+.ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -35px; }
+.ms-services .tl-item:nth-child(even) .tl-card::after { left: -35px; }
 
+/* active state: icon + card light up when the line reaches them */
+.ms-services .tl-item.is-active .tl-node {
+    background: #2f7f6a;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 7px rgba(47, 127, 106, 0.18), 0 10px 22px rgba(20, 40, 30, 0.25);
+}
+.ms-services .tl-item.is-active .tl-card {
+    border-color: #2f7f6a;
+    box-shadow: 0 18px 40px rgba(31, 107, 87, 0.18);
+}
+
+/* image: whole picture visible, nothing cut off */
+.ms-services .tl-img {
+    flex: 0 0 170px;
+    width: 170px;
+    height: 190px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #e9eedf;                 /* use #ffffff for a plain white box */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ms-services .tl-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    padding: 6px;
+    transition: transform 0.6s ease;
+}
+.ms-services .tl-item:hover .tl-img img { transform: scale(1.05); }
+
+.ms-services .tl-body { flex: 1; min-width: 0; }
+
+.ms-services .tl-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: #efe5d0;
+    color: #2b3a2f;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+.ms-services .tl-card h3 {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #1f3a2c;
+    margin: 0 0 10px;
+    text-transform: none;
+}
+.ms-services .tl-card p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: #5b6560;
+    margin: 0 0 18px;
+}
+.ms-services .tl-more {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 50px;
+    background: #35432f;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s ease, gap 0.3s ease;
+}
+.ms-services .tl-more:hover { background: #c9972b; gap: 12px; }
+
+/* tablet */
+@media (max-width: 991px) {
+    .ms-services .tl-item { grid-template-columns: 1fr 70px 1fr; margin-bottom: -50px; }
+    .ms-services .tl-card { gap: 16px; padding: 20px; }
+    .ms-services .tl-card::after { width: 20px; }
+    .ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -21px; }
+    .ms-services .tl-item:nth-child(even) .tl-card::after { left: -21px; }
+    .ms-services .tl-img { flex-basis: 120px; width: 120px; height: 150px; }
+    .ms-services .tl-card h3 { font-size: 25px; }
+    .ms-services .tl-card p { font-size: 14px; }
+    .ms-services .tl-pill { font-size: 11px; padding: 6px 14px; }
+}
+
+/* mobile: line on the left, all cards on the right (no overlap) */
+@media (max-width: 767px) {
+    .ms-services .tl-list::before { left: 28px; transform: none; }
+    .ms-services .tl-progress { left: 28px; transform: none; }
+    .ms-services .tl-progress::after { left: 1.5px; transform: translateX(-50%); }
+    .ms-services .tl-item { grid-template-columns: 56px 1fr; column-gap: 14px; margin-bottom: 22px; }
+    .ms-services .tl-item:last-child { margin-bottom: 0; }
+    .ms-services .tl-node { grid-column: 1; width: 48px; height: 48px; font-size: 18px; box-shadow: 0 0 0 5px rgba(252, 247, 246, 0.9), 0 8px 18px rgba(20, 40, 30, 0.2); }
+    .ms-services .tl-item:nth-child(odd)  .tl-card,
+    .ms-services .tl-item:nth-child(even) .tl-card { grid-column: 2; flex-direction: column; align-items: flex-start; padding: 18px; }
+    .ms-services .tl-card::after { display: none; }
+    .ms-services .tl-img { flex: none; width: 100%; height: 190px; }
+    .ms-services .tl-card h3 { font-size: 24px; }
+}
     /* ================= HOME FILTER PILLS (packages + destinations) ================= */
     .fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
     .fl-btn {
@@ -1579,7 +1716,7 @@
                     </div>
 
                     <div class="ab-second">
-                        <figure class="image-anime reveal"><img src="{% static 'malabar-static/malabat-r1.webp' %}" alt="Malabar travel"></figure>
+                        <figure class="image-anime reveal"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar travel"></figure>
                     </div>
                 </div>
             </div>
@@ -1637,13 +1774,7 @@
 </div>
 <!-- About Us End -->
 <!-- Malabaroutes Services -->
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
-
 <div class="our-services bg-section ms-services" style="position:relative;">
-
-    <svg class="sv-plane" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
-        <path d="M46 3 2 20l14 6 6 14 5-9 9 5L46 3Zm-8 9-17 12-3-1 20-11Z"/>
-    </svg>
 
     <div class="container">
 
@@ -1656,120 +1787,118 @@
             </div>
         </div>
 
-        <div class="ms-carousel sv-static" id="msCarousel">
+        <div class="tl-list">
 
-            <!-- Row 1: 01 - 04 (left to right) -->
-            <div class="sv-row">
-
-                <div class="sv-item">
-                    <article class="sv-card sv-t1">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/visa-2.png' %}" alt="Visa" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-file-lines"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">01</span><h3>Visa</h3></div>
+            <!-- 01 Visa -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-file-lines"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/visa-2.png' %}" alt="Visa" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 01</span>
+                        <h3>Visa</h3>
                         <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
-                        
-                    </article>
-                </div>
-
-                <div class="sv-item">
-                    <article class="sv-card sv-t2">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-book"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">02</span><h3>Passport</h3></div>
-                        <p>We help you with fast processing of passport applications, renewals and replacement.</p>
-                        
-                    </article>
-                </div>
-
-                <div class="sv-item">
-                    <article class="sv-card sv-t3">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-plane"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">03</span><h3>Tickets</h3></div>
-                        <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
-                       
-                    </article>
-                </div>
-
-                <div class="sv-item">
-                    <article class="sv-card sv-t4">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-suitcase-rolling"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">04</span><h3>Packages</h3></div>
-                        <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
-                        
-                    </article>
-                </div>
-
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
             </div>
 
-            <!-- Row 2: 08 - 05 (reversed, plane flies right to left) -->
-            <div class="sv-row">
+            <!-- 02 Passport -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-book"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 02</span>
+                        <h3>Passport</h3>
+                        <p>We help you with fast processing of passport applications, renewals and replacement.</p>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
 
-                <div class="sv-item">
-                    <article class="sv-card sv-t4">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-people-group"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">08</span><h3>Travel Guides</h3></div>
+            <!-- 03 Tickets -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-plane"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 03</span>
+                        <h3>Tickets</h3>
+                        <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- 04 Packages -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-suitcase-rolling"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 04</span>
+                        <h3>Packages</h3>
+                        <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- 05 Travel Guides -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-people-group"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 05</span>
+                        <h3>Travel Guides</h3>
                         <p>Local experts help you discover Malabar's culture and hidden places.</p>
-                        
-                    </article>
-                </div>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
 
-                <div class="sv-item">
-                    <article class="sv-card sv-t3">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-car"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">07</span><h3>Car Rentals</h3></div>
+            <!-- 06 Car Rentals -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-car"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 06</span>
+                        <h3>Car Rentals</h3>
                         <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
-                        
-                    </article>
-                </div>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
 
-                <div class="sv-item">
-                    <article class="sv-card sv-t2">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-ship"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">06</span><h3>House Boat</h3></div>
+            <!-- 07 House Boat -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-ship"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 07</span>
+                        <h3>House Boat</h3>
                         <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-                       
-                    </article>
-                </div>
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
 
-                <div class="sv-item">
-                    <article class="sv-card sv-t1">
-                        <div class="sv-art">
-                            <span class="sv-back"></span>
-                            <div class="sv-photo"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" draggable="false"></div>
-                            <span class="sv-badge"><i class="fa-solid fa-taxi"></i></span>
-                        </div>
-                        <div class="sv-head"><span class="sv-no">05</span><h3>Taxi Services</h3></div>
+            <!-- 08 Taxi Services -->
+            <div class="tl-item">
+                <span class="tl-node"><i class="fa-solid fa-taxi"></i></span>
+                <article class="tl-card">
+                    <div class="tl-img"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" loading="lazy"></div>
+                    <div class="tl-body">
+                        <span class="tl-pill">Service 08</span>
+                        <h3>Taxi Services</h3>
                         <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
-                        
-                    </article>
-                </div>
-
+                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
             </div>
 
         </div>
@@ -1791,14 +1920,7 @@
             </div>
         </div>
 
-        {% if nav_categories %}
-        <div class="fl-filters" id="pkFilters">
-            <button type="button" class="fl-btn active" data-filter="all">All</button>
-            {% for c in nav_categories %}
-            <button type="button" class="fl-btn" data-filter="{{ c.value }}">{{ c.label }}</button>
-            {% endfor %}
-        </div>
-        {% endif %}
+       
 
         <div class="ms-services pk-carousel-wrap">
             <div class="ms-carousel" id="pkCarousel">
@@ -1975,14 +2097,7 @@
     <div class="ms-services">
         <div class="ms-carousel" id="dsCarousel">
 
-            {% if nav_locations %}
-            <div class="fl-filters" id="dsFilters">
-                <button type="button" class="fl-btn active" data-filter="all">All</button>
-                {% for l in nav_locations %}
-                <button type="button" class="fl-btn" data-filter="{{ l.value }}">{{ l.label }}</button>
-                {% endfor %}
-            </div>
-            {% endif %}
+            
 
             <div class="ds-fluid">
                 <div class="ms-viewport">
@@ -2745,163 +2860,51 @@
         });
     }
 
-        /* wavy dashed line + plane that flies along it (one per row) */
-        /* ONE continuous dashed path: row 1 (left to right) -> curve 04 to 05 -> row 2 (right to left), with ONE plane on it */
-        /* ONE continuous path: row 1 -> curve 04 to 05 -> row 2. ONE plane, with a glowing trail behind it */
-    (function () {
-        var root = document.getElementById('msCarousel');
-        if (!root) return;
-        var NS = 'http://www.w3.org/2000/svg';
-        var rows = root.querySelectorAll('.sv-row');
-        if (rows.length < 2) return;
-
-        function mk(style) {
-            var el = document.createElementNS(NS, 'path');
-            el.style.fill = 'none';
-            el.style.strokeLinecap = 'round';
-            for (var k in style) el.style[k] = style[k];
-            return el;
-        }
-
-        var svg = document.createElementNS(NS, 'svg');
-        svg.setAttribute('class', 'sv-line');
-        svg.setAttribute('aria-hidden', 'true');
-
-        var base = document.createElementNS(NS, 'path');            /* dashed base line */
-        var hot  = mk({ stroke: '#1f6b57', strokeWidth: '3.5', strokeDasharray: '0 9999', animation: 'none',
-                        filter: 'drop-shadow(0 0 4px rgba(31,107,87,.55))' });   /* trail behind the plane */
-        var hotC = mk({ stroke: '#2f7f6a', strokeWidth: '7', strokeDasharray: '0 9999', animation: 'none',
-                        filter: 'drop-shadow(0 0 8px rgba(47,127,106,.85))' });  /* thick glow on the 04 -> 05 curve */
-        svg.appendChild(base);
-        svg.appendChild(hot);
-        svg.appendChild(hotC);
-        root.insertBefore(svg, root.firstChild);
-
-        var sky = document.createElement('div');
-        sky.className = 'sv-sky';
-        sky.setAttribute('aria-hidden', 'true');
-        sky.innerHTML = '<div class="sv-flyer"><svg viewBox="0 0 48 36" aria-hidden="true">' +
-            '<path d="M2 4 L46 17 L16 21 Z" fill="#5aa690"/>' +
-            '<path d="M16 21 L46 17 L26 32 L22 24 Z" fill="#2f7f6a"/>' +
-            '<path d="M16 21 L22 24 L20 32 Z" fill="#23594a"/>' +
-            '</svg></div>';
-        root.appendChild(sky);
-        var flyer = sky.firstChild;
-        flyer.style.animation = 'none';             /* the plane is moved by the script below */
-
-        var L = 1, L1 = 0, Lc = 1;
-        var cards = root.querySelectorAll('.sv-card');
-var activeCard = null;
-        function draw() {
-            var w = root.clientWidth;
-            var H = root.offsetHeight;
-            var EXTRA = 40;                         /* room on the right for the 04 -> 05 curve */
-            var p = w / 4;
-            var h = 105;
-            var y1 = rows[0].offsetTop + 125;
-            var y2 = rows[1].offsetTop + 125;
-            var ym = (y1 + y2) / 2;
-            var xe = w - p / 2;
-            var bx = w + 30;                        /* how far right the connector swings */
-            var k = ym - (y1 - h * 0.3);
-            var x, s1, sc, s2;
-
-            svg.setAttribute('viewBox', '0 0 ' + (w + EXTRA) + ' ' + H);
-            svg.style.width = (w + EXTRA) + 'px';
-            svg.style.height = H + 'px';
-            sky.style.width = (w + EXTRA) + 'px';
-            sky.style.height = H + 'px';
-
-            /* row 1: left to right, ends in the middle of card 04 */
-            x = -p / 2;
-            s1 = 'M' + x + ' ' + y1;
-            while (x < xe - 1) {
-                s1 += ' C ' + (x + p * 0.3) + ' ' + (y1 - h) + ' ' + (x + p * 0.7) + ' ' + (y1 - h) + ' ' + (x + p) + ' ' + y1;
-                x += p;
-            }
-
-            /* connector 04 -> 05: swings out to the right, outside the cards */
-            sc = ' C ' + (xe + p * 0.35) + ' ' + (y1 - h) + ' ' + bx + ' ' + (y1 - h * 0.3) + ' ' + bx + ' ' + ym +
-                 ' C ' + bx + ' ' + (ym + k) + ' ' + (xe + p * 0.35) + ' ' + (y2 - h) + ' ' + xe + ' ' + y2;
-
-            /* row 2: right to left, starts in the middle of card 05 */
-            x = xe;
-            s2 = '';
-            while (x > -p / 2 + 1) {
-                s2 += ' C ' + (x - p * 0.3) + ' ' + (y2 - h) + ' ' + (x - p * 0.7) + ' ' + (y2 - h) + ' ' + (x - p) + ' ' + y2;
-                x -= p;
-            }
-
-            var full = s1 + sc + s2;
-            base.setAttribute('d', full);
-            hot.setAttribute('d', full);
-            flyer.style.offsetPath = "path('" + full + "')";
-
-            hot.setAttribute('d', s1);
-            L1 = hot.getTotalLength();
-            hot.setAttribute('d', full);
-            L = base.getTotalLength();
-
-            var cPath = 'M' + xe + ' ' + y1 + sc;
-            hotC.setAttribute('d', cPath);
-            Lc = hotC.getTotalLength();
-        }
-
-        var DUR = 14000;                            /* one full trip, in ms (smaller = faster) */
-        var t0 = performance.now();
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function frame(now) {
-            var prog = ((now - t0) % DUR) / DUR;
-            flyer.style.offsetDistance = (prog * 100) + '%';
-
-            var dist = prog * L;
-                        /* find which card slot the plane is over, and highlight only that card */
-            var pt = base.getPointAtLength(dist);
-            var hit = null;
-            rows.forEach(function (row) {
-                if (pt.y < row.offsetTop || pt.y > row.offsetTop + row.offsetHeight) return;
-                row.querySelectorAll('.sv-item').forEach(function (it) {
-                    if (pt.x >= it.offsetLeft && pt.x < it.offsetLeft + it.offsetWidth) {
-                        hit = it.querySelector('.sv-card');
-                    }
-                });
-            });
-            if (hit !== activeCard) {
-                if (activeCard) activeCard.classList.remove('is-active');
-                if (hit) hit.classList.add('is-active');
-                activeCard = hit;
-            }
-            hot.style.strokeDasharray = dist + ' ' + (L + 50);
-
-            var local = Math.max(0, Math.min(1, (dist - L1) / Lc));
-            hotC.style.strokeDasharray = (Lc * local) + ' ' + (Lc + 50);
-
-            var fade = prog > 0.96 ? (1 - prog) / 0.04 : 1;   /* trail fades out before the next lap */
-            hot.style.opacity = fade;
-            hotC.style.opacity = fade;
-
-            if (!reduce) requestAnimationFrame(frame);
-        }
-
-        draw();
-        window.addEventListener('load', draw);
-        var t;
-        window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(draw, 200); });
-        requestAnimationFrame(frame);
-    })();
-    var pkCar = initMsCarousel('pkCarousel');
-    var dsCar = initMsCarousel('dsCarousel');
-    initMsCarousel('pcCarousel', {
-        perView: function () {
-            return window.innerWidth < 768 ? 1 : 2;   /* 1 card on mobile, 2 big cards on tablet and desktop */
-        }
-    });
+       
 
     bindFilters('pkFilters', pkCar);
     bindFilters('dsFilters', dsCar);
 </script>
+<!-- Services timeline: line fills while scrolling -->
+<script>
+    (function () {
+        var list = document.querySelector('.tl-list');
+        if (!list) return;
 
+        var items = Array.prototype.slice.call(list.querySelectorAll('.tl-item'));
+        var bar = document.createElement('div');
+        bar.className = 'tl-progress';
+        bar.setAttribute('aria-hidden', 'true');
+        list.appendChild(bar);
+
+        var ticking = false;
+
+        function update() {
+            ticking = false;
+            var rect = list.getBoundingClientRect();
+            var trigger = window.innerHeight * 0.55;
+            var h = Math.max(0, Math.min(rect.height, trigger - rect.top));
+            bar.style.height = h + 'px';
+
+            items.forEach(function (it) {
+                var n = it.querySelector('.tl-node').getBoundingClientRect();
+                it.classList.toggle('is-active', n.top + n.height / 2 <= trigger);
+            });
+        }
+
+        function onScroll() {
+            if (!ticking) {
+                ticking = true;
+                requestAnimationFrame(update);
+            }
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll);
+        window.addEventListener('load', update);
+        update();
+    })();
+</script>
 <script>
     (function () {
         var bar = document.querySelector('.top-bar');

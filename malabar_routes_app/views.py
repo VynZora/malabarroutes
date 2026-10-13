@@ -1284,13 +1284,150 @@ def activity_detail(request, slug):
         'activity': activity,
         'other_activities': other_activities,
     })
+import re
+from decimal import Decimal, InvalidOperation
+
+from django.utils.html import strip_tags
 from django.utils.text import slugify
+
+# the place list and regex from your package_tags.py
+from .templatetags.package_tags import _PLACES_RE, _PLACES_SORTED
+
+
+# ============================================================
+# PACKAGE FILTER HELPERS (price, location, days)
+# ============================================================
+
+# ---------- PRICE: model field AND description are both read ----------
+PRICE_FIELDS = ("price", "starting_price", "offer_price", "cost", "amount")   # add your field name if different
+
+# prices written inside the description:  ₹12,500   Rs. 9999   INR 15000   12500/-
+PRICE_RE = re.compile(
+    r"(?:₹|rs\.?|inr)\s*(\d[\d,]*(?:\.\d+)?)|(\d[\d,]*)\s*/-",
+    re.I,
+)
+
+
+def _to_number(value):
+    try:
+        n = Decimal(str(value).replace(",", "").strip())
+    except (InvalidOperation, ValueError, TypeError):
+        return None
+    return int(n) if n > 0 else None
+
+
+def _package_prices(p, text):
+    """Every price found for a package: the model field(s) AND the description."""
+    found = []
+    for name in PRICE_FIELDS:
+        n = _to_number(getattr(p, name, None))
+        if n:
+            found.append(n)
+    for m in PRICE_RE.finditer(text):
+        n = _to_number(m.group(1) or m.group(2))
+        if n and n >= 500:          # ignore tiny numbers like "Rs 5 off"
+            found.append(n)
+    return sorted(set(found))
+
+
+# ---------- LOCATION: package location tag first, description as fallback ----------
+LOCATION_FIELDS = ("location", "locations", "destination", "place")   # add your field name if different
+
+_LOC_SPLIT = re.compile(
+    r"\s*(?:,|/|&|\||;|•|·|→|->|–|—|\s-\s|\s+to\s+|\s+and\s+)\s*",
+    re.I,
+)
+
+# lower-case -> proper spelling from your PLACES list (fixes capitalisation)
+_CANON = {p.lower(): p for p in _PLACES_SORTED}
+
+
+def _tag_values(p):
+    """Text values of the location tag (works for a text field, ForeignKey or ManyToMany)."""
+    values = []
+    for name in LOCATION_FIELDS:
+        raw = getattr(p, name, None)
+        if not raw:
+            continue
+        if hasattr(raw, "all"):                       # ManyToMany
+            values += [str(x) for x in raw.all()]
+        else:
+            values.append(str(raw))
+    return values
+
+
+def _package_locations(p, text):
+    found = []
+
+    # 1) the location tag (can hold several places: "Munnar, Thekkady")
+    for value in _tag_values(p):
+        for part in _LOC_SPLIT.split(value):
+            part = part.strip(" .:-")
+            if 2 <= len(part) <= 40 and part.lower() != "kerala":
+                found.append(_CANON.get(part.lower(), part))
+
+    # 2) no tag -> every known place mentioned in the description
+    if not found:
+        for m in _PLACES_RE.finditer(text):
+            found.append(_CANON.get(m.group(1).lower(), m.group(1)))
+
+    # unique, keep order
+    seen, out = set(), []
+    for l in found:
+        if l.lower() not in seen:
+            seen.add(l.lower())
+            out.append(l)
+    return out
+
+
+# ---------- DAYS (from duration, e.g. "5 Days / 4 Nights") ----------
+def _package_days(p):
+    d = str(getattr(p, "duration", "") or "")
+    m = re.search(r"(\d+)\s*days?", d, re.I)
+    if m:
+        return int(m.group(1))
+    m = re.search(r"(\d+)\s*nights?", d, re.I)
+    if m:
+        return int(m.group(1)) + 1
+    m = re.search(r"\d+", d)
+    return int(m.group(0)) if m else None
+
+
+# ============================================================
+# PACKAGES PAGE
+# ============================================================
 def packages(request):
     items = TourPackage.objects.order_by("-created_at")
 
     grouped = {}
     other = []
+
+    loc_labels = {}       # lower-case -> label shown in the filter
+    loc_count = {}        # how many packages have each location
+    days_set = set()
+    all_prices = []
+
     for p in items:
+        text = strip_tags(f"{p.card_description or ''} {p.description or ''}")
+
+        prices = _package_prices(p, text)
+        locs = _package_locations(p, text)
+        days = _package_days(p)
+
+        # values the template writes into data-attributes (used by the filter JS)
+        p.f_prices = ",".join(str(x) for x in prices)
+        p.f_locs = "|".join(l.lower() for l in locs)
+        p.f_days = days or ""
+
+        all_prices += prices
+        if days:
+            days_set.add(days)
+        for l in locs:
+            k = l.lower()
+            loc_labels.setdefault(k, l)
+            loc_count[k] = loc_count.get(k, 0) + 1
+
+        # ---- group by category (same as before) ----
         name = " ".join((p.category or "").split())
         if not name:
             other.append(p)
@@ -1310,9 +1447,22 @@ def packages(request):
     if selected:
         groups = [g for g in groups if g["value"] == selected]
 
+    # ---- filter options for the left sidebar ----
+    filter_locations = sorted(
+        ({"value": k, "label": loc_labels[k], "count": loc_count[k]} for k in loc_labels),
+        key=lambda x: x["label"].lower(),
+    )
+    filter_days = sorted(days_set)
+
+    price_max = max(all_prices) if all_prices else 100000
+    price_max = ((price_max + 999) // 1000) * 1000      # round up to the next 1,000
+
     return render(request, "frontends/packages.html", {
         "groups": groups,
         "selected": selected,
+        "filter_locations": filter_locations,
+        "filter_days": filter_days,
+        "price_max": price_max,
     })
 def package_detail(request, slug):
     package = get_object_or_404(TourPackage, slug=slug)

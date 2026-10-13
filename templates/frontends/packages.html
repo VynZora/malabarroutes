@@ -8,7 +8,8 @@
     Hero = same design and rotating background images as the About page hero.
     Packages are grouped by category (South Kerala, etc.).
     The navbar "Packages" dropdown links to /packages/?category=<slug> to show one category.
-    Card order: title, duration, inclusions, description (on hover), price, buttons.
+    FILTER BAR (horizontal, above the cards): budget, destination (location tag, description
+    as fallback), number of days. Data comes from the packages view (f_prices, f_locs, f_days).
 {% endcomment %}
 
 
@@ -99,14 +100,14 @@
         background-size: 100% 100%, 100% auto;
         background-position: center, center top;
         background-repeat: no-repeat, repeat-y;
-         --pk-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
+        --pk-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
         --pk-dark: var(--nav-ink, #12281f);
         --pk-gold: var(--nav-gold, #e0b14a);
     }
     .pk-section .container { max-width: 1320px; }
 
     /* ================= SECTION HEADING ================= */
-    .pk-head { text-align: center; max-width: 760px; margin: 0 auto 60px; }
+    .pk-head { text-align: center; max-width: 760px; margin: 0 auto 50px; }
     .pk-eyebrow {
         display: inline-block; font-size: 14px; font-weight: 600; letter-spacing: 3px;
         text-transform: uppercase; color: #2f4a3a; margin-bottom: 14px;
@@ -126,6 +127,9 @@
     }
     .pk-col.in-view, .pk-head.in-view { opacity: 1; transform: translateY(0); }
     .pk-col.in-view.pk-delay { transition-delay: .2s; }
+
+    /* hidden by the filter */
+    .pk-hide { display: none !important; }
 
     /* ================= CARD (same layout as the About page) ================= */
     .pk-col { display: flex; }
@@ -202,7 +206,7 @@
     .pk-title::before, .pk-title::after { display: none !important; content: none !important; }
     .pk-title,
     .pk-title a { color: #111111 !important; text-decoration: none; }
-    .pk-title a:hover { color: var(--pk-accent) !important; }
+    .pk-title a:hover { color: var(--pk-gold) !important; }
 
     .pk-loc {
         display: flex; align-items: center; gap: 8px;
@@ -290,7 +294,188 @@
     .pk-group-head h3::before, .pk-group-head h3::after { display: none !important; content: none !important; }
     .pk-line { flex: 1; height: 2px; background: linear-gradient(to right, #c9972b, rgba(201,151,43,0)); }
 
+    /* ================= FILTER BAR (horizontal, above the cards) ================= */
+    .pf-bar {
+        position: relative;
+        z-index: 30;                       /* dropdowns sit above the cards */
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        max-width: 1100px;
+        margin: 0 auto 18px;
+        padding: 10px 12px 10px 10px;
+        border-radius: 80px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(31, 91, 58, 0.16);
+        box-shadow: 0 16px 40px rgba(20, 40, 30, 0.14);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .pf-seg { position: relative; flex: 1; min-width: 0; }
+    .pf-seg + .pf-seg::before {            /* thin divider between segments */
+        content: "";
+        position: absolute; left: -3px; top: 20%; bottom: 20%;
+        width: 1px; background: rgba(20, 40, 30, 0.12);
+    }
+
+    .pf-trigger {
+        width: 100%;
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 18px 10px 12px;
+        border: 0;
+        border-radius: 60px;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        transition: background .25s ease;
+    }
+    .pf-trigger:hover,
+    .pf-seg.open .pf-trigger { background: rgba(31, 91, 58, 0.08); }
+
+    .pf-ico {
+        flex: 0 0 42px; width: 42px; height: 42px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--pk-accent);
+        color: var(--pk-gold);
+        font-size: 16px;
+        transition: background .25s ease, color .25s ease;
+    }
+    .pf-seg.open .pf-ico,
+    .pf-trigger:hover .pf-ico { background: var(--pk-gold); color: var(--pk-dark); }
+
+    .pf-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
+    .pf-txt small {
+        font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+        text-transform: uppercase; color: #8a948f;
+    }
+    .pf-txt b {
+        font-size: 15px; font-weight: 600; color: #1b1b1b;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pf-caret { font-size: 12px; color: #5b6560; transition: transform .25s ease; }
+    .pf-seg.open .pf-caret { transform: rotate(180deg); }
+
+    /* dropdown panel */
+    .pf-panel {
+        position: absolute;
+        top: calc(100% + 14px); left: 0;
+        min-width: 300px;
+        padding: 20px 22px;
+        border-radius: 22px;
+        background: #ffffff;
+        border: 1px solid rgba(31, 91, 58, 0.14);
+        box-shadow: 0 22px 50px rgba(6, 28, 20, 0.22);
+        opacity: 0; visibility: hidden; transform: translateY(10px);
+        transition: opacity .25s ease, transform .25s ease, visibility .25s;
+    }
+    .pf-seg.open .pf-panel { opacity: 1; visibility: visible; transform: translateY(0); }
+    .pf-panel-lg { min-width: 380px; }
+
+    .pf-panel-title {
+        margin: 0 0 14px;
+        font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+        text-transform: uppercase; color: #1b1b1b;
+    }
+
+    /* budget slider */
+    .pf-price-val { text-align: center; font-size: 26px; font-weight: 700; color: var(--pk-accent); margin: 0 0 16px; }
+    .pf-range {
+        -webkit-appearance: none; appearance: none;
+        width: 100%; height: 6px; border-radius: 6px; outline: none; cursor: pointer;
+        background: linear-gradient(to right, var(--pk-accent) var(--fill, 100%), #e3e8e4 var(--fill, 100%));
+    }
+    .pf-range::-webkit-slider-thumb {
+        -webkit-appearance: none; appearance: none;
+        width: 24px; height: 24px; border-radius: 50%;
+        background: var(--pk-gold); border: 4px solid var(--pk-accent);
+        cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .pf-range::-moz-range-thumb {
+        width: 18px; height: 18px; border-radius: 50%;
+        background: var(--pk-gold); border: 4px solid var(--pk-accent);
+        cursor: pointer;
+    }
+    .pf-range-row { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: #5b6560; }
+
+    /* checkbox lists */
+    .pf-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; max-height: 280px; overflow-y: auto; padding-right: 6px; }
+    .pf-list.one { grid-template-columns: 1fr; }
+    .pf-list::-webkit-scrollbar { width: 5px; }
+    .pf-list::-webkit-scrollbar-thumb { background: rgba(31, 91, 58, 0.35); border-radius: 5px; }
+    .pf-check {
+        display: flex; align-items: center; gap: 10px;
+        padding: 7px 0;
+        font-size: 14.5px; font-weight: 500; color: #3d4742;
+        cursor: pointer;
+    }
+    .pf-check input { width: 16px; height: 16px; accent-color: var(--pk-accent); cursor: pointer; flex: 0 0 16px; }
+    .pf-check:hover { color: var(--pk-accent); }
+    .pf-check span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pf-check small { color: #8a948f; font-size: 12px; }
+
+    /* right side buttons */
+    .pf-actions { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-left: 4px; }
+    .pf-reset {
+        width: 46px; height: 46px; flex: 0 0 46px;
+        border-radius: 50%;
+        border: 1.5px solid var(--pk-accent);
+        background: transparent; color: var(--pk-accent);
+        font-size: 15px; cursor: pointer;
+        transition: all .3s ease;
+    }
+    .pf-reset:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark); transform: rotate(-180deg); }
+    .pf-go {
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 14px 26px;
+        border: 1.5px solid var(--pk-accent);
+        border-radius: 50px;
+        background: var(--pk-accent); color: #fff;
+        font-size: 15px; font-weight: 600; white-space: nowrap;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+    .pf-go:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark); }
+
+    /* chips under the bar */
+    .pf-chips {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+        max-width: 1100px; margin: 0 auto;
+    }
+    .pf-chip {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 7px 8px 7px 16px;
+        border: 1px solid rgba(31, 91, 58, 0.25);
+        border-radius: 50px;
+        background: #fff; color: var(--pk-accent);
+        font-size: 13.5px; font-weight: 600;
+        cursor: pointer;
+        transition: all .25s ease;
+    }
+    .pf-chip i {
+        width: 20px; height: 20px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(31, 91, 58, 0.12); font-size: 10px;
+        transition: all .25s ease;
+    }
+    .pf-chip:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark); }
+    .pf-chip:hover i { background: var(--pk-dark); color: #fff; }
+
+    .pf-count { text-align: center; margin: 22px 0 46px; font-size: 15px; color: #5b6560; }
+    .pf-count b { color: var(--pk-accent); }
+
+    .pk-nomatch { display: none; text-align: center; font-size: 18px; color: #5a524a; padding: 60px 0; }
+    .pk-nomatch.show { display: block; }
+
     /* ================= RESPONSIVE ================= */
+    @media (max-width: 1199px) {
+        .pf-bar { border-radius: 36px; flex-wrap: wrap; justify-content: center; }
+        .pf-seg { flex: 1 1 30%; }
+        .pf-actions { flex: 1 1 100%; justify-content: center; margin: 4px 0 2px; }
+        .pf-seg + .pf-seg::before { display: none; }
+    }
+
     @media (max-width: 991px) {
         .page-header.page-hero {
             width: calc(100% - 20px) !important;
@@ -316,11 +501,25 @@
             font-size: 14px;
         }
         .pk-section { padding: 70px 0 80px; }
-        .pk-head { margin-bottom: 44px; }
+        .pk-head { margin-bottom: 36px; }
         .pk-head h2 { font-size: 36px; }
         .pk-col.in-view.pk-delay { transition-delay: 0s; }
         .pk-group { margin-bottom: 60px; }
         .pk-group-head h3 { font-size: 30px; }
+
+        /* filter bar stacks, dropdowns open inline */
+        .pf-bar { flex-direction: column; align-items: stretch; border-radius: 28px; padding: 12px; gap: 4px; }
+        .pf-seg { flex: none; }
+        .pf-panel, .pf-panel-lg {
+            position: static; min-width: 0;
+            display: none; opacity: 1; visibility: visible; transform: none;
+            margin: 6px 4px 10px;
+            box-shadow: none; background: #f6f9f6;
+        }
+        .pf-seg.open .pf-panel { display: block; }
+        .pf-list { grid-template-columns: 1fr 1fr; }
+        .pf-actions { justify-content: stretch; }
+        .pf-go { flex: 1; justify-content: center; }
     }
 
     @media (max-width: 575px) {
@@ -328,6 +527,9 @@
         .pk-head h2 { font-size: 28px; }
         .pk-head p { font-size: 16px; }
         .pk-group-head h3 { font-size: 24px; white-space: normal; }
+        .pf-trigger { padding: 8px 12px 8px 8px; }
+        .pf-ico { flex-basis: 38px; width: 38px; height: 38px; font-size: 14px; }
+        .pf-chip { font-size: 12.5px; }
 
         .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
         .pk-media { height: 200px; flex-basis: 200px; border-radius: 18px; }
@@ -387,6 +589,82 @@
 
         {% if groups %}
 
+        <!-- ============ FILTER BAR (horizontal) ============ -->
+        <div class="pf-bar" id="pkFilter">
+
+            <!-- BUDGET -->
+            <div class="pf-seg" data-seg="price">
+                <button type="button" class="pf-trigger" aria-expanded="false">
+                    <span class="pf-ico"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+                    <span class="pf-txt"><small>Budget</small><b id="pfPriceSum">Any budget</b></span>
+                    <i class="fa-solid fa-angle-down pf-caret"></i>
+                </button>
+                <div class="pf-panel">
+                    <p class="pf-panel-title">Set your own budget</p>
+                    <p class="pf-price-val" id="pfPriceVal">₹ {{ price_max }}</p>
+                    <input type="range" class="pf-range" id="pfPrice" min="0" max="{{ price_max }}" step="1000" value="{{ price_max }}">
+                    <div class="pf-range-row">
+                        <span>Min: ₹ 0</span>
+                        <span id="pfPriceMax">Max: ₹ {{ price_max }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESTINATION -->
+            <div class="pf-seg" data-seg="loc">
+                <button type="button" class="pf-trigger" aria-expanded="false">
+                    <span class="pf-ico"><i class="fa-solid fa-location-dot"></i></span>
+                    <span class="pf-txt"><small>Destination</small><b id="pfLocSum">All destinations</b></span>
+                    <i class="fa-solid fa-angle-down pf-caret"></i>
+                </button>
+                <div class="pf-panel pf-panel-lg">
+                    <p class="pf-panel-title">Choose destinations</p>
+                    <div class="pf-list">
+                        {% for l in filter_locations %}
+                        <label class="pf-check">
+                            <input type="checkbox" name="loc" value="{{ l.value }}" data-label="{{ l.label }}">
+                            <span>{{ l.label }}</span>
+                            <small>{{ l.count }}</small>
+                        </label>
+                        {% empty %}
+                        <span class="pf-check">No destinations found</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAYS -->
+            <div class="pf-seg" data-seg="day">
+                <button type="button" class="pf-trigger" aria-expanded="false">
+                    <span class="pf-ico"><i class="fa-regular fa-calendar-days"></i></span>
+                    <span class="pf-txt"><small>Duration</small><b id="pfDaySum">Any duration</b></span>
+                    <i class="fa-solid fa-angle-down pf-caret"></i>
+                </button>
+                <div class="pf-panel">
+                    <p class="pf-panel-title">Number of days</p>
+                    <div class="pf-list">
+                        {% for d in filter_days %}
+                        <label class="pf-check">
+                            <input type="checkbox" name="day" value="{{ d }}" data-label="{{ d }} Day{{ d|pluralize }}">
+                            <span>{{ d }} Day{{ d|pluralize }}</span>
+                        </label>
+                        {% empty %}
+                        <span class="pf-check">No durations found</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pf-actions">
+                <button type="button" class="pf-reset" id="pfReset" aria-label="Reset filters"><i class="fa-solid fa-rotate-left"></i></button>
+                <button type="button" class="pf-go" id="pfGo">Show Packages <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- selected filters as removable chips -->
+        <div class="pf-chips" id="pfChips"></div>
+        <p class="pf-count" id="pkCount"></p>
+
         <!-- One block per category -->
         {% for group in groups %}
         <div class="pk-group" id="cat-{{ group.value }}">
@@ -397,7 +675,10 @@
 
             <div class="row g-4 g-xl-5">
                 {% for package in group.packages %}
-                <div class="col-lg-6 col-md-6 pk-col{% if not forloop.counter0|divisibleby:2 %} pk-delay{% endif %}">
+                <div class="col-lg-6 col-md-6 pk-col{% if not forloop.counter0|divisibleby:2 %} pk-delay{% endif %}"
+                     data-prices="{{ package.f_prices }}"
+                     data-locs="{{ package.f_locs }}"
+                     data-days="{{ package.f_days }}">
                     <div class="pk-card">
 
                         <div class="pk-media">
@@ -423,11 +704,17 @@
                         <div class="pk-body">
                             <h3 class="pk-title"><a href="{% url 'package_detail' package.slug %}">{{ package.name }}</a></h3>
 
-                            {% with loc=package.card_description|default:""|add:" "|add:package.description|extract_location %}
-                                {% if loc %}
-                                <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ loc }}</p>
-                                {% endif %}
-                            {% endwith %}
+                            <!-- location: the package's location tag first, description as fallback.
+                                 If your field is not called "location", change package.location below -->
+                            {% if package.location %}
+                                <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ package.location }}</p>
+                            {% else %}
+                                {% with loc=package.card_description|default:""|add:" "|add:package.description|extract_location %}
+                                    {% if loc %}
+                                    <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ loc }}</p>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
 
                             <p class="pk-desc">{% if package.card_description %}{{ package.card_description|truncatewords:20 }}{% else %}{{ package.description|striptags|truncatewords:20 }}{% endif %}</p>
 
@@ -447,7 +734,9 @@
                 {% endfor %}   {# end: packages in this group #}
             </div>             {# end: .row #}
         </div>                 {# end: .pk-group #}
-        {% endfor %}           {# end: groups  <-- this was missing #}
+        {% endfor %}           {# end: groups #}
+
+        <p class="pk-nomatch" id="pkNoMatch">No packages match your filters. Try a higher budget or fewer options.</p>
 
         {% else %}
         <p class="pk-empty">No packages available right now.</p>
@@ -494,6 +783,155 @@
         }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
 
         items.forEach(function (c) { io.observe(c); });
+    })();
+</script>
+
+<!-- FILTER BAR: budget + destination + days (filters live while you change anything) -->
+<script>
+    (function () {
+        var bar = document.getElementById('pkFilter');
+        if (!bar) return;
+
+        var range  = document.getElementById('pfPrice');
+        var out    = document.getElementById('pfPriceVal');
+        var maxLbl = document.getElementById('pfPriceMax');
+        var sumP   = document.getElementById('pfPriceSum');
+        var sumL   = document.getElementById('pfLocSum');
+        var sumD   = document.getElementById('pfDaySum');
+        var chips  = document.getElementById('pfChips');
+        var cols   = [].slice.call(document.querySelectorAll('.pk-col'));
+        var groups = [].slice.call(document.querySelectorAll('.pk-group'));
+        var none   = document.getElementById('pkNoMatch');
+        var count  = document.getElementById('pkCount');
+        var segs   = [].slice.call(bar.querySelectorAll('.pf-seg'));
+
+        function fmt(n) { return Number(n).toLocaleString('en-IN'); }
+        function boxes(name) { return [].slice.call(bar.querySelectorAll('input[name="' + name + '"]')); }
+        function checked(name) { return boxes(name).filter(function (i) { return i.checked; }); }
+
+        /* ---- dropdowns ---- */
+        function closeAll() {
+            segs.forEach(function (s) {
+                s.classList.remove('open');
+                s.querySelector('.pf-trigger').setAttribute('aria-expanded', 'false');
+            });
+        }
+        segs.forEach(function (s) {
+            s.querySelector('.pf-trigger').addEventListener('click', function (e) {
+                e.stopPropagation();
+                var willOpen = !s.classList.contains('open');
+                closeAll();
+                if (willOpen) {
+                    s.classList.add('open');
+                    this.setAttribute('aria-expanded', 'true');
+                }
+            });
+            s.querySelector('.pf-panel').addEventListener('click', function (e) { e.stopPropagation(); });
+        });
+        document.addEventListener('click', closeAll);
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
+
+        /* ---- slider fill ---- */
+        function paintRange() {
+            var pct = (+range.value / +range.max) * 100;
+            range.style.setProperty('--fill', pct + '%');
+        }
+
+        /* ---- summaries + chips ---- */
+        function summary(list, none, many) {
+            if (!list.length) return none;
+            if (list.length === 1) return list[0].getAttribute('data-label');
+            return list.length + ' ' + many;
+        }
+
+        function updateText() {
+            var atMax = +range.value >= +range.max;
+            out.textContent = '₹ ' + fmt(range.value);
+            sumP.textContent = atMax ? 'Any budget' : 'Up to ₹ ' + fmt(range.value);
+            sumL.textContent = summary(checked('loc'), 'All destinations', 'destinations');
+            sumD.textContent = summary(checked('day'), 'Any duration', 'durations');
+
+            chips.innerHTML = '';
+            function addChip(label, onRemove) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'pf-chip';
+                b.innerHTML = label + ' <i class="fa-solid fa-xmark"></i>';
+                b.addEventListener('click', onRemove);
+                chips.appendChild(b);
+            }
+            if (!atMax) addChip('Up to ₹ ' + fmt(range.value), function () { range.value = range.max; apply(); });
+            checked('loc').forEach(function (i) { addChip(i.getAttribute('data-label'), function () { i.checked = false; apply(); }); });
+            checked('day').forEach(function (i) { addChip(i.getAttribute('data-label'), function () { i.checked = false; apply(); }); });
+        }
+
+        /* ---- the filter itself ---- */
+        function apply() {
+            paintRange();
+            updateText();
+
+            var max   = +range.value;
+            var atMax = max >= +range.max;
+            var locs  = checked('loc').map(function (i) { return i.value; });
+            var days  = checked('day').map(function (i) { return i.value; });
+            var shown = 0;
+
+            cols.forEach(function (c) {
+                var ok = true;
+
+                /* BUDGET: every price found for the package (model field AND description)
+                   is checked; the package shows if any of them is inside the budget.
+                   Packages with no price at all are never hidden by the budget. */
+                var prices = (c.getAttribute('data-prices') || '').split(',').filter(Boolean).map(Number);
+                if (!atMax && prices.length) {
+                    ok = prices.some(function (p) { return p <= max; });
+                }
+
+                /* DESTINATION: any selected destination appears in the package */
+                if (ok && locs.length) {
+                    var pl = (c.getAttribute('data-locs') || '').split('|');
+                    ok = locs.some(function (l) { return pl.indexOf(l) > -1; });
+                }
+
+                /* DAYS: package days equals any selected day count */
+                if (ok && days.length) {
+                    ok = days.indexOf(c.getAttribute('data-days')) > -1;
+                }
+
+                c.classList.toggle('pk-hide', !ok);
+                if (ok) shown++;
+            });
+
+            /* hide a category heading when none of its cards are visible */
+            groups.forEach(function (g) {
+                g.classList.toggle('pk-hide', !g.querySelector('.pk-col:not(.pk-hide)'));
+            });
+
+            none.classList.toggle('show', shown === 0);
+            count.innerHTML = 'Showing <b>' + shown + '</b> package' + (shown === 1 ? '' : 's');
+        }
+
+        range.addEventListener('input', apply);
+        bar.addEventListener('change', function (e) {
+            if (e.target.type === 'checkbox') apply();
+        });
+
+        document.getElementById('pfReset').addEventListener('click', function () {
+            boxes('loc').concat(boxes('day')).forEach(function (i) { i.checked = false; });
+            range.value = range.max;
+            apply();
+        });
+
+        /* "Show Packages": close the dropdowns and scroll to the results */
+        document.getElementById('pfGo').addEventListener('click', function () {
+            closeAll();
+            var first = document.querySelector('.pk-group:not(.pk-hide)') || count;
+            var y = first.getBoundingClientRect().top + window.pageYOffset - 120;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        });
+
+        maxLbl.textContent = 'Max: ₹ ' + fmt(range.max);
+        apply();
     })();
 </script>
 {% endblock %}

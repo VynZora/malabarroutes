@@ -117,51 +117,117 @@
 }
 
 .sv-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
     padding: 34px 30px 36px;
     border-radius: 18px;
-    background: var(--sv-green);
-    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 55%);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 14px 30px rgba(6, 28, 20, 0.18);
+    background: #ffffff;
+    border: 1px solid rgba(31, 91, 58, 0.14);
+    box-shadow: 0 10px 26px rgba(20, 40, 30, 0.08);
     text-decoration: none;
-    transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
+}
+/* green fill that grows out from the icon corner */
+.sv-card::before {
+    content: "";
+    position: absolute; inset: 0; z-index: -1;
+    background: var(--sv-green);
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 60%);
+    clip-path: circle(0 at 14% 20%);
+    transition: clip-path .75s cubic-bezier(.65, 0, .25, 1);
 }
 .sv-card:hover,
+.sv-card:focus,
+.sv-card:active,
 .sv-card:focus-visible {
-    transform: translateY(-6px);
+    transform: translateY(-8px);
     border-color: var(--sv-gold);
-    box-shadow: 0 22px 42px rgba(6, 28, 20, 0.32);
+    box-shadow: 0 24px 46px rgba(6, 28, 20, 0.34);
     outline: none;
 }
+.sv-card:hover::before,
+.sv-card:focus::before,
+.sv-card:active::before,
+.sv-card:focus-visible::before { clip-path: circle(150% at 14% 20%); }
 
 .sv-ico {
     display: block;
-    width: 52px; height: 52px;
-    margin-bottom: 36px;
-    color: var(--sv-gold);
-    transition: transform .35s ease;
+    width: 76px; height: 76px;
+    margin-bottom: 30px;
+    color: var(--sv-green);
+    transition: color .4s ease .15s, transform .5s ease;
 }
 .sv-ico svg {
     display: block; width: 100%; height: 100%;
     fill: none; stroke: currentColor;
-    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+    stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+    overflow: visible;
 }
-.sv-card:hover .sv-ico { transform: scale(1.1); }
+.sv-ico svg * { stroke-dasharray: 1; stroke-dashoffset: 0; }
+
+.sv-card:hover .sv-ico,
+.sv-card:focus .sv-ico,
+.sv-card:active .sv-ico { color: var(--sv-gold); transform: scale(1.08) rotate(-4deg); }
+
+/* icon draws itself again on hover */
+.sv-card:hover .sv-ico svg *,
+.sv-card:focus .sv-ico svg *,
+.sv-card:active .sv-ico svg * { animation: svDraw .9s ease-out both; }
+@keyframes svDraw {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
+}
 
 .sv-card h3 {
-    margin: 0 0 20px;
+    position: relative;
+    margin: 0 0 24px;
     font-size: 23px; font-weight: 700; line-height: 1.25;
     text-transform: none;
-    color: #ffffff;
+    color: var(--sv-green);
+    transition: color .4s ease .15s;
 }
+/* small gold line under the title grows on hover */
+.sv-card h3::after {
+    content: "";
+    position: absolute; left: 0; bottom: -12px;
+    width: 0; height: 3px; border-radius: 3px;
+    background: var(--sv-gold);
+    transition: width .6s ease .2s;
+}
+.sv-card:hover h3::after,
+.sv-card:focus h3::after,
+.sv-card:active h3::after { width: 54px; }
+
 .sv-card p {
     margin: 0;
     font-size: 16px; line-height: 1.6;
-    color: rgba(255, 255, 255, 0.74);
+    color: #5b6560;
+    transition: color .4s ease .15s;
+}
+.sv-card:hover h3,
+.sv-card:focus h3,
+.sv-card:active h3 { color: #ffffff; }
+.sv-card:hover p,
+.sv-card:focus p,
+.sv-card:active p { color: rgba(255, 255, 255, 0.84); }
+
+/* cards rise in one by one when the section scrolls into view */
+.sv-grid.sv-js .sv-card { opacity: 0; transform: translateY(46px) scale(.96); }
+.sv-grid.sv-js.sv-in .sv-card {
+    opacity: 1; transform: none;
+    transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2, .7, .2, 1) var(--d, 0s), border-color .4s ease, box-shadow .5s ease;
+}
+.sv-grid.sv-js.sv-in .sv-card:hover,
+.sv-grid.sv-js.sv-in .sv-card:focus,
+.sv-grid.sv-js.sv-in .sv-card:active {
+    transform: translateY(-8px);
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
 }
 
 @media (max-width: 1199px) {
@@ -172,18 +238,20 @@
     .sv-section .section-row { margin-bottom: 0 !important; }
     .sv-section .section-title { margin-bottom: 0 !important; }
     .sv-card { padding: 28px 24px 30px; }
-    .sv-ico { margin-bottom: 26px; }
+    .sv-ico { width: 68px; height: 68px; margin-bottom: 24px; }
 }
 @media (max-width: 575px) {
     .sv-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
     .sv-section { padding-bottom: 28px; }
     .sv-card { padding: 24px 22px 26px; border-radius: 16px; }
-    .sv-ico { width: 44px; height: 44px; margin-bottom: 20px; }
+    .sv-ico { width: 60px; height: 60px; margin-bottom: 20px; }
     .sv-card h3 { font-size: 21px; margin-bottom: 12px; }
     .sv-card p { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .sv-card, .sv-ico { transition: none; }
+    .sv-card, .sv-card::before, .sv-ico, .sv-card h3::after { transition: none; }
+    .sv-card:hover .sv-ico svg *, .sv-card:focus .sv-ico svg * { animation: none; }
+    .sv-grid.sv-js .sv-card { opacity: 1; transform: none; }
 }
 
     /* ================= POPULAR PACKAGES (carousel of cards) ================= */
@@ -1336,49 +1404,49 @@
         <div class="sv-grid">
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="6" width="30" height="36" rx="3"/><path d="M16 15h16M16 21h10"/><circle cx="29" cy="32" r="5"/><path d="M26.7 32l1.8 1.8 3.2-3.6"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="9" y="6" width="30" height="36" rx="3"/><path pathLength="1" d="M16 15h16M16 21h10"/><circle pathLength="1" cx="29" cy="32" r="5"/><path pathLength="1" d="M26.7 32l1.8 1.8 3.2-3.6"/></svg></span>
                 <h3>Visa</h3>
                 <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="5" width="28" height="38" rx="3"/><circle cx="24" cy="21" r="8"/><path d="M16 21h16M24 13c-3.5 3-3.5 13 0 16M24 13c3.5 3 3.5 13 0 16M17 36h14"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="10" y="5" width="28" height="38" rx="3"/><circle pathLength="1" cx="24" cy="21" r="8"/><path pathLength="1" d="M16 21h16M24 13c-3.5 3-3.5 13 0 16M24 13c3.5 3 3.5 13 0 16M17 36h14"/></svg></span>
                 <h3>Passport</h3>
                 <p>We help you with fast processing of passport applications, renewals and replacement.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M42 6L6 21l15 6 6 15z"/><path d="M42 6L21 27"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M42 6L6 21l15 6 6 15z"/><path pathLength="1" d="M42 6L21 27"/></svg></span>
                 <h3>Tickets</h3>
                 <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 30h36l-5 9H11z"/><path d="M13 30v-8h22v8"/><path d="M18 22v-5h12v5"/><path d="M6 44c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M6 30h36l-5 9H11z"/><path pathLength="1" d="M13 30v-8h22v8"/><path pathLength="1" d="M18 22v-5h12v5"/><path pathLength="1" d="M6 44c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0"/></svg></span>
                 <h3>House Boat</h3>
                 <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
             </a>
 
             <a href="{% url 'packages' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M17 14v-4a3 3 0 013-3h8a3 3 0 013 3v4M6 26h36M20 26v4h8v-4"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="6" y="14" width="36" height="26" rx="4"/><path pathLength="1" d="M17 14v-4a3 3 0 013-3h8a3 3 0 013 3v4M6 26h36M20 26v4h8v-4"/></svg></span>
                 <h3>Packages</h3>
                 <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 44S11 32.5 11 23a13 13 0 0126 0c0 9.5-13 21-13 21z"/><circle cx="24" cy="23" r="5"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M24 44S11 32.5 11 23a13 13 0 0126 0c0 9.5-13 21-13 21z"/><circle pathLength="1" cx="24" cy="23" r="5"/></svg></span>
                 <h3>Travel Guides</h3>
                 <p>Local experts help you discover Malabar's culture and hidden places.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30v-6l4-11h22l4 11v6z"/><path d="M9 24h30"/><circle cx="15" cy="27" r="1.5"/><circle cx="33" cy="27" r="1.5"/><path d="M12 30v7h6v-7M30 30v7h6v-7"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M9 30v-6l4-11h22l4 11v6z"/><path pathLength="1" d="M9 24h30"/><circle pathLength="1" cx="15" cy="27" r="1.5"/><circle pathLength="1" cx="33" cy="27" r="1.5"/><path pathLength="1" d="M12 30v7h6v-7M30 30v7h6v-7"/></svg></span>
                 <h3>Car Rentals</h3>
                 <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
             </a>
 
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="18" y="6" width="12" height="6" rx="1.5"/><path d="M24 12v3"/><path d="M5 34v-6c0-1 .5-2 1.5-2.5L11 17h26l4.5 8.5c1 .5 1.5 1.5 1.5 2.5v6z"/><circle cx="14" cy="36" r="4"/><circle cx="34" cy="36" r="4"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="18" y="6" width="12" height="6" rx="1.5"/><path pathLength="1" d="M24 12v3"/><path pathLength="1" d="M5 34v-6c0-1 .5-2 1.5-2.5L11 17h26l4.5 8.5c1 .5 1.5 1.5 1.5 2.5v6z"/><circle pathLength="1" cx="14" cy="36" r="4"/><circle pathLength="1" cx="34" cy="36" r="4"/></svg></span>
                 <h3>Taxi Services</h3>
                 <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
             </a>
@@ -2103,6 +2171,27 @@
     });
 
     bindFilters('pkFilters', pkCar);
+</script>
+
+<!-- Services: cards rise in one by one on scroll -->
+<script>
+    (function () {
+        var grid = document.querySelector('.sv-grid');
+        if (!grid) return;
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce || !('IntersectionObserver' in window)) return;
+
+        var cards = grid.querySelectorAll('.sv-card');
+        var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 1200 ? 2 : 4);
+        cards.forEach(function (c, i) { c.style.setProperty('--d', ((i % cols) * 0.12) + 's'); });
+        grid.classList.add('sv-js');
+
+        new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { grid.classList.add('sv-in'); obs.disconnect(); }
+            });
+        }, { threshold: 0.15 }).observe(grid);
+    })();
 </script>
 
 {% endblock %}

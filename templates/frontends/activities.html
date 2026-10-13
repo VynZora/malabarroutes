@@ -93,9 +93,9 @@
 
     /* ================= SECTION (bg3.png background) ================= */
     .act-section {
-        --act-accent: var(--accent-color, #265648);
-        --act-dark: var(--primary-color, #1a1a1a);
-
+        --act-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
+        --act-dark: var(--nav-ink, #12281f);
+        --act-gold: var(--nav-gold, #e0b14a);
         padding: 100px 0 130px;
         background-color: #faf8f6;
         background-image:
@@ -125,7 +125,7 @@
 
     .act-badge {
         position: absolute; top: 18px; left: 18px; z-index: 3;
-        background: var(--act-accent); color: #fff;
+        background: var(--act-gold); color: var(--act-dark);
         font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
         padding: 8px 18px; border-radius: 30px;
     }
@@ -174,7 +174,7 @@
         border: 1.5px solid var(--act-accent);
         color: #fff !important;
     }
-    .act-btn-fill:hover { filter: brightness(0.88); color: #fff !important; }
+       .act-btn-fill:hover { background: var(--act-gold); border-color: var(--act-gold); color: var(--act-dark) !important; }
 
     /* View Details: outlined, fills with the accent colour on hover */
     .act-btn-line {
@@ -182,7 +182,7 @@
         border: 1.5px solid var(--act-accent);
         color: var(--act-accent) !important;
     }
-    .act-btn-line:hover { background: var(--act-accent); color: #fff !important; }
+        .act-btn-line:hover { background: var(--act-accent); color: #fff !important; }
 
     .act-empty { text-align: center; color: #6b625a; padding: 40px 0; }
 

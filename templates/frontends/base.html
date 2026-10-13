@@ -399,6 +399,10 @@ background-position: center 70% !important;
         height: auto !important;
     }
 
+    /* ---------- Preloader always on top of everything ----------
+       (so the mobile Call / Email bar, navbar and modals never show through it) */
+    .preloader { z-index: 99999 !important; }
+
     /* ---------- Footer background image (foot.png) ---------- */
     .footer-main {
         /* IMAGE FADE: change both 0.55 values together (higher = image fainter + text clearer) */
@@ -748,7 +752,7 @@ background-position: center 70% !important;
     .mb-contact-bar {
         position: fixed;
         left: 0; right: 0; bottom: 0;
-        z-index: 1500;                       /* below the booking modal (2000) */
+        z-index: 1500;                       /* below the booking modal (2000) and the preloader (99999) */
         display: flex;
         background: var(--nav-green, #1F5B3A);
         box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);

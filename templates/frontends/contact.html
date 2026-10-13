@@ -5,7 +5,7 @@
 
 {% comment %}
     Fonts are NOT set on this page: they come from base.html (except the Cinzel hero heading).
-    Colours come from base.html (--accent-color, --primary-color).
+    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
     Hero = same design and rotating background images as the Packages / About hero.
     Social links: edit the three hrefs in the "Follow Us" block below.
 {% endcomment %}
@@ -92,11 +92,12 @@
     /* ================= CONTACT SECTION ================= */
     .contact-section {
         /* colours come from base.html */
-        --cx-accent: var(--accent-color, #265648);
-        --cx-dark: var(--primary-color, #1a1a1a);
+        --cx-accent: var(--nav-green, #1F5B3A);
+        --cx-dark: var(--nav-ink, #12281f);
+        --cx-gold: var(--nav-gold, #e0b14a);
         --cx-accent-soft: #e4ece3;
         --cx-accent-soft: color-mix(in srgb, var(--cx-accent) 14%, #ffffff);
-        --cx-ring: rgba(38, 86, 72, .14);
+        --cx-ring: rgba(31, 91, 58, .16);
         --cx-ring: color-mix(in srgb, var(--cx-accent) 16%, transparent);
 
         padding: 90px 0 110px;
@@ -184,17 +185,39 @@
         margin-bottom: 40px;
     }
     .cx-info-card {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
         height: 100%;
         background: #fff;
         border-radius: 20px;
         padding: 26px 28px;
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-        transition: transform .3s ease, box-shadow .3s ease;
+        transition: transform .4s ease, box-shadow .4s ease;
     }
-    .cx-info-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+
+    /* green panel that slides up from the bottom */
+    .cx-info-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: var(--cx-accent);
+        transform: translateY(101%);
+        transition: transform .55s cubic-bezier(.22, .61, .36, 1);
     }
+
+    /* gold line that draws across the top edge */
+    .cx-info-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        height: 4px;
+        width: 0;
+        background: var(--cx-gold);
+        transition: width .55s ease .15s;
+    }
+
     .cx-info-head {
         display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
     }
@@ -203,18 +226,35 @@
         background: var(--cx-accent-soft); color: var(--cx-accent);
         display: flex; align-items: center; justify-content: center;
         font-size: 18px; flex-shrink: 0;
-        transition: all .3s ease;
+        transition: background .35s ease, color .35s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
     }
-    .cx-info-card:hover .cx-info-icon { background: var(--cx-accent); color: #fff; }
     .cx-info-head h3 {
         margin: 0; font-size: 15px; letter-spacing: 1px; text-transform: uppercase;
+        transition: color .35s ease .1s;
     }
     .cx-info-card p {
         margin: 0; font-size: 14px; line-height: 1.8;
         color: var(--text-color, #2b2b2b);
+        transition: color .35s ease .1s;
     }
     .cx-info-card a { color: inherit; word-break: break-word; transition: color .25s ease; }
-    .cx-info-card a:hover { color: var(--cx-accent); }
+
+    /* hover */
+    .cx-info-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(31, 91, 58, 0.28);
+    }
+    .cx-info-card:hover::before { transform: translateY(0); }
+    .cx-info-card:hover::after { width: 100%; }
+    .cx-info-card:hover .cx-info-icon {
+        background: var(--cx-gold);
+        color: var(--cx-dark);
+        transform: rotate(-10deg) scale(1.12);
+    }
+    .cx-info-card:hover .cx-info-head h3,
+    .cx-info-card:hover p,
+    .cx-info-card:hover a { color: #ffffff; }
+    .cx-info-card a:hover { color: var(--cx-gold); }
 
     /* ---------- Follow Us (social links) ---------- */
     .cx-social {
@@ -298,6 +338,8 @@
         width: 100%; height: 100%; min-height: 520px;
         border: 0; display: block;
     }
+
+    /* Get Directions: outlined green, fills green on hover */
     .cx-directions {
         align-self: flex-start;
         display: inline-flex; align-items: center; gap: 10px;
@@ -315,7 +357,7 @@
         font-size: 13px; transition: all .3s ease;
     }
     .cx-directions:hover { background: var(--cx-accent); color: #fff; }
-    .cx-directions:hover span.dir-icon { background: #fff; color: var(--cx-accent); }
+    .cx-directions:hover span.dir-icon { background: var(--cx-gold); color: var(--cx-dark); }
 
     /* Form card */
     .cx-form-card {
@@ -363,7 +405,7 @@
 
     .cx-recaptcha { margin-top: 24px; }
 
-    /* ---------- Send button (filled with the base accent colour) ---------- */
+    /* ---------- Send button: green, gold on hover (same as the navbar) ---------- */
     .cx-submit {
         margin-top: 30px; border: 0; border-radius: 50px;
         padding: 14px 34px;
@@ -374,7 +416,7 @@
         box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
         transition: all .3s ease;
     }
-    .cx-submit:hover { background: var(--cx-dark); }
+    .cx-submit:hover { background: var(--cx-gold); color: var(--cx-dark); }
 
     /* not pressable: while sending and while the success modal is open */
     .cx-submit:disabled,
@@ -383,6 +425,7 @@
         cursor: not-allowed;
         pointer-events: none;
         background: var(--cx-accent);
+        color: #fff;
         box-shadow: none;
     }
     .cx-submit.is-sending { cursor: wait; }
@@ -391,9 +434,9 @@
     .cx-status.ok { display: block; color: #1a7f37; }
     .cx-status.err { display: block; color: #c62828; }
 
-    /* success modal button matches this page's accent colour */
-    #contactSuccess .bk-success-btn { background: var(--accent-color, #265648); }
-    #contactSuccess .bk-success-btn:hover { background: var(--primary-color, #1a1a1a); }
+    /* success modal button: green, gold on hover (same as the navbar) */
+    #contactSuccess .bk-success-btn { background: var(--nav-green, #1F5B3A); color: #fff; }
+    #contactSuccess .bk-success-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 991px) {
@@ -560,7 +603,10 @@
                         <div class="cx-info-icon"><i class="fa-solid fa-phone-volume"></i></div>
                         <h3>Call Us</h3>
                     </div>
-                    <p><a href="tel:{{ info.phone_link }}">{{ info.phone }}</a></p>
+                    <p>
+                        <a href="tel:+918848333382">+91 8848333382</a><br>
+                        <a href="tel:+919526220085">+91 9526220085</a>
+                    </p>
                 </div>
             </div>
 
@@ -580,7 +626,7 @@
                         <div class="cx-info-icon"><i class="fa-solid fa-envelope"></i></div>
                         <h3>Email Direct</h3>
                     </div>
-                    <p><a href="mailto:{{ info.email }}">{{ info.email }}</a></p>
+                    <p><a href="mailto:malabaroutes@gmail.com">malabaroutes@gmail.com</a></p>
                 </div>
             </div>
         </div>

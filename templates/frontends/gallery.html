@@ -5,7 +5,7 @@
 
 {% comment %}
     Hero = same design and rotating background images as the Packages / About hero.
-    Colours come from base.html (--accent-color, --primary-color).
+    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
     Lightbox shows the full photo (no cropping).
 {% endcomment %}
 
@@ -90,8 +90,10 @@
 
     /* ================= GALLERY ================= */
     .gallery-section {
-        --gal-accent: var(--accent-color, #265648);
-        --gal-dark: var(--primary-color, #111111);
+        /* colours come from base.html */
+        --gal-accent: var(--nav-green, #1F5B3A);
+        --gal-dark: var(--nav-ink, #12281f);
+        --gal-gold: var(--nav-gold, #e0b14a);
 
         padding: 90px 0 110px;
         background-color: #faf8f6;
@@ -121,11 +123,15 @@
         cursor: pointer;
         transition: all .3s ease;
     }
+    /* hover: gold fill, dark text (same as the navbar Book Now) */
     .gallery-filter-btn:hover {
-        border-color: var(--gal-accent);
-        color: var(--gal-accent);
+        background: var(--gal-gold);
+        border-color: var(--gal-gold);
+        color: var(--gal-dark);
     }
-    .gallery-filter-btn.active {
+    /* active: green (stays green on hover) */
+    .gallery-filter-btn.active,
+    .gallery-filter-btn.active:hover {
         background: var(--gal-accent);
         border-color: var(--gal-accent);
         color: #fff;
@@ -166,7 +172,7 @@
     }
     .gallery-item:hover img { transform: scale(1.08); }
 
-    /* hover overlay with zoom icon */
+    /* hover overlay with zoom icon (navbar green) */
     .gallery-item::after {
         content: "\f00e"; /* Font Awesome magnifier-plus */
         font-family: "Font Awesome 6 Free";
@@ -311,10 +317,10 @@
                data-wow-delay="{% cycle '0s' '0.15s' '0.3s' %}"
                data-category="{{ img.category_id }}">
                 <img src="{{ img.image.url }}"
-     srcset="{{ img.image|srcset }}"
-     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 470px"
-     alt="{{ img.title }}"
-     loading="lazy" decoding="async">
+                     srcset="{{ img.image|srcset }}"
+                     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 470px"
+                     alt="{{ img.title }}"
+                     loading="lazy" decoding="async">
             </a>
             {% endfor %}
         </div>

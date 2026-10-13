@@ -99,8 +99,9 @@
         background-size: 100% 100%, 100% auto;
         background-position: center, center top;
         background-repeat: no-repeat, repeat-y;
-        --pk-accent: var(--accent-color, #6b8e23);   /* same colours as the About cards */
-        --pk-dark: var(--primary-color, #1a1a1a);
+         --pk-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
+        --pk-dark: var(--nav-ink, #12281f);
+        --pk-gold: var(--nav-gold, #e0b14a);
     }
     .pk-section .container { max-width: 1320px; }
 
@@ -247,17 +248,21 @@
         transition: transform 0.3s ease;
     }
 
-    /* Book Now: filled */
+    /* Book Now: filled green, gold on hover (same as navbar) */
     .pk-btn-fill {
         background: var(--pk-accent);
         border: 1.5px solid var(--pk-accent);
         color: #fff !important;
     }
-    .pk-btn-fill .pk-btn-ico { background: var(--pk-dark); color: #fff; }
-    .pk-btn-fill:hover { filter: brightness(0.88); }
-    .pk-btn-fill:hover .pk-btn-ico { transform: translateX(3px); }
+    .pk-btn-fill .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); }
+    .pk-btn-fill:hover {
+        background: var(--pk-gold);
+        border-color: var(--pk-gold);
+        color: var(--pk-dark) !important;
+    }
+    .pk-btn-fill:hover .pk-btn-ico { background: var(--pk-accent); color: #fff; transform: translateX(3px); }
 
-    /* View More: outlined */
+    /* View More: outlined green, fills green on hover */
     .pk-btn-line {
         background: transparent;
         border: 1.5px solid var(--pk-accent);
@@ -266,7 +271,7 @@
     .pk-btn-line .pk-btn-ico { background: var(--pk-accent); color: #fff; }
     .pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
     .pk-btn-line:hover { background: var(--pk-accent); color: #fff !important; }
-    .pk-btn-line:hover .pk-btn-ico { background: #fff; color: var(--pk-accent); transform: translate(2px, -2px); }
+    .pk-btn-line:hover .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); transform: translate(2px, -2px); }
 
     .pk-empty { text-align: center; font-size: 18px; color: #5a524a; padding: 60px 0; }
 

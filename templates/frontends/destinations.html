@@ -6,7 +6,7 @@
 
 {% comment %}
     Fonts are NOT set on this page: they come from base.html.
-    Colours come from base.html (--accent-color, --primary-color).
+    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
     Hero = same design and rotating background images as the About page.
     Destinations are grouped by location. The navbar "Destinations" dropdown
     links to /destinations/?location=<slug> to show one location.
@@ -93,8 +93,10 @@
 
     /* ================= DESTINATIONS SECTION (bg5.png as page background) ================= */
     .dest-page {
-        --dest-accent: var(--accent-color, #265648);
-        --dest-dark: var(--primary-color, #1a1a1a);
+        /* colours come from base.html */
+        --dest-accent: var(--nav-green, #1F5B3A);
+        --dest-dark: var(--nav-ink, #12281f);
+        --dest-gold: var(--nav-gold, #e0b14a);
 
         padding: 90px 0 100px;
         background-color: #f2fdff;
@@ -118,7 +120,7 @@
         text-transform: none; white-space: nowrap;
     }
     .dest-group-head h3::before, .dest-group-head h3::after { display: none !important; content: none !important; }
-    .dest-line { flex: 1; height: 2px; background: linear-gradient(to right, #c9972b, rgba(201,151,43,0)); }
+    .dest-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--dest-gold), rgba(224, 177, 74, 0)); }
 
     .dest-grid {
         display: grid;
@@ -174,7 +176,7 @@
         pointer-events: none;
     }
 
-    /* bottom panel: WHITE by default -> ACCENT colour when opened */
+    /* bottom panel: WHITE by default -> GREEN when opened */
     .dest-panel {
         position: absolute;
         left: 0; right: 0; bottom: 0;
@@ -229,25 +231,28 @@
     .dest-btn i { font-size: 12px; transition: transform .3s ease; }
     .dest-btn:hover i { transform: translateX(3px); }
 
+    /* View more: white, gold on hover (same as the navbar) */
     .dest-btn-fill {
         background: #ffffff;
         border: 1.5px solid #ffffff;
         color: var(--dest-accent) !important;
     }
     .dest-btn-fill:hover {
-        background: var(--dest-dark);
-        border-color: var(--dest-dark);
-        color: #ffffff !important;
+        background: var(--dest-gold);
+        border-color: var(--dest-gold);
+        color: var(--dest-dark) !important;
     }
+
+    /* Book Now: outlined white, gold on hover (same as the navbar) */
     .dest-btn-line {
         background: transparent;
         border: 1.5px solid rgba(255, 255, 255, .9);
         color: #ffffff !important;
     }
     .dest-btn-line:hover {
-        background: #ffffff;
-        border-color: #ffffff;
-        color: var(--dest-accent) !important;
+        background: var(--dest-gold);
+        border-color: var(--dest-gold);
+        color: var(--dest-dark) !important;
     }
 
     /* open state (touch / focus) */
@@ -408,10 +413,10 @@
                         <div class="dest-media">
                             <figure class="image-anime reveal">
                                 <img src="{{ d.image.url }}"
-     srcset="{{ d.image|srcset }}"
-     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
-     alt="{{ d.name }}"
-     loading="lazy" decoding="async">
+                                     srcset="{{ d.image|srcset }}"
+                                     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
+                                     alt="{{ d.name }}"
+                                     loading="lazy" decoding="async">
                             </figure>
                         </div>
                         {% endif %}

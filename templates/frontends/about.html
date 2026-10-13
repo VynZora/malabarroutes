@@ -10,6 +10,9 @@
     The sections' styles live in extra_css, their scripts in extra_js.
     Packages and Testimonials need `featured_packages` and `testimonials`
     in the about view's context (same queries as the home view).
+
+    COLOURS: all buttons and accents use the palette from base.html:
+    --nav-green, --nav-gold, --nav-ink. Change them there and this page follows.
 {% endcomment %}
 
 {% block extra_css %}
@@ -49,9 +52,9 @@
     width: 54px;
     height: 54px;
     border-radius: 50%;
-    border: 1px solid #111111;
+    border: 1px solid var(--nav-green, #1F5B3A);
     background: transparent;
-    color: #111111;
+    color: var(--nav-green, #1F5B3A);
     font-size: 18px;
     display: flex;
     align-items: center;
@@ -60,8 +63,9 @@
     transition: all 0.3s ease;
 }
 .ms-services .ms-nav button.ms-arrow:hover {
-    background: #111111;
-    color: #ffffff;
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
 }
 
 .ms-services .ms-dots {
@@ -82,14 +86,18 @@
 .ms-services .ms-dot.active {
     width: 28px;
     border-radius: 10px;
-    background: #111111;
+    background: var(--nav-green, #1F5B3A);
 }
 
 @media (max-width: 767px) {
     .ms-services .ms-dots { display: none; }
 }
 
-/* ================= SERVICES (icon cards, green comes from base.html) ================= */
+/* ================= SERVICES (icon cards, green comes from base.html) =================
+   The "active" card (green fill + gold icon) is set by JS:
+   - desktop: cards light up one by one automatically, mouse hover takes over
+   - phones/tablets (no hover): the card nearest the screen centre lights up while scrolling
+   No :hover / :focus / :active rules are used, so nothing gets stuck after a tap. */
 .sv-section {
     --sv-green: var(--nav-green, #1F5B3A);
     --sv-gold:  var(--nav-gold, #e0b14a);
@@ -131,6 +139,7 @@
     box-shadow: 0 10px 26px rgba(20, 40, 30, 0.08);
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
 }
 /* green fill that grows out from the icon corner */
@@ -142,18 +151,14 @@
     clip-path: circle(0 at 14% 20%);
     transition: clip-path .75s cubic-bezier(.65, 0, .25, 1);
 }
-.sv-card:hover,
-.sv-card:focus,
-.sv-card:active,
+.sv-card.active,
 .sv-card:focus-visible {
     transform: translateY(-8px);
     border-color: var(--sv-gold);
     box-shadow: 0 24px 46px rgba(6, 28, 20, 0.34);
     outline: none;
 }
-.sv-card:hover::before,
-.sv-card:focus::before,
-.sv-card:active::before,
+.sv-card.active::before,
 .sv-card:focus-visible::before { clip-path: circle(150% at 14% 20%); }
 
 .sv-ico {
@@ -171,14 +176,12 @@
 }
 .sv-ico svg * { stroke-dasharray: 1; stroke-dashoffset: 0; }
 
-.sv-card:hover .sv-ico,
-.sv-card:focus .sv-ico,
-.sv-card:active .sv-ico { color: var(--sv-gold); transform: scale(1.08) rotate(-4deg); }
+.sv-card.active .sv-ico,
+.sv-card:focus-visible .sv-ico { color: var(--sv-gold); transform: scale(1.08) rotate(-4deg); }
 
-/* icon draws itself again on hover */
-.sv-card:hover .sv-ico svg *,
-.sv-card:focus .sv-ico svg *,
-.sv-card:active .sv-ico svg * { animation: svDraw .9s ease-out both; }
+/* icon draws itself again when the card becomes active */
+.sv-card.active .sv-ico svg *,
+.sv-card:focus-visible .sv-ico svg * { animation: svDraw .9s ease-out both; }
 @keyframes svDraw {
     from { stroke-dashoffset: 1; }
     to   { stroke-dashoffset: 0; }
@@ -192,7 +195,7 @@
     color: var(--sv-green);
     transition: color .4s ease .15s;
 }
-/* small gold line under the title grows on hover */
+/* small gold line under the title grows when active */
 .sv-card h3::after {
     content: "";
     position: absolute; left: 0; bottom: -12px;
@@ -200,9 +203,8 @@
     background: var(--sv-gold);
     transition: width .6s ease .2s;
 }
-.sv-card:hover h3::after,
-.sv-card:focus h3::after,
-.sv-card:active h3::after { width: 54px; }
+.sv-card.active h3::after,
+.sv-card:focus-visible h3::after { width: 54px; }
 
 .sv-card p {
     margin: 0;
@@ -210,12 +212,10 @@
     color: #5b6560;
     transition: color .4s ease .15s;
 }
-.sv-card:hover h3,
-.sv-card:focus h3,
-.sv-card:active h3 { color: #ffffff; }
-.sv-card:hover p,
-.sv-card:focus p,
-.sv-card:active p { color: rgba(255, 255, 255, 0.84); }
+.sv-card.active h3,
+.sv-card:focus-visible h3 { color: #ffffff; }
+.sv-card.active p,
+.sv-card:focus-visible p { color: rgba(255, 255, 255, 0.84); }
 
 /* cards rise in one by one when the section scrolls into view */
 .sv-grid.sv-js .sv-card { opacity: 0; transform: translateY(46px) scale(.96); }
@@ -223,9 +223,8 @@
     opacity: 1; transform: none;
     transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2, .7, .2, 1) var(--d, 0s), border-color .4s ease, box-shadow .5s ease;
 }
-.sv-grid.sv-js.sv-in .sv-card:hover,
-.sv-grid.sv-js.sv-in .sv-card:focus,
-.sv-grid.sv-js.sv-in .sv-card:active {
+.sv-grid.sv-js.sv-in .sv-card.active,
+.sv-grid.sv-js.sv-in .sv-card:focus-visible {
     transform: translateY(-8px);
     transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
 }
@@ -247,10 +246,13 @@
     .sv-ico { width: 60px; height: 60px; margin-bottom: 20px; }
     .sv-card h3 { font-size: 21px; margin-bottom: 12px; }
     .sv-card p { font-size: 15px; }
+    /* on phones a smaller lift so cards never touch each other */
+    .sv-card.active,
+    .sv-grid.sv-js.sv-in .sv-card.active { transform: translateY(-4px); }
 }
 @media (prefers-reduced-motion: reduce) {
     .sv-card, .sv-card::before, .sv-ico, .sv-card h3::after { transition: none; }
-    .sv-card:hover .sv-ico svg *, .sv-card:focus .sv-ico svg * { animation: none; }
+    .sv-card.active .sv-ico svg *, .sv-card:focus-visible .sv-ico svg * { animation: none; }
     .sv-grid.sv-js .sv-card { opacity: 1; transform: none; }
 }
 
@@ -267,8 +269,8 @@
         background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
         padding: 30px 0 100px;
         position: relative;
-        --pk-accent: var(--accent-color, #6b8e23);
-        --pk-dark: var(--primary-color, #1a1a1a);
+        --pk-accent: var(--nav-green, #1F5B3A);
+        --pk-dark: var(--nav-ink, #12281f);
     }
 
     .pk-card {
@@ -347,7 +349,7 @@
         color: #111111 !important;
         text-decoration: none;
     }
-    .pk-title a:hover { color: var(--pk-accent) !important; }
+    .pk-title a:hover { color: var(--nav-gold, #e0b14a) !important; }
 
     .pk-desc {
         font-size: 17px;
@@ -394,7 +396,11 @@
         color: #fff !important;
     }
     .pk-btn-fill .pk-btn-ico { background: var(--pk-dark); color: #fff; }
-    .pk-btn-fill:hover { filter: brightness(0.88); }
+    .pk-btn-fill:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f) !important;
+    }
     .pk-btn-fill:hover .pk-btn-ico { transform: translateX(3px); }
 
     .pk-btn-line {
@@ -404,22 +410,30 @@
     }
     .pk-btn-line .pk-btn-ico { background: var(--pk-accent); color: #fff; }
     .pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
-    .pk-btn-line:hover { background: var(--pk-accent); color: #fff !important; }
-    .pk-btn-line:hover .pk-btn-ico { background: #fff; color: var(--pk-accent); transform: translate(2px, -2px); }
+    .pk-btn-line:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f) !important;
+    }
+    .pk-btn-line:hover .pk-btn-ico { background: var(--nav-ink, #12281f); color: #fff; transform: translate(2px, -2px); }
 
     .pk-more { text-align: center; margin-top: 40px; }
     .pk-more a {
         display: inline-flex; align-items: center; gap: 10px;
         padding: 13px 30px;
         border-radius: 50px;
-        border: 1.5px solid #265648;
-        background: #265648;
+        border: 1.5px solid var(--nav-green, #1F5B3A);
+        background: var(--nav-green, #1F5B3A);
         color: #fff;
         font-size: 15px; font-weight: 600;
         text-decoration: none;
         transition: all 0.3s ease;
     }
-    .pk-more a:hover { background: #c9972b; border-color: #c9972b; }
+    .pk-more a:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f);
+    }
 
     @media (max-width: 575px) {
         .pk-section { padding-bottom: 60px; }
@@ -456,13 +470,13 @@
         background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
         padding: 50px 0 90px;
         position: relative;
-        --tc-green: var(--accent-color, #265648);
+        --tc-green: var(--nav-green, #1F5B3A);
         --tc-tint: #dfe9dc;
         --tc-tint: color-mix(in srgb, var(--tc-green) 14%, #ffffff);
     }
     .tc-title-row { display: flex; align-items: center; justify-content: center; gap: 22px; }
     .tc-title-row h2 { margin: 0; }
-    .tc-line { flex: 0 1 90px; height: 1px; background: rgba(38, 86, 72, 0.45); }
+    .tc-line { flex: 0 1 90px; height: 1px; background: rgba(31, 91, 58, 0.45); }
 
     .tc-grid {
         --tc-dur: 3500ms;
@@ -488,7 +502,7 @@
     }
     .tc-item.active {
         background: #ffffff;
-        border-color: rgba(38, 86, 72, 0.12);
+        border-color: rgba(31, 91, 58, 0.12);
         box-shadow: 0 16px 36px rgba(20, 40, 30, 0.12);
     }
 
@@ -509,8 +523,8 @@
         animation: tcPulse 1.6s ease-out infinite;
     }
     @keyframes tcPulse {
-        0%   { box-shadow: 0 0 0 0 rgba(38, 86, 72, 0.35); }
-        100% { box-shadow: 0 0 0 16px rgba(38, 86, 72, 0); }
+        0%   { box-shadow: 0 0 0 0 rgba(31, 91, 58, 0.35); }
+        100% { box-shadow: 0 0 0 16px rgba(31, 91, 58, 0); }
     }
 
     .tc-no {
@@ -735,7 +749,7 @@
 
     /* ================= FAQ (sticky left, scrolling accordion on the right) ================= */
     .fq-section {
-        --fq-green: var(--accent-color, #265648);
+        --fq-green: var(--nav-green, #1F5B3A);
         --fq-tint: #dfe9dc;
         --fq-tint: color-mix(in srgb, var(--fq-green) 14%, #ffffff);
         background-color: #fcf7f6;
@@ -771,12 +785,12 @@
     .fq-ask .fq-ask-ico {
         width: 40px; height: 40px;
         border-radius: 50%;
-        background: #12281f; color: #fff;
+        background: var(--nav-ink, #12281f); color: #fff;
         display: flex; align-items: center; justify-content: center;
         font-size: 13px;
         transition: transform 0.3s ease;
     }
-    .fq-ask:hover { filter: brightness(0.9); color: #fff; }
+    .fq-ask:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
     .fq-ask:hover .fq-ask-ico { transform: translate(2px, -2px); }
 
     .fq-google {
@@ -1040,8 +1054,8 @@
         font-size: 15px; font-weight: 600;
         cursor: pointer; transition: all .3s ease;
     }
-    .fl-btn:hover { border-color: #265648; color: #265648; }
-    .fl-btn.active { background: #265648; border-color: #265648; color: #fff; }
+    .fl-btn:hover { border-color: var(--nav-green, #1F5B3A); color: var(--nav-green, #1F5B3A); }
+    .fl-btn.active { background: var(--nav-green, #1F5B3A); border-color: var(--nav-green, #1F5B3A); color: #fff; }
     @media (max-width: 575px) {
         .fl-filters { gap: 8px; margin-bottom: 30px; }
         .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
@@ -1195,15 +1209,15 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 15px;
     font-weight: 600;
-    color: #265648;
+    color: var(--nav-green, #1F5B3A);
 }
 .about-story .st-more i { font-size: 12px; transition: transform 0.3s ease; }
 .about-story .st-more.open i { transform: rotate(180deg); }
-.about-story .st-more:hover { color: #c9972b; }
+.about-story .st-more:hover { color: var(--nav-gold, #e0b14a); }
 
 /* ---------- 2x2 point cards ---------- */
 .about-story .st-route {
-    --st-accent: var(--accent-color, #265648);
+    --st-accent: var(--nav-green, #1F5B3A);
     --st-border: #cfdcd3;
     --st-border: color-mix(in srgb, var(--st-accent) 28%, #ffffff);
     --st-shadow: rgba(20, 40, 30, 0.10);
@@ -1267,14 +1281,33 @@
     justify-content: flex-start;
     gap: 16px;
 }
+
+/* "book now" (outlined) */
 .about-story .about-body-footer .btn-default.btn-book {
     background: transparent;
-    color: #265648;
-    border: 1.5px solid #265648;
+    color: var(--nav-green, #1F5B3A);
+    border: 1.5px solid var(--nav-green, #1F5B3A);
 }
 .about-story .about-body-footer .btn-default.btn-book:hover {
-    background: #265648;
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+
+/* "contact us" (filled) */
+.about-story .about-body-footer .btn-default:not(.btn-book) {
+    background: var(--nav-green, #1F5B3A);
+    border: 1.5px solid var(--nav-green, #1F5B3A);
     color: #fff;
+}
+.about-story .about-body-footer .btn-default:not(.btn-book):hover {
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+/* theme's hover fill layer */
+.about-story .about-body-footer .btn-default::after {
+    background: var(--nav-gold, #e0b14a) !important;
 }
 
 /* ---------- tablet ---------- */
@@ -1439,14 +1472,35 @@
                 <p>Local experts help you discover Malabar's culture and hidden places.</p>
             </a>
 
+            <!-- Car Rentals: side-view car with windows, door handles and wheels -->
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M9 30v-6l4-11h22l4 11v6z"/><path pathLength="1" d="M9 24h30"/><circle pathLength="1" cx="15" cy="27" r="1.5"/><circle pathLength="1" cx="33" cy="27" r="1.5"/><path pathLength="1" d="M12 30v7h6v-7M30 30v7h6v-7"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path pathLength="1" d="M8 34H5.5A1.5 1.5 0 0 1 4 32.5V27C4 25.7 4.9 24.6 6.1 24.2L13 22L17 15.5H31L35 22L41.9 24.2C43.1 24.6 44 25.7 44 27V32.5A1.5 1.5 0 0 1 42.5 34H40"/>
+                    <path pathLength="1" d="M16 34H32"/>
+                    <path pathLength="1" d="M13 22H35"/>
+                    <path pathLength="1" d="M24 15.5V22"/>
+                    <path pathLength="1" d="M18 27.5H21"/>
+                    <path pathLength="1" d="M27 27.5H30"/>
+                    <path pathLength="1" d="M39 27.5H41.5"/>
+                    <circle pathLength="1" cx="12" cy="34" r="4"/>
+                    <circle pathLength="1" cx="36" cy="34" r="4"/>
+                </svg></span>
                 <h3>Car Rentals</h3>
                 <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
             </a>
 
+            <!-- Taxi Services: side-view car with roof sign and stripe -->
             <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="18" y="6" width="12" height="6" rx="1.5"/><path pathLength="1" d="M24 12v3"/><path pathLength="1" d="M5 34v-6c0-1 .5-2 1.5-2.5L11 17h26l4.5 8.5c1 .5 1.5 1.5 1.5 2.5v6z"/><circle pathLength="1" cx="14" cy="36" r="4"/><circle pathLength="1" cx="34" cy="36" r="4"/></svg></span>
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
+                    <rect pathLength="1" x="19" y="6" width="10" height="5" rx="1.5"/>
+                    <path pathLength="1" d="M24 11V17.5"/>
+                    <path pathLength="1" d="M8 36H5.5A1.5 1.5 0 0 1 4 34.5V29C4 27.7 4.9 26.6 6.1 26.2L13 24L17 17.5H31L35 24L41.9 26.2C43.1 26.6 44 27.7 44 29V34.5A1.5 1.5 0 0 1 42.5 36H40"/>
+                    <path pathLength="1" d="M16 36H32"/>
+                    <path pathLength="1" d="M13 24H35"/>
+                    <path pathLength="1" d="M4.5 30.5H43.5"/>
+                    <circle pathLength="1" cx="12" cy="36" r="4"/>
+                    <circle pathLength="1" cx="36" cy="36" r="4"/>
+                </svg></span>
                 <h3>Taxi Services</h3>
                 <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
             </a>
@@ -2173,15 +2227,95 @@
     bindFilters('pkFilters', pkCar);
 </script>
 
-<!-- Services: cards rise in one by one on scroll -->
+<!-- Services: cards rise in on scroll + automatic "hover" (desktop: timed loop, touch: follows scroll) -->
 <script>
     (function () {
         var grid = document.querySelector('.sv-grid');
         if (!grid) return;
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce || !('IntersectionObserver' in window)) return;
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.sv-card'));
+        if (!cards.length) return;
 
-        var cards = grid.querySelectorAll('.sv-card');
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var DUR = 3000;
+        var cur = -1, timer = null, visible = false, hovering = false, ticking = false;
+
+        /* phones / tablets (no real hover) vs. mouse devices */
+        function isTouch() {
+            return (window.matchMedia && window.matchMedia('(hover: none)').matches) || window.innerWidth < 576;
+        }
+
+        function activate(i) {
+            if (i === cur) return;
+            cards.forEach(function (c) { c.classList.remove('active'); });
+            if (i >= 0 && cards[i]) cards[i].classList.add('active');
+            cur = i;
+        }
+
+        /* ---- desktop: cards light up one by one ---- */
+        function next() { activate((cur + 1) % cards.length); }
+        function stop() { if (timer) clearInterval(timer); timer = null; }
+        function start() {
+            stop();
+            if (reduce || hovering || !visible || isTouch()) return;
+            timer = setInterval(next, DUR);
+        }
+
+        /* ---- touch: the card closest to the screen centre is active ---- */
+        function byScroll() {
+            ticking = false;
+            if (!visible || !isTouch()) return;
+            var mid = window.innerHeight / 2, best = -1, bestD = Infinity;
+            cards.forEach(function (c, i) {
+                var r = c.getBoundingClientRect();
+                var d = Math.abs((r.top + r.height / 2) - mid);
+                if (d < bestD) { bestD = d; best = i; }
+            });
+            activate(best);
+        }
+        function onScroll() {
+            if (ticking || !isTouch()) return;
+            ticking = true;
+            window.requestAnimationFrame(byScroll);
+        }
+
+        function refresh() {
+            if (!visible) return;
+            if (isTouch()) { stop(); byScroll(); }
+            else { if (cur < 0) activate(0); start(); }
+        }
+
+        /* real mouse: hover takes over and pauses the loop (touch "mouseenter" is ignored) */
+        cards.forEach(function (c, i) {
+            c.addEventListener('pointerenter', function (e) {
+                if (e.pointerType !== 'mouse') return;
+                hovering = true; stop(); activate(i);
+            });
+            c.addEventListener('touchstart', function () { activate(i); }, { passive: true });
+            c.addEventListener('focus', function () { hovering = true; stop(); activate(i); });
+        });
+        grid.addEventListener('pointerleave', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            hovering = false; start();
+        });
+        grid.addEventListener('focusout', function (e) {
+            if (!grid.contains(e.relatedTarget)) { hovering = false; start(); }
+        });
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', refresh);
+
+        /* run only while the grid is on screen */
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) {
+                visible = entries[0].isIntersecting;
+                if (visible) refresh(); else stop();
+            }, { threshold: 0.1 }).observe(grid);
+        } else {
+            visible = true; refresh();
+        }
+
+        /* ---- cards rise in one by one on scroll ---- */
+        if (reduce || !('IntersectionObserver' in window)) return;
         var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 1200 ? 2 : 4);
         cards.forEach(function (c, i) { c.style.setProperty('--d', ((i % cols) * 0.12) + 's'); });
         grid.classList.add('sv-js');

@@ -326,10 +326,14 @@
         .ms-services .ms-dots { display: none; }
     }
 
-    /* ================= SERVICES (circle carousel) ================= */
+    /* ================= SERVICES (icon cards, same as the About page) =================
+       The "active" card (green fill + gold icon) is set by JS:
+       - desktop: cards light up one by one automatically, mouse hover takes over
+       - phones/tablets (no hover): the card nearest the screen centre lights up while scrolling
+       No :hover / :focus / :active rules are used, so nothing gets stuck after a tap. */
     .sv-section {
-        --sv-green: #1d5a3a;
-        --sv-gold: #c9a45b;
+        --sv-green: var(--nav-green, #1F5B3A);
+        --sv-gold:  var(--nav-gold, #e0b14a);
         background-color: #fcf7f6;
         background-image:
             linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
@@ -339,115 +343,150 @@
         background-size: 100% 200px, 100% 200px, cover, cover;
         background-position: top, bottom, center, center;
         background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 90px 0 100px;
+        padding: 20px 0 60px;
         position: relative;
         overflow: hidden;
     }
+    @media (min-width: 1200px) { .sv-section .container { max-width: 1440px; } }
+    @media (min-width: 1600px) { .sv-section .container { max-width: 1560px; } }
 
-    .svc-stage {
-        --d: 340px;                               /* circle size, set by the script */
-        position: relative; width: 100%; max-width: 1700px; margin: 16px auto 0;
-        height: calc(var(--d) + 90px);
-        touch-action: pan-y; user-select: none;
-    }
-    .svc-floor {                                  /* soft gold floor rings */
-        position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
-        width: 92%; height: calc(var(--d) * 0.5); border-radius: 50%;
-        border: 1px solid rgba(201, 164, 91, 0.38); pointer-events: none;
-    }
-    .svc-floor::after {
-        content: ""; position: absolute; inset: 14% 8%; border-radius: 50%;
-        border: 1px solid rgba(201, 164, 91, 0.24);
-    }
-    .svc-glow {
-        position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-        width: calc(var(--d) * 1.15); height: calc(var(--d) * 0.2);
-        background: radial-gradient(ellipse at center, rgba(29, 90, 58, 0.20), rgba(29, 90, 58, 0) 70%);
-        pointer-events: none;
+    .sv-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 30px;
+        margin: 30px 0 0;
     }
 
-    .svc-item {
-        position: absolute; left: 50%; top: calc(50% - 18px);
-        width: var(--d); height: var(--d);
-        display: block; overflow: hidden; border-radius: 50%;
-        background: linear-gradient(160deg, #fbfdf9, #dfeee3);
-        border: 3px solid var(--sv-gold);
-        box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.92), 0 16px 36px rgba(20, 40, 30, 0.16);
-        text-decoration: none; cursor: pointer; will-change: transform;
-        transition: transform .65s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, box-shadow .4s ease;
+    .sv-card {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        padding: 34px 30px 36px;
+        border-radius: 18px;
+        background: #ffffff;
+        border: 1px solid rgba(31, 91, 58, 0.14);
+        box-shadow: 0 10px 26px rgba(20, 40, 30, 0.08);
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
     }
-    .svc-item.is-active {
-        box-shadow: inset 0 0 0 6px #ffffff, 0 26px 56px rgba(20, 40, 30, 0.28), 0 0 0 7px rgba(201, 164, 91, 0.18);
+    /* green fill that grows out from the icon corner */
+    .sv-card::before {
+        content: "";
+        position: absolute; inset: 0; z-index: -1;
+        background: var(--sv-green);
+        background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 60%);
+        clip-path: circle(0 at 14% 20%);
+        transition: clip-path .75s cubic-bezier(.65, 0, .25, 1);
     }
-    .svc-item:focus-visible { outline: 3px solid var(--sv-gold); outline-offset: 4px; }
+    .sv-card.active,
+    .sv-card:focus-visible {
+        transform: translateY(-8px);
+        border-color: var(--sv-gold);
+        box-shadow: 0 24px 46px rgba(6, 28, 20, 0.34);
+        outline: none;
+    }
+    .sv-card.active::before,
+    .sv-card:focus-visible::before { clip-path: circle(150% at 14% 20%); }
 
-    .svc-pic {
-        position: absolute; left: 0; right: 0; top: 0; bottom: 24%;
-        display: flex; align-items: center; justify-content: center;
-        padding: 9% 12% 3%;
+    .sv-ico {
+        display: block;
+        width: 76px; height: 76px;
+        margin-bottom: 30px;
+        color: var(--sv-green);
+        transition: color .4s ease .15s, transform .5s ease;
     }
-    .svc-pic img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+    .sv-ico svg {
+        display: block; width: 100%; height: 100%;
+        fill: none; stroke: currentColor;
+        stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+        overflow: visible;
+    }
+    .sv-ico svg * { stroke-dasharray: 1; stroke-dashoffset: 0; }
 
-    .svc-label {                                  /* green dome at the bottom of each circle */
-        position: absolute; left: -2%; right: -2%; bottom: 0; height: 31%;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: calc(var(--d) * 0.02); padding-top: calc(var(--d) * 0.03);
-        background: linear-gradient(180deg, #236a43, #17492f);
-        border-radius: 50% 50% 0 0 / 46% 46% 0 0;
-    }
-    .svc-label b {
-        font-family: 'Playfair Display', serif; font-weight: 500;
-        font-size: calc(var(--d) * 0.075); line-height: 1.1;
-        color: #ffffff; text-align: center;
-    }
-    .svc-label i { display: block; width: calc(var(--d) * 0.07); height: 2px; border-radius: 2px; background: var(--sv-gold); }
+    .sv-card.active .sv-ico,
+    .sv-card:focus-visible .sv-ico { color: var(--sv-gold); transform: scale(1.08) rotate(-4deg); }
 
-    .svc-arrow {
-        position: absolute; top: calc(50% - 18px); transform: translateY(-50%); z-index: 40;
-        width: 56px; height: 56px; border: 0; border-radius: 50%;
-        background: var(--sv-green); color: #ffffff; font-size: 18px;
-        display: flex; align-items: center; justify-content: center; cursor: pointer;
-        box-shadow: 0 8px 20px rgba(20, 60, 40, 0.35);
-        transition: background .3s ease, transform .3s ease;
+    /* icon draws itself again when the card becomes active */
+    .sv-card.active .sv-ico svg *,
+    .sv-card:focus-visible .sv-ico svg * { animation: svDraw .9s ease-out both; }
+    @keyframes svDraw {
+        from { stroke-dashoffset: 1; }
+        to   { stroke-dashoffset: 0; }
     }
-    .svc-arrow:hover { background: #c9972b; }
-    .svc-prev { left: 24px; }
-    .svc-next { right: 24px; }
 
-    .svc-cap {
-        max-width: 660px; margin: 8px auto 0; text-align: center; min-height: 170px;
-        transition: opacity .35s ease, transform .35s ease;
+    .sv-card h3 {
+        position: relative;
+        margin: 0 0 24px;
+        font-size: 23px; font-weight: 700; line-height: 1.25;
+        text-transform: none;
+        color: var(--sv-green);
+        transition: color .4s ease .15s;
     }
-    .svc-cap.is-swap { opacity: 0; transform: translateY(8px); }
-    .svc-cap h3 { margin: 0 0 10px; font-size: 30px; font-weight: 700; color: #1f3a2c; text-transform: none; }
-    .svc-cap p { margin: 0 0 22px; font-size: 17px; line-height: 1.7; color: #5b6560; }
-    .svc-btn {
-        display: inline-flex; align-items: center; gap: 10px;
-        padding: 13px 30px; border-radius: 50px;
-        background: var(--sv-green); border: 1.5px solid var(--sv-green);
-        color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none;
-        transition: all .3s ease;
+    /* small gold line under the title grows when active */
+    .sv-card h3::after {
+        content: "";
+        position: absolute; left: 0; bottom: -12px;
+        width: 0; height: 3px; border-radius: 3px;
+        background: var(--sv-gold);
+        transition: width .6s ease .2s;
     }
-    .svc-btn:hover { background: #c9972b; border-color: #c9972b; }
-    .svc-btn i { font-size: 13px; transition: transform .3s ease; }
-    .svc-btn:hover i { transform: translateX(4px); }
+    .sv-card.active h3::after,
+    .sv-card:focus-visible h3::after { width: 54px; }
 
+    .sv-card p {
+        margin: 0;
+        font-size: 16px; line-height: 1.6;
+        color: #5b6560;
+        transition: color .4s ease .15s;
+    }
+    .sv-card.active h3,
+    .sv-card:focus-visible h3 { color: #ffffff; }
+    .sv-card.active p,
+    .sv-card:focus-visible p { color: rgba(255, 255, 255, 0.84); }
+
+    /* cards rise in one by one when the section scrolls into view */
+    .sv-grid.sv-js .sv-card { opacity: 0; transform: translateY(46px) scale(.96); }
+    .sv-grid.sv-js.sv-in .sv-card {
+        opacity: 1; transform: none;
+        transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2, .7, .2, 1) var(--d, 0s), border-color .4s ease, box-shadow .5s ease;
+    }
+    .sv-grid.sv-js.sv-in .sv-card.active,
+    .sv-grid.sv-js.sv-in .sv-card:focus-visible {
+        transform: translateY(-8px);
+        transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
+    }
+
+    @media (max-width: 1199px) {
+        .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    }
     @media (max-width: 991px) {
-        .sv-section { padding: 60px 0 70px; }
-        .svc-arrow { width: 46px; height: 46px; font-size: 15px; }
-        .svc-prev { left: 10px; }
-        .svc-next { right: 10px; }
-        .svc-cap h3 { font-size: 26px; }
-        .svc-cap { min-height: 190px; padding: 0 16px; }
+        .sv-section { padding: 10px 0 40px; }
+        .sv-section .section-row { margin-bottom: 0 !important; }
+        .sv-section .section-title { margin-bottom: 0 !important; }
+        .sv-card { padding: 28px 24px 30px; }
+        .sv-ico { width: 68px; height: 68px; margin-bottom: 24px; }
     }
     @media (max-width: 575px) {
-        .svc-arrow { width: 40px; height: 40px; font-size: 13px; }
-        .svc-cap h3 { font-size: 23px; }
-        .svc-cap p { font-size: 15px; }
-        .svc-btn { padding: 10px 22px; font-size: 13.5px; }
+        .sv-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
+        .sv-section { padding-bottom: 28px; }
+        .sv-card { padding: 24px 22px 26px; border-radius: 16px; }
+        .sv-ico { width: 60px; height: 60px; margin-bottom: 20px; }
+        .sv-card h3 { font-size: 21px; margin-bottom: 12px; }
+        .sv-card p { font-size: 15px; }
+        /* on phones a smaller lift so cards never touch each other */
+        .sv-card.active,
+        .sv-grid.sv-js.sv-in .sv-card.active { transform: translateY(-4px); }
     }
     @media (prefers-reduced-motion: reduce) {
-        .svc-item, .svc-cap, .svc-arrow { transition: none; }
+        .sv-card, .sv-card::before, .sv-ico, .sv-card h3::after { transition: none; }
+        .sv-card.active .sv-ico svg *, .sv-card:focus-visible .sv-ico svg * { animation: none; }
+        .sv-grid.sv-js .sv-card { opacity: 1; transform: none; }
     }
 
     
@@ -483,7 +522,7 @@
         padding: 60px 0 100px;
         position: relative;
     }
-    .pk-section { --pk-accent: var(--accent-color, #6b8e23); --pk-dark: var(--primary-color, #1a1a1a); }
+        .pk-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
 
     .pk-card {
         display: flex; flex-direction: column; height: 100%;
@@ -578,15 +617,15 @@
     }
 
     .pk-btn-fill { background: var(--pk-accent); border: 1.5px solid var(--pk-accent); color: #fff !important; }
-    .pk-btn-fill .pk-btn-ico { background: var(--pk-dark); color: #fff; }
-    .pk-btn-fill:hover { filter: brightness(0.88); }
-    .pk-btn-fill:hover .pk-btn-ico { transform: translateX(3px); }
+        .pk-btn-fill .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); }
+    .pk-btn-fill:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark) !important; }
+    .pk-btn-fill:hover .pk-btn-ico { background: var(--pk-accent); color: #fff; transform: translateX(3px); }
 
     .pk-btn-line { background: transparent; border: 1.5px solid var(--pk-accent); color: var(--pk-accent) !important; }
     .pk-btn-line .pk-btn-ico { background: var(--pk-accent); color: #fff; }
     .pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
     .pk-btn-line:hover { background: var(--pk-accent); color: #fff !important; }
-    .pk-btn-line:hover .pk-btn-ico { background: #fff; color: var(--pk-accent); transform: translate(2px, -2px); }
+        .pk-btn-line:hover .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); transform: translate(2px, -2px); }
 
     .pk-more { text-align: center; margin-top: 40px; }
     .pk-more a {
@@ -654,7 +693,7 @@
         font-size: 28px; font-weight: 600; line-height: 1.2;
         color: #1d2b24; margin: 0 0 10px; text-transform: none;
     }
-    .ac-section { --pk-accent: var(--accent-color, #6b8e23); --pk-dark: var(--primary-color, #1a1a1a); }
+        .ac-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
     .ac-media > a { display: block; width: 100%; height: 100%; }
     .ac-title a { color: inherit; text-decoration: none; }
     .ac-title a:hover { color: var(--pk-accent); }
@@ -1467,7 +1506,6 @@
     }
     /* ================= COMPACT: Services -> Popular Packages ================= */
 .sv-section { padding-bottom: 20px !important; }
-.svc-cap { min-height: 0; margin-top: 4px; }
 
 .pk-section { padding-top: 20px !important; }
 
@@ -1510,6 +1548,68 @@
         padding: 150px 0 60px !important;
     }
 }
+/* ================= PALETTE FROM base.html (keep at the very end) ================= */
+
+/* About Us */
+.about-us { --ab-green: var(--nav-green, #1F5B3A); }
+.about-us .ab-btn-fill:hover {
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+
+/* View All Packages / View All Activities */
+.pk-more a, .ac-more a {
+    background: var(--nav-green, #1F5B3A);
+    border-color: var(--nav-green, #1F5B3A);
+}
+.pk-more a:hover, .ac-more a:hover {
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+
+/* Why Choose Us */
+.why-choose-us .wc-btn { border-color: var(--nav-green, #1F5B3A); }
+.why-choose-us .wc-btn-fill { background: var(--nav-green, #1F5B3A); }
+.why-choose-us .wc-btn-fill:hover {
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+.why-choose-us .wc-btn-line { color: var(--nav-green, #1F5B3A); }
+.why-choose-us .wc-btn-line:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
+
+/* Filter pills */
+.fl-btn:hover {
+    background: var(--nav-gold, #e0b14a);
+    border-color: var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+.fl-btn.active, .fl-btn.active:hover {
+    background: var(--nav-green, #1F5B3A);
+    border-color: var(--nav-green, #1F5B3A);
+    color: #fff;
+}
+
+/* Carousel arrows + dots */
+.ms-services .ms-nav button.ms-arrow {
+    border-color: var(--nav-green, #1F5B3A);
+    color: var(--nav-green, #1F5B3A);
+}
+.ms-services .ms-nav button.ms-arrow:hover {
+    background: var(--nav-green, #1F5B3A);
+    color: #fff;
+}
+.ms-services .ms-dot.active { background: var(--nav-green, #1F5B3A); }
+
+/* FAQ + Terms accents */
+.fq-section { --fq-green: var(--nav-green, #1F5B3A); }
+.tc-section { --tc-green: var(--nav-green, #1F5B3A); }
+.fq-ask .fq-ask-ico { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+
+/* Top bar */
+.top-bar a i { color: var(--nav-green, #1F5B3A); }
 </style>
 {% endblock %}
 
@@ -1517,9 +1617,9 @@
 <!-- Top contact bar (home page only) -->
 <div class="top-bar">
     <div class="top-bar-inner">
-        <a href="mailto:info@malabaroutes.com"><i class="fa-solid fa-envelope"></i>malabaroutes@gmail.com</a>
-        <a href="tel:+919446062666"><i class="fa-solid fa-phone"></i>+91 8848333382</a>
-        <a href="tel:+919446062666"><i class="fa-solid fa-phone"></i>+91 9526220085</a>
+                <a href="mailto:malabaroutes@gmail.com"><i class="fa-solid fa-envelope"></i>malabaroutes@gmail.com</a>
+        <a href="tel:+918848333382"><i class="fa-solid fa-phone"></i>+91 8848333382</a>
+        <a href="tel:+919526220085"><i class="fa-solid fa-phone"></i>+91 9526220085</a>
     </div>
 </div>
 
@@ -1691,7 +1791,8 @@
     </div>
 </div>
 <!-- About Us End -->
-<!-- Malabaroutes Services -->
+
+<!-- Malabaroutes Services (icon cards, same as the About page) -->
 <div class="sv-section">
     <div class="container">
         <div class="row section-row align-items-center">
@@ -1702,54 +1803,77 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="svc-stage" id="svcStage" role="region" aria-roledescription="carousel" aria-label="Our services">
-        <span class="svc-floor" aria-hidden="true"></span>
-        <span class="svc-glow" aria-hidden="true"></span>
+        <div class="sv-grid">
 
-        <a href="{% url 'contact' %}" class="svc-item" data-text="We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/visa-2.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Visa</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="We help you with fast processing of passport applications, renewals and replacement.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/passport.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Passport</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Let us help you, we will take care of your tickets at the lowest cost available.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/tickets.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Tickets</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/house boat.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>House Boat</b><i></i></span>
-        </a>
-        <a href="{% url 'packages' %}" class="svc-item" data-text="Book International or national Holiday Packages at best prices and plan memorable Holidays.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/packages.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Packages</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Local experts help you discover Malabar's culture and hidden places.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/tours guied.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Travel Guides</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a rental car, we'll take care of that.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/car rental.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Car Rentals</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a taxi, we'll take care of that.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/taxi.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Taxi Services</b><i></i></span>
-        </a>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="9" y="6" width="30" height="36" rx="3"/><path pathLength="1" d="M16 15h16M16 21h10"/><circle pathLength="1" cx="29" cy="32" r="5"/><path pathLength="1" d="M26.7 32l1.8 1.8 3.2-3.6"/></svg></span>
+                <h3>Visa</h3>
+                <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+            </a>
 
-        <button type="button" class="svc-arrow svc-prev" aria-label="Previous service"><i class="fa-solid fa-chevron-left"></i></button>
-        <button type="button" class="svc-arrow svc-next" aria-label="Next service"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="10" y="5" width="28" height="38" rx="3"/><circle pathLength="1" cx="24" cy="21" r="8"/><path pathLength="1" d="M16 21h16M24 13c-3.5 3-3.5 13 0 16M24 13c3.5 3 3.5 13 0 16M17 36h14"/></svg></span>
+                <h3>Passport</h3>
+                <p>We help you with fast processing of passport applications, renewals and replacement.</p>
+            </a>
 
-    <div class="container">
-        <div class="svc-cap" id="svcCap" aria-live="polite">
-            <h3>House Boat</h3>
-            <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-            <a href="{% url 'contact' %}" class="svc-btn">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M42 6L6 21l15 6 6 15z"/><path pathLength="1" d="M42 6L21 27"/></svg></span>
+                <h3>Tickets</h3>
+                <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M6 30h36l-5 9H11z"/><path pathLength="1" d="M13 30v-8h22v8"/><path pathLength="1" d="M18 22v-5h12v5"/><path pathLength="1" d="M6 44c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0"/></svg></span>
+                <h3>House Boat</h3>
+                <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
+            </a>
+
+            <a href="{% url 'packages' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="6" y="14" width="36" height="26" rx="4"/><path pathLength="1" d="M17 14v-4a3 3 0 013-3h8a3 3 0 013 3v4M6 26h36M20 26v4h8v-4"/></svg></span>
+                <h3>Packages</h3>
+                <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M24 44S11 32.5 11 23a13 13 0 0126 0c0 9.5-13 21-13 21z"/><circle pathLength="1" cx="24" cy="23" r="5"/></svg></span>
+                <h3>Travel Guides</h3>
+                <p>Local experts help you discover Malabar's culture and hidden places.</p>
+            </a>
+
+            <!-- Car Rentals: side-view car with windows, door handles and wheels -->
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path pathLength="1" d="M8 34H5.5A1.5 1.5 0 0 1 4 32.5V27C4 25.7 4.9 24.6 6.1 24.2L13 22L17 15.5H31L35 22L41.9 24.2C43.1 24.6 44 25.7 44 27V32.5A1.5 1.5 0 0 1 42.5 34H40"/>
+                    <path pathLength="1" d="M16 34H32"/>
+                    <path pathLength="1" d="M13 22H35"/>
+                    <path pathLength="1" d="M24 15.5V22"/>
+                    <path pathLength="1" d="M18 27.5H21"/>
+                    <path pathLength="1" d="M27 27.5H30"/>
+                    <path pathLength="1" d="M39 27.5H41.5"/>
+                    <circle pathLength="1" cx="12" cy="34" r="4"/>
+                    <circle pathLength="1" cx="36" cy="34" r="4"/>
+                </svg></span>
+                <h3>Car Rentals</h3>
+                <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
+            </a>
+
+            <!-- Taxi Services: side-view car with roof sign and stripe -->
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
+                    <rect pathLength="1" x="19" y="6" width="10" height="5" rx="1.5"/>
+                    <path pathLength="1" d="M24 11V17.5"/>
+                    <path pathLength="1" d="M8 36H5.5A1.5 1.5 0 0 1 4 34.5V29C4 27.7 4.9 26.6 6.1 26.2L13 24L17 17.5H31L35 24L41.9 26.2C43.1 26.6 44 27.7 44 29V34.5A1.5 1.5 0 0 1 42.5 36H40"/>
+                    <path pathLength="1" d="M16 36H32"/>
+                    <path pathLength="1" d="M13 24H35"/>
+                    <path pathLength="1" d="M4.5 30.5H43.5"/>
+                    <circle pathLength="1" cx="12" cy="36" r="4"/>
+                    <circle pathLength="1" cx="36" cy="36" r="4"/>
+                </svg></span>
+                <h3>Taxi Services</h3>
+                <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
+            </a>
         </div>
     </div>
 </div>
@@ -2788,110 +2912,105 @@
         else window.addEventListener('load', waitForPreloader);
     })();
 </script>
-<!-- Services: circle carousel (centre item is the biggest) -->
+
+<!-- Services: cards rise in on scroll + automatic "hover" (desktop: timed loop, touch: follows scroll) -->
 <script>
     (function () {
-        var stage = document.getElementById('svcStage');
-        if (!stage) return;
-        var items = Array.prototype.slice.call(stage.querySelectorAll('.svc-item'));
-        var cap = document.getElementById('svcCap');
-        var capT = cap.querySelector('h3'), capP = cap.querySelector('p'), capA = cap.querySelector('a');
-        var n = items.length, active = 3, timer = null;
-        var SCALES = [1, 0.78, 0.62, 0.5];
+        var grid = document.querySelector('.sv-grid');
+        if (!grid) return;
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.sv-card'));
+        if (!cards.length) return;
+
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var DUR = 3000;
+        var cur = -1, timer = null, visible = false, hovering = false, ticking = false;
 
-        function layout() {
-            var W = stage.clientWidth;
-            var vis = W < 576 ? 1 : (W < 992 ? 2 : 3);
-            var D = W < 576 ? W * 0.62 : (W < 992 ? Math.min(W * 0.42, 360) : Math.min(W * 0.235, 340));
-            stage.style.setProperty('--d', D + 'px');
-
-            var xs = [0];
-            for (var k = 1; k <= 3; k++) {
-                xs[k] = xs[k - 1] + D * SCALES[k - 1] / 2 + D * SCALES[k] / 2 - D * 0.03;
-            }
-            items.forEach(function (it, i) {
-                var o = ((i - active + n + n / 2) % n) - n / 2;      // -4 ... 3
-                var a = Math.abs(o), idx = Math.min(a, 3);
-                var x = (o < 0 ? -1 : 1) * xs[idx];
-                var shown = a <= vis;
-                it.style.transform = 'translate(-50%, -50%) translateX(' + x + 'px) scale(' + SCALES[idx] + ')';
-                it.style.zIndex = 20 - a;
-                it.style.opacity = shown ? 1 : 0;
-                it.style.pointerEvents = shown ? 'auto' : 'none';
-                it.tabIndex = shown ? 0 : -1;
-                it.setAttribute('aria-hidden', shown ? 'false' : 'true');
-                it.classList.toggle('is-active', o === 0);
-            });
+        /* phones / tablets (no real hover) vs. mouse devices */
+        function isTouch() {
+            return (window.matchMedia && window.matchMedia('(hover: none)').matches) || window.innerWidth < 576;
         }
 
-        function fillCaption() {
-            var it = items[active];
-            capT.textContent = it.querySelector('b').textContent;
-            capP.textContent = it.getAttribute('data-text');
-            capA.setAttribute('href', it.getAttribute('href'));
-        }
-        function swapCaption() {
-            cap.classList.add('is-swap');
-            setTimeout(function () { fillCaption(); cap.classList.remove('is-swap'); }, 180);
+        function activate(i) {
+            if (i === cur) return;
+            cards.forEach(function (c) { c.classList.remove('active'); });
+            if (i >= 0 && cards[i]) cards[i].classList.add('active');
+            cur = i;
         }
 
-        function setActive(i) {
-            active = ((i % n) + n) % n;
-            layout();
-            swapCaption();
-        }
-        function next() { setActive(active + 1); }
-        function prev() { setActive(active - 1); }
-
+        /* ---- desktop: cards light up one by one ---- */
+        function next() { activate((cur + 1) % cards.length); }
+        function stop() { if (timer) clearInterval(timer); timer = null; }
         function start() {
             stop();
-            if (reduce) return;
-            timer = setInterval(next, 3500);
+            if (reduce || hovering || !visible || isTouch()) return;
+            timer = setInterval(next, DUR);
         }
-        function stop() { if (timer) clearInterval(timer); timer = null; }
 
-        stage.querySelector('.svc-next').addEventListener('click', function () { next(); start(); });
-        stage.querySelector('.svc-prev').addEventListener('click', function () { prev(); start(); });
-
-        /* click a side circle to bring it to the centre; the centre circle follows its link */
-        var dragged = false;
-        items.forEach(function (it, i) {
-            it.addEventListener('click', function (e) {
-                if (dragged) { e.preventDefault(); dragged = false; return; }
-                if (i !== active) { e.preventDefault(); setActive(i); start(); }
+        /* ---- touch: the card closest to the screen centre is active ---- */
+        function byScroll() {
+            ticking = false;
+            if (!visible || !isTouch()) return;
+            var mid = window.innerHeight / 2, best = -1, bestD = Infinity;
+            cards.forEach(function (c, i) {
+                var r = c.getBoundingClientRect();
+                var d = Math.abs((r.top + r.height / 2) - mid);
+                if (d < bestD) { bestD = d; best = i; }
             });
+            activate(best);
+        }
+        function onScroll() {
+            if (ticking || !isTouch()) return;
+            ticking = true;
+            window.requestAnimationFrame(byScroll);
+        }
+
+        function refresh() {
+            if (!visible) return;
+            if (isTouch()) { stop(); byScroll(); }
+            else { if (cur < 0) activate(0); start(); }
+        }
+
+        /* real mouse: hover takes over and pauses the loop (touch "mouseenter" is ignored) */
+        cards.forEach(function (c, i) {
+            c.addEventListener('pointerenter', function (e) {
+                if (e.pointerType !== 'mouse') return;
+                hovering = true; stop(); activate(i);
+            });
+            c.addEventListener('touchstart', function () { activate(i); }, { passive: true });
+            c.addEventListener('focus', function () { hovering = true; stop(); activate(i); });
+        });
+        grid.addEventListener('pointerleave', function (e) {
+            if (e.pointerType !== 'mouse') return;
+            hovering = false; start();
+        });
+        grid.addEventListener('focusout', function (e) {
+            if (!grid.contains(e.relatedTarget)) { hovering = false; start(); }
         });
 
-        /* swipe / drag */
-        var startX = null;
-        stage.addEventListener('pointerdown', function (e) { startX = e.clientX; stop(); });
-        stage.addEventListener('pointerup', function (e) {
-            if (startX === null) return;
-            var diff = e.clientX - startX;
-            dragged = Math.abs(diff) > 50;
-            if (dragged) { diff < 0 ? next() : prev(); }
-            startX = null;
-            start();
-        });
-        stage.addEventListener('pointercancel', function () { startX = null; });
-        stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', refresh);
 
-        stage.addEventListener('keydown', function (e) {
-            if (e.key === 'ArrowRight') { next(); start(); }
-            if (e.key === 'ArrowLeft') { prev(); start(); }
-        });
+        /* run only while the grid is on screen */
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) {
+                visible = entries[0].isIntersecting;
+                if (visible) refresh(); else stop();
+            }, { threshold: 0.1 }).observe(grid);
+        } else {
+            visible = true; refresh();
+        }
 
-        stage.addEventListener('mouseenter', stop);
-        stage.addEventListener('mouseleave', start);
-        document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+        /* ---- cards rise in one by one on scroll ---- */
+        if (reduce || !('IntersectionObserver' in window)) return;
+        var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 1200 ? 2 : 4);
+        cards.forEach(function (c, i) { c.style.setProperty('--d', ((i % cols) * 0.12) + 's'); });
+        grid.classList.add('sv-js');
 
-        var rt;
-        window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 150); });
-
-        layout();
-        fillCaption();
-        start();
+        new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { grid.classList.add('sv-in'); obs.disconnect(); }
+            });
+        }, { threshold: 0.15 }).observe(grid);
     })();
 </script>
 

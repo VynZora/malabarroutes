@@ -14,25 +14,6 @@
 
 {% block extra_css %}
 <style>
-/* ================= MALABAROUTES SERVICES ================= */
-.our-services.bg-section.ms-services,
-.our-services.ms-services {
-    position: relative;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    background-color: #fcf7f6 !important;
-    background-image:
-        linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-        linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-        linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
-        url('{% static 'malabar-static/mr5.png' %}') !important;
-    background-size: 100% 200px, 100% 200px, cover, cover !important;
-    background-position: top, bottom, center, center !important;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
-}
-
 /* ---- shared carousel parts (also used by packages and testimonials) ---- */
 .ms-services .ms-carousel { position: relative; }
 
@@ -108,229 +89,136 @@
     .ms-services .ms-dots { display: none; }
 }
 
-/* ================= Services: timeline ================= */
-.ms-services .tl-list {
+/* ================= SERVICES (circle carousel, same as home page) ================= */
+.sv-section {
+    --sv-green: #1d5a3a;
+    --sv-gold: #c9a45b;
+    background-color: #fcf7f6;
+    background-image:
+        linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+        linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+        linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+        url('{% static 'malabar-static/mr5.png' %}');
+    background-size: 100% 200px, 100% 200px, cover, cover;
+    background-position: top, bottom, center, center;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    padding: 20px 0 40px;
     position: relative;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 10px 0;
-}
-.ms-services .tl-list::before {          /* grey base line */
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, transparent, #b9cbc0 8%, #b9cbc0 92%, transparent);
-}
-
-/* scroll progress line (created by the script) */
-.ms-services .tl-progress {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 3px;
-    height: 0;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, #2f7f6a, #1f6b57);
-    border-radius: 3px;
-    z-index: 1;
-    pointer-events: none;
-}
-.ms-services .tl-progress::after {       /* glowing dot at the tip */
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -5px;
-    width: 12px;
-    height: 12px;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: #c9972b;
-    box-shadow: 0 0 0 4px rgba(201, 151, 43, 0.25), 0 0 12px rgba(201, 151, 43, 0.7);
-}
-
-.ms-services .tl-item {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 90px 1fr;
-    align-items: center;
-    margin-bottom: -80px;                /* more negative = tighter, less negative = more space */
-    pointer-events: none;                /* empty row area must not block clicks on overlapping cards */
-}
-.ms-services .tl-item:last-child { margin-bottom: 0; }
-
-/* round icon node on the line */
-.ms-services .tl-node {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: center;
-    position: relative;
-    z-index: 2;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #12281f;
-    color: #fff;
-    font-size: 21px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 0 7px rgba(252, 247, 246, 0.9), 0 10px 22px rgba(20, 40, 30, 0.22);
-    transition: transform 0.3s ease, background 0.4s ease, box-shadow 0.4s ease;
-    pointer-events: auto;
-}
-.ms-services .tl-item:hover .tl-node { background: #265648; transform: scale(1.1); }
-
-/* card (white, thin dark green border) */
-.ms-services .tl-card {
-    grid-row: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 26px;
-    padding: 28px 30px;
-    border-radius: 22px;
-    background: #ffffff;
-    border: 1px solid #2f4a3a;
-    box-shadow: 0 14px 34px rgba(20, 40, 30, 0.12);
-    transition: transform 0.3s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    pointer-events: auto;
-}
-.ms-services .tl-card,
-.ms-services .tl-card * {
-    font-family: inherit;
-}
-.ms-services .tl-card .fa-solid,
-.ms-services .tl-card .fa-arrow-right {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
-}
-.ms-services .tl-item:hover .tl-card {
-    transform: translateY(-4px);
-    box-shadow: 0 22px 44px rgba(20, 40, 30, 0.18);
-}
-.ms-services .tl-item:nth-child(odd)  .tl-card { grid-column: 1; }
-.ms-services .tl-item:nth-child(even) .tl-card { grid-column: 3; flex-direction: row-reverse; }
-
-/* dashed connector from card to node */
-.ms-services .tl-card::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 34px;
-    border-top: 2px dashed #b9cbc0;
-    pointer-events: none;
-}
-.ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -35px; }
-.ms-services .tl-item:nth-child(even) .tl-card::after { left: -35px; }
-
-/* active state: icon + card light up when the line reaches them */
-.ms-services .tl-item.is-active .tl-node {
-    background: #2f7f6a;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 7px rgba(47, 127, 106, 0.18), 0 10px 22px rgba(20, 40, 30, 0.25);
-}
-.ms-services .tl-item.is-active .tl-card {
-    border-color: #2f7f6a;
-    box-shadow: 0 18px 40px rgba(31, 107, 87, 0.18);
-}
-
-/* image: whole picture visible, nothing cut off */
-.ms-services .tl-img {
-    flex: 0 0 170px;
-    width: 170px;
-    height: 190px;
-    border-radius: 16px;
     overflow: hidden;
-    background: #e9eedf;                 /* use #ffffff for a plain white box */
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
-.ms-services .tl-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    padding: 6px;
-    transition: transform 0.6s ease;
-}
-.ms-services .tl-item:hover .tl-img img { transform: scale(1.05); }
 
-.ms-services .tl-body { flex: 1; min-width: 0; }
+.svc-stage {
+    --d: 340px;                               /* circle size, set by the script */
+    position: relative; width: 100%; max-width: 1700px; margin: 16px auto 0;
+    height: calc(var(--d) + 90px);
+    touch-action: pan-y; user-select: none;
+}
+.svc-floor {                                  /* soft gold floor rings */
+    position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
+    width: 92%; height: calc(var(--d) * 0.5); border-radius: 50%;
+    border: 1px solid rgba(201, 164, 91, 0.38); pointer-events: none;
+}
+.svc-floor::after {
+    content: ""; position: absolute; inset: 14% 8%; border-radius: 50%;
+    border: 1px solid rgba(201, 164, 91, 0.24);
+}
+.svc-glow {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    width: calc(var(--d) * 1.15); height: calc(var(--d) * 0.2);
+    background: radial-gradient(ellipse at center, rgba(29, 90, 58, 0.20), rgba(29, 90, 58, 0) 70%);
+    pointer-events: none;
+}
 
-.ms-services .tl-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 18px;
-    border-radius: 50px;
-    background: #efe5d0;
-    color: #2b3a2f;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
+.svc-item {
+    position: absolute; left: 50%; top: calc(50% - 18px);
+    width: var(--d); height: var(--d);
+    display: block; overflow: hidden; border-radius: 50%;
+    background: linear-gradient(160deg, #fbfdf9, #dfeee3);
+    border: 3px solid var(--sv-gold);
+    box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.92), 0 16px 36px rgba(20, 40, 30, 0.16);
+    text-decoration: none; cursor: pointer; will-change: transform;
+    transition: transform .65s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, box-shadow .4s ease;
 }
-.ms-services .tl-card h3 {
-    font-size: 30px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: #1f3a2c;
-    margin: 0 0 10px;
-    text-transform: none;
+.svc-item.is-active {
+    box-shadow: inset 0 0 0 6px #ffffff, 0 26px 56px rgba(20, 40, 30, 0.28), 0 0 0 7px rgba(201, 164, 91, 0.18);
 }
-.ms-services .tl-card p {
-    font-size: 16px;
-    line-height: 1.65;
-    color: #5b6560;
-    margin: 0 0 18px;
-}
-.ms-services .tl-more {
-    position: relative;
-    z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
-    border-radius: 50px;
-    background: #35432f;
-    color: #fff !important;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.3s ease, gap 0.3s ease;
-}
-.ms-services .tl-more:hover { background: #c9972b; gap: 12px; }
+.svc-item:focus-visible { outline: 3px solid var(--sv-gold); outline-offset: 4px; }
 
-/* tablet */
+.svc-pic {
+    position: absolute; left: 0; right: 0; top: 0; bottom: 24%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 9% 12% 3%;
+}
+.svc-pic img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+
+.svc-label {                                  /* green dome at the bottom of each circle */
+    position: absolute; left: -2%; right: -2%; bottom: 0; height: 31%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: calc(var(--d) * 0.02); padding-top: calc(var(--d) * 0.03);
+    background: linear-gradient(180deg, #236a43, #17492f);
+    border-radius: 50% 50% 0 0 / 46% 46% 0 0;
+}
+.svc-label b {
+    font-family: 'Playfair Display', serif; font-weight: 500;
+    font-size: calc(var(--d) * 0.075); line-height: 1.1;
+    color: #ffffff; text-align: center;
+}
+.svc-label i { display: block; width: calc(var(--d) * 0.07); height: 2px; border-radius: 2px; background: var(--sv-gold); }
+
+.svc-arrow {
+    position: absolute; top: calc(50% - 18px); transform: translateY(-50%); z-index: 40;
+    width: 56px; height: 56px; border: 0; border-radius: 50%;
+    background: var(--sv-green); color: #ffffff; font-size: 18px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(20, 60, 40, 0.35);
+    transition: background .3s ease, transform .3s ease;
+}
+.svc-arrow:hover { background: #c9972b; }
+.svc-prev { left: 24px; }
+.svc-next { right: 24px; }
+
+.svc-cap {
+    max-width: 660px; margin: 8px auto 0; text-align: center; min-height: 150px;
+    transition: opacity .35s ease, transform .35s ease;
+}
+.svc-cap.is-swap { opacity: 0; transform: translateY(8px); }
+.svc-cap h3 { margin: 0 0 10px; font-size: 30px; font-weight: 700; color: #1f3a2c; text-transform: none; }
+.svc-cap p { margin: 0 0 22px; font-size: 17px; line-height: 1.7; color: #5b6560; }
+.svc-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 13px 30px; border-radius: 50px;
+    background: var(--sv-green); border: 1.5px solid var(--sv-green);
+    color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none;
+    transition: all .3s ease;
+}
+.svc-btn:hover { background: #c9972b; border-color: #c9972b; }
+.svc-btn i { font-size: 13px; transition: transform .3s ease; }
+.svc-btn:hover i { transform: translateX(4px); }
+
 @media (max-width: 991px) {
-    .ms-services .tl-item { grid-template-columns: 1fr 70px 1fr; margin-bottom: -50px; }
-    .ms-services .tl-card { gap: 16px; padding: 20px; }
-    .ms-services .tl-card::after { width: 20px; }
-    .ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -21px; }
-    .ms-services .tl-item:nth-child(even) .tl-card::after { left: -21px; }
-    .ms-services .tl-img { flex-basis: 120px; width: 120px; height: 150px; }
-    .ms-services .tl-card h3 { font-size: 25px; }
-    .ms-services .tl-card p { font-size: 14px; }
-    .ms-services .tl-pill { font-size: 11px; padding: 6px 14px; }
-}
+    .sv-section { padding: 10px 0 24px; }
+    .sv-section .section-row { margin-bottom: 0 !important; }
+    .sv-section .section-title { margin-bottom: 0 !important; }
 
-/* mobile: line on the left, all cards on the right (no overlap) */
-@media (max-width: 767px) {
-    .ms-services .tl-list::before { left: 28px; transform: none; }
-    .ms-services .tl-progress { left: 28px; transform: none; }
-    .ms-services .tl-progress::after { left: 1.5px; transform: translateX(-50%); }
-    .ms-services .tl-item { grid-template-columns: 56px 1fr; column-gap: 14px; margin-bottom: 22px; }
-    .ms-services .tl-item:last-child { margin-bottom: 0; }
-    .ms-services .tl-node { grid-column: 1; width: 48px; height: 48px; font-size: 18px; box-shadow: 0 0 0 5px rgba(252, 247, 246, 0.9), 0 8px 18px rgba(20, 40, 30, 0.2); }
-    .ms-services .tl-item:nth-child(odd)  .tl-card,
-    .ms-services .tl-item:nth-child(even) .tl-card { grid-column: 2; flex-direction: column; align-items: flex-start; padding: 18px; }
-    .ms-services .tl-card::after { display: none; }
-    .ms-services .tl-img { flex: none; width: 100%; height: 190px; }
-    .ms-services .tl-card h3 { font-size: 24px; }
+    .svc-stage { margin-top: 10px; height: calc(var(--d) + 40px); }
+    .svc-floor { bottom: 0; }
+    .svc-glow  { bottom: 4px; }
+
+    .svc-arrow { width: 38px; height: 38px; font-size: 13px; }
+    .svc-prev { left: 8px; }
+    .svc-next { right: 8px; }
+
+    .svc-cap { min-height: 190px; margin-top: 0; padding: 0 16px; }
+    .svc-cap h3 { font-size: 24px; margin-bottom: 6px; }
+    .svc-cap p  { font-size: 15px; line-height: 1.55; margin-bottom: 16px; }
+}
+@media (max-width: 575px) {
+    .sv-section { padding-bottom: 16px; }
+    .svc-cap { min-height: 185px; }
+    .svc-btn { padding: 10px 22px; font-size: 13.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .svc-item, .svc-cap, .svc-arrow { transition: none; }
 }
 
     /* ================= POPULAR PACKAGES (carousel of cards) ================= */
@@ -344,7 +232,7 @@
         background-size: 100% 200px, 100% 200px, cover, cover;
         background-position: top, bottom, center, center;
         background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 60px 0 100px;
+        padding: 30px 0 100px;
         position: relative;
         --pk-accent: var(--accent-color, #6b8e23);
         --pk-dark: var(--primary-color, #1a1a1a);
@@ -940,7 +828,7 @@
     @media (max-width: 575px) {
 
         /* ---- Popular Packages ---- */
-        .pk-section { padding: 40px 0 40px; }
+        .pk-section { padding: 24px 0 40px; }
         .pk-section .section-title h2 { font-size: 28px !important; }
         .pk-section .section-title p { font-size: 14px; }
         .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
@@ -1169,7 +1057,7 @@
         max-width: 100% !important;
         margin: 0 !important;
         border-radius: 0 !important;
-        padding: 110px 0 130px !important;
+        padding: 110px 0 60px !important;
         background-color: #fcf7f6 !important;
         background-image:
             linear-gradient(to bottom, rgba(252, 247, 246, 0) calc(100% - 200px), #fcf7f6 100%),
@@ -1358,7 +1246,7 @@
 
 /* ---------- tablet ---------- */
 @media (max-width: 991px) {
-    .about-us.about-story { padding: 80px 0 90px !important; }
+    .about-us.about-story { padding: 80px 0 40px !important; }
     .about-story .section-title h2 { font-size: 42px; }
     .about-story .about-us-image { max-width: 520px; }
     .about-story .about-body-footer { gap: 10px; }
@@ -1468,11 +1356,9 @@
 </div>
 <!-- Our Story End -->
 
-<!-- Malabaroutes Services -->
-<div class="our-services bg-section ms-services" style="position:relative;">
-
+<!-- Malabaroutes Services (circle carousel, same as home page) -->
+<div class="sv-section">
     <div class="container">
-
         <div class="row section-row align-items-center">
             <div class="col-lg-12">
                 <div class="section-title section-title-center">
@@ -1481,123 +1367,55 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="tl-list">
+    <div class="svc-stage" id="svcStage" role="region" aria-roledescription="carousel" aria-label="Our services">
+        <span class="svc-floor" aria-hidden="true"></span>
+        <span class="svc-glow" aria-hidden="true"></span>
 
-            <!-- 01 Visa -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-file-lines"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/visa-2.png' %}" alt="Visa" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 01</span>
-                        <h3>Visa</h3>
-                        <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/visa-2.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Visa</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="We help you with fast processing of passport applications, renewals and replacement.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/passport.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Passport</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Let us help you, we will take care of your tickets at the lowest cost available.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/tickets.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Tickets</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/house boat.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>House Boat</b><i></i></span>
+        </a>
+        <a href="{% url 'packages' %}" class="svc-item" data-text="Book International or national Holiday Packages at best prices and plan memorable Holidays.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/packages.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Packages</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Local experts help you discover Malabar's culture and hidden places.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/tours guied.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Travel Guides</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a rental car, we'll take care of that.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/car rental.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Car Rentals</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a taxi, we'll take care of that.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/taxi.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Taxi Services</b><i></i></span>
+        </a>
 
-            <!-- 02 Passport -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-book"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 02</span>
-                        <h3>Passport</h3>
-                        <p>We help you with fast processing of passport applications, renewals and replacement.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
+        <button type="button" class="svc-arrow svc-prev" aria-label="Previous service"><i class="fa-solid fa-chevron-left"></i></button>
+        <button type="button" class="svc-arrow svc-next" aria-label="Next service"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
 
-            <!-- 03 Tickets -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-plane"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 03</span>
-                        <h3>Tickets</h3>
-                        <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 04 Packages -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-suitcase-rolling"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 04</span>
-                        <h3>Packages</h3>
-                        <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 05 Travel Guides -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-people-group"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 05</span>
-                        <h3>Travel Guides</h3>
-                        <p>Local experts help you discover Malabar's culture and hidden places.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 06 Car Rentals -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-car"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 06</span>
-                        <h3>Car Rentals</h3>
-                        <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 07 House Boat -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-ship"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 07</span>
-                        <h3>House Boat</h3>
-                        <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 08 Taxi Services -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-taxi"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 08</span>
-                        <h3>Taxi Services</h3>
-                        <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
+    <div class="container">
+        <div class="svc-cap" id="svcCap" aria-live="polite">
+            <h3>House Boat</h3>
+            <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
+            <a href="{% url 'contact' %}" class="svc-btn">Learn More <i class="fa-solid fa-arrow-right"></i></a>
         </div>
-
     </div>
 </div>
 <!-- Malabaroutes Services End -->
@@ -2309,9 +2127,7 @@
         });
     }
 
-    /* ONE continuous path: row 1 -> curve 04 to 05 -> row 2. ONE plane, with a glowing trail behind it */
-    
-    /* services are now a static grid (no carousel), so only packages + testimonials are initialised */
+    /* Services use their own circle carousel (script below); only packages + testimonials are initialised here */
     var pkCar = initMsCarousel('pkCarousel');
     initMsCarousel('pcCarousel', {
         perView: function () {
@@ -2321,44 +2137,111 @@
 
     bindFilters('pkFilters', pkCar);
 </script>
-<!-- Services timeline: line fills while scrolling -->
+
+<!-- Services: circle carousel (centre item is the biggest) -->
 <script>
     (function () {
-        var list = document.querySelector('.tl-list');
-        if (!list) return;
+        var stage = document.getElementById('svcStage');
+        if (!stage) return;
+        var items = Array.prototype.slice.call(stage.querySelectorAll('.svc-item'));
+        var cap = document.getElementById('svcCap');
+        var capT = cap.querySelector('h3'), capP = cap.querySelector('p'), capA = cap.querySelector('a');
+        var n = items.length, active = 3, timer = null;
+        var SCALES = [1, 0.78, 0.62, 0.5];
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        var items = Array.prototype.slice.call(list.querySelectorAll('.tl-item'));
-        var bar = document.createElement('div');
-        bar.className = 'tl-progress';
-        bar.setAttribute('aria-hidden', 'true');
-        list.appendChild(bar);
+        function layout() {
+            var W = stage.clientWidth;
+            var vis = W < 576 ? 1 : (W < 992 ? 2 : 3);
+            var D = W < 576 ? W * 0.62 : (W < 992 ? Math.min(W * 0.42, 360) : Math.min(W * 0.235, 340));
+            stage.style.setProperty('--d', D + 'px');
 
-        var ticking = false;
-
-        function update() {
-            ticking = false;
-            var rect = list.getBoundingClientRect();
-            var trigger = window.innerHeight * 0.55;      /* line grows up to this height on screen */
-            var h = Math.max(0, Math.min(rect.height, trigger - rect.top));
-            bar.style.height = h + 'px';
-
-            items.forEach(function (it) {
-                var n = it.querySelector('.tl-node').getBoundingClientRect();
-                it.classList.toggle('is-active', n.top + n.height / 2 <= trigger);
+            var xs = [0];
+            for (var k = 1; k <= 3; k++) {
+                xs[k] = xs[k - 1] + D * SCALES[k - 1] / 2 + D * SCALES[k] / 2 - D * 0.03;
+            }
+            items.forEach(function (it, i) {
+                var o = ((i - active + n + n / 2) % n) - n / 2;      // -4 ... 3
+                var a = Math.abs(o), idx = Math.min(a, 3);
+                var x = (o < 0 ? -1 : 1) * xs[idx];
+                var shown = a <= vis;
+                it.style.transform = 'translate(-50%, -50%) translateX(' + x + 'px) scale(' + SCALES[idx] + ')';
+                it.style.zIndex = 20 - a;
+                it.style.opacity = shown ? 1 : 0;
+                it.style.pointerEvents = shown ? 'auto' : 'none';
+                it.tabIndex = shown ? 0 : -1;
+                it.setAttribute('aria-hidden', shown ? 'false' : 'true');
+                it.classList.toggle('is-active', o === 0);
             });
         }
 
-        function onScroll() {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(update);
-            }
+        function fillCaption() {
+            var it = items[active];
+            capT.textContent = it.querySelector('b').textContent;
+            capP.textContent = it.getAttribute('data-text');
+            capA.setAttribute('href', it.getAttribute('href'));
+        }
+        function swapCaption() {
+            cap.classList.add('is-swap');
+            setTimeout(function () { fillCaption(); cap.classList.remove('is-swap'); }, 180);
         }
 
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        window.addEventListener('load', update);
-        update();
+        function setActive(i) {
+            active = ((i % n) + n) % n;
+            layout();
+            swapCaption();
+        }
+        function next() { setActive(active + 1); }
+        function prev() { setActive(active - 1); }
+
+        function start() {
+            stop();
+            if (reduce) return;
+            timer = setInterval(next, 3500);
+        }
+        function stop() { if (timer) clearInterval(timer); timer = null; }
+
+        stage.querySelector('.svc-next').addEventListener('click', function () { next(); start(); });
+        stage.querySelector('.svc-prev').addEventListener('click', function () { prev(); start(); });
+
+        /* click a side circle to bring it to the centre; the centre circle follows its link */
+        var dragged = false;
+        items.forEach(function (it, i) {
+            it.addEventListener('click', function (e) {
+                if (dragged) { e.preventDefault(); dragged = false; return; }
+                if (i !== active) { e.preventDefault(); setActive(i); start(); }
+            });
+        });
+
+        /* swipe / drag */
+        var startX = null;
+        stage.addEventListener('pointerdown', function (e) { startX = e.clientX; stop(); });
+        stage.addEventListener('pointerup', function (e) {
+            if (startX === null) return;
+            var diff = e.clientX - startX;
+            dragged = Math.abs(diff) > 50;
+            if (dragged) { diff < 0 ? next() : prev(); }
+            startX = null;
+            start();
+        });
+        stage.addEventListener('pointercancel', function () { startX = null; });
+        stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        stage.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight') { next(); start(); }
+            if (e.key === 'ArrowLeft') { prev(); start(); }
+        });
+
+        stage.addEventListener('mouseenter', stop);
+        stage.addEventListener('mouseleave', start);
+        document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+
+        var rt;
+        window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 150); });
+
+        layout();
+        fillCaption();
+        start();
     })();
 </script>
 {% endblock %}

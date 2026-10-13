@@ -10,6 +10,7 @@
     The navbar "Packages" dropdown links to /packages/?category=<slug> to show one category.
     FILTER BAR (horizontal, above the cards): budget, destination (location tag, description
     as fallback), number of days. Data comes from the packages view (f_prices, f_locs, f_days).
+    Filters are applied ONLY when "Show Packages" is clicked (not while setting them).
     NO-RESULT MODAL: opens when "Show Packages" is clicked and no package matches the filters.
 {% endcomment %}
 
@@ -751,7 +752,7 @@
             </div>
         </div>
 
-        <!-- selected filters as removable chips -->
+        <!-- applied filters as removable chips (filled after "Show Packages") -->
         <div class="pf-chips" id="pfChips"></div>
         <p class="pf-count" id="pkCount"></p>
 
@@ -898,7 +899,9 @@
     })();
 </script>
 
-<!-- FILTER BAR: budget + destination + days (filters live while you change anything) -->
+<!-- FILTER BAR: budget + destination + days.
+     While setting filters only the labels update; the cards are filtered
+     ONLY when "Show Packages" is clicked. -->
 <script>
     (function () {
         var bar = document.getElementById('pkFilter');
@@ -957,20 +960,25 @@
             range.style.setProperty('--fill', pct + '%');
         }
 
-        /* ---- summaries + chips ---- */
+        /* ---- summaries ---- */
         function summary(list, none, many) {
             if (!list.length) return none;
             if (list.length === 1) return list[0].getAttribute('data-label');
             return list.length + ' ' + many;
         }
 
-        function updateText() {
+        /* live: only updates the labels while the visitor is setting filters */
+        function updateSummary() {
             var atMax = +range.value >= +range.max;
             out.textContent = '₹ ' + fmt(range.value);
             sumP.textContent = atMax ? 'Any budget' : 'Up to ₹ ' + fmt(range.value);
             sumL.textContent = summary(checked('loc'), 'All destinations', 'destinations');
             sumD.textContent = summary(checked('day'), 'Any duration', 'durations');
+        }
 
+        /* only called from apply() (after "Show Packages"): chips show the applied filters */
+        function buildChips() {
+            var atMax = +range.value >= +range.max;
             chips.innerHTML = '';
             function addChip(label, onRemove) {
                 var b = document.createElement('button');
@@ -985,10 +993,11 @@
             checked('day').forEach(function (i) { addChip(i.getAttribute('data-label'), function () { i.checked = false; apply(); }); });
         }
 
-        /* ---- the filter itself ---- */
+        /* ---- the filter itself (runs only on "Show Packages", chip removal, reset) ---- */
         function apply() {
             paintRange();
-            updateText();
+            updateSummary();
+            buildChips();
 
             var max   = +range.value;
             var atMax = max >= +range.max;
@@ -1040,7 +1049,7 @@
         function openModal() {
             if (!modal) return;
 
-            /* show the selected filters inside the modal */
+            /* show the applied filters inside the modal */
             modalTags.innerHTML = '';
             [].slice.call(chips.querySelectorAll('.pf-chip')).forEach(function (chip) {
                 var s = document.createElement('span');
@@ -1089,17 +1098,19 @@
             if (e.key === 'Escape') { closeAll(); closeModal(); }
         });
 
-        range.addEventListener('input', apply);
+        /* while setting filters: only update labels and slider fill, no filtering */
+        range.addEventListener('input', function () { paintRange(); updateSummary(); });
         bar.addEventListener('change', function (e) {
-            if (e.target.type === 'checkbox') apply();
+            if (e.target.type === 'checkbox') updateSummary();
         });
 
         document.getElementById('pfReset').addEventListener('click', resetFilters);
 
-        /* "Show Packages": close the dropdowns, then either open the
-           "no packages" modal or scroll to the results */
+        /* "Show Packages": apply the filters, close the dropdowns, then either
+           open the "no packages" modal or scroll to the results */
         document.getElementById('pfGo').addEventListener('click', function () {
             closeAll();
+            apply();   /* filtering happens only here */
 
             if (shownNow === 0) {
                 openModal();
@@ -1112,7 +1123,7 @@
         });
 
         maxLbl.textContent = 'Max: ₹ ' + fmt(range.max);
-        apply();
+        apply();   /* initial state: all packages visible */
     })();
 </script>
 {% endblock %}

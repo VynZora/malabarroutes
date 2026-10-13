@@ -697,6 +697,90 @@ background-position: center 70% !important;
         background-size: 190% auto !important;
     }
 }
+/* ================= MOBILE / TABLET: gold hover on Book Now, plain menu toggle ================= */
+@media (max-width: 991px) {
+
+    /* Book Now pill in the bar */
+    .main-header .mobile-book-btn {
+        transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+    }
+    .main-header .mobile-book-btn:hover,
+    .main-header .mobile-book-btn:focus,
+    .main-header .mobile-book-btn:active {
+        background: var(--nav-gold) !important;
+        border-color: var(--nav-gold) !important;
+        color: var(--nav-ink) !important;
+        box-shadow: 0 4px 14px rgba(224, 177, 74, 0.45) !important;
+    }
+
+    /* Menu toggle (hamburger): no border, no hover / tap / open effect */
+    .main-header .slicknav_btn,
+    .main-header .slicknav_btn:hover,
+    .main-header .slicknav_btn:focus,
+    .main-header .slicknav_btn:active,
+    .main-header .slicknav_btn.slicknav_open {
+        background-color: rgba(255, 255, 255, 0.10) !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        transition: none !important;
+    }
+    .main-header .slicknav_btn .slicknav_icon-bar,
+    .main-header .slicknav_btn:hover .slicknav_icon-bar,
+    .main-header .slicknav_btn:focus .slicknav_icon-bar,
+    .main-header .slicknav_btn:active .slicknav_icon-bar,
+    .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
+        background-color: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    /* menu links: soft gold highlight when tapped */
+    .main-header .slicknav_nav a:hover,
+    .main-header .slicknav_nav a:active {
+        background: rgba(224, 177, 74, 0.14) !important;
+        color: var(--nav-gold) !important;
+    }
+}
+/* ================= MOBILE / TABLET: sticky Call + Email bar ================= */
+.mb-contact-bar { display: none; }
+
+@media (max-width: 991px) {
+    .mb-contact-bar {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 1500;                       /* below the booking modal (2000) */
+        display: flex;
+        background: var(--nav-green, #1F5B3A);
+        box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .mb-contact-bar a {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px 10px;
+        color: #ffffff !important;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background-color .25s ease, color .25s ease;
+    }
+    .mb-contact-bar a + a { border-left: 1px solid rgba(255, 255, 255, 0.25); }
+    .mb-contact-bar a i { font-size: 16px; }
+
+    .mb-contact-bar a:hover,
+    .mb-contact-bar a:active {
+        background: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f) !important;
+    }
+
+    /* keep the footer copyright from hiding behind the bar */
+    body { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+}
 </style>
 
     {% block extra_css %}{% endblock %}
@@ -919,7 +1003,11 @@ background-position: center 70% !important;
             </div>
         </div>
     </footer>
-
+<!-- Mobile sticky contact bar -->
+<div class="mb-contact-bar">
+    <a href="tel:+918848333382"><i class="fa-solid fa-phone-volume"></i> Call Now</a>
+    <a href="mailto:malabaroutes@gmail.com"><i class="fa-solid fa-envelope"></i> Email Us</a>
+</div>
     <!-- Scripts (order matters) -->
     <script src="{% static 'malabar-static/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'malabar-static/js/bootstrap.min.js' %}"></script>

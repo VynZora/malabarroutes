@@ -1492,7 +1492,24 @@
     .about-us { padding-bottom: 10px !important; }
     .sv-section { padding-top: 0 !important; }
 }
+/* ================= MOBILE / TABLET: taller hero image ================= */
+@media (max-width: 991px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        min-height: 88vh !important;
+        min-height: 88svh !important;
+        padding: 160px 0 70px !important;
+    }
+}
 
+@media (max-width: 575px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        min-height: 84vh !important;
+        min-height: 84svh !important;
+        padding: 150px 0 60px !important;
+    }
+}
 </style>
 {% endblock %}
 

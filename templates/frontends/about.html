@@ -89,10 +89,10 @@
     .ms-services .ms-dots { display: none; }
 }
 
-/* ================= SERVICES (circle carousel, same as home page) ================= */
+/* ================= SERVICES (icon cards, green comes from base.html) ================= */
 .sv-section {
-    --sv-green: #1d5a3a;
-    --sv-gold: #c9a45b;
+    --sv-green: var(--nav-green, #1F5B3A);
+    --sv-gold:  var(--nav-gold, #e0b14a);
     background-color: #fcf7f6;
     background-image:
         linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
@@ -102,123 +102,88 @@
     background-size: 100% 200px, 100% 200px, cover, cover;
     background-position: top, bottom, center, center;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    padding: 20px 0 40px;
+    padding: 20px 0 60px;
     position: relative;
     overflow: hidden;
 }
+@media (min-width: 1200px) { .sv-section .container { max-width: 1440px; } }
+@media (min-width: 1600px) { .sv-section .container { max-width: 1560px; } }
 
-.svc-stage {
-    --d: 340px;                               /* circle size, set by the script */
-    position: relative; width: 100%; max-width: 1700px; margin: 16px auto 0;
-    height: calc(var(--d) + 90px);
-    touch-action: pan-y; user-select: none;
-}
-.svc-floor {                                  /* soft gold floor rings */
-    position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
-    width: 92%; height: calc(var(--d) * 0.5); border-radius: 50%;
-    border: 1px solid rgba(201, 164, 91, 0.38); pointer-events: none;
-}
-.svc-floor::after {
-    content: ""; position: absolute; inset: 14% 8%; border-radius: 50%;
-    border: 1px solid rgba(201, 164, 91, 0.24);
-}
-.svc-glow {
-    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-    width: calc(var(--d) * 1.15); height: calc(var(--d) * 0.2);
-    background: radial-gradient(ellipse at center, rgba(29, 90, 58, 0.20), rgba(29, 90, 58, 0) 70%);
-    pointer-events: none;
+.sv-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 30px;
+    margin: 30px 0 0;
 }
 
-.svc-item {
-    position: absolute; left: 50%; top: calc(50% - 18px);
-    width: var(--d); height: var(--d);
-    display: block; overflow: hidden; border-radius: 50%;
-    background: linear-gradient(160deg, #fbfdf9, #dfeee3);
-    border: 3px solid var(--sv-gold);
-    box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.92), 0 16px 36px rgba(20, 40, 30, 0.16);
-    text-decoration: none; cursor: pointer; will-change: transform;
-    transition: transform .65s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, box-shadow .4s ease;
+.sv-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 34px 30px 36px;
+    border-radius: 18px;
+    background: var(--sv-green);
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0) 55%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 14px 30px rgba(6, 28, 20, 0.18);
+    text-decoration: none;
+    transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
-.svc-item.is-active {
-    box-shadow: inset 0 0 0 6px #ffffff, 0 26px 56px rgba(20, 40, 30, 0.28), 0 0 0 7px rgba(201, 164, 91, 0.18);
+.sv-card:hover,
+.sv-card:focus-visible {
+    transform: translateY(-6px);
+    border-color: var(--sv-gold);
+    box-shadow: 0 22px 42px rgba(6, 28, 20, 0.32);
+    outline: none;
 }
-.svc-item:focus-visible { outline: 3px solid var(--sv-gold); outline-offset: 4px; }
 
-.svc-pic {
-    position: absolute; left: 0; right: 0; top: 0; bottom: 24%;
-    display: flex; align-items: center; justify-content: center;
-    padding: 9% 12% 3%;
+.sv-ico {
+    display: block;
+    width: 52px; height: 52px;
+    margin-bottom: 36px;
+    color: var(--sv-gold);
+    transition: transform .35s ease;
 }
-.svc-pic img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+.sv-ico svg {
+    display: block; width: 100%; height: 100%;
+    fill: none; stroke: currentColor;
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+.sv-card:hover .sv-ico { transform: scale(1.1); }
 
-.svc-label {                                  /* green dome at the bottom of each circle */
-    position: absolute; left: -2%; right: -2%; bottom: 0; height: 31%;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: calc(var(--d) * 0.02); padding-top: calc(var(--d) * 0.03);
-    background: linear-gradient(180deg, #236a43, #17492f);
-    border-radius: 50% 50% 0 0 / 46% 46% 0 0;
+.sv-card h3 {
+    margin: 0 0 20px;
+    font-size: 23px; font-weight: 700; line-height: 1.25;
+    text-transform: none;
+    color: #ffffff;
 }
-.svc-label b {
-    font-family: 'Playfair Display', serif; font-weight: 500;
-    font-size: calc(var(--d) * 0.075); line-height: 1.1;
-    color: #ffffff; text-align: center;
+.sv-card p {
+    margin: 0;
+    font-size: 16px; line-height: 1.6;
+    color: rgba(255, 255, 255, 0.74);
 }
-.svc-label i { display: block; width: calc(var(--d) * 0.07); height: 2px; border-radius: 2px; background: var(--sv-gold); }
 
-.svc-arrow {
-    position: absolute; top: calc(50% - 18px); transform: translateY(-50%); z-index: 40;
-    width: 56px; height: 56px; border: 0; border-radius: 50%;
-    background: var(--sv-green); color: #ffffff; font-size: 18px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 8px 20px rgba(20, 60, 40, 0.35);
-    transition: background .3s ease, transform .3s ease;
+@media (max-width: 1199px) {
+    .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 }
-.svc-arrow:hover { background: #c9972b; }
-.svc-prev { left: 24px; }
-.svc-next { right: 24px; }
-
-.svc-cap {
-    max-width: 660px; margin: 8px auto 0; text-align: center; min-height: 150px;
-    transition: opacity .35s ease, transform .35s ease;
-}
-.svc-cap.is-swap { opacity: 0; transform: translateY(8px); }
-.svc-cap h3 { margin: 0 0 10px; font-size: 30px; font-weight: 700; color: #1f3a2c; text-transform: none; }
-.svc-cap p { margin: 0 0 22px; font-size: 17px; line-height: 1.7; color: #5b6560; }
-.svc-btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 13px 30px; border-radius: 50px;
-    background: var(--sv-green); border: 1.5px solid var(--sv-green);
-    color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none;
-    transition: all .3s ease;
-}
-.svc-btn:hover { background: #c9972b; border-color: #c9972b; }
-.svc-btn i { font-size: 13px; transition: transform .3s ease; }
-.svc-btn:hover i { transform: translateX(4px); }
-
 @media (max-width: 991px) {
-    .sv-section { padding: 10px 0 24px; }
+    .sv-section { padding: 10px 0 40px; }
     .sv-section .section-row { margin-bottom: 0 !important; }
     .sv-section .section-title { margin-bottom: 0 !important; }
-
-    .svc-stage { margin-top: 10px; height: calc(var(--d) + 40px); }
-    .svc-floor { bottom: 0; }
-    .svc-glow  { bottom: 4px; }
-
-    .svc-arrow { width: 38px; height: 38px; font-size: 13px; }
-    .svc-prev { left: 8px; }
-    .svc-next { right: 8px; }
-
-    .svc-cap { min-height: 190px; margin-top: 0; padding: 0 16px; }
-    .svc-cap h3 { font-size: 24px; margin-bottom: 6px; }
-    .svc-cap p  { font-size: 15px; line-height: 1.55; margin-bottom: 16px; }
+    .sv-card { padding: 28px 24px 30px; }
+    .sv-ico { margin-bottom: 26px; }
 }
 @media (max-width: 575px) {
-    .sv-section { padding-bottom: 16px; }
-    .svc-cap { min-height: 185px; }
-    .svc-btn { padding: 10px 22px; font-size: 13.5px; }
+    .sv-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
+    .sv-section { padding-bottom: 28px; }
+    .sv-card { padding: 24px 22px 26px; border-radius: 16px; }
+    .sv-ico { width: 44px; height: 44px; margin-bottom: 20px; }
+    .sv-card h3 { font-size: 21px; margin-bottom: 12px; }
+    .sv-card p { font-size: 15px; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .svc-item, .svc-cap, .svc-arrow { transition: none; }
+    .sv-card, .sv-ico { transition: none; }
 }
 
     /* ================= POPULAR PACKAGES (carousel of cards) ================= */
@@ -1356,7 +1321,7 @@
 </div>
 <!-- Our Story End -->
 
-<!-- Malabaroutes Services (circle carousel, same as home page) -->
+<!-- Malabaroutes Services (icon cards) -->
 <div class="sv-section">
     <div class="container">
         <div class="row section-row align-items-center">
@@ -1367,54 +1332,56 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="svc-stage" id="svcStage" role="region" aria-roledescription="carousel" aria-label="Our services">
-        <span class="svc-floor" aria-hidden="true"></span>
-        <span class="svc-glow" aria-hidden="true"></span>
+        <div class="sv-grid">
 
-        <a href="{% url 'contact' %}" class="svc-item" data-text="We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/visa-2.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Visa</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="We help you with fast processing of passport applications, renewals and replacement.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/passport.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Passport</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Let us help you, we will take care of your tickets at the lowest cost available.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/tickets.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Tickets</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/house boat.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>House Boat</b><i></i></span>
-        </a>
-        <a href="{% url 'packages' %}" class="svc-item" data-text="Book International or national Holiday Packages at best prices and plan memorable Holidays.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/packages.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Packages</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Local experts help you discover Malabar's culture and hidden places.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/tours guied.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Travel Guides</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a rental car, we'll take care of that.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/car rental.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Car Rentals</b><i></i></span>
-        </a>
-        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a taxi, we'll take care of that.">
-            <span class="svc-pic"><img src="{% static 'malabar-static/taxi.png' %}" alt="" loading="lazy" draggable="false"></span>
-            <span class="svc-label"><b>Taxi Services</b><i></i></span>
-        </a>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="9" y="6" width="30" height="36" rx="3"/><path d="M16 15h16M16 21h10"/><circle cx="29" cy="32" r="5"/><path d="M26.7 32l1.8 1.8 3.2-3.6"/></svg></span>
+                <h3>Visa</h3>
+                <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+            </a>
 
-        <button type="button" class="svc-arrow svc-prev" aria-label="Previous service"><i class="fa-solid fa-chevron-left"></i></button>
-        <button type="button" class="svc-arrow svc-next" aria-label="Next service"><i class="fa-solid fa-chevron-right"></i></button>
-    </div>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="10" y="5" width="28" height="38" rx="3"/><circle cx="24" cy="21" r="8"/><path d="M16 21h16M24 13c-3.5 3-3.5 13 0 16M24 13c3.5 3 3.5 13 0 16M17 36h14"/></svg></span>
+                <h3>Passport</h3>
+                <p>We help you with fast processing of passport applications, renewals and replacement.</p>
+            </a>
 
-    <div class="container">
-        <div class="svc-cap" id="svcCap" aria-live="polite">
-            <h3>House Boat</h3>
-            <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-            <a href="{% url 'contact' %}" class="svc-btn">Learn More <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M42 6L6 21l15 6 6 15z"/><path d="M42 6L21 27"/></svg></span>
+                <h3>Tickets</h3>
+                <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 30h36l-5 9H11z"/><path d="M13 30v-8h22v8"/><path d="M18 22v-5h12v5"/><path d="M6 44c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0"/></svg></span>
+                <h3>House Boat</h3>
+                <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
+            </a>
+
+            <a href="{% url 'packages' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="14" width="36" height="26" rx="4"/><path d="M17 14v-4a3 3 0 013-3h8a3 3 0 013 3v4M6 26h36M20 26v4h8v-4"/></svg></span>
+                <h3>Packages</h3>
+                <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 44S11 32.5 11 23a13 13 0 0126 0c0 9.5-13 21-13 21z"/><circle cx="24" cy="23" r="5"/></svg></span>
+                <h3>Travel Guides</h3>
+                <p>Local experts help you discover Malabar's culture and hidden places.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 30v-6l4-11h22l4 11v6z"/><path d="M9 24h30"/><circle cx="15" cy="27" r="1.5"/><circle cx="33" cy="27" r="1.5"/><path d="M12 30v7h6v-7M30 30v7h6v-7"/></svg></span>
+                <h3>Car Rentals</h3>
+                <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
+            </a>
+
+            <a href="{% url 'contact' %}" class="sv-card">
+                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="18" y="6" width="12" height="6" rx="1.5"/><path d="M24 12v3"/><path d="M5 34v-6c0-1 .5-2 1.5-2.5L11 17h26l4.5 8.5c1 .5 1.5 1.5 1.5 2.5v6z"/><circle cx="14" cy="36" r="4"/><circle cx="34" cy="36" r="4"/></svg></span>
+                <h3>Taxi Services</h3>
+                <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
+            </a>
         </div>
     </div>
 </div>
@@ -2127,7 +2094,7 @@
         });
     }
 
-    /* Services use their own circle carousel (script below); only packages + testimonials are initialised here */
+    /* only packages + testimonials carousels are initialised here */
     var pkCar = initMsCarousel('pkCarousel');
     initMsCarousel('pcCarousel', {
         perView: function () {
@@ -2138,110 +2105,4 @@
     bindFilters('pkFilters', pkCar);
 </script>
 
-<!-- Services: circle carousel (centre item is the biggest) -->
-<script>
-    (function () {
-        var stage = document.getElementById('svcStage');
-        if (!stage) return;
-        var items = Array.prototype.slice.call(stage.querySelectorAll('.svc-item'));
-        var cap = document.getElementById('svcCap');
-        var capT = cap.querySelector('h3'), capP = cap.querySelector('p'), capA = cap.querySelector('a');
-        var n = items.length, active = 3, timer = null;
-        var SCALES = [1, 0.78, 0.62, 0.5];
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function layout() {
-            var W = stage.clientWidth;
-            var vis = W < 576 ? 1 : (W < 992 ? 2 : 3);
-            var D = W < 576 ? W * 0.62 : (W < 992 ? Math.min(W * 0.42, 360) : Math.min(W * 0.235, 340));
-            stage.style.setProperty('--d', D + 'px');
-
-            var xs = [0];
-            for (var k = 1; k <= 3; k++) {
-                xs[k] = xs[k - 1] + D * SCALES[k - 1] / 2 + D * SCALES[k] / 2 - D * 0.03;
-            }
-            items.forEach(function (it, i) {
-                var o = ((i - active + n + n / 2) % n) - n / 2;      // -4 ... 3
-                var a = Math.abs(o), idx = Math.min(a, 3);
-                var x = (o < 0 ? -1 : 1) * xs[idx];
-                var shown = a <= vis;
-                it.style.transform = 'translate(-50%, -50%) translateX(' + x + 'px) scale(' + SCALES[idx] + ')';
-                it.style.zIndex = 20 - a;
-                it.style.opacity = shown ? 1 : 0;
-                it.style.pointerEvents = shown ? 'auto' : 'none';
-                it.tabIndex = shown ? 0 : -1;
-                it.setAttribute('aria-hidden', shown ? 'false' : 'true');
-                it.classList.toggle('is-active', o === 0);
-            });
-        }
-
-        function fillCaption() {
-            var it = items[active];
-            capT.textContent = it.querySelector('b').textContent;
-            capP.textContent = it.getAttribute('data-text');
-            capA.setAttribute('href', it.getAttribute('href'));
-        }
-        function swapCaption() {
-            cap.classList.add('is-swap');
-            setTimeout(function () { fillCaption(); cap.classList.remove('is-swap'); }, 180);
-        }
-
-        function setActive(i) {
-            active = ((i % n) + n) % n;
-            layout();
-            swapCaption();
-        }
-        function next() { setActive(active + 1); }
-        function prev() { setActive(active - 1); }
-
-        function start() {
-            stop();
-            if (reduce) return;
-            timer = setInterval(next, 3500);
-        }
-        function stop() { if (timer) clearInterval(timer); timer = null; }
-
-        stage.querySelector('.svc-next').addEventListener('click', function () { next(); start(); });
-        stage.querySelector('.svc-prev').addEventListener('click', function () { prev(); start(); });
-
-        /* click a side circle to bring it to the centre; the centre circle follows its link */
-        var dragged = false;
-        items.forEach(function (it, i) {
-            it.addEventListener('click', function (e) {
-                if (dragged) { e.preventDefault(); dragged = false; return; }
-                if (i !== active) { e.preventDefault(); setActive(i); start(); }
-            });
-        });
-
-        /* swipe / drag */
-        var startX = null;
-        stage.addEventListener('pointerdown', function (e) { startX = e.clientX; stop(); });
-        stage.addEventListener('pointerup', function (e) {
-            if (startX === null) return;
-            var diff = e.clientX - startX;
-            dragged = Math.abs(diff) > 50;
-            if (dragged) { diff < 0 ? next() : prev(); }
-            startX = null;
-            start();
-        });
-        stage.addEventListener('pointercancel', function () { startX = null; });
-        stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
-
-        stage.addEventListener('keydown', function (e) {
-            if (e.key === 'ArrowRight') { next(); start(); }
-            if (e.key === 'ArrowLeft') { prev(); start(); }
-        });
-
-        stage.addEventListener('mouseenter', stop);
-        stage.addEventListener('mouseleave', start);
-        document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
-
-        var rt;
-        window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 150); });
-
-        layout();
-        fillCaption();
-        start();
-    })();
-</script>
 {% endblock %}

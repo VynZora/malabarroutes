@@ -1610,6 +1610,19 @@
 
 /* Top bar */
 .top-bar a i { color: var(--nav-green, #1F5B3A); }
+/* Why Choose Us: icon box turns gold on hover (matches navbar gold) */
+.why-choose-us .why-choose-list-item .icon-box::before {
+    background: var(--nav-gold, #e0b14a) !important;
+}
+.why-choose-us .why-choose-list-item:hover .icon-box,
+.why-choose-us .why-choose-list-item .icon-box:hover {
+    background-color: var(--nav-gold, #e0b14a) !important;
+}
+/* icon turns dark so it stays readable on gold */
+.why-choose-us .why-choose-list-item:hover .icon-box img,
+.why-choose-us .why-choose-list-item .icon-box:hover img {
+    filter: brightness(0) !important;
+}
 </style>
 {% endblock %}
 

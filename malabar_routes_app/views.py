@@ -1298,7 +1298,7 @@ from .templatetags.package_tags import _PLACES_RE, _PLACES_SORTED
 # PACKAGE FILTER HELPERS (price, location, days)
 # ============================================================
 
-# ---------- PRICE: model field AND description are both read ----------
+# ---------- PRICE: model field AND description are BOTH read ----------
 PRICE_FIELDS = ("price", "starting_price", "offer_price", "cost", "amount")   # add your field name if different
 
 # prices written inside the description:  ₹12,500   Rs. 9999   INR 15000   12500/-
@@ -1306,6 +1306,10 @@ PRICE_RE = re.compile(
     r"(?:₹|rs\.?|inr)\s*(\d[\d,]*(?:\.\d+)?)|(\d[\d,]*)\s*/-",
     re.I,
 )
+
+# smallest number in the description that counts as a package price
+# (ignores things like "Rs 500 extra" or "Rs 1000 advance")
+MIN_DESCRIPTION_PRICE = 3000
 
 
 def _to_number(value):
@@ -1319,14 +1323,19 @@ def _to_number(value):
 def _package_prices(p, text):
     """Every price found for a package: the model field(s) AND the description."""
     found = []
+
+    # 1) model field(s)
     for name in PRICE_FIELDS:
         n = _to_number(getattr(p, name, None))
         if n:
             found.append(n)
+
+    # 2) prices written in the description
     for m in PRICE_RE.finditer(text):
         n = _to_number(m.group(1) or m.group(2))
-        if n and n >= 500:          # ignore tiny numbers like "Rs 5 off"
+        if n and n >= MIN_DESCRIPTION_PRICE:
             found.append(n)
+
     return sorted(set(found))
 
 
@@ -1416,6 +1425,7 @@ def packages(request):
 
         # values the template writes into data-attributes (used by the filter JS)
         p.f_prices = ",".join(str(x) for x in prices)
+        p.f_price = prices[0] if prices else ""          # lowest price, shown on the card
         p.f_locs = "|".join(l.lower() for l in locs)
         p.f_days = days or ""
 
@@ -1427,7 +1437,7 @@ def packages(request):
             loc_labels.setdefault(k, l)
             loc_count[k] = loc_count.get(k, 0) + 1
 
-        # ---- group by category (same as before) ----
+        # ---- group by category ----
         name = " ".join((p.category or "").split())
         if not name:
             other.append(p)
@@ -1447,15 +1457,16 @@ def packages(request):
     if selected:
         groups = [g for g in groups if g["value"] == selected]
 
-    # ---- filter options for the left sidebar ----
+    # ---- filter options for the filter bar ----
     filter_locations = sorted(
         ({"value": k, "label": loc_labels[k], "count": loc_count[k]} for k in loc_labels),
         key=lambda x: x["label"].lower(),
     )
     filter_days = sorted(days_set)
 
+    # slider maximum = highest price found, rounded up to the next 1,000
     price_max = max(all_prices) if all_prices else 100000
-    price_max = ((price_max + 999) // 1000) * 1000      # round up to the next 1,000
+    price_max = ((price_max + 999) // 1000) * 1000
 
     return render(request, "frontends/packages.html", {
         "groups": groups,

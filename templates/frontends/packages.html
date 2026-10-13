@@ -10,6 +10,7 @@
     The navbar "Packages" dropdown links to /packages/?category=<slug> to show one category.
     FILTER BAR (horizontal, above the cards): budget, destination (location tag, description
     as fallback), number of days. Data comes from the packages view (f_prices, f_locs, f_days).
+    NO-RESULT MODAL: opens when "Show Packages" is clicked and no package matches the filters.
 {% endcomment %}
 
 
@@ -215,6 +216,9 @@
         color: var(--pk-accent);
     }
     .pk-loc i { font-size: 14px; }
+
+    .pk-price { margin: 0 0 12px; font-size: 15px; color: #5b6560; }
+    .pk-price b { font-size: 20px; color: var(--pk-accent); }
 
     .pk-desc {
         font-size: 17px;
@@ -468,6 +472,85 @@
     .pk-nomatch { display: none; text-align: center; font-size: 18px; color: #5a524a; padding: 60px 0; }
     .pk-nomatch.show { display: block; }
 
+    /* ================= NO-RESULT MODAL ================= */
+    .pk-modal {
+        position: fixed; inset: 0; z-index: 2000;
+        display: flex; align-items: center; justify-content: center;
+        padding: 20px;
+        background: rgba(8, 24, 17, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        opacity: 0; visibility: hidden;
+        transition: opacity .3s ease, visibility .3s;
+    }
+    .pk-modal.show { opacity: 1; visibility: visible; }
+
+    .pk-modal-box {
+        position: relative;
+        width: 100%; max-width: 480px;
+        padding: 44px 36px 34px;
+        border-radius: 30px;
+        background: #fff;
+        text-align: center;
+        box-shadow: 0 30px 70px rgba(6, 28, 20, 0.35);
+        transform: translateY(30px) scale(.96);
+        transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    }
+    .pk-modal.show .pk-modal-box { transform: translateY(0) scale(1); }
+
+    .pk-modal-close {
+        position: absolute; top: 16px; right: 16px;
+        width: 36px; height: 36px; border-radius: 50%;
+        border: 0; background: rgba(31, 91, 58, 0.10);
+        color: #1F5B3A; font-size: 14px; cursor: pointer;
+        transition: all .25s ease;
+    }
+    .pk-modal-close:hover { background: #e0b14a; color: #12281f; }
+
+    .pk-modal-ico {
+        width: 84px; height: 84px; margin: 0 auto 20px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        background: #1F5B3A;
+        color: #e0b14a;
+        font-size: 32px;
+    }
+    .pk-modal-box h4 {
+        margin: 0 0 10px; font-size: 26px; font-weight: 700; color: #1b1b1b; text-transform: none;
+    }
+    .pk-modal-box h4::before, .pk-modal-box h4::after { display: none !important; content: none !important; }
+    .pk-modal-box p { margin: 0 0 18px; font-size: 16px; line-height: 1.6; color: #5b6560; }
+
+    /* filters the visitor selected, shown inside the modal */
+    .pk-modal-tags {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+        margin: 0 0 26px;
+    }
+    .pk-modal-tags:empty { display: none; }
+    .pk-modal-tags span {
+        padding: 6px 14px; border-radius: 50px;
+        background: rgba(31, 91, 58, 0.10); color: #1F5B3A;
+        font-size: 13px; font-weight: 600;
+    }
+
+    .pk-modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .pk-modal-btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 13px 26px;
+        border-radius: 50px;
+        font-size: 15px; font-weight: 600;
+        cursor: pointer;
+        transition: all .3s ease;
+    }
+    .pk-modal-btn-fill { background: #1F5B3A; border: 1.5px solid #1F5B3A; color: #fff; }
+    .pk-modal-btn-fill:hover { background: #e0b14a; border-color: #e0b14a; color: #12281f; }
+    .pk-modal-btn-line { background: transparent; border: 1.5px solid #1F5B3A; color: #1F5B3A; }
+    .pk-modal-btn-line:hover { background: #1F5B3A; color: #fff; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .pk-modal, .pk-modal-box { transition: none; }
+    }
+
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1199px) {
         .pf-bar { border-radius: 36px; flex-wrap: wrap; justify-content: center; }
@@ -541,6 +624,13 @@
         .pk-actions { gap: 8px; }
         .pk-btn { font-size: 12px; padding: 4px 4px 4px 14px; gap: 6px; }
         .pk-btn .pk-btn-ico { width: 26px; height: 26px; flex: 0 0 26px; font-size: 10px; }
+
+        .pk-modal-box { padding: 38px 22px 26px; border-radius: 24px; }
+        .pk-modal-ico { width: 70px; height: 70px; font-size: 27px; }
+        .pk-modal-box h4 { font-size: 22px; }
+        .pk-modal-box p { font-size: 15px; }
+        .pk-modal-actions { flex-direction: column; }
+        .pk-modal-btn { width: 100%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -716,6 +806,11 @@
                                 {% endwith %}
                             {% endif %}
 
+                            <!-- lowest price found (model field AND description) -->
+                            {% if package.f_price %}
+                            <p class="pk-price">From <b>₹ {{ package.f_price }}</b></p>
+                            {% endif %}
+
                             <p class="pk-desc">{% if package.card_description %}{{ package.card_description|truncatewords:20 }}{% else %}{{ package.description|striptags|truncatewords:20 }}{% endif %}</p>
 
                             <div class="pk-actions">
@@ -737,6 +832,23 @@
         {% endfor %}           {# end: groups #}
 
         <p class="pk-nomatch" id="pkNoMatch">No packages match your filters. Try a higher budget or fewer options.</p>
+
+        <!-- ============ NO-RESULT MODAL ============ -->
+        <div class="pk-modal" id="pkModal" role="dialog" aria-modal="true" aria-labelledby="pkModalTitle" aria-hidden="true">
+            <div class="pk-modal-box">
+                <button type="button" class="pk-modal-close" id="pkModalClose" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                <div class="pk-modal-ico"><i class="fa-solid fa-magnifying-glass-location"></i></div>
+                <h4 id="pkModalTitle">No Packages Found</h4>
+                <p>We could not find any package that matches your filters. Try a higher budget, or choose fewer destinations or durations.</p>
+                <div class="pk-modal-tags" id="pkModalTags"></div>
+                <div class="pk-modal-actions">
+                    <button type="button" class="pk-modal-btn pk-modal-btn-fill" id="pkModalReset">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Filters
+                    </button>
+                    <button type="button" class="pk-modal-btn pk-modal-btn-line" id="pkModalOk">Change Filters</button>
+                </div>
+            </div>
+        </div>
 
         {% else %}
         <p class="pk-empty">No packages available right now.</p>
@@ -805,6 +917,15 @@
         var count  = document.getElementById('pkCount');
         var segs   = [].slice.call(bar.querySelectorAll('.pf-seg'));
 
+        /* no-result modal */
+        var modal     = document.getElementById('pkModal');
+        var modalTags = document.getElementById('pkModalTags');
+        var shownNow  = cols.length;       /* how many packages match right now */
+        var lastFocus = null;
+
+        /* move the modal to <body> so no parent can clip or stack it wrongly */
+        if (modal) document.body.appendChild(modal);
+
         function fmt(n) { return Number(n).toLocaleString('en-IN'); }
         function boxes(name) { return [].slice.call(bar.querySelectorAll('input[name="' + name + '"]')); }
         function checked(name) { return boxes(name).filter(function (i) { return i.checked; }); }
@@ -829,7 +950,6 @@
             s.querySelector('.pf-panel').addEventListener('click', function (e) { e.stopPropagation(); });
         });
         document.addEventListener('click', closeAll);
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAll(); });
 
         /* ---- slider fill ---- */
         function paintRange() {
@@ -879,12 +999,13 @@
             cols.forEach(function (c) {
                 var ok = true;
 
-                /* BUDGET: every price found for the package (model field AND description)
-                   is checked; the package shows if any of them is inside the budget.
-                   Packages with no price at all are never hidden by the budget. */
+                /* BUDGET: prices come from the model field AND the description.
+                   A package shows only if its lowest price is inside the budget.
+                   Once a budget is set, packages with no price at all are hidden too.
+                   At the slider maximum ("Any budget") every package shows. */
                 var prices = (c.getAttribute('data-prices') || '').split(',').filter(Boolean).map(Number);
-                if (!atMax && prices.length) {
-                    ok = prices.some(function (p) { return p <= max; });
+                if (!atMax) {
+                    ok = prices.length ? Math.min.apply(null, prices) <= max : false;
                 }
 
                 /* DESTINATION: any selected destination appears in the package */
@@ -907,24 +1028,84 @@
                 g.classList.toggle('pk-hide', !g.querySelector('.pk-col:not(.pk-hide)'));
             });
 
+            shownNow = shown;
             none.classList.toggle('show', shown === 0);
             count.innerHTML = 'Showing <b>' + shown + '</b> package' + (shown === 1 ? '' : 's');
+
+            /* if the modal is open and the visitor fixed the filters, close it */
+            if (shown > 0) closeModal();
         }
+
+        /* ---- no-result modal ---- */
+        function openModal() {
+            if (!modal) return;
+
+            /* show the selected filters inside the modal */
+            modalTags.innerHTML = '';
+            [].slice.call(chips.querySelectorAll('.pf-chip')).forEach(function (chip) {
+                var s = document.createElement('span');
+                s.textContent = chip.textContent.trim();
+                modalTags.appendChild(s);
+            });
+
+            lastFocus = document.activeElement;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            document.getElementById('pkModalReset').focus();
+        }
+
+        function closeModal() {
+            if (!modal || !modal.classList.contains('show')) return;
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+
+        function resetFilters() {
+            boxes('loc').concat(boxes('day')).forEach(function (i) { i.checked = false; });
+            range.value = range.max;
+            apply();
+        }
+
+        if (modal) {
+            document.getElementById('pkModalClose').addEventListener('click', closeModal);
+            document.getElementById('pkModalOk').addEventListener('click', function () {
+                closeModal();
+                bar.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+            document.getElementById('pkModalReset').addEventListener('click', function () {
+                resetFilters();
+                closeModal();
+            });
+            /* click on the dark background closes it */
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') { closeAll(); closeModal(); }
+        });
 
         range.addEventListener('input', apply);
         bar.addEventListener('change', function (e) {
             if (e.target.type === 'checkbox') apply();
         });
 
-        document.getElementById('pfReset').addEventListener('click', function () {
-            boxes('loc').concat(boxes('day')).forEach(function (i) { i.checked = false; });
-            range.value = range.max;
-            apply();
-        });
+        document.getElementById('pfReset').addEventListener('click', resetFilters);
 
-        /* "Show Packages": close the dropdowns and scroll to the results */
+        /* "Show Packages": close the dropdowns, then either open the
+           "no packages" modal or scroll to the results */
         document.getElementById('pfGo').addEventListener('click', function () {
             closeAll();
+
+            if (shownNow === 0) {
+                openModal();
+                return;
+            }
+
             var first = document.querySelector('.pk-group:not(.pk-hide)') || count;
             var y = first.getBoundingClientRect().top + window.pageYOffset - 120;
             window.scrollTo({ top: y, behavior: 'smooth' });

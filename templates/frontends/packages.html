@@ -1,6 +1,7 @@
 {% extends "frontends/base.html" %}
 {% load static %}
 {% load image_tags %}
+{% load package_tags %}
 {% block title %}Packages | Malabar{% endblock %}
 
 {% comment %}
@@ -9,6 +10,7 @@
     The navbar "Packages" dropdown links to /packages/?category=<slug> to show one category.
     Card order: title, duration, inclusions, description (on hover), price, buttons.
 {% endcomment %}
+
 
 {% block extra_css %}
 <style>
@@ -30,7 +32,6 @@
     .page-header.page-hero::before,
     .page-header.page-hero::after { display: none !important; }
 
-    /* ---- background images: cross-fade + zoom out, same as the About hero ---- */
     .page-hero .ah-bgs {
         position: absolute;
         inset: 0;
@@ -43,7 +44,7 @@
         position: absolute;
         inset: 0;
         z-index: 1;
-        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
+        background: rgba(0, 0, 0, 0.30);
         pointer-events: none;
     }
     .page-hero .ah-bg {
@@ -89,7 +90,7 @@
         text-transform: capitalize;
     }
 
-    /* ================= SECTION (bg fits full width, no side cropping) ================= */
+    /* ================= SECTION ================= */
     .pk-section {
         padding: 100px 0 120px; background-color: #faf8f6;
         background-image:
@@ -98,6 +99,8 @@
         background-size: 100% 100%, 100% auto;
         background-position: center, center top;
         background-repeat: no-repeat, repeat-y;
+        --pk-accent: var(--accent-color, #6b8e23);   /* same colours as the About cards */
+        --pk-dark: var(--primary-color, #1a1a1a);
     }
     .pk-section .container { max-width: 1320px; }
 
@@ -123,126 +126,149 @@
     .pk-col.in-view, .pk-head.in-view { opacity: 1; transform: translateY(0); }
     .pk-col.in-view.pk-delay { transition-delay: .2s; }
 
-    .pk-card .pk-img {
-        clip-path: inset(0 0 100% 0);
-        transition: clip-path 1s cubic-bezier(.65,0,.15,1);
-    }
-    .pk-card .pk-img img {
-        transform: scale(1.25);
-        transition: transform 1.4s cubic-bezier(.2,.7,.2,1);
-    }
-    .pk-col.in-view .pk-img { clip-path: inset(0 0 0 0); }
-    .pk-col.in-view .pk-img img { transform: scale(1); }
+    /* ================= CARD (same layout as the About page) ================= */
+    .pk-col { display: flex; }
 
-    /* ================= CARD ================= */
     .pk-card {
-        position: relative; display: flex; flex-direction: column; justify-content: flex-end;
-        height: 600px; border-radius: 20px; overflow: hidden; color: #fff;
-        background-color: #222;
-        box-shadow: 0 8px 28px rgba(0,0,0,.12);
-        transition: transform .3s ease, box-shadow .3s ease;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        width: 100%;
+        padding: 20px 20px 24px;
+        border-radius: 30px;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(20, 40, 30, 0.10);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .pk-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,.2); }
-
-    .pk-card .pk-img {
-        position: absolute; inset: 0; z-index: 0; margin: 0;
-        width: 100%; height: 100%; overflow: hidden;
-    }
-    .pk-card .pk-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .pk-card::before {
-        content: ""; position: absolute; inset: 0; z-index: 1;
-        background: linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.4) 45%, rgba(0,0,0,0) 75%);
-        transition: background .35s ease;
-        pointer-events: none;
-    }
-    .pk-card:hover::before {
-        background: linear-gradient(to top, rgba(0,0,0,.94) 0%, rgba(0,0,0,.78) 60%, rgba(0,0,0,.3) 100%);
+    .pk-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 42px rgba(20, 40, 30, 0.18);
     }
 
-    .pk-route {
-        position: absolute; right: 0; bottom: 190px; z-index: 2; width: 110px; height: 50px;
-        border-top: 2px dashed rgba(255,255,255,.7); border-left: 2px dashed rgba(255,255,255,.7);
-        border-top-left-radius: 100% 100%; opacity: .6; pointer-events: none;
+    .pk-media {
+        position: relative;
+        height: 300px;
+        flex: 0 0 300px;
+        border-radius: 24px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #d9e6dc, #c4d8c9);
     }
-
-    .pk-body { position: relative; z-index: 3; padding: 32px 34px; }
-
-    .pk-body h3 {
-        color: #fff; font-size: 36px; font-weight: 700; line-height: 1.2;
-        margin: 0 0 10px; text-transform: none;
-        transition: font-size .35s ease, transform .35s ease;
+    .pk-media > a { display: block; width: 100%; height: 100%; }
+    .pk-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s ease;
     }
-    .pk-card:hover .pk-body h3 { font-size: 40px; transform: translateY(-4px); }
-    .pk-body h3::before, .pk-body h3::after { display: none !important; content: none !important; }
-    .pk-body h3 a { color: inherit; text-decoration: none; }
+    .pk-card:hover .pk-media img { transform: scale(1.06); }
+
+    /* orange duration badge on the bottom edge of the image */
+    .pk-meta {
+        position: absolute;
+        left: 50%; bottom: 0;
+        transform: translateX(-50%);
+        z-index: 2;
+        max-width: 94%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 13px 26px;
+        border-radius: 26px 26px 0 0;
+        background: #f7931e;
+        color: #fff;
+        font-size: 15px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .pk-meta span { display: inline-flex; align-items: center; gap: 7px; }
+    .pk-meta i { font-size: 14px; }
+
+    .pk-body { padding: 24px 6px 6px; display: flex; flex-direction: column; flex: 1; }
+
+    .pk-title {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 0 0 12px;
+        text-transform: none;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .pk-title::before, .pk-title::after { display: none !important; content: none !important; }
+    .pk-title,
+    .pk-title a { color: #111111 !important; text-decoration: none; }
+    .pk-title a:hover { color: var(--pk-accent) !important; }
+
+    .pk-loc {
+        display: flex; align-items: center; gap: 8px;
+        margin: -4px 0 12px;
+        font-size: 15px; font-weight: 600;
+        color: var(--pk-accent);
+    }
+    .pk-loc i { font-size: 14px; }
 
     .pk-desc {
-        margin: 0; font-size: 22px; line-height: 1.7; font-weight: 400;
-        color: rgba(255,255,255,.96);
-        max-height: 0; opacity: 0; overflow: hidden; transform: translateY(14px);
-        transition: max-height .5s ease, opacity .4s ease, margin .4s ease, transform .4s ease;
+        font-size: 17px;
+        line-height: 1.6;
+        color: #5b6560 !important;
+        margin: 0 0 22px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: calc(1.6em * 3);
     }
-    .pk-card:hover .pk-desc { max-height: 340px; opacity: 1; margin: 0 0 18px; transform: translateY(0); }
 
-    /* footer: price on top, buttons below */
-    .pk-foot { display: flex; flex-direction: column; gap: 16px; }
-    .pk-price small { font-size: 16px; opacity: .85; margin-right: 8px; }
-    .pk-price strong { font-size: 32px; font-weight: 600; }
-
-    .pk-actions { display: flex; gap: 12px; }
+    .pk-actions { margin-top: auto; display: flex; gap: 10px; }
     .pk-btn {
         flex: 1;
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        border-radius: 40px;
-        padding: 12px 20px; font-size: 16px; font-weight: 600; line-height: 1.2;
-        text-decoration: none; white-space: nowrap;
-        transition: background .25s ease, color .25s ease, border-color .25s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 8px 8px 8px 20px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.3s ease;
     }
-    .pk-btn i { font-size: 13px; transition: transform .25s ease; }
-    .pk-btn:hover i { transform: translateX(4px); }
+    .pk-btn .pk-btn-ico {
+        width: 34px; height: 34px;
+        flex: 0 0 34px;
+        border-radius: 50%;
+        font-size: 12px;
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.3s ease;
+    }
 
     /* Book Now: filled */
     .pk-btn-fill {
-        background: #f7e3d2;
-        border: 1.5px solid #f7e3d2;
-        color: #12281f !important;
-    }
-    .pk-btn-fill:hover { background: #c9972b; border-color: #c9972b; color: #fff !important; }
-
-    /* Explore: outlined */
-    .pk-btn-line {
-        background: transparent;
-        border: 1.5px solid rgba(255,255,255,.85);
+        background: var(--pk-accent);
+        border: 1.5px solid var(--pk-accent);
         color: #fff !important;
     }
-    .pk-btn-line:hover { background: #fff; border-color: #fff; color: #1b1b1b !important; }
+    .pk-btn-fill .pk-btn-ico { background: var(--pk-dark); color: #fff; }
+    .pk-btn-fill:hover { filter: brightness(0.88); }
+    .pk-btn-fill:hover .pk-btn-ico { transform: translateX(3px); }
+
+    /* View More: outlined */
+    .pk-btn-line {
+        background: transparent;
+        border: 1.5px solid var(--pk-accent);
+        color: var(--pk-accent) !important;
+    }
+    .pk-btn-line .pk-btn-ico { background: var(--pk-accent); color: #fff; }
+    .pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
+    .pk-btn-line:hover { background: var(--pk-accent); color: #fff !important; }
+    .pk-btn-line:hover .pk-btn-ico { background: #fff; color: var(--pk-accent); transform: translate(2px, -2px); }
 
     .pk-empty { text-align: center; font-size: 18px; color: #5a524a; padding: 60px 0; }
-
-    /* ================= DURATION UNDER TITLE ================= */
-    .pk-duration {
-        display: inline-flex; align-items: center; gap: 8px;
-        margin: 0 0 12px; font-size: 17px; font-weight: 500;
-        color: #f7e3d2;
-    }
-    .pk-duration i { font-size: 14px; }
-
-    /* ================= INCLUSIONS UNDER TITLE ================= */
-    .pk-incl {
-        list-style: none; margin: 0 0 14px; padding: 0;
-        display: flex; flex-wrap: wrap; gap: 8px;
-    }
-    .pk-incl li {
-        display: inline-flex; align-items: center; gap: 6px;
-        max-width: 100%; padding: 5px 12px; border-radius: 30px;
-        font-size: 14px; font-weight: 500; color: #fff;
-        background: rgba(255,255,255,.16);
-        border: 1px solid rgba(255,255,255,.35);
-        backdrop-filter: blur(4px);
-        overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-    }
-    .pk-incl li i { font-size: 11px; color: #f7e3d2; flex-shrink: 0; }
 
     /* ================= CATEGORY GROUPS ================= */
     .pk-group { margin-bottom: 90px; scroll-margin-top: 110px; }
@@ -260,13 +286,6 @@
     .pk-line { flex: 1; height: 2px; background: linear-gradient(to right, #c9972b, rgba(201,151,43,0)); }
 
     /* ================= RESPONSIVE ================= */
-    @media (hover: none) {
-        .pk-desc { max-height: 340px; opacity: 1; margin: 0 0 18px; transform: none; }
-        .pk-card::before {
-            background: linear-gradient(to top, rgba(0,0,0,.94) 0%, rgba(0,0,0,.78) 60%, rgba(0,0,0,.3) 100%);
-        }
-    }
-
     @media (max-width: 991px) {
         .page-header.page-hero {
             width: calc(100% - 20px) !important;
@@ -294,10 +313,7 @@
         .pk-section { padding: 70px 0 80px; }
         .pk-head { margin-bottom: 44px; }
         .pk-head h2 { font-size: 36px; }
-        .pk-card { height: 560px; }
         .pk-col.in-view.pk-delay { transition-delay: 0s; }
-        .pk-actions { gap: 10px; }
-        .pk-btn { padding: 11px 14px; font-size: 14.5px; }
         .pk-group { margin-bottom: 60px; }
         .pk-group-head h3 { font-size: 30px; }
     }
@@ -306,35 +322,26 @@
         .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
         .pk-head h2 { font-size: 28px; }
         .pk-head p { font-size: 16px; }
-        .pk-card { height: 580px; }
-        .pk-body { padding: 24px 22px; }
-        .pk-body h3, .pk-card:hover .pk-body h3 { font-size: 28px; }
-        .pk-desc { font-size: 17px; }
-        .pk-foot { gap: 12px; }
-        .pk-price small { font-size: 14px; }
-        .pk-price strong { font-size: 24px; }
-        .pk-actions { gap: 8px; }
-        .pk-btn { padding: 9px 10px; font-size: 13px; gap: 6px; border-width: 1.2px; }
-        .pk-btn i { font-size: 10px; }
-        .pk-duration { font-size: 14px; margin-bottom: 10px; }
-        .pk-incl { gap: 6px; margin-bottom: 10px; }
-        .pk-incl li { font-size: 12px; padding: 4px 10px; }
         .pk-group-head h3 { font-size: 24px; white-space: normal; }
-    }
 
-    @media (max-width: 360px) {
-        .pk-btn { padding: 8px 8px; font-size: 12px; }
-        .pk-price strong { font-size: 22px; }
+        .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
+        .pk-media { height: 200px; flex-basis: 200px; border-radius: 18px; }
+        .pk-meta { font-size: 12px; padding: 8px 14px; }
+        .pk-body { padding: 16px 4px 4px; }
+        .pk-title { font-size: 20px; margin-bottom: 8px; }
+        .pk-loc { font-size: 13px; margin-bottom: 8px; }
+        .pk-desc { font-size: 14px; line-height: 1.5; margin-bottom: 14px; min-height: calc(1.5em * 3); }
+        .pk-actions { gap: 8px; }
+        .pk-btn { font-size: 12px; padding: 4px 4px 4px 14px; gap: 6px; }
+        .pk-btn .pk-btn-ico { width: 26px; height: 26px; flex: 0 0 26px; font-size: 10px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .pk-col, .pk-head, .pk-card .pk-img, .pk-card .pk-img img { transition: none; }
-        .pk-col, .pk-head { opacity: 1; transform: none; }
-        .pk-card .pk-img { clip-path: none; }
-        .pk-card .pk-img img { transform: none; }
+        .pk-col, .pk-head { transition: none; opacity: 1; transform: none; }
     }
 </style>
 {% endblock %}
+
 
 {% block content %}
 <!-- Hero (same design and rotating images as the About page) -->
@@ -386,65 +393,56 @@
             <div class="row g-4 g-xl-5">
                 {% for package in group.packages %}
                 <div class="col-lg-6 col-md-6 pk-col{% if not forloop.counter0|divisibleby:2 %} pk-delay{% endif %}">
-
                     <div class="pk-card">
 
-<figure class="pk-img">
-    {% if package.main_image %}
-        <img src="{{ package.main_image.url }}"
-             srcset="{{ package.main_image|srcset }}"
-             sizes="(max-width: 767px) 100vw, 50vw"
-             alt="{{ package.name }}" loading="lazy" decoding="async">
-    {% else %}
-        <img src="{% static 'malabar-static/mr5.webp' %}"
-             alt="{{ package.name }}" loading="lazy" decoding="async">
-    {% endif %}
-</figure>
-                        <span class="pk-route"></span>
-
-                        <div class="pk-body">
-                            <h3><a href="{% url 'package_detail' package.slug %}">{{ package.name }}</a></h3>
+                        <div class="pk-media">
+                            <a href="{% url 'package_detail' package.slug %}" draggable="false">
+                                {% if package.main_image %}
+                                <img src="{{ package.main_image.url }}"
+                                     srcset="{{ package.main_image|srcset }}"
+                                     sizes="(max-width: 767px) 100vw, 50vw"
+                                     alt="{{ package.name }}" draggable="false" loading="lazy" decoding="async">
+                                {% else %}
+                                <img src="{% static 'malabar-static/mr5.webp' %}"
+                                     alt="{{ package.name }}" draggable="false" loading="lazy" decoding="async">
+                                {% endif %}
+                            </a>
 
                             {% if package.duration %}
-                            <div class="pk-duration"><i class="fa-regular fa-clock"></i> {{ package.duration }}</div>
+                            <div class="pk-meta">
+                                <span><i class="fa-regular fa-calendar-days"></i>{{ package.duration }}</span>
+                            </div>
                             {% endif %}
+                        </div>
 
-                            {% if package.inclusions_short %}
-                            <ul class="pk-incl">
-                                {% for item in package.inclusions_short %}
-                                <li><i class="fa-solid fa-check"></i> {{ item }}</li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
+                        <div class="pk-body">
+                            <h3 class="pk-title"><a href="{% url 'package_detail' package.slug %}">{{ package.name }}</a></h3>
 
-                            {% if package.description %}
-                            <p class="pk-desc">{{ package.description|striptags|safe|truncatewords:28 }}</p>
-                            {% endif %}
-
-                            <div class="pk-foot">
-                                {% if package.price_from %}
-                                <div class="pk-price">
-                                    <small>From</small><strong>₹{{ package.price_from|floatformat:"0g" }}</strong>
-                                </div>
+                            {% with loc=package.card_description|default:""|add:" "|add:package.description|extract_location %}
+                                {% if loc %}
+                                <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ loc }}</p>
                                 {% endif %}
+                            {% endwith %}
 
-                                <div class="pk-actions">
-                                    <!-- opens the booking modal from base.html, with the package name -->
-                                    <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ package.name }}">
-                                        Book Now <i class="fa-solid fa-angles-right"></i>
-                                    </a>
-                                    <a href="{% url 'package_detail' package.slug %}" class="pk-btn pk-btn-line">
-                                        Explore <i class="fa-solid fa-arrow-right"></i>
-                                    </a>
-                                </div>
+                            <p class="pk-desc">{% if package.card_description %}{{ package.card_description|truncatewords:20 }}{% else %}{{ package.description|striptags|truncatewords:20 }}{% endif %}</p>
+
+                            <div class="pk-actions">
+                                <!-- opens the booking modal from base.html, with the package name -->
+                                <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ package.name }}">
+                                    Book Now <span class="pk-btn-ico"><i class="fa-solid fa-angles-right"></i></span>
+                                </a>
+                                <a href="{% url 'package_detail' package.slug %}" class="pk-btn pk-btn-line">
+                                    View More <span class="pk-btn-ico"><i class="fa-solid fa-arrow-right"></i></span>
+                                </a>
                             </div>
                         </div>
+
                     </div>
                 </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endfor %}
+                {% endfor %}   {# end: packages in this group #}
+            </div>             {# end: .row #}
+        </div>                 {# end: .pk-group #}
+        {% endfor %}           {# end: groups  <-- this was missing #}
 
         {% else %}
         <p class="pk-empty">No packages available right now.</p>

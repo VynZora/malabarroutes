@@ -1,6 +1,7 @@
 {% extends "frontends/base.html" %}
 {% load static %}
 {% load image_tags %}
+{% load package_tags %}
 {% block title %}Home | Malabar{% endblock %}
 
 {% comment %}
@@ -250,324 +251,206 @@
         .ab-tagline { display: none; }
     }
 
-    /* ================= MALABAROUTES SERVICES ================= */
-.our-services.bg-section.ms-services,
-.our-services.ms-services {
-    position: relative;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    background-color: #fcf7f6 !important;
-    background-image:
-        linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-        linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-        linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
-        url('{% static 'malabar-static/mr5.png' %}') !important;
-    background-size: 100% 200px, 100% 200px, cover, cover !important;
-    background-position: top, bottom, center, center !important;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
-}
+    /* ================= SHARED CAROUSEL PARTS (packages, destinations, testimonials) ================= */
+    .ms-services .ms-carousel { position: relative; }
 
-/* ---- shared carousel parts (also used by packages, destinations, testimonials) ---- */
-.ms-services .ms-carousel { position: relative; }
+    .ms-services .ms-viewport {
+        overflow: hidden;
+        padding: 20px 0 30px;
+        margin: -20px 0 -30px;
+        cursor: grab;
+        user-select: none;
+    }
+    .ms-services .ms-viewport.dragging { cursor: grabbing; }
 
-.ms-services .ms-viewport {
-    overflow: hidden;
-    padding: 20px 0 30px;
-    margin: -20px 0 -30px;
-    cursor: grab;
-    user-select: none;
-}
-.ms-services .ms-viewport.dragging { cursor: grabbing; }
+    .ms-services .ms-track {
+        display: flex;
+        will-change: transform;
+        touch-action: pan-y;
+    }
 
-.ms-services .ms-track {
-    display: flex;
-    will-change: transform;
-    touch-action: pan-y;
-}
+    .ms-services .ms-slide {
+        flex: 0 0 33.3333%;
+        padding: 0 12px;
+        display: flex;
+    }
 
-.ms-services .ms-slide {
-    flex: 0 0 33.3333%;
-    padding: 0 12px;
-    display: flex;
-}
+    .ms-services .ms-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        margin-top: 40px;
+    }
+    .ms-services .ms-nav button.ms-arrow {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        border: 1px solid #111111;
+        background: transparent;
+        color: #111111;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .ms-services .ms-nav button.ms-arrow:hover {
+        background: #111111;
+        color: #ffffff;
+    }
 
-.ms-services .ms-nav {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 22px;
-    margin-top: 40px;
-}
-.ms-services .ms-nav button.ms-arrow {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    border: 1px solid #111111;
-    background: transparent;
-    color: #111111;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.ms-services .ms-nav button.ms-arrow:hover {
-    background: #111111;
-    color: #ffffff;
-}
+    .ms-services .ms-dots {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ms-services .ms-dot {
+        width: 10px;
+        height: 10px;
+        padding: 0;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .ms-services .ms-dot.active {
+        width: 28px;
+        border-radius: 10px;
+        background: #111111;
+    }
 
-.ms-services .ms-dots {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.ms-services .ms-dot {
-    width: 10px;
-    height: 10px;
-    padding: 0;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.ms-services .ms-dot.active {
-    width: 28px;
-    border-radius: 10px;
-    background: #111111;
-}
+    @media (max-width: 767px) {
+        .ms-services .ms-dots { display: none; }
+    }
 
-@media (max-width: 767px) {
-    .ms-services .ms-dots { display: none; }
-}
+    /* ================= SERVICES (circle carousel) ================= */
+    .sv-section {
+        --sv-green: #1d5a3a;
+        --sv-gold: #c9a45b;
+        background-color: #fcf7f6;
+        background-image:
+            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
+            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            url('{% static 'malabar-static/mr5.png' %}');
+        background-size: 100% 200px, 100% 200px, cover, cover;
+        background-position: top, bottom, center, center;
+        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+        padding: 90px 0 100px;
+        position: relative;
+        overflow: hidden;
+    }
 
-/* ================= Services: timeline ================= */
-.ms-services .tl-list {
-    position: relative;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 10px 0;
-}
-.ms-services .tl-list::before {          /* grey base line */
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, transparent, #b9cbc0 8%, #b9cbc0 92%, transparent);
-}
+    .svc-stage {
+        --d: 340px;                               /* circle size, set by the script */
+        position: relative; width: 100%; max-width: 1700px; margin: 16px auto 0;
+        height: calc(var(--d) + 90px);
+        touch-action: pan-y; user-select: none;
+    }
+    .svc-floor {                                  /* soft gold floor rings */
+        position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%);
+        width: 92%; height: calc(var(--d) * 0.5); border-radius: 50%;
+        border: 1px solid rgba(201, 164, 91, 0.38); pointer-events: none;
+    }
+    .svc-floor::after {
+        content: ""; position: absolute; inset: 14% 8%; border-radius: 50%;
+        border: 1px solid rgba(201, 164, 91, 0.24);
+    }
+    .svc-glow {
+        position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+        width: calc(var(--d) * 1.15); height: calc(var(--d) * 0.2);
+        background: radial-gradient(ellipse at center, rgba(29, 90, 58, 0.20), rgba(29, 90, 58, 0) 70%);
+        pointer-events: none;
+    }
 
-/* scroll progress line (created by the script) */
-.ms-services .tl-progress {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 3px;
-    height: 0;
-    transform: translateX(-50%);
-    background: linear-gradient(to bottom, #2f7f6a, #1f6b57);
-    border-radius: 3px;
-    z-index: 1;
-    pointer-events: none;
-}
-.ms-services .tl-progress::after {       /* glowing dot at the tip */
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: -5px;
-    width: 12px;
-    height: 12px;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background: #c9972b;
-    box-shadow: 0 0 0 4px rgba(201, 151, 43, 0.25), 0 0 12px rgba(201, 151, 43, 0.7);
-}
+    .svc-item {
+        position: absolute; left: 50%; top: calc(50% - 18px);
+        width: var(--d); height: var(--d);
+        display: block; overflow: hidden; border-radius: 50%;
+        background: linear-gradient(160deg, #fbfdf9, #dfeee3);
+        border: 3px solid var(--sv-gold);
+        box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.92), 0 16px 36px rgba(20, 40, 30, 0.16);
+        text-decoration: none; cursor: pointer; will-change: transform;
+        transition: transform .65s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, box-shadow .4s ease;
+    }
+    .svc-item.is-active {
+        box-shadow: inset 0 0 0 6px #ffffff, 0 26px 56px rgba(20, 40, 30, 0.28), 0 0 0 7px rgba(201, 164, 91, 0.18);
+    }
+    .svc-item:focus-visible { outline: 3px solid var(--sv-gold); outline-offset: 4px; }
 
-.ms-services .tl-item {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 90px 1fr;
-    align-items: center;
-    margin-bottom: -80px;                /* more negative = tighter, less negative = more space */
-    pointer-events: none;                /* empty row area must not block clicks on overlapping cards */
-}
-.ms-services .tl-item:last-child { margin-bottom: 0; }
+    .svc-pic {
+        position: absolute; left: 0; right: 0; top: 0; bottom: 24%;
+        display: flex; align-items: center; justify-content: center;
+        padding: 9% 12% 3%;
+    }
+    .svc-pic img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 
-/* round icon node on the line */
-.ms-services .tl-node {
-    grid-column: 2;
-    grid-row: 1;
-    justify-self: center;
-    position: relative;
-    z-index: 2;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #12281f;
-    color: #fff;
-    font-size: 21px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 0 7px rgba(252, 247, 246, 0.9), 0 10px 22px rgba(20, 40, 30, 0.22);
-    transition: transform 0.3s ease, background 0.4s ease, box-shadow 0.4s ease;
-    pointer-events: auto;
-}
-.ms-services .tl-item:hover .tl-node { background: #265648; transform: scale(1.1); }
+    .svc-label {                                  /* green dome at the bottom of each circle */
+        position: absolute; left: -2%; right: -2%; bottom: 0; height: 31%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: calc(var(--d) * 0.02); padding-top: calc(var(--d) * 0.03);
+        background: linear-gradient(180deg, #236a43, #17492f);
+        border-radius: 50% 50% 0 0 / 46% 46% 0 0;
+    }
+    .svc-label b {
+        font-family: 'Playfair Display', serif; font-weight: 500;
+        font-size: calc(var(--d) * 0.075); line-height: 1.1;
+        color: #ffffff; text-align: center;
+    }
+    .svc-label i { display: block; width: calc(var(--d) * 0.07); height: 2px; border-radius: 2px; background: var(--sv-gold); }
 
-/* card (white, thin dark green border) */
-.ms-services .tl-card {
-    grid-row: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 26px;
-    padding: 28px 30px;
-    border-radius: 22px;
-    background: #ffffff;
-    border: 1px solid #2f4a3a;
-    box-shadow: 0 14px 34px rgba(20, 40, 30, 0.12);
-    transition: transform 0.3s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    pointer-events: auto;
-}
-.ms-services .tl-card,
-.ms-services .tl-card * {
-    font-family: inherit;
-}
-.ms-services .tl-card .fa-solid,
-.ms-services .tl-card .fa-arrow-right {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", "FontAwesome";
-}
-.ms-services .tl-item:hover .tl-card {
-    transform: translateY(-4px);
-    box-shadow: 0 22px 44px rgba(20, 40, 30, 0.18);
-}
-.ms-services .tl-item:nth-child(odd)  .tl-card { grid-column: 1; }
-.ms-services .tl-item:nth-child(even) .tl-card { grid-column: 3; flex-direction: row-reverse; }
+    .svc-arrow {
+        position: absolute; top: calc(50% - 18px); transform: translateY(-50%); z-index: 40;
+        width: 56px; height: 56px; border: 0; border-radius: 50%;
+        background: var(--sv-green); color: #ffffff; font-size: 18px;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        box-shadow: 0 8px 20px rgba(20, 60, 40, 0.35);
+        transition: background .3s ease, transform .3s ease;
+    }
+    .svc-arrow:hover { background: #c9972b; }
+    .svc-prev { left: 24px; }
+    .svc-next { right: 24px; }
 
-/* dashed connector from card to node */
-.ms-services .tl-card::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 34px;
-    border-top: 2px dashed #b9cbc0;
-    pointer-events: none;
-}
-.ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -35px; }
-.ms-services .tl-item:nth-child(even) .tl-card::after { left: -35px; }
+    .svc-cap {
+        max-width: 660px; margin: 8px auto 0; text-align: center; min-height: 170px;
+        transition: opacity .35s ease, transform .35s ease;
+    }
+    .svc-cap.is-swap { opacity: 0; transform: translateY(8px); }
+    .svc-cap h3 { margin: 0 0 10px; font-size: 30px; font-weight: 700; color: #1f3a2c; text-transform: none; }
+    .svc-cap p { margin: 0 0 22px; font-size: 17px; line-height: 1.7; color: #5b6560; }
+    .svc-btn {
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 13px 30px; border-radius: 50px;
+        background: var(--sv-green); border: 1.5px solid var(--sv-green);
+        color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none;
+        transition: all .3s ease;
+    }
+    .svc-btn:hover { background: #c9972b; border-color: #c9972b; }
+    .svc-btn i { font-size: 13px; transition: transform .3s ease; }
+    .svc-btn:hover i { transform: translateX(4px); }
 
-/* active state: icon + card light up when the line reaches them */
-.ms-services .tl-item.is-active .tl-node {
-    background: #2f7f6a;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 7px rgba(47, 127, 106, 0.18), 0 10px 22px rgba(20, 40, 30, 0.25);
-}
-.ms-services .tl-item.is-active .tl-card {
-    border-color: #2f7f6a;
-    box-shadow: 0 18px 40px rgba(31, 107, 87, 0.18);
-}
+    @media (max-width: 991px) {
+        .sv-section { padding: 60px 0 70px; }
+        .svc-arrow { width: 46px; height: 46px; font-size: 15px; }
+        .svc-prev { left: 10px; }
+        .svc-next { right: 10px; }
+        .svc-cap h3 { font-size: 26px; }
+        .svc-cap { min-height: 190px; padding: 0 16px; }
+    }
+    @media (max-width: 575px) {
+        .svc-arrow { width: 40px; height: 40px; font-size: 13px; }
+        .svc-cap h3 { font-size: 23px; }
+        .svc-cap p { font-size: 15px; }
+        .svc-btn { padding: 10px 22px; font-size: 13.5px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .svc-item, .svc-cap, .svc-arrow { transition: none; }
+    }
 
-/* image: whole picture visible, nothing cut off */
-.ms-services .tl-img {
-    flex: 0 0 170px;
-    width: 170px;
-    height: 190px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #e9eedf;                 /* use #ffffff for a plain white box */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.ms-services .tl-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    padding: 6px;
-    transition: transform 0.6s ease;
-}
-.ms-services .tl-item:hover .tl-img img { transform: scale(1.05); }
-
-.ms-services .tl-body { flex: 1; min-width: 0; }
-
-.ms-services .tl-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 18px;
-    border-radius: 50px;
-    background: #efe5d0;
-    color: #2b3a2f;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-}
-.ms-services .tl-card h3 {
-    font-size: 30px;
-    font-weight: 700;
-    line-height: 1.2;
-    color: #1f3a2c;
-    margin: 0 0 10px;
-    text-transform: none;
-}
-.ms-services .tl-card p {
-    font-size: 16px;
-    line-height: 1.65;
-    color: #5b6560;
-    margin: 0 0 18px;
-}
-.ms-services .tl-more {
-    position: relative;
-    z-index: 3;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
-    border-radius: 50px;
-    background: #35432f;
-    color: #fff !important;
-    font-size: 14px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.3s ease, gap 0.3s ease;
-}
-.ms-services .tl-more:hover { background: #c9972b; gap: 12px; }
-
-/* tablet */
-@media (max-width: 991px) {
-    .ms-services .tl-item { grid-template-columns: 1fr 70px 1fr; margin-bottom: -50px; }
-    .ms-services .tl-card { gap: 16px; padding: 20px; }
-    .ms-services .tl-card::after { width: 20px; }
-    .ms-services .tl-item:nth-child(odd)  .tl-card::after { right: -21px; }
-    .ms-services .tl-item:nth-child(even) .tl-card::after { left: -21px; }
-    .ms-services .tl-img { flex-basis: 120px; width: 120px; height: 150px; }
-    .ms-services .tl-card h3 { font-size: 25px; }
-    .ms-services .tl-card p { font-size: 14px; }
-    .ms-services .tl-pill { font-size: 11px; padding: 6px 14px; }
-}
-
-/* mobile: line on the left, all cards on the right (no overlap) */
-@media (max-width: 767px) {
-    .ms-services .tl-list::before { left: 28px; transform: none; }
-    .ms-services .tl-progress { left: 28px; transform: none; }
-    .ms-services .tl-progress::after { left: 1.5px; transform: translateX(-50%); }
-    .ms-services .tl-item { grid-template-columns: 56px 1fr; column-gap: 14px; margin-bottom: 22px; }
-    .ms-services .tl-item:last-child { margin-bottom: 0; }
-    .ms-services .tl-node { grid-column: 1; width: 48px; height: 48px; font-size: 18px; box-shadow: 0 0 0 5px rgba(252, 247, 246, 0.9), 0 8px 18px rgba(20, 40, 30, 0.2); }
-    .ms-services .tl-item:nth-child(odd)  .tl-card,
-    .ms-services .tl-item:nth-child(even) .tl-card { grid-column: 2; flex-direction: column; align-items: flex-start; padding: 18px; }
-    .ms-services .tl-card::after { display: none; }
-    .ms-services .tl-img { flex: none; width: 100%; height: 190px; }
-    .ms-services .tl-card h3 { font-size: 24px; }
-}
+    
     /* ================= HOME FILTER PILLS (packages + destinations) ================= */
     .fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
     .fl-btn {
@@ -662,6 +545,15 @@
     }
     .pk-title, .pk-title a { color: #111111 !important; text-decoration: none; }
     .pk-title a:hover { color: var(--pk-accent) !important; }
+
+    .pk-loc {
+        display: flex; align-items: center; gap: 8px;
+        margin: -4px 0 12px;
+        font-size: 15px; font-weight: 600; line-height: 1.3;
+        color: var(--pk-accent);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pk-loc i { font-size: 14px; flex: 0 0 auto; }
 
     .pk-desc {
         font-size: 17px; line-height: 1.6; color: #5b6560 !important;
@@ -839,7 +731,7 @@
     @media (min-width: 1600px) { .pk-section .container { max-width: 1560px; } }
 
     /* ===== Package card: size only ===== */
-    .pk-card { height: 538px; }
+    .pk-card { height: 572px; }
     .pk-media { aspect-ratio: auto; height: 280px; flex: 0 0 280px; }
     .pk-desc { min-height: calc(1.6em * 3); }
     @media (max-width: 575px) {
@@ -877,7 +769,7 @@
         transform: translate3d(var(--px, 0px), 0, 0) scale(var(--sc, 1));
     }
 
-    .pk-section    { padding-bottom: calc(var(--div-h) / 2 + 10px) !important; }
+    .sv-section    { padding-bottom: calc(var(--div-h) / 2 + 10px) !important; }
     .why-choose-us { padding-top: calc(var(--div-h) / 2 + 30px) !important; }
 
     @keyframes pkFloat {
@@ -1525,118 +1417,80 @@
         }
         .main-header { top: 28px !important; }
     }
-    /* ---- Services: static grid (no carousel) ---- */
-.ms-services .sv-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 50px 10px;
-    margin-top: 20px;
-}
-.ms-services .sv-grid .ms-slide {
-    flex: none;
-    padding: 0;
-    display: flex;
-}
-@media (max-width: 1199px) {
-    .ms-services .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 575px) {
-    .ms-services .sv-grid { grid-template-columns: 1fr; gap: 40px; }
-}
-/* ---- Services: static 4 + 4 grid (keeps the plane line) ---- */
-.ms-services .sv-static { position: relative; }
 
-.ms-services .sv-static .sv-row {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
-}
-.ms-services .sv-static .sv-row + .sv-row { margin-top: 60px; }
+    /* ===== Mobile: Popular Packages (same as About page) ===== */
+    @media (max-width: 575px) {
+        .pk-section { padding-top: 40px; }
+        .pk-section .section-title h2 { font-size: 28px !important; }
+        .pk-section .section-title p { font-size: 14px; }
+        .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
+        .pk-media { height: 170px; flex-basis: 170px; border-radius: 18px; }
+        .pk-meta { font-size: 12px; padding: 8px 14px; }
+        .pk-body { padding: 16px 4px 4px; }
+        .pk-title { font-size: 18px; margin-bottom: 8px; }
+        .pk-loc { font-size: 13px; margin-bottom: 8px; }
+        .pk-desc { font-size: 13.5px; line-height: 1.5; margin-bottom: 14px; min-height: calc(1.5em * 3); }
+        .pk-more { margin-top: 28px; }
+        .pk-more a { padding: 10px 22px; font-size: 13px; gap: 8px; }
 
-.ms-services .sv-static .sv-item { display: flex; min-width: 0; }
-.ms-services .sv-static .sv-item .sv-card { flex: 1; padding-left: 0; align-items: center; }
-.ms-services .sv-static .sv-item .sv-head,
-.ms-services .sv-static .sv-item p,
-.ms-services .sv-static .sv-item .sv-more { width: 250px; max-width: 100%; align-self: center; }
-
-/* the line + plane sit inside each row */
-#msCarousel .sv-row .sv-line,
-#msCarousel .sv-row .sv-sky { left: 0; top: 0; }
-
-@media (max-width: 991px) {
-    .ms-services .sv-static .sv-row { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 50px; }
-    .ms-services .sv-static .sv-row + .sv-row { margin-top: 50px; }
-}
-@media (max-width: 575px) {
-    .ms-services .sv-static .sv-row { grid-template-columns: 1fr; row-gap: 40px; }
-}
-/* plane + line sit BEHIND the cards */
-#msCarousel .sv-item { position: relative; z-index: 1; }
-#msCarousel .sv-line,
-#msCarousel .sv-sky { z-index: 0; }
-/* card highlighted while the plane is over it */
-#msCarousel .sv-card { transition: transform .5s ease; }
-#msCarousel .sv-card.is-active { transform: translateY(-10px); }
-#msCarousel .sv-card.is-active .sv-back { transform: rotate(8deg) scale(1.04); }
-#msCarousel .sv-card.is-active .sv-photo { border-radius: 45% 55% 42% 58% / 55% 45% 55% 45%; }
-#msCarousel .sv-card.is-active .sv-photo img { transform: scale(1.08); }
-#msCarousel .sv-card.is-active .sv-badge { transform: scale(1.1) rotate(-6deg); }
-#msCarousel .sv-card .sv-no,
-#msCarousel .sv-card h3 { transition: color .4s ease; }
-#msCarousel .sv-card.is-active .sv-no { color: #8fb0a2; }
-#msCarousel .sv-card.is-active h3 { color: #c9972b; }
-/* Mobile / tablet: show services in order 1 to 8 going downwards */
-@media (max-width: 991px) {
-    .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(1) { order: 4; } /* 08 */
-    .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(2) { order: 3; } /* 07 */
-    .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(3) { order: 2; } /* 06 */
-    .ms-services .sv-static .sv-row + .sv-row .sv-item:nth-child(4) { order: 1; } /* 05 */
-}
-/* ===== Mobile: Popular Packages (same as About page) ===== */
-@media (max-width: 575px) {
-    .pk-section { padding-top: 40px; }
-    .pk-section .section-title h2 { font-size: 28px !important; }
-    .pk-section .section-title p { font-size: 14px; }
-    .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
-    .pk-media { height: 170px; flex-basis: 170px; border-radius: 18px; }
-    .pk-meta { font-size: 12px; padding: 8px 14px; }
-    .pk-body { padding: 16px 4px 4px; }
-    .pk-title { font-size: 18px; margin-bottom: 8px; }
-    .pk-desc { font-size: 13.5px; line-height: 1.5; margin-bottom: 14px; min-height: calc(1.5em * 3); }
-    .pk-more { margin-top: 28px; }
-    .pk-more a { padding: 10px 22px; font-size: 13px; gap: 8px; }
-
-    .pk-actions { gap: 8px; }
-    .pk-btn { font-size: 12px; padding: 4px 4px 4px 14px; gap: 6px; }
-    .pk-btn .pk-btn-ico { width: 26px; height: 26px; flex: 0 0 26px; font-size: 10px; }
-}
-/* ================= MOBILE / TABLET: hero (taller v4, slight) ================= */
-@media (max-width: 991px) {
-    .hero .hero-section,
-    .hero .hero-section.hero-bg-image {
-        min-height: 70svh !important;
-        min-height: 70vh !important;
-        min-height: 70svh !important;
-        padding: 150px 0 54px !important;
+        .pk-actions { gap: 8px; }
+        .pk-btn { font-size: 12px; padding: 4px 4px 4px 14px; gap: 6px; }
+        .pk-btn .pk-btn-ico { width: 26px; height: 26px; flex: 0 0 26px; font-size: 10px; }
     }
-    .hero .hero-eyebrow { margin-bottom: 22px; }
-    .hero .hero-title { margin-bottom: 22px !important; }
-    .hero .hero-dots { margin-top: 28px; }
-}
 
-@media (max-width: 575px) {
-    .hero .hero-section,
-    .hero .hero-section.hero-bg-image {
-        min-height: 66svh !important;
-        min-height: 66vh !important;
-        min-height: 66svh !important;
-        padding: 140px 0 50px !important;
+    /* ================= MOBILE / TABLET: hero (taller v4, slight) ================= */
+    @media (max-width: 991px) {
+        .hero .hero-section,
+        .hero .hero-section.hero-bg-image {
+            min-height: 70svh !important;
+            min-height: 70vh !important;
+            min-height: 70svh !important;
+            padding: 150px 0 54px !important;
+        }
+        .hero .hero-eyebrow { margin-bottom: 22px; }
+        .hero .hero-title { margin-bottom: 22px !important; }
+        .hero .hero-dots { margin-top: 28px; }
     }
-    .hero .hero-title-top,
-    .hero .hero-title-bottom { font-size: 44px !important; }
-    .hero p.hero-subtitle { font-size: 15.5px !important; line-height: 1.7 !important; }
-    .hero .hero-eyebrow { font-size: 12.5px; margin-bottom: 16px; }
+
+    @media (max-width: 575px) {
+        .hero .hero-section,
+        .hero .hero-section.hero-bg-image {
+            min-height: 66svh !important;
+            min-height: 66vh !important;
+            min-height: 66svh !important;
+            padding: 140px 0 50px !important;
+        }
+        .hero .hero-title-top,
+        .hero .hero-title-bottom { font-size: 44px !important; }
+        .hero p.hero-subtitle { font-size: 15.5px !important; line-height: 1.7 !important; }
+        .hero .hero-eyebrow { font-size: 12.5px; margin-bottom: 16px; }
+    }
+    /* ================= COMPACT: Services -> Popular Packages ================= */
+.sv-section { padding-bottom: 20px !important; }
+.svc-cap { min-height: 0; margin-top: 4px; }
+
+.pk-section { padding-top: 20px !important; }
+
+@media (max-width: 991px) {
+    .sv-section { padding-bottom: 10px !important; }
+    .pk-section { padding-top: 10px !important; }
+}
+@media (max-width: 575px) {
+    .sv-section { padding-bottom: 0 !important; }
+    .pk-section { padding-top: 10px !important; }
+}
+/* ================= COMPACT: About Us -> Services ================= */
+.about-us { padding-bottom: 30px !important; }
+.sv-section { padding-top: 20px !important; }
+
+@media (max-width: 991px) {
+    .about-us { padding-bottom: 20px !important; }
+    .sv-section { padding-top: 10px !important; }
+    .ab-collage { margin-bottom: 30px; }
+}
+@media (max-width: 575px) {
+    .about-us { padding-bottom: 10px !important; }
+    .sv-section { padding-top: 0 !important; }
 }
 </style>
 {% endblock %}
@@ -1819,10 +1673,8 @@
 </div>
 <!-- About Us End -->
 <!-- Malabaroutes Services -->
-<div class="our-services bg-section ms-services" style="position:relative;">
-
+<div class="sv-section">
     <div class="container">
-
         <div class="row section-row align-items-center">
             <div class="col-lg-12">
                 <div class="section-title section-title-center">
@@ -1831,123 +1683,55 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="tl-list">
+    <div class="svc-stage" id="svcStage" role="region" aria-roledescription="carousel" aria-label="Our services">
+        <span class="svc-floor" aria-hidden="true"></span>
+        <span class="svc-glow" aria-hidden="true"></span>
 
-            <!-- 01 Visa -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-file-lines"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/visa-2.png' %}" alt="Visa" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 01</span>
-                        <h3>Visa</h3>
-                        <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/visa-2.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Visa</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="We help you with fast processing of passport applications, renewals and replacement.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/passport.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Passport</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Let us help you, we will take care of your tickets at the lowest cost available.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/tickets.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Tickets</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/house boat.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>House Boat</b><i></i></span>
+        </a>
+        <a href="{% url 'packages' %}" class="svc-item" data-text="Book International or national Holiday Packages at best prices and plan memorable Holidays.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/packages.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Packages</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Local experts help you discover Malabar's culture and hidden places.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/tours guied.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Travel Guides</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a rental car, we'll take care of that.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/car rental.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Car Rentals</b><i></i></span>
+        </a>
+        <a href="{% url 'contact' %}" class="svc-item" data-text="Never spoil your memorable moments looking for a taxi, we'll take care of that.">
+            <span class="svc-pic"><img src="{% static 'malabar-static/taxi.png' %}" alt="" loading="lazy" draggable="false"></span>
+            <span class="svc-label"><b>Taxi Services</b><i></i></span>
+        </a>
 
-            <!-- 02 Passport -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-book"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/passport.png' %}" alt="Passport" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 02</span>
-                        <h3>Passport</h3>
-                        <p>We help you with fast processing of passport applications, renewals and replacement.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
+        <button type="button" class="svc-arrow svc-prev" aria-label="Previous service"><i class="fa-solid fa-chevron-left"></i></button>
+        <button type="button" class="svc-arrow svc-next" aria-label="Next service"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
 
-            <!-- 03 Tickets -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-plane"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/tickets.png' %}" alt="Tickets" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 03</span>
-                        <h3>Tickets</h3>
-                        <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 04 Packages -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-suitcase-rolling"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/packages.png' %}" alt="Packages" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 04</span>
-                        <h3>Packages</h3>
-                        <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 05 Travel Guides -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-people-group"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/tours guied.png' %}" alt="Travel Guides" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 05</span>
-                        <h3>Travel Guides</h3>
-                        <p>Local experts help you discover Malabar's culture and hidden places.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 06 Car Rentals -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-car"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/car rental.png' %}" alt="Car Rentals" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 06</span>
-                        <h3>Car Rentals</h3>
-                        <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 07 House Boat -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-ship"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/house boat.png' %}" alt="House Boat" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 07</span>
-                        <h3>House Boat</h3>
-                        <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- 08 Taxi Services -->
-            <div class="tl-item">
-                <span class="tl-node"><i class="fa-solid fa-taxi"></i></span>
-                <article class="tl-card">
-                    <div class="tl-img"><img src="{% static 'malabar-static/taxi.png' %}" alt="Taxi Services" loading="lazy"></div>
-                    <div class="tl-body">
-                        <span class="tl-pill">Service 08</span>
-                        <h3>Taxi Services</h3>
-                        <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="tl-more">Learn More <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </article>
-            </div>
-
+    <div class="container">
+        <div class="svc-cap" id="svcCap" aria-live="polite">
+            <h3>House Boat</h3>
+            <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
+            <a href="{% url 'contact' %}" class="svc-btn">Learn More <i class="fa-solid fa-arrow-right"></i></a>
         </div>
-
     </div>
 </div>
 <!-- Malabaroutes Services End -->
@@ -1965,8 +1749,6 @@
             </div>
         </div>
 
-       
-
         <div class="ms-services pk-carousel-wrap">
             <div class="ms-carousel" id="pkCarousel">
                 <div class="ms-viewport">
@@ -1978,12 +1760,13 @@
 
                                 <div class="pk-media">
                                     <a href="{% url 'package_detail' p.slug %}" draggable="false">
-{% if p.main_image %}
-    <img src="{{ p.main_image.url }}"
-         srcset="{{ p.main_image|srcset }}"
-         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
-         alt="{{ p.name }}" loading="lazy" decoding="async" draggable="false">
-{% endif %}                                    </a>
+                                        {% if p.main_image %}
+                                        <img src="{{ p.main_image.url }}"
+                                             srcset="{{ p.main_image|srcset }}"
+                                             sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+                                             alt="{{ p.name }}" loading="lazy" decoding="async" draggable="false">
+                                        {% endif %}
+                                    </a>
 
                                     {% if p.duration %}
                                     <div class="pk-meta">
@@ -1994,6 +1777,12 @@
 
                                 <div class="pk-body">
                                     <h3 class="pk-title"><a href="{% url 'package_detail' p.slug %}">{{ p.name }}</a></h3>
+
+                                    {% with loc=p.card_description|default:""|add:" "|add:p.description|extract_location %}
+                                        {% if loc %}
+                                        <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ loc }}</p>
+                                        {% endif %}
+                                    {% endwith %}
 
                                     <p class="pk-desc">{{ p.card_description|truncatewords:20 }}</p>
 
@@ -2028,6 +1817,8 @@
 </div>
 <!-- Popular Packages End -->
 {% endif %}
+
+
 
 <div class="pk-why-divider" aria-hidden="true">
     <img src="{% static 'malabar-static/img.png' %}" alt="" draggable="false">
@@ -2078,57 +1869,6 @@
     </div>
 </div>
 
-{% if recent_activities %}
-<!-- Recent Activities -->
-<div class="ac-section">
-    <div class="container">
-
-        <div class="row section-row align-items-center">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <h2 class="text-anime-style-3" data-cursor="-opaque">Experiences &amp; Activities</h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">Discover the most loved things to do across Malabar and Kerala.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="ac-grid ac-n{{ recent_activities|length }}">
-            {% for a in recent_activities %}
-            {% url 'activity_detail' a.slug as act_url %}
-            <article class="ac-card {% cycle 'ac-c1' 'ac-c2' 'ac-c3' %}">
-                <div class="ac-media">
-                    <a href="{{ act_url }}" draggable="false">
-{% if a.image %}
-    <img src="{{ a.image.url }}"
-         srcset="{{ a.image|srcset }}"
-         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
-         alt="{{ a.title }}" loading="lazy" decoding="async">
-{% endif %}                    </a>
-                    {% if a.category %}<span class="ac-pill"><i class="fa-solid fa-leaf"></i>{{ a.category }}</span>{% endif %}
-                </div>
-                <div class="ac-body">
-                    <h3 class="ac-title"><a href="{{ act_url }}">{{ a.title }}</a></h3>
-                    <p class="ac-text">{% if recent_activities|length == 1 %}{{ a.description|striptags|truncatewords:45 }}{% else %}{{ a.description|striptags|truncatewords:18 }}{% endif %}</p>
-                    <div class="pk-actions">
-                        <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ a.title }}">
-                            Book Now <span class="pk-btn-ico"><i class="fa-solid fa-angles-right"></i></span>
-                        </a>
-                    </div>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-
-        {% url 'activities' as all_act_url %}
-        {% if all_act_url %}
-        <div class="ac-more"><a href="{{ all_act_url }}">View All Activities <i class="fa-solid fa-arrow-right"></i></a></div>
-        {% endif %}
-
-    </div>
-</div>
-<!-- Recent Activities End -->
-{% endif %}
-
 {% if destinations %}
 <!-- Popular Destinations (filter by location) -->
 <div class="ds-section">
@@ -2148,8 +1888,6 @@
     <div class="ms-services">
         <div class="ms-carousel" id="dsCarousel">
 
-            
-
             <div class="ds-fluid">
                 <div class="ms-viewport">
                     <div class="ms-track">
@@ -2157,11 +1895,11 @@
                         <div class="ms-slide" data-filter="{{ d.location|slugify }}">
                             <a href="{% url 'destination_detail' d.slug %}" class="ds-card" draggable="false">
                                 {% if d.image %}
-    <img src="{{ d.image.url }}"
-         srcset="{{ d.image|srcset }}"
-         sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 25vw"
-         alt="{{ d.name }}" loading="lazy" decoding="async" draggable="false">
-{% endif %}
+                                <img src="{{ d.image.url }}"
+                                     srcset="{{ d.image|srcset }}"
+                                     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 25vw"
+                                     alt="{{ d.name }}" loading="lazy" decoding="async" draggable="false">
+                                {% endif %}
                                 <div class="ds-overlay">
                                     <span class="ds-pin"><i class="fa-solid fa-location-dot"></i></span>
                                     <h3 class="ds-name">{{ d.name }}</h3>
@@ -2314,15 +2052,16 @@
                                     <article class="pc-card {% cycle 'pc-t1' 'pc-t2' 'pc-t3' %}">
                                         <div class="pc-photo">
                                             <div class="pc-photo-img{% if not t.image %} no-photo{% endif %}">
-{% if t.image %}
-    <img src="{{ t.image.url }}"
-         srcset="{{ t.image|srcset }}"
-         sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 25vw"
-         alt="{{ t.name }}" loading="lazy" decoding="async" draggable="false">
-{% else %}                                                    <svg class="pc-avatar" viewBox="0 0 100 100" aria-hidden="true">
-                                                        <circle cx="50" cy="36" r="15"/>
-                                                        <path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/>
-                                                    </svg>
+                                                {% if t.image %}
+                                                <img src="{{ t.image.url }}"
+                                                     srcset="{{ t.image|srcset }}"
+                                                     sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 25vw"
+                                                     alt="{{ t.name }}" loading="lazy" decoding="async" draggable="false">
+                                                {% else %}
+                                                <svg class="pc-avatar" viewBox="0 0 100 100" aria-hidden="true">
+                                                    <circle cx="50" cy="36" r="15"/>
+                                                    <path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/>
+                                                </svg>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -2359,6 +2098,58 @@
     </div>
 </div>
 <!-- Testimonials End -->
+{% endif %}
+
+{% if recent_activities %}
+<!-- Recent Activities -->
+<div class="ac-section">
+    <div class="container">
+
+        <div class="row section-row align-items-center">
+            <div class="col-lg-12">
+                <div class="section-title section-title-center">
+                    <h2 class="text-anime-style-3" data-cursor="-opaque">Experiences &amp; Activities</h2>
+                    <p class="wow fadeInUp" data-wow-delay="0.2s">Discover the most loved things to do across Malabar and Kerala.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="ac-grid ac-n{{ recent_activities|length }}">
+            {% for a in recent_activities %}
+            {% url 'activity_detail' a.slug as act_url %}
+            <article class="ac-card {% cycle 'ac-c1' 'ac-c2' 'ac-c3' %}">
+                <div class="ac-media">
+                    <a href="{{ act_url }}" draggable="false">
+                        {% if a.image %}
+                        <img src="{{ a.image.url }}"
+                             srcset="{{ a.image|srcset }}"
+                             sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+                             alt="{{ a.title }}" loading="lazy" decoding="async">
+                        {% endif %}
+                    </a>
+                    {% if a.category %}<span class="ac-pill"><i class="fa-solid fa-leaf"></i>{{ a.category }}</span>{% endif %}
+                </div>
+                <div class="ac-body">
+                    <h3 class="ac-title"><a href="{{ act_url }}">{{ a.title }}</a></h3>
+                    <p class="ac-text">{% if recent_activities|length == 1 %}{{ a.description|striptags|truncatewords:45 }}{% else %}{{ a.description|striptags|truncatewords:18 }}{% endif %}</p>
+                    <div class="pk-actions">
+                        <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ a.title }}">
+                            Book Now <span class="pk-btn-ico"><i class="fa-solid fa-angles-right"></i></span>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+
+        {% url 'activities' as all_act_url %}
+        {% if all_act_url %}
+        <div class="ac-more"><a href="{{ all_act_url }}">View All Activities <i class="fa-solid fa-arrow-right"></i></a></div>
+        {% endif %}
+
+    </div>
+</div>
+<!-- Recent Activities End -->
 {% endif %}
 
 <!-- FAQ: left side sticks while the questions scroll -->
@@ -2700,7 +2491,7 @@
     })();
 </script>
 
-<!-- Carousels (services + packages + destinations + testimonials) with optional filtering -->
+<!-- Carousels (packages + destinations + testimonials) with optional filtering -->
 <script>
     function initMsCarousel(rootId, opts) {
         opts = opts || {};
@@ -2918,8 +2709,6 @@
         });
     }
 
-       
-
     /* Popular Packages: 3 on desktop, 2 on tablet, 1 on mobile (default) */
     var pkCar = initMsCarousel('pkCarousel');
 
@@ -2944,46 +2733,7 @@
     bindFilters('pkFilters', pkCar);
     bindFilters('dsFilters', dsCar);
 </script>
-<!-- Services timeline: line fills while scrolling -->
-<script>
-    (function () {
-        var list = document.querySelector('.tl-list');
-        if (!list) return;
 
-        var items = Array.prototype.slice.call(list.querySelectorAll('.tl-item'));
-        var bar = document.createElement('div');
-        bar.className = 'tl-progress';
-        bar.setAttribute('aria-hidden', 'true');
-        list.appendChild(bar);
-
-        var ticking = false;
-
-        function update() {
-            ticking = false;
-            var rect = list.getBoundingClientRect();
-            var trigger = window.innerHeight * 0.55;
-            var h = Math.max(0, Math.min(rect.height, trigger - rect.top));
-            bar.style.height = h + 'px';
-
-            items.forEach(function (it) {
-                var n = it.querySelector('.tl-node').getBoundingClientRect();
-                it.classList.toggle('is-active', n.top + n.height / 2 <= trigger);
-            });
-        }
-
-        function onScroll() {
-            if (!ticking) {
-                ticking = true;
-                requestAnimationFrame(update);
-            }
-        }
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        window.addEventListener('load', update);
-        update();
-    })();
-</script>
 <script>
     (function () {
         var bar = document.querySelector('.top-bar');
@@ -3019,4 +2769,111 @@
         else window.addEventListener('load', waitForPreloader);
     })();
 </script>
+<!-- Services: circle carousel (centre item is the biggest) -->
+<script>
+    (function () {
+        var stage = document.getElementById('svcStage');
+        if (!stage) return;
+        var items = Array.prototype.slice.call(stage.querySelectorAll('.svc-item'));
+        var cap = document.getElementById('svcCap');
+        var capT = cap.querySelector('h3'), capP = cap.querySelector('p'), capA = cap.querySelector('a');
+        var n = items.length, active = 3, timer = null;
+        var SCALES = [1, 0.78, 0.62, 0.5];
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function layout() {
+            var W = stage.clientWidth;
+            var vis = W < 576 ? 1 : (W < 992 ? 2 : 3);
+            var D = W < 576 ? W * 0.62 : (W < 992 ? Math.min(W * 0.42, 360) : Math.min(W * 0.235, 340));
+            stage.style.setProperty('--d', D + 'px');
+
+            var xs = [0];
+            for (var k = 1; k <= 3; k++) {
+                xs[k] = xs[k - 1] + D * SCALES[k - 1] / 2 + D * SCALES[k] / 2 - D * 0.03;
+            }
+            items.forEach(function (it, i) {
+                var o = ((i - active + n + n / 2) % n) - n / 2;      // -4 ... 3
+                var a = Math.abs(o), idx = Math.min(a, 3);
+                var x = (o < 0 ? -1 : 1) * xs[idx];
+                var shown = a <= vis;
+                it.style.transform = 'translate(-50%, -50%) translateX(' + x + 'px) scale(' + SCALES[idx] + ')';
+                it.style.zIndex = 20 - a;
+                it.style.opacity = shown ? 1 : 0;
+                it.style.pointerEvents = shown ? 'auto' : 'none';
+                it.tabIndex = shown ? 0 : -1;
+                it.setAttribute('aria-hidden', shown ? 'false' : 'true');
+                it.classList.toggle('is-active', o === 0);
+            });
+        }
+
+        function fillCaption() {
+            var it = items[active];
+            capT.textContent = it.querySelector('b').textContent;
+            capP.textContent = it.getAttribute('data-text');
+            capA.setAttribute('href', it.getAttribute('href'));
+        }
+        function swapCaption() {
+            cap.classList.add('is-swap');
+            setTimeout(function () { fillCaption(); cap.classList.remove('is-swap'); }, 180);
+        }
+
+        function setActive(i) {
+            active = ((i % n) + n) % n;
+            layout();
+            swapCaption();
+        }
+        function next() { setActive(active + 1); }
+        function prev() { setActive(active - 1); }
+
+        function start() {
+            stop();
+            if (reduce) return;
+            timer = setInterval(next, 3500);
+        }
+        function stop() { if (timer) clearInterval(timer); timer = null; }
+
+        stage.querySelector('.svc-next').addEventListener('click', function () { next(); start(); });
+        stage.querySelector('.svc-prev').addEventListener('click', function () { prev(); start(); });
+
+        /* click a side circle to bring it to the centre; the centre circle follows its link */
+        var dragged = false;
+        items.forEach(function (it, i) {
+            it.addEventListener('click', function (e) {
+                if (dragged) { e.preventDefault(); dragged = false; return; }
+                if (i !== active) { e.preventDefault(); setActive(i); start(); }
+            });
+        });
+
+        /* swipe / drag */
+        var startX = null;
+        stage.addEventListener('pointerdown', function (e) { startX = e.clientX; stop(); });
+        stage.addEventListener('pointerup', function (e) {
+            if (startX === null) return;
+            var diff = e.clientX - startX;
+            dragged = Math.abs(diff) > 50;
+            if (dragged) { diff < 0 ? next() : prev(); }
+            startX = null;
+            start();
+        });
+        stage.addEventListener('pointercancel', function () { startX = null; });
+        stage.addEventListener('dragstart', function (e) { e.preventDefault(); });
+
+        stage.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight') { next(); start(); }
+            if (e.key === 'ArrowLeft') { prev(); start(); }
+        });
+
+        stage.addEventListener('mouseenter', stop);
+        stage.addEventListener('mouseleave', start);
+        document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+
+        var rt;
+        window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(layout, 150); });
+
+        layout();
+        fillCaption();
+        start();
+    })();
+</script>
+
 {% endblock %}

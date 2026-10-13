@@ -569,7 +569,134 @@ background-position: center 70% !important;
     }
     .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
 }
+/* ================= GREEN PREMIUM NAVBAR (no bubble pattern) ================= */
+:root {
+    --nav-green: #1F5B3A;     /* main green: darker = more premium, lighter = softer */
+    --nav-gold:  #e0b14a;     /* active / hover colour */
+    --nav-ink:   #12281f;     /* text colour on gold */
+}
 
+/* bar: solid green multiplied over nav4.png */
+.main-header .header-sticky,
+.main-header .header-sticky.hide,
+.main-header .header-sticky.active {
+    background-color: var(--nav-green) !important;
+    background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+    background-blend-mode: multiply !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center 70% !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 12px 36px rgba(6, 28, 20, 0.40) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+/* menu text: white, gold when active/hover */
+.main-header .nav-link { color: #ffffff !important; }
+.main-header .nav-link:hover,
+.main-header .nav-link.active { color: var(--nav-gold) !important; }
+
+/* logo: lighter shadow so it sits cleanly on green */
+.main-header .navbar-brand img {
+    filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* ================= Book Now (desktop): outlined white pill ================= */
+.main-header .header-btn .btn-default {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    transition: color .3s ease, border-color .3s ease, background-color .3s ease;
+}
+
+/* kill the theme's dark hover fill (it is drawn by ::after) */
+.main-header .header-btn .btn-default::after {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+}
+
+/* hover: GOLD fill, dark text, dark arrow */
+.main-header .header-btn .btn-default:hover {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+    border-color: var(--nav-gold) !important;
+    color: var(--nav-ink) !important;
+}
+.main-header .header-btn .btn-default:hover::after {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+}
+
+/* arrow icon: white normally, dark on gold hover */
+.main-header .header-btn .btn-default::before {
+    transition: filter .3s ease;
+}
+.main-header .header-btn .btn-default:hover::before {
+    filter: brightness(0) saturate(100%);   /* turns the white arrow dark */
+}
+
+/* dropdowns (Packages / Destinations): dark green panel */
+@media (min-width: 992px) {
+    .main-header .pk-nav-menu {
+        background: rgba(20, 70, 55, 0.97);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 14px 36px rgba(6, 28, 20, 0.40);
+    }
+    .main-header .pk-nav-menu a { color: #ffffff !important; }
+    .main-header .pk-nav-menu a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--nav-gold) !important;
+    }
+}
+
+/* mobile / tablet */
+@media (max-width: 991px) {
+    .main-header .mobile-book-btn {
+        background: transparent;
+        border: 2px solid #ffffff;
+        color: #ffffff !important;
+        box-shadow: none;
+        padding: 10px 16px;
+    }
+    .main-header .mobile-book-btn:hover,
+    .main-header .mobile-book-btn:active {
+        background: var(--nav-gold) !important;
+        border-color: var(--nav-gold) !important;
+        color: var(--nav-ink) !important;
+    }
+
+    /* mobile zoom on nav4.png */
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active {
+        background-size: 150% auto !important;
+        background-position: center 65% !important;
+    }
+
+    .main-header .slicknav_nav {
+        background-color: var(--nav-green) !important;
+        background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+        background-blend-mode: multiply !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .main-header .slicknav_nav a { color: #ffffff !important; }
+    .main-header .slicknav_nav a:hover,
+    .main-header .slicknav_nav a.active { color: var(--nav-gold) !important; }
+    .main-header .slicknav_nav .slicknav_arrow { color: #ffffff !important; }
+}
+
+/* very small phones: zoom nav4.png a little more */
+@media (max-width: 480px) {
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active {
+        background-size: 190% auto !important;
+    }
+}
 </style>
 
     {% block extra_css %}{% endblock %}

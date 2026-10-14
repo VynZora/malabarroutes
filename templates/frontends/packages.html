@@ -12,6 +12,10 @@
     as fallback), number of days. Data comes from the packages view (f_prices, f_locs, f_days).
     Filters are applied ONLY when "Show Packages" is clicked (not while setting them).
     NO-RESULT MODAL: opens when "Show Packages" is clicked and no package matches the filters.
+
+    COLOURS: every colour on this page comes from the :root variables in base.html
+    (--nav-green, --nav-gold, --nav-ink, --nav-green-rgb, --nav-gold-rgb).
+    Change the palette there and this page follows.
 {% endcomment %}
 
 
@@ -29,7 +33,7 @@
         display: flex;
         align-items: center;
         padding: 200px 0 120px !important;
-        background-color: #12281f !important;
+        background-color: var(--nav-green) !important;
         background-image: none !important;   /* images come from .ah-bgs below */
     }
     .page-header.page-hero::before,
@@ -102,9 +106,9 @@
         background-size: 100% 100%, 100% auto;
         background-position: center, center top;
         background-repeat: no-repeat, repeat-y;
-        --pk-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
-        --pk-dark: var(--nav-ink, #12281f);
-        --pk-gold: var(--nav-gold, #e0b14a);
+        --pk-accent: var(--nav-green);   /* from base.html :root */
+        --pk-dark: var(--nav-ink);
+        --pk-gold: var(--nav-gold);
     }
     .pk-section .container { max-width: 1320px; }
 
@@ -112,7 +116,7 @@
     .pk-head { text-align: center; max-width: 760px; margin: 0 auto 50px; }
     .pk-eyebrow {
         display: inline-block; font-size: 14px; font-weight: 600; letter-spacing: 3px;
-        text-transform: uppercase; color: #2f4a3a; margin-bottom: 14px;
+        text-transform: uppercase; color: var(--nav-gold); margin-bottom: 14px;
     }
     .pk-head h2 {
         font-size: 48px; font-weight: 700; line-height: 1.2; color: #1b1b1b;
@@ -144,12 +148,12 @@
         padding: 20px 20px 24px;
         border-radius: 30px;
         background: #ffffff;
-        box-shadow: 0 10px 30px rgba(20, 40, 30, 0.10);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.10);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .pk-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 20px 42px rgba(20, 40, 30, 0.18);
+        box-shadow: 0 20px 42px rgba(0, 0, 0, 0.18);
     }
 
     .pk-media {
@@ -158,7 +162,7 @@
         flex: 0 0 300px;
         border-radius: 24px;
         overflow: hidden;
-        background: linear-gradient(135deg, #d9e6dc, #c4d8c9);
+        background: linear-gradient(135deg, #efe6d2, #e3d6b8);
     }
     .pk-media > a { display: block; width: 100%; height: 100%; }
     .pk-media img {
@@ -170,7 +174,7 @@
     }
     .pk-card:hover .pk-media img { transform: scale(1.06); }
 
-    /* orange duration badge on the bottom edge of the image */
+    /* duration badge on the bottom edge of the image (gold, from base) */
     .pk-meta {
         position: absolute;
         left: 50%; bottom: 0;
@@ -183,8 +187,8 @@
         gap: 14px;
         padding: 13px 26px;
         border-radius: 26px 26px 0 0;
-        background: #f7931e;
-        color: #fff;
+        background: var(--nav-gold);
+        color: var(--nav-ink);
         font-size: 15px;
         font-weight: 600;
         white-space: nowrap;
@@ -216,7 +220,7 @@
         font-size: 15px; font-weight: 600;
         color: var(--pk-accent);
     }
-    .pk-loc i { font-size: 14px; }
+    .pk-loc i { font-size: 14px; color: var(--pk-gold); }
 
     .pk-price { margin: 0 0 12px; font-size: 15px; color: #5b6560; }
     .pk-price b { font-size: 20px; color: var(--pk-accent); }
@@ -257,7 +261,7 @@
         transition: transform 0.3s ease;
     }
 
-    /* Book Now: filled green, gold on hover (same as navbar) */
+    /* Book Now: filled dark, gold on hover (same as navbar) */
     .pk-btn-fill {
         background: var(--pk-accent);
         border: 1.5px solid var(--pk-accent);
@@ -271,7 +275,7 @@
     }
     .pk-btn-fill:hover .pk-btn-ico { background: var(--pk-accent); color: #fff; transform: translateX(3px); }
 
-    /* View More: outlined green, fills green on hover */
+    /* View More: outlined dark, fills dark on hover */
     .pk-btn-line {
         background: transparent;
         border: 1.5px solid var(--pk-accent);
@@ -297,7 +301,7 @@
         text-transform: none; white-space: nowrap;
     }
     .pk-group-head h3::before, .pk-group-head h3::after { display: none !important; content: none !important; }
-    .pk-line { flex: 1; height: 2px; background: linear-gradient(to right, #c9972b, rgba(201,151,43,0)); }
+    .pk-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--nav-gold), rgba(var(--nav-gold-rgb), 0)); }
 
     /* ================= FILTER BAR (horizontal, above the cards) ================= */
     .pf-bar {
@@ -311,8 +315,8 @@
         padding: 10px 12px 10px 10px;
         border-radius: 80px;
         background: rgba(255, 255, 255, 0.92);
-        border: 1px solid rgba(31, 91, 58, 0.16);
-        box-shadow: 0 16px 40px rgba(20, 40, 30, 0.14);
+        border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
     }
@@ -321,7 +325,7 @@
     .pf-seg + .pf-seg::before {            /* thin divider between segments */
         content: "";
         position: absolute; left: -3px; top: 20%; bottom: 20%;
-        width: 1px; background: rgba(20, 40, 30, 0.12);
+        width: 1px; background: rgba(0, 0, 0, 0.12);
     }
 
     .pf-trigger {
@@ -336,7 +340,7 @@
         transition: background .25s ease;
     }
     .pf-trigger:hover,
-    .pf-seg.open .pf-trigger { background: rgba(31, 91, 58, 0.08); }
+    .pf-seg.open .pf-trigger { background: rgba(var(--nav-gold-rgb), 0.12); }
 
     .pf-ico {
         flex: 0 0 42px; width: 42px; height: 42px;
@@ -370,8 +374,8 @@
         padding: 20px 22px;
         border-radius: 22px;
         background: #ffffff;
-        border: 1px solid rgba(31, 91, 58, 0.14);
-        box-shadow: 0 22px 50px rgba(6, 28, 20, 0.22);
+        border: 1px solid rgba(var(--nav-gold-rgb), 0.30);
+        box-shadow: 0 22px 50px rgba(0, 0, 0, 0.30);
         opacity: 0; visibility: hidden; transform: translateY(10px);
         transition: opacity .25s ease, transform .25s ease, visibility .25s;
     }
@@ -389,7 +393,7 @@
     .pf-range {
         -webkit-appearance: none; appearance: none;
         width: 100%; height: 6px; border-radius: 6px; outline: none; cursor: pointer;
-        background: linear-gradient(to right, var(--pk-accent) var(--fill, 100%), #e3e8e4 var(--fill, 100%));
+        background: linear-gradient(to right, var(--pk-gold) var(--fill, 100%), #e6e0d2 var(--fill, 100%));
     }
     .pf-range::-webkit-slider-thumb {
         -webkit-appearance: none; appearance: none;
@@ -408,15 +412,15 @@
     .pf-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 18px; max-height: 280px; overflow-y: auto; padding-right: 6px; }
     .pf-list.one { grid-template-columns: 1fr; }
     .pf-list::-webkit-scrollbar { width: 5px; }
-    .pf-list::-webkit-scrollbar-thumb { background: rgba(31, 91, 58, 0.35); border-radius: 5px; }
+    .pf-list::-webkit-scrollbar-thumb { background: rgba(var(--nav-gold-rgb), 0.55); border-radius: 5px; }
     .pf-check {
         display: flex; align-items: center; gap: 10px;
         padding: 7px 0;
         font-size: 14.5px; font-weight: 500; color: #3d4742;
         cursor: pointer;
     }
-    .pf-check input { width: 16px; height: 16px; accent-color: var(--pk-accent); cursor: pointer; flex: 0 0 16px; }
-    .pf-check:hover { color: var(--pk-accent); }
+    .pf-check input { width: 16px; height: 16px; accent-color: var(--pk-gold); cursor: pointer; flex: 0 0 16px; }
+    .pf-check:hover { color: var(--pk-gold); }
     .pf-check span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .pf-check small { color: #8a948f; font-size: 12px; }
 
@@ -451,7 +455,7 @@
     .pf-chip {
         display: inline-flex; align-items: center; gap: 8px;
         padding: 7px 8px 7px 16px;
-        border: 1px solid rgba(31, 91, 58, 0.25);
+        border: 1px solid rgba(var(--nav-gold-rgb), 0.45);
         border-radius: 50px;
         background: #fff; color: var(--pk-accent);
         font-size: 13.5px; font-weight: 600;
@@ -461,7 +465,7 @@
     .pf-chip i {
         width: 20px; height: 20px; border-radius: 50%;
         display: inline-flex; align-items: center; justify-content: center;
-        background: rgba(31, 91, 58, 0.12); font-size: 10px;
+        background: rgba(var(--nav-gold-rgb), 0.18); font-size: 10px;
         transition: all .25s ease;
     }
     .pf-chip:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark); }
@@ -473,12 +477,14 @@
     .pk-nomatch { display: none; text-align: center; font-size: 18px; color: #5a524a; padding: 60px 0; }
     .pk-nomatch.show { display: block; }
 
-    /* ================= NO-RESULT MODAL ================= */
+    /* ================= NO-RESULT MODAL =================
+       Moved to <body> by the script, so it uses the --nav-* variables
+       from base.html :root directly (not the --pk-* ones). */
     .pk-modal {
         position: fixed; inset: 0; z-index: 2000;
         display: flex; align-items: center; justify-content: center;
         padding: 20px;
-        background: rgba(8, 24, 17, 0.55);
+        background: rgba(var(--nav-green-rgb), 0.65);
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
         opacity: 0; visibility: hidden;
@@ -492,8 +498,9 @@
         padding: 44px 36px 34px;
         border-radius: 30px;
         background: #fff;
+        border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
         text-align: center;
-        box-shadow: 0 30px 70px rgba(6, 28, 20, 0.35);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
         transform: translateY(30px) scale(.96);
         transition: transform .35s cubic-bezier(.2,.7,.2,1);
     }
@@ -502,18 +509,19 @@
     .pk-modal-close {
         position: absolute; top: 16px; right: 16px;
         width: 36px; height: 36px; border-radius: 50%;
-        border: 0; background: rgba(31, 91, 58, 0.10);
-        color: #1F5B3A; font-size: 14px; cursor: pointer;
+        border: 0; background: rgba(var(--nav-gold-rgb), 0.15);
+        color: var(--nav-gold); font-size: 14px; cursor: pointer;
         transition: all .25s ease;
     }
-    .pk-modal-close:hover { background: #e0b14a; color: #12281f; }
+    .pk-modal-close:hover { background: var(--nav-gold); color: var(--nav-ink); }
 
     .pk-modal-ico {
         width: 84px; height: 84px; margin: 0 auto 20px;
         border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        background: #1F5B3A;
-        color: #e0b14a;
+        background: var(--nav-green);
+        color: var(--nav-gold);
+        border: 2px solid rgba(var(--nav-gold-rgb), 0.5);
         font-size: 32px;
     }
     .pk-modal-box h4 {
@@ -530,7 +538,7 @@
     .pk-modal-tags:empty { display: none; }
     .pk-modal-tags span {
         padding: 6px 14px; border-radius: 50px;
-        background: rgba(31, 91, 58, 0.10); color: #1F5B3A;
+        background: rgba(var(--nav-gold-rgb), 0.14); color: var(--nav-ink);
         font-size: 13px; font-weight: 600;
     }
 
@@ -543,10 +551,10 @@
         cursor: pointer;
         transition: all .3s ease;
     }
-    .pk-modal-btn-fill { background: #1F5B3A; border: 1.5px solid #1F5B3A; color: #fff; }
-    .pk-modal-btn-fill:hover { background: #e0b14a; border-color: #e0b14a; color: #12281f; }
-    .pk-modal-btn-line { background: transparent; border: 1.5px solid #1F5B3A; color: #1F5B3A; }
-    .pk-modal-btn-line:hover { background: #1F5B3A; color: #fff; }
+    .pk-modal-btn-fill { background: var(--nav-green); border: 1.5px solid var(--nav-green); color: #fff; }
+    .pk-modal-btn-fill:hover { background: var(--nav-gold); border-color: var(--nav-gold); color: var(--nav-ink); }
+    .pk-modal-btn-line { background: transparent; border: 1.5px solid var(--nav-green); color: var(--nav-green); }
+    .pk-modal-btn-line:hover { background: var(--nav-green); color: #fff; }
 
     @media (prefers-reduced-motion: reduce) {
         .pk-modal, .pk-modal-box { transition: none; }
@@ -598,7 +606,7 @@
             position: static; min-width: 0;
             display: none; opacity: 1; visibility: visible; transform: none;
             margin: 6px 4px 10px;
-            box-shadow: none; background: #f6f9f6;
+            box-shadow: none; background: #f7f4ec;
         }
         .pf-seg.open .pf-panel { display: block; }
         .pf-list { grid-template-columns: 1fr 1fr; }

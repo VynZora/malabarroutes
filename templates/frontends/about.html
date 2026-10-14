@@ -1350,6 +1350,71 @@
         height: 16px !important;
     }
 }
+/* =====================================================================
+   GOLD THEME FOR THE ABOUT PAGE
+   One same gold on every section (no fades, no bands).
+   --page-bg = the gold   |   --pw-all = how strongly it covers the photos
+   (1 = perfectly flat gold, no photos)
+   ===================================================================== */
+:root {
+    --page-bg: #e0cf86;
+    --page-bg-soft: #ebdea0;
+    --page-text-muted: #4a4228;
+    --pw-all: rgba(224, 207, 134, 0.80);
+}
+html, body { background-color: var(--page-bg) !important; }
+
+/* hero fallback colour behind the rotating photos: black */
+body .page-header.about-hero { background-color: var(--nav-green, #111111) !important; }
+
+/* ---------- every section: same gold + same wash over its photo ---------- */
+body .about-us.about-story,
+body .sv-section,
+body .pk-section,
+body .tc-section,
+body .pc-section,
+body .fq-section {
+    background-color: var(--page-bg) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+body .about-us.about-story,
+body .sv-section,
+body .pk-section,
+body .tc-section,
+body .fq-section {
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/mr5.png" %}') !important;
+}
+body .pc-section {
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/bg7.png" %}') !important;
+}
+
+/* ---------- Our Story: gold cards + gold photo frame ---------- */
+body .about-story .st-item {
+    background: var(--card-bg, #a4892e) !important;
+    border: 1px solid var(--card-edge, rgba(196, 173, 58, 0.6)) !important;
+}
+body .about-story .st-item:hover {
+    border-color: var(--nav-green, #111111) !important;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+}
+body .about-story .st-ico,
+body .about-story .st-item h4 { color: var(--card-text, #111111) !important; }
+body .about-story .st-item p  { color: var(--card-text, #111111) !important; opacity: .85; }
+body .about-story .about-us-image .about-img-2 { background: var(--card-bg, #a4892e) !important; }
+
+/* ---------- muted / grey text on the gold page: warm dark ---------- */
+body .about-story .st-text,
+body .section-title p,
+body .pc-sub,
+body .fq-text { color: var(--page-text-muted) !important; }
+body .about-story .st-more { color: var(--nav-green, #111111); }
+body .about-story .st-more:hover { color: var(--nav-ink, #111111); text-decoration: underline; }
 </style>
 
 <div class="about-us about-story">

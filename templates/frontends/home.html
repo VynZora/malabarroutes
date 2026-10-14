@@ -14,6 +14,23 @@
 
 {% block extra_css %}
 <style>
+    /* ================= GOLD PAGE COLOURS (was off-white #fcf7f6) =================
+       Change the gold ONLY here.
+         --page-bg   = main gold-cream (section colour + fade colour)
+         --pw-*      = strength of the gold wash over the section photos
+                       (higher alpha = photo fainter)
+       The hero, navbar, footer and preloader are not affected. */
+    :root {
+        --page-bg: #eadfae;                         /* was #fcf7f6 */
+        --page-bg-soft: #f1e8c1;                    /* lightest gold */
+        --page-text-muted: #4a4228;                 /* muted text on gold (was grey) */
+        --page-fade: rgba(234, 223, 174, 0);        /* transparent end of the fades (same colour as --page-bg) */
+        --pw-45: rgba(234, 223, 174, 0.45);
+        --pw-55: rgba(234, 223, 174, 0.55);
+        --pw-60: rgba(234, 223, 174, 0.60);
+    }
+    html, body { background-color: var(--page-bg) !important; }
+
     /* ================= HERO (inset, rounded corners) ================= */
     .hero {
         margin: 0 !important;
@@ -129,12 +146,12 @@
 
     @media (prefers-reduced-motion: reduce) { .hero .hero-bg.active { animation: none; } }
 
-    /* ================= ABOUT US background image ================= */
+    /* ================= ABOUT US background image (gold) ================= */
     .about-us {
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(var(--pw-45), var(--pw-45)),
             url('{% static 'malabar-static/mr5.png' %}');
         background-size: 100% 200px, cover, cover;
         background-position: bottom, center, center;
@@ -334,11 +351,11 @@
     .sv-section {
         --sv-green: var(--nav-green, #1F5B3A);
         --sv-gold:  var(--nav-gold, #e0b14a);
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(var(--pw-45), var(--pw-45)),
             url('{% static 'malabar-static/mr5.png' %}');
         background-size: 100% 200px, 100% 200px, cover, cover;
         background-position: top, bottom, center, center;
@@ -489,7 +506,6 @@
         .sv-grid.sv-js .sv-card { opacity: 1; transform: none; }
     }
 
-    
     /* ================= HOME FILTER PILLS (packages + destinations) ================= */
     .fl-filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 0 0 44px; }
     .fl-btn {
@@ -507,14 +523,14 @@
         .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
     }
 
-    /* ================= POPULAR PACKAGES + RECENT ACTIVITIES: shared background ================= */
+    /* ================= POPULAR PACKAGES + RECENT ACTIVITIES: shared background (gold) ================= */
     .pk-section,
     .ac-section {
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(var(--pw-45), var(--pw-45)),
             url('{% static 'malabar-static/mr5.png' %}');
         background-size: 100% 200px, 100% 200px, cover, cover;
         background-position: top, bottom, center, center;
@@ -778,13 +794,13 @@
         .pk-media { height: 220px; flex-basis: 220px; }
     }
 
-    /* ================= WHY CHOOSE US background ================= */
+    /* ================= WHY CHOOSE US background (gold) ================= */
     .why-choose-us {
-        background-color: #fcf7f6 !important;
+        background-color: var(--page-bg) !important;
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(var(--pw-45), var(--pw-45)),
             url('{% static 'malabar-static/bg8.png' %}') !important;
         background-size: 100% 200px, 100% 200px, cover, cover !important;
         background-position: top, bottom, center, center !important;
@@ -886,13 +902,13 @@
         .why-choose-us .why-choose-image { width: calc(100% + 70px); margin-right: -70px; }
     }
 
-    /* ================= POPULAR DESTINATIONS ================= */
+    /* ================= POPULAR DESTINATIONS (gold) ================= */
     .ds-section {
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 200px),
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
+            linear-gradient(var(--pw-45), var(--pw-45)),
             url('{% static 'malabar-static/bg7.png' %}');
         background-size: 100% 200px, 100% 200px, cover, cover;
         background-position: top, bottom, center, center;
@@ -969,13 +985,13 @@
         .ds-go { display: flex; flex: 0 0 38px; width: 38px; height: 38px; font-size: 14px; }
     }
 
-    /* ================= TERMS & CONDITIONS ================= */
+    /* ================= TERMS & CONDITIONS (gold) ================= */
     .tc-section {
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(rgba(252, 247, 246, 0.6), rgba(252, 247, 246, 0.6)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(var(--pw-60), var(--pw-60)),
             url('{% static 'malabar-static/mr5.png' %}');
         background-size: 100% 160px, 100% 160px, cover, cover;
         background-position: top, bottom, center, center;
@@ -1056,14 +1072,14 @@
         .tc-text h3 { font-size: 16px; }
     }
 
-    /* ================= TESTIMONIALS: Postcards from the road ================= */
+    /* ================= TESTIMONIALS: Postcards from the road (gold) ================= */
     .pc-section {
         --pc-green: #12281f; --pc-gold: #c9972b;
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(rgba(252, 247, 246, 0.55), rgba(252, 247, 246, 0.55)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(var(--pw-55), var(--pw-55)),
             url('{% static 'malabar-static/bg7.png' %}');
         background-size: 100% 160px, 100% 160px, cover, cover;
         background-position: top, bottom, center, center;
@@ -1176,16 +1192,16 @@
         .pc-author { font-size: 16px; padding-left: 34px; }
     }
 
-    /* ================= FAQ ================= */
+    /* ================= FAQ (gold) ================= */
     .fq-section {
         --fq-green: var(--accent-color, #265648);
         --fq-tint: #dfe9dc;
         --fq-tint: color-mix(in srgb, var(--fq-green) 14%, #ffffff);
-        background-color: #fcf7f6;
+        background-color: var(--page-bg);
         background-image:
-            linear-gradient(to bottom, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(to top, #fcf7f6 0, rgba(252, 247, 246, 0) 160px),
-            linear-gradient(rgba(252, 247, 246, 0.6), rgba(252, 247, 246, 0.6)),
+            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
+            linear-gradient(var(--pw-60), var(--pw-60)),
             url('{% static 'malabar-static/mr5.png' %}');
         background-size: 100% 160px, 100% 160px, cover, cover;
         background-position: top, bottom, center, center;
@@ -1431,13 +1447,13 @@
         .main-header .mobile-book-btn { padding: 9px 14px; font-size: 12.5px; }
     }
 
-    /* ================= TOP CONTACT BAR: always fixed ================= */
+    /* ================= TOP CONTACT BAR: always fixed (gold) ================= */
     .top-bar {
         position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: auto !important;
         z-index: 1001; background: transparent !important; pointer-events: none;
     }
     .top-bar::after { content: none !important; display: none !important; }
-    .top-bar-inner { pointer-events: auto; background: #fcf7f6; padding: 0 18px; border-radius: 0 0 16px 16px; }
+    .top-bar-inner { pointer-events: auto; background: var(--page-bg); padding: 0 18px; border-radius: 0 0 16px 16px; }
     @media (max-width: 991px) { .top-bar-inner { padding: 0 14px; } }
 
     /* ================= TOP BAR: hidden while the preloader is showing ================= */
@@ -1504,126 +1520,208 @@
         .hero p.hero-subtitle { font-size: 15.5px !important; line-height: 1.7 !important; }
         .hero .hero-eyebrow { font-size: 12.5px; margin-bottom: 16px; }
     }
+
     /* ================= COMPACT: Services -> Popular Packages ================= */
-.sv-section { padding-bottom: 20px !important; }
+    .sv-section { padding-bottom: 20px !important; }
+    .pk-section { padding-top: 20px !important; }
 
-.pk-section { padding-top: 20px !important; }
-
-@media (max-width: 991px) {
-    .sv-section { padding-bottom: 10px !important; }
-    .pk-section { padding-top: 10px !important; }
-}
-@media (max-width: 575px) {
-    .sv-section { padding-bottom: 0 !important; }
-    .pk-section { padding-top: 10px !important; }
-}
-/* ================= COMPACT: About Us -> Services ================= */
-.about-us { padding-bottom: 30px !important; }
-.sv-section { padding-top: 20px !important; }
-
-@media (max-width: 991px) {
-    .about-us { padding-bottom: 20px !important; }
-    .sv-section { padding-top: 10px !important; }
-    .ab-collage { margin-bottom: 30px; }
-}
-@media (max-width: 575px) {
-    .about-us { padding-bottom: 10px !important; }
-    .sv-section { padding-top: 0 !important; }
-}
-/* ================= MOBILE / TABLET: taller hero image ================= */
-@media (max-width: 991px) {
-    .hero .hero-section,
-    .hero .hero-section.hero-bg-image {
-        min-height: 88vh !important;
-        min-height: 88svh !important;
-        padding: 160px 0 70px !important;
+    @media (max-width: 991px) {
+        .sv-section { padding-bottom: 10px !important; }
+        .pk-section { padding-top: 10px !important; }
     }
-}
-
-@media (max-width: 575px) {
-    .hero .hero-section,
-    .hero .hero-section.hero-bg-image {
-        min-height: 84vh !important;
-        min-height: 84svh !important;
-        padding: 150px 0 60px !important;
+    @media (max-width: 575px) {
+        .sv-section { padding-bottom: 0 !important; }
+        .pk-section { padding-top: 10px !important; }
     }
-}
-/* ================= PALETTE FROM base.html (keep at the very end) ================= */
 
-/* About Us */
-.about-us { --ab-green: var(--nav-green, #1F5B3A); }
-.about-us .ab-btn-fill:hover {
-    background: var(--nav-gold, #e0b14a);
-    border-color: var(--nav-gold, #e0b14a);
-    color: var(--nav-ink, #12281f);
+    /* ================= COMPACT: About Us -> Services ================= */
+    .about-us { padding-bottom: 30px !important; }
+    .sv-section { padding-top: 20px !important; }
+
+    @media (max-width: 991px) {
+        .about-us { padding-bottom: 20px !important; }
+        .sv-section { padding-top: 10px !important; }
+        .ab-collage { margin-bottom: 30px; }
+    }
+    @media (max-width: 575px) {
+        .about-us { padding-bottom: 10px !important; }
+        .sv-section { padding-top: 0 !important; }
+    }
+
+    /* ================= MOBILE / TABLET: taller hero image ================= */
+    @media (max-width: 991px) {
+        .hero .hero-section,
+        .hero .hero-section.hero-bg-image {
+            min-height: 88vh !important;
+            min-height: 88svh !important;
+            padding: 160px 0 70px !important;
+        }
+    }
+    @media (max-width: 575px) {
+        .hero .hero-section,
+        .hero .hero-section.hero-bg-image {
+            min-height: 84vh !important;
+            min-height: 84svh !important;
+            padding: 150px 0 60px !important;
+        }
+    }
+
+    /* ================= PALETTE FROM base.html (keep at the very end) ================= */
+
+    /* About Us */
+    .about-us { --ab-green: var(--nav-green, #1F5B3A); }
+    .about-us .ab-btn-fill:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f);
+    }
+
+    /* View All Packages / View All Activities */
+    .pk-more a, .ac-more a {
+        background: var(--nav-green, #1F5B3A);
+        border-color: var(--nav-green, #1F5B3A);
+    }
+    .pk-more a:hover, .ac-more a:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f);
+    }
+
+    /* Why Choose Us */
+    .why-choose-us .wc-btn { border-color: var(--nav-green, #1F5B3A); }
+    .why-choose-us .wc-btn-fill { background: var(--nav-green, #1F5B3A); }
+    .why-choose-us .wc-btn-fill:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f);
+    }
+    .why-choose-us .wc-btn-line { color: var(--nav-green, #1F5B3A); }
+    .why-choose-us .wc-btn-line:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
+
+    /* Filter pills */
+    .fl-btn:hover {
+        background: var(--nav-gold, #e0b14a);
+        border-color: var(--nav-gold, #e0b14a);
+        color: var(--nav-ink, #12281f);
+    }
+    .fl-btn.active, .fl-btn.active:hover {
+        background: var(--nav-green, #1F5B3A);
+        border-color: var(--nav-green, #1F5B3A);
+        color: #fff;
+    }
+
+    /* Carousel arrows + dots */
+    .ms-services .ms-nav button.ms-arrow {
+        border-color: var(--nav-green, #1F5B3A);
+        color: var(--nav-green, #1F5B3A);
+    }
+    .ms-services .ms-nav button.ms-arrow:hover {
+        background: var(--nav-green, #1F5B3A);
+        color: #fff;
+    }
+    .ms-services .ms-dot.active { background: var(--nav-green, #1F5B3A); }
+
+    /* FAQ + Terms accents */
+    .fq-section { --fq-green: var(--nav-green, #1F5B3A); }
+    .tc-section { --tc-green: var(--nav-green, #1F5B3A); }
+    .fq-ask .fq-ask-ico { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+
+    /* Top bar */
+    .top-bar a i { color: var(--nav-green, #1F5B3A); }
+
+    /* Why Choose Us: icon box turns gold on hover (matches navbar gold) */
+    .why-choose-us .why-choose-list-item .icon-box::before {
+        background: var(--nav-gold, #e0b14a) !important;
+    }
+    .why-choose-us .why-choose-list-item:hover .icon-box,
+    .why-choose-us .why-choose-list-item .icon-box:hover {
+        background-color: var(--nav-gold, #e0b14a) !important;
+    }
+    /* icon turns dark so it stays readable on gold */
+    .why-choose-us .why-choose-list-item:hover .icon-box img,
+    .why-choose-us .why-choose-list-item .icon-box:hover img {
+        filter: brightness(0) !important;
+    }
+
+    /* grey paragraph text on the gold page: warm dark instead of grey */
+    body .section-title p,
+    body .pc-sub,
+    body .fq-text,
+    body .why-choose-us p,
+    body .pc-eyebrow,
+    body .about-us-content p { color: var(--page-text-muted); }
+    /* =====================================================================
+   ONE SAME GOLD ON EVERY SECTION (no fades, no bands)
+   --pw-all = how strongly the gold covers each section photo.
+              0.80 = photo faint   |   1 = perfectly flat gold, no photo
+   ===================================================================== */
+:root {
+    --pw-all: rgba(234, 223, 174, 0.80);
 }
 
-/* View All Packages / View All Activities */
-.pk-more a, .ac-more a {
-    background: var(--nav-green, #1F5B3A);
-    border-color: var(--nav-green, #1F5B3A);
-}
-.pk-more a:hover, .ac-more a:hover {
-    background: var(--nav-gold, #e0b14a);
-    border-color: var(--nav-gold, #e0b14a);
-    color: var(--nav-ink, #12281f);
-}
-
-/* Why Choose Us */
-.why-choose-us .wc-btn { border-color: var(--nav-green, #1F5B3A); }
-.why-choose-us .wc-btn-fill { background: var(--nav-green, #1F5B3A); }
-.why-choose-us .wc-btn-fill:hover {
-    background: var(--nav-gold, #e0b14a);
-    border-color: var(--nav-gold, #e0b14a);
-    color: var(--nav-ink, #12281f);
-}
-.why-choose-us .wc-btn-line { color: var(--nav-green, #1F5B3A); }
-.why-choose-us .wc-btn-line:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
-
-/* Filter pills */
-.fl-btn:hover {
-    background: var(--nav-gold, #e0b14a);
-    border-color: var(--nav-gold, #e0b14a);
-    color: var(--nav-ink, #12281f);
-}
-.fl-btn.active, .fl-btn.active:hover {
-    background: var(--nav-green, #1F5B3A);
-    border-color: var(--nav-green, #1F5B3A);
-    color: #fff;
+body .about-us,
+body .sv-section,
+body .pk-section,
+body .ac-section,
+body .why-choose-us,
+body .ds-section,
+body .tc-section,
+body .pc-section,
+body .fq-section {
+    background-color: var(--page-bg) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
-/* Carousel arrows + dots */
-.ms-services .ms-nav button.ms-arrow {
-    border-color: var(--nav-green, #1F5B3A);
-    color: var(--nav-green, #1F5B3A);
+/* each section keeps its own photo, under the same gold wash */
+body .about-us,
+body .sv-section,
+body .pk-section,
+body .ac-section,
+body .tc-section,
+body .fq-section {
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/mr5.png" %}') !important;
 }
-.ms-services .ms-nav button.ms-arrow:hover {
-    background: var(--nav-green, #1F5B3A);
-    color: #fff;
+body .why-choose-us {
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/bg8.png" %}') !important;
 }
-.ms-services .ms-dot.active { background: var(--nav-green, #1F5B3A); }
+body .ds-section,
+body .pc-section {
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/bg7.png" %}') !important;
+}
+/* slightly bolder gold (was #eadfae) */
+:root {
+    --page-bg: #e0cf86;
+    --page-bg-soft: #ebdea0;
+    --page-fade: rgba(224, 207, 134, 0);
+    --pw-all: rgba(224, 207, 134, 0.80);   /* wash over the section photos */
+}
+:root {
+    --page-bg: #e0cf86;
+    --page-bg-soft: #ebdea0;
+    --page-text-muted: #4a4228;
+    --page-fade: rgba(224, 207, 134, 0);
+    --pw-all: rgba(224, 207, 134, 0.80);
+}
+html, body { background-color: var(--page-bg) !important; }
 
-/* FAQ + Terms accents */
-.fq-section { --fq-green: var(--nav-green, #1F5B3A); }
-.tc-section { --tc-green: var(--nav-green, #1F5B3A); }
-.fq-ask .fq-ask-ico { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+/* hero fallback colour behind the photos */
+body .page-header.page-hero,
+body .page-header.about-hero { background-color: var(--nav-green, #111111) !important; }
+body .hero {
+    background-color: var(--page-bg) !important;
+    background-image: none !important;
+}
 
-/* Top bar */
-.top-bar a i { color: var(--nav-green, #1F5B3A); }
-/* Why Choose Us: icon box turns gold on hover (matches navbar gold) */
-.why-choose-us .why-choose-list-item .icon-box::before {
-    background: var(--nav-gold, #e0b14a) !important;
-}
-.why-choose-us .why-choose-list-item:hover .icon-box,
-.why-choose-us .why-choose-list-item .icon-box:hover {
-    background-color: var(--nav-gold, #e0b14a) !important;
-}
-/* icon turns dark so it stays readable on gold */
-.why-choose-us .why-choose-list-item:hover .icon-box img,
-.why-choose-us .why-choose-list-item .icon-box:hover img {
-    filter: brightness(0) !important;
-}
 </style>
+
 {% endblock %}
 
 {% block content %}

@@ -645,6 +645,37 @@
     @media (prefers-reduced-motion: reduce) {
         .pk-col, .pk-head { transition: none; opacity: 1; transform: none; }
     }
+    /* =====================================================================
+   GOLD THEME (same as About, Activities and Activity detail pages)
+   --page-bg = the gold   |   --pw-all = how strongly it covers the photo
+   ===================================================================== */
+:root {
+    --page-bg: #e0cf86;
+    --page-bg-soft: #ebdea0;
+    --page-text-muted: #4a4228;
+    --pw-all: rgba(224, 207, 134, 0.80);
+}
+html, body { background-color: var(--page-bg) !important; }
+
+/* hero fallback colour behind the rotating photos */
+body .page-header.page-hero { background-color: var(--nav-green, #111111) !important; }
+
+/* packages section: same gold + same wash over bg4.png */
+body .pk-section {
+    background-color: var(--page-bg) !important;
+    background-image:
+        linear-gradient(var(--pw-all), var(--pw-all)),
+        url('{% static "malabar-static/bg4.png" %}') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+/* muted text that sits directly on the gold */
+body .pk-head p,
+body .pk-empty,
+body .pk-nomatch,
+body .pf-count { color: var(--page-text-muted) !important; }
 </style>
 {% endblock %}
 

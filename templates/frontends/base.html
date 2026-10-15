@@ -779,6 +779,21 @@ background-position: center 70% !important;
     /* keep the footer copyright from hiding behind the bar */
     body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
 }
+/* ================= PRELOADER: same green as the navbar ================= */
+.preloader {
+    background-color: var(--nav-green, #1F5B3A) !important;
+    background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+    background-blend-mode: multiply !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+/* spinning ring: gold so it stands out on the green */
+.preloader .loading {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    border-top-color: var(--nav-gold, #e0b14a) !important;
+}
 </style>
 
     {% block extra_css %}{% endblock %}

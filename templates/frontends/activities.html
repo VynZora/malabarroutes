@@ -400,6 +400,31 @@
         .act-n2 .act-card-body h3,
         .act-n1 .act-card-body h3 { font-size: 19px; }
     }
+    /* ===== ACTIVITIES HERO: full-bleed, no rounded corners, no inset ===== */
+.page-header.page-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 80vh !important;
+    padding: 200px 0 120px !important;
+}
+
+.page-hero .ah-bgs,
+.page-hero .ah-bg {
+    border-radius: 0 !important;
+}
+
+@media (max-width: 991px) {
+    .page-header.page-hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        min-height: 50vh !important;
+        padding: 140px 0 65px !important;
+    }
+}
 </style>
 {% endblock %}
 

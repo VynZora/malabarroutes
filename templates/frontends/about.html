@@ -1,6 +1,7 @@
 {% extends "frontends/base.html" %}
 {% load static %}
 {% load static image_tags %}
+{% load package_tags %}
 {% block title %}About Us | Malabar{% endblock %}
 
 {% comment %}
@@ -8,7 +9,6 @@
     - HERO = same design as the Packages page hero (centered title + breadcrumb,
       same 5 rotating background images with zoom-out).
     - everything after the hero sits in ONE wrapper (.flow) that owns the fixed landscape background
-    - no panels / cards behind headings: text sits straight on the background
     - faded side pictures per section (same pictures as the home page)
     Sections: Our Story, Services, Popular Packages, Terms, Testimonials, FAQ.
     The booking modal lives in base.html; any element with class "open-booking" opens it.
@@ -945,6 +945,142 @@
     .ms-services .ms-nav { gap: 14px; margin-top: 20px; }
     .ms-services .ms-nav button.ms-arrow { width: 42px; height: 42px; font-size: 14px; }
 }
+/* ===== ABOUT HERO: full-bleed, no rounded corners, no inset ===== */
+.page-header.page-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 80vh !important;
+    padding: 200px 0 120px !important;
+}
+
+.page-hero .ah-bgs,
+.page-hero .ah-bg {
+    border-radius: 0 !important;
+}
+
+@media (max-width: 991px) {
+    .page-header.page-hero {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        min-height: 50vh !important;
+        padding: 140px 0 65px !important;
+    }
+}
+/* ===== No white shadow / glow on any text, all sections ===== */
+.flow [class][class],
+.flow [class][class] * {
+    text-shadow: none !important;
+}
+
+/* Our Story: remove the white haze behind the text (desktop) */
+.about-story::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* ===== TERMS: every point has a permanent white background ===== */
+.flow .tc-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(31, 91, 58, 0.12) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.08) !important;
+}
+.flow .tc-item.active {
+    border-color: rgba(31, 91, 58, 0.35) !important;
+    box-shadow: 0 16px 36px rgba(20, 40, 30, 0.16) !important;
+}
+
+/* clean, readable text on the white cards */
+.flow .tc-text h3 { color: var(--nav-green, #1F5B3A) !important; }
+.flow .tc-text p  { color: #3d4742 !important; font-weight: 500 !important; }
+
+/* number badge: light green, solid green when active */
+.flow .tc-no { background: #eef2ea !important; color: var(--nav-green, #1F5B3A) !important; }
+.flow .tc-item.active .tc-no { background: var(--nav-green, #1F5B3A) !important; color: #fff !important; }
+
+/* active icon: green circle with a gold icon */
+.flow .tc-item.active .tc-icon {
+    background: var(--nav-green, #1F5B3A) !important;
+    color: var(--nav-gold, #e0b14a) !important;
+}
+.flow .tc-item.active .tc-icon i { color: var(--nav-gold, #e0b14a) !important; }
+
+/* a little more room between the cards */
+.flow .tc-grid { row-gap: 16px !important; }
+/* ===== Our Story: card with a slight border behind the text ===== */
+
+/* remove the dark / white haze over the picture */
+.about-story::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* the card */
+.flow .about-story .about-us-content .section-title {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(31, 91, 58, 0.30) !important;
+    border-radius: 26px !important;
+    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.12) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+            backdrop-filter: blur(6px) !important;
+    padding: 28px 30px !important;
+    margin-bottom: 0 !important;
+}
+
+/* text on the card: dark, no shadow */
+.flow .about-story .section-title h3 {
+    color: var(--nav-green, #1F5B3A) !important;
+    text-shadow: none !important;
+}
+.flow .about-story .section-title h2 {
+    color: #111111 !important;
+    text-shadow: none !important;
+}
+.flow .about-story .st-text {
+    color: #1d2b24 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+}
+
+/* Read more / Read less */
+.flow .about-story .st-more {
+    color: var(--nav-green, #1F5B3A) !important;
+    text-shadow: none !important;
+}
+.flow .about-story .st-more:hover { color: #a97a14 !important; }
+
+/* a little space between the card and the 4 point cards */
+.about-story .st-route { margin-top: 20px; }
+
+@media (max-width: 575px) {
+    .flow .about-story .about-us-content .section-title {
+        padding: 20px 18px !important;
+        border-radius: 20px !important;
+    }
+}
+
+/* ===== Popular Packages: same as the home page ===== */
+.pk-card { height: 590px; }
+.pk-title { min-height: calc(1.3em * 2); }
+
+.pk-loc {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 0 12px;
+    font-size: 15px; font-weight: 600; line-height: 1.3;
+    color: var(--pk-accent);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pk-loc i { font-size: 14px; flex: 0 0 auto; }
+
+@media (max-width: 575px) {
+    .pk-card { height: auto; }
+    .pk-title { min-height: 0; }
+    .pk-loc { font-size: 13px; margin-bottom: 8px; }
+}
 </style>
 {% endblock %}
 
@@ -1178,6 +1314,12 @@
 
                                 <div class="pk-body">
                                     <h3 class="pk-title"><a href="{% url 'package_detail' p.slug %}">{{ p.name }}</a></h3>
+
+                                    {% with loc=p.card_description|default:""|add:" "|add:p.description|extract_location %}
+                                        {% if loc %}
+                                        <p class="pk-loc"><i class="fa-solid fa-location-dot"></i>{{ loc }}</p>
+                                        {% endif %}
+                                    {% endwith %}
 
                                     <p class="pk-desc">{{ p.card_description|truncatewords:20 }}</p>
 
@@ -1640,7 +1782,7 @@
         var AUTOPLAY_MS = 3000;
         var SPEED_MS = 600;
 
-        var perView = 3, index = 0, slideW = 0, busy = false, timer = null;
+        var perView = 3, index = 0, busy = false, timer = null;
         var dots = [];
         var isStatic = false;
         var nav = root.querySelector('.ms-nav');
@@ -1682,8 +1824,10 @@
             });
 
             perView = getPerView();
-            slideW = viewport.clientWidth / perView;
-            originals.forEach(function (s) { s.style.flex = '0 0 ' + slideW + 'px'; });
+
+            /* sizes are in %, so the cards always fit the carousel exactly (no cut-off card) */
+            var basis = '0 0 ' + (100 / perView) + '%';
+            originals.forEach(function (s) { s.style.flex = basis; });
 
             isStatic = total <= perView;
             nav.style.display = isStatic ? 'none' : '';
@@ -1701,14 +1845,14 @@
                 before.classList.add('ms-clone');
                 before.setAttribute('aria-hidden', 'true');
                 before.style.display = '';
-                before.style.flex = '0 0 ' + slideW + 'px';
+                before.style.flex = basis;
                 track.insertBefore(before, track.firstChild);
 
                 var after = originals[i % total].cloneNode(true);
                 after.classList.add('ms-clone');
                 after.setAttribute('aria-hidden', 'true');
                 after.style.display = '';
-                after.style.flex = '0 0 ' + slideW + 'px';
+                after.style.flex = basis;
                 track.appendChild(after);
             }
 
@@ -1719,7 +1863,7 @@
 
         function setPos(animate) {
             track.style.transition = animate ? 'transform ' + SPEED_MS + 'ms ease' : 'none';
-            track.style.transform = 'translateX(' + (-index * slideW) + 'px)';
+            track.style.transform = 'translateX(' + (-index * 100 / perView) + '%)';
         }
         function settle() {
             if (index >= total + perView) index -= total;
@@ -1815,7 +1959,12 @@
         return { setFilter: setFilter };
     }
 
-    initMsCarousel('pkCarousel');
+    /* Popular Packages: 2 cards on desktop and tablet, 1 on mobile */
+    initMsCarousel('pkCarousel', {
+        perView: function () { return window.innerWidth < 768 ? 1 : 2; }
+    });
+
+    /* Testimonials: 2 cards on desktop and tablet, 1 on mobile */
     initMsCarousel('pcCarousel', {
         perView: function () { return window.innerWidth < 768 ? 1 : 2; }
     });

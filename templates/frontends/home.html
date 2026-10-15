@@ -2827,6 +2827,227 @@
     border: 0 !important;
     box-shadow: none !important;
 }
+/* ===== HERO: full-bleed, no rounded corners, no inset ===== */
+.hero {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.hero .hero-section,
+.hero .hero-section.hero-bg-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 100vh !important;
+    min-height: 100svh !important;
+    padding: 180px 0 56px !important;
+    align-items: flex-end !important;
+}
+
+.hero .hero-section::before,
+.hero .hero-section::after,
+.hero .hero-bgs,
+.hero .hero-bg {
+    border-radius: 0 !important;
+}
+
+@media (max-width: 991px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        min-height: 88vh !important;
+        min-height: 88svh !important;
+        padding: 150px 0 36px !important;
+    }
+}
+
+@media (max-width: 575px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        min-height: 84vh !important;
+        min-height: 84svh !important;
+        padding: 140px 0 32px !important;
+    }
+}
+/* ===== TERMS: every point has a permanent white background ===== */
+.flow .tc-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(31, 91, 58, 0.12) !important;
+    border-radius: 22px !important;
+    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.08) !important;
+}
+
+/* active one: slightly stronger shadow and green outline */
+.flow .tc-item.active {
+    border-color: rgba(31, 91, 58, 0.35) !important;
+    box-shadow: 0 16px 36px rgba(20, 40, 30, 0.16) !important;
+}
+
+/* clean, readable text on white (removes the glow used over the pictures) */
+.flow .tc-text h3 {
+    color: var(--nav-green, #1F5B3A) !important;
+    text-shadow: none !important;
+}
+.flow .tc-text p {
+    color: #3d4742 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+}
+
+/* number badge: light green, solid green when active */
+.flow .tc-no {
+    background: #eef2ea !important;
+    color: var(--nav-green, #1F5B3A) !important;
+}
+.flow .tc-item.active .tc-no {
+    background: var(--nav-green, #1F5B3A) !important;
+    color: #fff !important;
+}
+
+/* a little more room between the cards */
+.flow .tc-grid { row-gap: 16px !important; }
+
+/* the white haze from my earlier mobile fix is no longer needed */
+.flow .tc-section::after { display: none !important; }
+/* ===== TERMS: active icon is gold, not white ===== */
+.flow .tc-item.active .tc-icon {
+    background: var(--nav-green, #1F5B3A) !important;
+    color: var(--nav-gold, #e0b14a) !important;
+}
+.flow .tc-item.active .tc-icon i {
+    color: var(--nav-gold, #e0b14a) !important;
+}
+/* Popular Packages: equal cards, buttons aligned */
+.pk-card { height: 590px; }
+.pk-title { min-height: calc(1.3em * 2); }
+
+@media (max-width: 575px) {
+    .pk-card { height: auto; }
+    .pk-title { min-height: 0; }
+}
+/* ===== Top contact bar: transparent background ===== */
+.top-bar-inner {
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* white text with a soft shadow so it stays readable over any picture */
+.top-bar a {
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7), 0 0 10px rgba(0, 0, 0, 0.45);
+}
+.top-bar a i {
+    color: var(--nav-gold, #e0b14a) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+.top-bar a:hover { color: var(--nav-gold, #e0b14a) !important; }
+/* ===== About Us: no white haze, white text on the picture ===== */
+
+/* replace the white haze with a light dark-green tint (helps readability) */
+.about-us::before {
+    content: "" !important;
+    display: block !important;
+    position: absolute;
+    left: 0; top: 0;
+    width: 62%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to right,
+        rgba(10, 25, 18, 0.45) 0,
+        rgba(10, 25, 18, 0.30) 55%,
+        rgba(10, 25, 18, 0) 100%) !important;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%);
+}
+@media (max-width: 991px) {
+    .about-us::before {
+        width: 100%;
+        background: linear-gradient(to bottom,
+            rgba(10, 25, 18, 0.20) 0,
+            rgba(10, 25, 18, 0.38) 50%,
+            rgba(10, 25, 18, 0.20) 100%) !important;
+    }
+}
+
+/* heading + paragraph: white, dark shadow, no white glow (desktop and mobile) */
+.flow .about-us .ab-title-wrap h2,
+.flow .about-us .ab-title-wrap h2 .ab-green,
+.flow .about-us .ab-title-wrap h2 i {
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55) !important;
+}
+.flow .about-us .ab-title-wrap p {
+    color: #ffffff !important;
+    font-weight: 500;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7), 0 0 14px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* "About Us" pill: keep its own look, remove the glow */
+.flow .about-us .ab-tag {
+    color: var(--nav-green, #1F5B3A) !important;
+    text-shadow: none !important;
+}
+.about-us .ab-bar { background: var(--nav-gold, #e0b14a); }
+/* ===== Testimonials intro: black heading, no white shadow ===== */
+@media (min-width: 992px) {
+
+    /* heading: black, no glow */
+    .flow .pc-intro .pc-heading {
+        color: #000000 !important;
+        font-weight: 700;
+        text-shadow: none !important;
+    }
+
+    /* small "TESTIMONIALS" label: black, no glow */
+    .flow .pc-intro .pc-eyebrow {
+        color: #000000 !important;
+        font-weight: 700;
+        text-shadow: none !important;
+    }
+
+    /* sub text and Google score: same white, stronger dark shadow */
+    .flow .pc-intro .pc-sub,
+    .flow .pc-intro .pc-g-score {
+        font-weight: 700;
+        text-shadow:
+            0 1px 2px rgba(0,0,0,.95),
+            0 0 8px rgba(0,0,0,.85),
+            0 0 18px rgba(0,0,0,.7),
+            0 0 30px rgba(0,0,0,.5) !important;
+    }
+}
+/* ===== FAQ intro: bold, clearly visible, no shadow / glow ===== */
+.flow .fq-left .pc-eyebrow,
+.flow .fq-left h2,
+.flow .fq-left .section-title h2 {
+    text-shadow: none !important;
+}
+
+.flow .fq-text {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* mobile / tablet */
+@media (max-width: 991px) {
+    .flow .fq-left .pc-eyebrow,
+    .flow .fq-left h2,
+    .flow .fq-left .section-title h2 {
+        text-shadow: none !important;
+    }
+    .flow .fq-text {
+        color: #000000 !important;
+        font-weight: 700 !important;
+        text-shadow: none !important;
+    }
+}
 </style>
 
 {% endblock %}
@@ -3944,7 +4165,8 @@
             perView = getPerView();
             slideW = viewport.clientWidth / perView;
 
-            originals.forEach(function (s) { s.style.flex = '0 0 ' + slideW + 'px'; });
+            var basis = '0 0 ' + (100 / perView) + '%';
+originals.forEach(function (s) { s.style.flex = basis; });
 
             isStatic = total <= perView;
             nav.style.display = isStatic ? 'none' : '';
@@ -3962,14 +4184,14 @@
                 before.classList.add('ms-clone');
                 before.setAttribute('aria-hidden', 'true');
                 before.style.display = '';
-                before.style.flex = '0 0 ' + slideW + 'px';
+                before.style.flex = basis;
                 track.insertBefore(before, track.firstChild);
 
                 var after = originals[i % total].cloneNode(true);
                 after.classList.add('ms-clone');
                 after.setAttribute('aria-hidden', 'true');
                 after.style.display = '';
-                after.style.flex = '0 0 ' + slideW + 'px';
+                after.style.flex = basis;
                 track.appendChild(after);
             }
 
@@ -3979,9 +4201,9 @@
         }
 
         function setPos(animate) {
-            track.style.transition = animate ? 'transform ' + SPEED_MS + 'ms ease' : 'none';
-            track.style.transform = 'translateX(' + (-index * slideW) + 'px)';
-        }
+    track.style.transition = animate ? 'transform ' + SPEED_MS + 'ms ease' : 'none';
+    track.style.transform = 'translateX(' + (-index * 100 / perView) + '%)';
+}
 
         function settle() {
             if (index >= total + perView) index -= total;
@@ -4072,10 +4294,24 @@
         viewport.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
         var resizeTimer;
-        window.addEventListener('resize', function () {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function () { busy = false; build(); }, 200);
-        });
+function rebuildSoon(ms) {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { busy = false; build(); }, ms);
+}
+window.addEventListener('resize', function () { rebuildSoon(200); });
+
+/* re-measure after everything has loaded (fonts, images, scrollbar) */
+window.addEventListener('load', function () { rebuildSoon(50); });
+
+/* re-measure whenever the carousel's own width changes */
+if ('ResizeObserver' in window) {
+    var lastW = viewport.clientWidth;
+    new ResizeObserver(function () {
+        if (viewport.clientWidth === lastW) return;
+        lastW = viewport.clientWidth;
+        rebuildSoon(100);
+    }).observe(viewport);
+}
 
         makeDots();
         build();
@@ -4098,8 +4334,9 @@
     }
 
     /* Popular Packages: 3 on desktop, 2 on tablet, 1 on mobile (default) */
-    var pkCar = initMsCarousel('pkCarousel');
-
+    var pkCar = initMsCarousel('pkCarousel', {
+    perView: function () { return window.innerWidth < 768 ? 1 : 2; }
+});
     /* Popular Destinations: 4 on desktop, 2 on tablet, 1 on mobile */
     /* Popular Destinations: 2 on tablet and desktop, 1 on mobile */
     /* Popular Destinations: 3 on desktop, 2 on tablet, 1 on mobile */

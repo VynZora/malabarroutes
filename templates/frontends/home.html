@@ -2590,6 +2590,243 @@
     .rt-pin, .rt-pin.on { transition: none; }
     .rt-pin.on::after, .rt-puck { animation: none; }
 }
+/* ===== HERO REDESIGN: caption bottom-left, destination tabs on the right ===== */
+.hero .hero-section,
+.hero .hero-section.hero-bg-image {
+    align-items: flex-end !important;
+    padding-bottom: 48px !important;
+}
+
+.hero .hero-bgs::before,
+.hero .hero-section.text-right .hero-bgs::before { opacity: 0 !important; }
+.hero .hero-bgs::after,
+.hero .hero-section.text-right .hero-bgs::after {
+    opacity: 1 !important;
+    background: linear-gradient(0deg,
+        rgba(8, 22, 16, 0.84) 0,
+        rgba(8, 22, 16, 0.46) 38%,
+        rgba(8, 22, 16, 0) 72%) !important;
+}
+
+.hero .hero-content,
+.hero .hero-content.is-right {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-areas: "slides rail" "actions rail";
+    column-gap: 56px;
+    align-items: end;
+}
+.hero .hero-slides  { grid-area: slides; }
+.hero .hero-actions { grid-area: actions; }
+.hero .hero-dots,
+.hero .hero-content.is-right .hero-dots { grid-area: rail; }
+
+.hero .hero-slide,
+.hero .hero-slide.is-right {
+    justify-self: start;
+    text-align: left !important;
+    max-width: 780px;
+}
+
+.hero .hero-eyebrow,
+.hero .hero-slide.is-right .hero-eyebrow {
+    display: inline-flex;
+    justify-content: flex-start !important;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: none;
+}
+.hero .hero-eyebrow::before,
+.hero .hero-slide.is-right .hero-eyebrow::before {
+    content: "\f3c5";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    width: auto; height: auto; background: none;
+    display: inline-block !important;
+    color: var(--nav-gold, #e0b14a);
+    font-size: 14px;
+}
+.hero .hero-eyebrow::after,
+.hero .hero-slide.is-right .hero-eyebrow::after { content: none !important; display: none !important; }
+
+.hero .hero-content .hero-title .hero-title-top,
+.hero .hero-content .hero-title .hero-title-bottom {
+    font-size: clamp(52px, 7.2vw, 108px) !important;
+    line-height: 0.98;
+    letter-spacing: 0 !important;
+    white-space: normal;
+}
+.hero .hero-content .hero-title { margin: 0 0 22px !important; }
+
+.hero .hero-content .section-title p.hero-subtitle,
+.hero p.hero-subtitle,
+.hero .hero-slide.is-right p.hero-subtitle {
+    max-width: 520px;
+    margin: 0 !important;
+    font-size: 19px !important;
+    font-weight: 400 !important;
+    line-height: 1.6 !important;
+    text-align: left !important;
+}
+
+.hero .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.hero .hero-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 28px; border-radius: 50px;
+    font-size: 16px; font-weight: 600; line-height: 1;
+    text-decoration: none; cursor: pointer;
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+.hero .hero-btn-fill {
+    background: var(--nav-gold, #e0b14a);
+    border: 1.5px solid var(--nav-gold, #e0b14a);
+    color: var(--nav-ink, #12281f);
+}
+.hero .hero-btn-fill:hover { background: #fff; border-color: #fff; color: var(--nav-ink, #12281f); }
+.hero .hero-btn-line {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.7);
+    color: #fff;
+}
+.hero .hero-btn-line:hover { background: #fff; color: var(--nav-ink, #12281f); }
+.hero .hero-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+.hero .hero-dots,
+.hero .hero-content.is-right .hero-dots {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end !important;
+    align-items: stretch;
+    gap: 10px;
+    margin: 0 !important;
+}
+.hero .hero-dot {
+    position: relative;
+    overflow: hidden;
+    width: 100%; height: auto;
+    display: flex; align-items: center; gap: 14px;
+    padding: 15px 18px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(10, 25, 18, 0.38);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    color: #fff;
+    font: inherit; font-size: 16px; font-weight: 500; text-align: left;
+    transition: background .35s ease, color .35s ease, border-color .35s ease;
+}
+.hero .hero-dot i { width: 20px; text-align: center; font-size: 16px; color: var(--nav-gold, #e0b14a); transition: color .35s ease; }
+.hero .hero-dot:hover { background: rgba(10, 25, 18, 0.6); }
+.hero .hero-dot:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.hero .hero-dot.active {
+    width: 100%; border-radius: 16px;
+    background: rgba(255, 255, 255, 0.94);
+    border-color: transparent;
+    color: var(--nav-ink, #12281f);
+}
+.hero .hero-dot.active i { color: var(--nav-green, #1F5B3A); }
+
+.hero .hero-dot::after {
+    content: ""; position: absolute; left: 0; bottom: 0;
+    width: 100%; height: 3px;
+    background: var(--nav-gold, #e0b14a);
+    transform: scaleX(0); transform-origin: left;
+}
+.hero .hero-dot.active::after { animation: heroTab 5s linear forwards; }
+@keyframes heroTab { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+    .hero .hero-dot.active::after { animation: none; transform: scaleX(1); }
+}
+
+@media (max-width: 991px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image { padding-bottom: 28px !important; }
+
+    .hero .hero-content,
+    .hero .hero-content.is-right {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "slides" "actions" "rail";
+        row-gap: 0;
+    }
+    .hero .hero-dots,
+    .hero .hero-content.is-right .hero-dots {
+        flex-direction: row;
+        overflow-x: auto;
+        margin-top: 26px !important;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+    }
+    .hero .hero-dots::-webkit-scrollbar { display: none; }
+    .hero .hero-dot { flex: 0 0 auto; width: auto; padding: 11px 16px; font-size: 14px; gap: 10px; }
+    .hero .hero-dot.active { width: auto; }
+    .hero p.hero-subtitle, .hero .hero-slide.is-right p.hero-subtitle { font-size: 16px !important; }
+}
+@media (max-width: 575px) {
+    .hero .hero-eyebrow { font-size: 13px; padding: 7px 13px; margin-bottom: 16px; }
+    .hero .hero-content .hero-title .hero-title-top,
+    .hero .hero-content .hero-title .hero-title-bottom { font-size: 46px !important; }
+    .hero p.hero-subtitle, .hero .hero-slide.is-right p.hero-subtitle { font-size: 15px !important; }
+    .hero .hero-actions { gap: 10px; margin-top: 22px; }
+    .hero .hero-btn { padding: 12px 20px; font-size: 14px; }
+}
+/* ===== HERO MOBILE FIX: slim icon row instead of stacked bars ===== */
+@media (max-width: 991px) {
+    .hero .hero-content .hero-dots,
+    .hero .hero-content.is-right .hero-dots {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start !important;
+        gap: 8px;
+        overflow-x: auto;
+        margin-top: 22px !important;
+        padding: 0;
+        scrollbar-width: none;
+    }
+    .hero .hero-content .hero-dots::-webkit-scrollbar { display: none; }
+
+    .hero .hero-content .hero-dots .hero-dot {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        min-width: 44px;
+        height: 44px !important;
+        padding: 0 16px !important;
+        border-radius: 50px !important;
+        justify-content: center;
+        gap: 8px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    /* inactive tabs: icon only */
+    .hero .hero-content .hero-dots .hero-dot:not(.active) {
+        width: 44px !important;
+        padding: 0 !important;
+        gap: 0;
+        font-size: 0;            /* hides the label text */
+    }
+    .hero .hero-content .hero-dots .hero-dot:not(.active) i { font-size: 16px; }
+}
+/* ===== Hero location chip: no border ===== */
+.hero .hero-eyebrow,
+.hero .hero-slide.is-right .hero-eyebrow {
+    border: 0 !important;
+    box-shadow: none !important;
+}
 </style>
 
 {% endblock %}
@@ -2608,7 +2845,6 @@
 <div class="hero">
     <div class="hero-section hero-bg-image bg-section dark-section">
 
-        <!-- Background images: Houseboat -> Hills -> Beach -> Wildlife -> Backwaters -->
         <div class="hero-bgs" aria-hidden="true">
             <div class="hero-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -2621,69 +2857,73 @@
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <div class="hero-content">
-                        <div class="hero-slides">
 
+                        <div class="hero-slides">
                             <div class="hero-slide active">
-                                <span class="hero-eyebrow">Explore Kerala</span>
+                                <span class="hero-eyebrow">Alleppey, Kumarakom, Kollam</span>
                                 <h1 class="hero-title">
                                     <span class="hero-title-top">Houseboat</span>
                                     <span class="hero-title-bottom">Cruises</span>
                                 </h1>
-                                <p class="hero-subtitle">Cruise a Traditional Houseboat Through Alleppey, Kumarakom and Kollam</p>
+                                <p class="hero-subtitle">Drift through the backwaters on a traditional houseboat, with meals cooked on board.</p>
                             </div>
 
                             <div class="hero-slide is-right">
-                                <span class="hero-eyebrow">Discover</span>
+                                <span class="hero-eyebrow">Munnar, Wayanad, Vagamon, Ponmudi</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Hill</span>
                                     <span class="hero-title-bottom">Stations</span>
                                 </h2>
-                                <p class="hero-subtitle">Tea Gardens and Cool Mountain Air in Munnar, Wayanad, Vagamon and Ponmudi</p>
+                                <p class="hero-subtitle">Walk through tea gardens and breathe cool mountain air.</p>
                             </div>
 
                             <div class="hero-slide">
-                                <span class="hero-eyebrow">Relax</span>
+                                <span class="hero-eyebrow">Kovalam, Varkala, Cherai, Bekal</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Golden</span>
                                     <span class="hero-title-bottom">Beaches</span>
                                 </h2>
-                                <p class="hero-subtitle">Relax on the Shores of Kovalam, Varkala, Cherai and Bekal Along Kerala's Coast</p>
+                                <p class="hero-subtitle">Relax on the shores along Kerala's coast, from lighthouse cliffs to quiet sands.</p>
                             </div>
 
                             <div class="hero-slide is-right">
-                                <span class="hero-eyebrow">Adventure</span>
+                                <span class="hero-eyebrow">Periyar, Thekkady, Wayanad, Parambikulam</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Wildlife</span>
                                     <span class="hero-title-bottom">Sanctuaries</span>
                                 </h2>
-                                <p class="hero-subtitle">Meet Elephants and Wildlife at Periyar, Thekkady, Wayanad and Parambikulam</p>
+                                <p class="hero-subtitle">Meet elephants and forest wildlife on guided safaris.</p>
                             </div>
 
                             <div class="hero-slide">
-                                <span class="hero-eyebrow">Unwind</span>
+                                <span class="hero-eyebrow">Kuttanad, Ashtamudi, Valiyaparamba</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Serene</span>
                                     <span class="hero-title-bottom">Backwaters</span>
                                 </h2>
-                                <p class="hero-subtitle">Palm-Lined Lagoons and Quiet Canals of Kuttanad, Ashtamudi and Valiyaparamba</p>
+                                <p class="hero-subtitle">Glide past palm-lined lagoons and quiet canals.</p>
                             </div>
+                        </div>
 
+                        <div class="hero-actions">
+                            <a href="#" class="hero-btn hero-btn-fill open-booking">Plan my trip <i class="fa-solid fa-arrow-right"></i></a>
+                            <a href="{% url 'packages' %}" class="hero-btn hero-btn-line">View packages</a>
                         </div>
 
                         <div class="hero-dots">
-                            <button type="button" class="hero-dot active" aria-label="Slide 1"></button>
-                            <button type="button" class="hero-dot" aria-label="Slide 2"></button>
-                            <button type="button" class="hero-dot" aria-label="Slide 3"></button>
-                            <button type="button" class="hero-dot" aria-label="Slide 4"></button>
-                            <button type="button" class="hero-dot" aria-label="Slide 5"></button>
+                            <button type="button" class="hero-dot active" aria-label="Houseboat Cruises"><i class="fa-solid fa-ship"></i>Houseboats</button>
+                            <button type="button" class="hero-dot" aria-label="Hill Stations"><i class="fa-solid fa-mountain"></i>Hill stations</button>
+                            <button type="button" class="hero-dot" aria-label="Golden Beaches"><i class="fa-solid fa-umbrella-beach"></i>Beaches</button>
+                            <button type="button" class="hero-dot" aria-label="Wildlife Sanctuaries"><i class="fa-solid fa-paw"></i>Wildlife</button>
+                            <button type="button" class="hero-dot" aria-label="Serene Backwaters"><i class="fa-solid fa-water"></i>Backwaters</button>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
 <div class="flow">
 

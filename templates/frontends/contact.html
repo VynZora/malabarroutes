@@ -4,581 +4,401 @@
 {% block title %}Contact Us | Malabar{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html (except the Cinzel hero heading).
+    CONTACT PAGE (same design as the About / Destinations / Gallery pages)
+    - Hero = same rotating background images as the other pages.
+    - Everything after the hero sits in ONE wrapper (.flow) that owns the fixed landscape background (bg3.png).
+    - Faded side pictures on desktop, soft backdrop on mobile. Tight spacing.
+    - Info cards (tap to call / email), compact "Follow Us" row, map + form side by side.
+    - The form, reCAPTCHA, honeypot, AJAX submit and success modal work exactly as before.
     Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
-    Hero = same design and rotating background images as the Packages / About hero.
     Social links: edit the three hrefs in the "Follow Us" block below.
 {% endcomment %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
-    /* ================= HERO (same design as Packages / About page) ================= */
-    .page-header.page-hero {
-        position: relative !important;
-        width: calc(100% - 32px) !important;
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;
-        border-radius: 40px !important;
-        overflow: hidden !important;
-        min-height: calc(80vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 120px !important;
-        background-color: #12281f !important;
-        background-image: none !important;   /* images come from .ah-bgs below */
-    }
-    .page-header.page-hero::before,
-    .page-header.page-hero::after { display: none !important; }
+/* =====================================================================
+   HERO (same design as About / Destinations / Gallery)
+   ===================================================================== */
+.page-header.page-hero {
+    position: relative !important;
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    margin: 16px 16px 0 !important;
+    border-radius: 40px !important;
+    overflow: hidden !important;
+    min-height: 58vh;
+    display: flex;
+    align-items: center;
+    padding: 160px 0 70px !important;
+    background-color: #12281f !important;
+    background-image: none !important;
+}
+.page-header.page-hero::before,
+.page-header.page-hero::after { display: none !important; }
 
-    /* ---- background images: cross-fade + zoom out ---- */
-    .page-hero .ah-bgs {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: inherit;
-    }
-    .page-hero .ah-bgs::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
-        pointer-events: none;
-    }
-    .page-hero .ah-bg {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transform: scale(1);
-        transition: opacity 1.2s ease;
-    }
-    .page-hero .ah-bg.active {
-        opacity: 1;
-        animation: ahZoomOut 5.2s ease-out forwards;
-    }
-    @keyframes ahZoomOut {
-        from { transform: scale(1.2); }
-        to   { transform: scale(1); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        .page-hero .ah-bg.active { animation: none; }
-    }
-    .page-header.page-hero > .container { position: relative; z-index: 2; }
+.page-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; }
+.page-hero .ah-bgs::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: rgba(0, 0, 0, 0.30); pointer-events: none;
+}
+.page-hero .ah-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0; transform: scale(1); transition: opacity 1.2s ease;
+}
+.page-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
+@keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
+.page-header.page-hero > .container { position: relative; z-index: 2; }
+.page-hero .page-header-box { text-align: center; }
 
-    .page-hero .page-header-box { text-align: center; }
+.page-header.page-hero h1 {
+    font-family: 'Cinzel', serif !important;
+    font-weight: 700 !important;
+    font-size: 80px;
+    letter-spacing: 6px;
+    color: #ffffff !important;
+    text-transform: none !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    margin-bottom: 20px;
+}
+.page-hero .breadcrumb { justify-content: center; margin: 0; }
+.page-hero .breadcrumb-item,
+.page-hero .breadcrumb-item a,
+.page-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: #ffffff !important;
+    text-transform: capitalize;
+}
 
-    .page-header.page-hero h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        font-size: 80px;
-        letter-spacing: 6px;
-        color: #ffffff !important;
-        text-transform: none !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-        margin-bottom: 20px;
-    }
+/* =====================================================================
+   ONE CONTINUOUS PAGE (everything after the hero)
+   ===================================================================== */
+.flow {
+    --cx-accent: var(--nav-green, #1F5B3A);
+    --cx-dark: var(--nav-ink, #12281f);
+    --cx-gold: var(--nav-gold, #e0b14a);
+    --cx-soft: #e4ece3;
+    --cx-soft: color-mix(in srgb, var(--cx-accent) 14%, #ffffff);
+    --cx-ring: rgba(31, 91, 58, .16);
+    --cx-ring: color-mix(in srgb, var(--cx-accent) 16%, transparent);
 
-    .page-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-hero .breadcrumb-item,
-    .page-hero .breadcrumb-item a,
-    .page-hero .breadcrumb-item + .breadcrumb-item::before {
-        color: #ffffff !important;
-        text-transform: capitalize;
-    }
+    position: relative;
+    isolation: isolate;
+    clip-path: inset(0);
+    overflow-x: clip;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #e9efe6;
+}
+.flow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
+}
+.flow .container { max-width: 1240px; }
 
-    /* ================= CONTACT SECTION ================= */
-    .contact-section {
-        /* colours come from base.html */
-        --cx-accent: var(--nav-green, #1F5B3A);
-        --cx-dark: var(--nav-ink, #12281f);
-        --cx-gold: var(--nav-gold, #e0b14a);
-        --cx-accent-soft: #e4ece3;
-        --cx-accent-soft: color-mix(in srgb, var(--cx-accent) 14%, #ffffff);
-        --cx-ring: rgba(31, 91, 58, .16);
-        --cx-ring: color-mix(in srgb, var(--cx-accent) 16%, transparent);
+/* faded side pictures (hidden until the desktop / mobile blocks below) */
+.ct-img { display: none; }
 
-        padding: 90px 0 110px;
-        overflow-x: clip;   /* sideways slide-in never causes a horizontal scrollbar */
-        background-color: #faf8f6;
-        background-image:
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
-            url('{% static "malabar-static/bg8.png" %}');
-        background-size: cover, cover;
-        background-position: center, center;
-        background-repeat: no-repeat, no-repeat;
-    }
-    .contact-section .container { max-width: 1200px; }
-    .contact-section .section-row { margin-bottom: 50px; }
+/* white glow so plain text stays readable on the picture */
+.flow .ct-head h2, .flow .ct-head p {
+    text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+}
 
-    /* ================= SCROLL REVEAL (fade in + fade out) =================
-       JS toggles .in-view when the element enters / leaves the screen.
-       Hidden states only apply when JS runs (.js-reveal), so nothing
-       can get stuck invisible. --d sets the delay when appearing. */
-    .js-reveal .rv {
-        opacity: 0;
-        transition: opacity .7s ease, transform .8s cubic-bezier(.22, .61, .36, 1);
-        transition-delay: 0s;               /* leaving: fade out immediately */
-        will-change: opacity, transform;
-    }
-    .js-reveal .rv-up    { transform: translateY(40px); }
-    .js-reveal .rv-left  { transform: translateX(-50px); }
-    .js-reveal .rv-right { transform: translateX(50px); }
-    .js-reveal .rv-zoom  { transform: scale(.94); }
+/* =====================================================================
+   HEADING + INFO CARDS + FOLLOW US
+   ===================================================================== */
+.ct-wrap { position: relative; isolation: isolate; }
+.ct-top { position: relative; padding: 34px 0 10px; }
+.ct-head { text-align: center; margin-bottom: 20px; }
+.ct-head h2 {
+    font-family: 'Cormorant SC', serif !important;
+    font-weight: 700 !important; font-size: 50px; line-height: 1.1;
+    color: #111 !important; text-transform: none !important; margin: 0 0 6px;
+}
+.ct-head p {
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
+    color: #2b3a35; margin: 0 auto; max-width: 640px;
+}
 
-    .js-reveal .rv.in-view {
-        opacity: 1;
-        transform: none;
-        transition-delay: var(--d, 0s);     /* appearing: staggered */
-    }
+.cx-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cx-info-card {
+    position: relative; overflow: hidden; isolation: isolate; height: 100%;
+    display: flex; align-items: flex-start; gap: 16px;
+    background: rgba(255, 255, 255, .96); border-radius: 20px;
+    padding: 20px 22px;
+    box-shadow: 0 10px 28px rgba(20, 40, 30, 0.12);
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+/* green panel that slides up on hover */
+.cx-info-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--cx-accent); transform: translateY(101%);
+    transition: transform .55s cubic-bezier(.22, .61, .36, 1);
+}
+.cx-info-icon {
+    width: 52px; height: 52px; border-radius: 16px; flex: 0 0 52px;
+    background: var(--cx-soft); color: var(--cx-accent);
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    transition: background .35s ease, color .35s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
+}
+.cx-info-text { min-width: 0; }
+.cx-info-card h3 {
+    margin: 0 0 4px; font-size: 14px; font-weight: 700; letter-spacing: .5px;
+    color: var(--cx-accent); text-transform: none; transition: color .35s ease .1s;
+}
+.cx-info-card p {
+    margin: 0; font-size: 14.5px; line-height: 1.6; color: #2b3a35;
+    text-shadow: none; transition: color .35s ease .1s;
+}
+.cx-info-card a { color: inherit; text-decoration: none; word-break: break-word; transition: color .25s ease; }
+.cx-info-card a:hover { text-decoration: underline; }
 
-    /* map zooms out slowly while it fades in */
-    .js-reveal .cx-map-frame iframe {
-        transform: scale(1.2);
-        transition: transform 1.6s cubic-bezier(.22, .61, .36, 1);
-    }
-    .js-reveal .cx-map-col.in-view .cx-map-frame iframe { transform: scale(1); }
-
-    /* form pieces rise in one after another when the card appears */
-    .js-reveal .cx-form-card h2,
-    .js-reveal .cx-form-card .cx-field,
-    .js-reveal .cx-form-card .cx-recaptcha,
-    .js-reveal .cx-form-card .cx-submit {
-        opacity: 0;
-        transform: translateY(18px);
-        transition: opacity .5s ease, transform .5s ease;
-        transition-delay: 0s;
-    }
-    .js-reveal .cx-form-card.in-view h2,
-    .js-reveal .cx-form-card.in-view .cx-field,
-    .js-reveal .cx-form-card.in-view .cx-recaptcha,
-    .js-reveal .cx-form-card.in-view .cx-submit {
-        opacity: 1; transform: none;
-    }
-    .js-reveal .cx-form-card.in-view h2 { transition-delay: .35s; }
-    .js-reveal .cx-form-card.in-view .cx-field:nth-child(1) { transition-delay: .5s; }
-    .js-reveal .cx-form-card.in-view .cx-field:nth-child(2) { transition-delay: .6s; }
-    .js-reveal .cx-form-card.in-view .cx-field:nth-child(3) { transition-delay: .7s; }
-    .js-reveal .cx-form-card.in-view .cx-field:nth-child(4) { transition-delay: .8s; }
-    .js-reveal .cx-form-card.in-view .cx-field:nth-child(5) { transition-delay: .9s; }
-    .js-reveal .cx-form-card.in-view .cx-recaptcha { transition-delay: 1s; }
-    .js-reveal .cx-form-card.in-view .cx-submit { transition-delay: 1.1s; }
-
-    @media (prefers-reduced-motion: reduce) {
-        .js-reveal .rv,
-        .js-reveal .cx-map-frame iframe,
-        .js-reveal .cx-form-card h2,
-        .js-reveal .cx-form-card .cx-field,
-        .js-reveal .cx-form-card .cx-recaptcha,
-        .js-reveal .cx-form-card .cx-submit {
-            opacity: 1 !important; transform: none !important; transition: none !important;
-        }
-    }
-
-    /* ---------- Info cards (top row) ---------- */
-    .cx-info-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 24px;
-        margin-bottom: 40px;
-    }
-    .cx-info-card {
-        position: relative;
-        overflow: hidden;
-        isolation: isolate;
-        height: 100%;
-        background: #fff;
-        border-radius: 20px;
-        padding: 26px 28px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-        transition: transform .4s ease, box-shadow .4s ease;
-    }
-
-    /* green panel that slides up from the bottom */
-    .cx-info-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background: var(--cx-accent);
-        transform: translateY(101%);
-        transition: transform .55s cubic-bezier(.22, .61, .36, 1);
-    }
-
-    /* gold line that draws across the top edge */
-    .cx-info-card::after {
-        content: "";
-        position: absolute;
-        top: 0; left: 0;
-        height: 4px;
-        width: 0;
-        background: var(--cx-gold);
-        transition: width .55s ease .15s;
-    }
-
-    .cx-info-head {
-        display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
-    }
-    .cx-info-icon {
-        width: 44px; height: 44px; border-radius: 14px;
-        background: var(--cx-accent-soft); color: var(--cx-accent);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px; flex-shrink: 0;
-        transition: background .35s ease, color .35s ease, transform .45s cubic-bezier(.34, 1.56, .64, 1);
-    }
-    .cx-info-head h3 {
-        margin: 0; font-size: 15px; letter-spacing: 1px; text-transform: uppercase;
-        transition: color .35s ease .1s;
-    }
-    .cx-info-card p {
-        margin: 0; font-size: 14px; line-height: 1.8;
-        color: var(--text-color, #2b2b2b);
-        transition: color .35s ease .1s;
-    }
-    .cx-info-card a { color: inherit; word-break: break-word; transition: color .25s ease; }
-
-    /* hover */
-    .cx-info-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 40px rgba(31, 91, 58, 0.28);
-    }
+@media (hover: hover) {
+    .cx-info-card:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(31, 91, 58, 0.3); }
     .cx-info-card:hover::before { transform: translateY(0); }
-    .cx-info-card:hover::after { width: 100%; }
-    .cx-info-card:hover .cx-info-icon {
-        background: var(--cx-gold);
-        color: var(--cx-dark);
-        transform: rotate(-10deg) scale(1.12);
-    }
-    .cx-info-card:hover .cx-info-head h3,
-    .cx-info-card:hover p,
-    .cx-info-card:hover a { color: #ffffff; }
+    .cx-info-card:hover .cx-info-icon { background: var(--cx-gold); color: var(--cx-dark); transform: rotate(-8deg) scale(1.08); }
+    .cx-info-card:hover h3, .cx-info-card:hover p, .cx-info-card:hover a { color: #fff; }
     .cx-info-card a:hover { color: var(--cx-gold); }
+}
 
-    /* ---------- Follow Us (social links) ---------- */
-    .cx-social {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 18px 26px;
-        margin-bottom: 60px;
-        padding: 22px 28px;
-        background: rgba(255, 255, 255, 0.85);
-        border-radius: 20px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-    .cx-social-title {
-        display: flex; align-items: center; gap: 14px;
-        margin: 0;
-        font-size: 15px; font-weight: 600;
-        letter-spacing: 1px; text-transform: uppercase;
-        color: var(--text-color, #2b2b2b);
-    }
-    .cx-social-title::before,
-    .cx-social-title::after {
-        content: ""; width: 34px; height: 1px;
-        background: var(--cx-accent); opacity: .45;
-    }
-    .cx-social-list {
-        display: flex; align-items: center; justify-content: center;
-        flex-wrap: wrap; gap: 14px;
-        margin: 0; padding: 0; list-style: none;
-    }
-    .cx-social-link {
-        --sc: var(--cx-accent);
-        display: inline-flex; align-items: center; gap: 10px;
-        padding: 7px 20px 7px 7px;
-        border: 1.5px solid var(--cx-accent);
-        border-radius: 50px;
-        background: transparent;
-        color: var(--cx-accent);
-        font-size: 14px; font-weight: 600;
-        text-decoration: none;
-        transition: all .3s ease;
-    }
-    .cx-social-link .sc-ico {
-        width: 36px; height: 36px; border-radius: 50%;
-        background: var(--cx-accent); color: #fff;
-        display: inline-flex; align-items: center; justify-content: center;
-        font-size: 16px;
-        transition: all .3s ease;
-    }
-    .cx-social-link:hover {
-        background: var(--sc);
-        border-color: var(--sc);
-        color: #fff;
-        transform: translateY(-3px);
-    }
+/* Follow Us: one slim row */
+.cx-social {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+    gap: 10px 18px; margin-top: 16px; padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.92); border-radius: 50px;
+    box-shadow: 0 10px 28px rgba(20, 40, 30, 0.10);
+}
+.cx-social-title {
+    margin: 0; font-size: 14px; font-weight: 700; color: var(--cx-accent);
+    text-transform: none; letter-spacing: 0;
+}
+.cx-social-list { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.cx-social-link {
+    --sc: var(--cx-accent);
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 16px 5px 5px; border: 1.5px solid var(--cx-accent); border-radius: 50px;
+    background: transparent; color: var(--cx-accent);
+    font-size: 13.5px; font-weight: 600; text-decoration: none; transition: all .3s ease;
+}
+.cx-social-link .sc-ico {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--cx-accent); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 14px; transition: all .3s ease;
+}
+@media (hover: hover) {
+    .cx-social-link:hover { background: var(--sc); border-color: var(--sc); color: #fff; transform: translateY(-2px); }
     .cx-social-link:hover .sc-ico { background: #fff; color: var(--sc); }
-
     .cx-social-link.sc-facebook:hover  { --sc: #1877f2; }
     .cx-social-link.sc-x:hover         { --sc: #000000; }
     .cx-social-link.sc-instagram:hover { --sc: #d62976; }
+}
 
-    /* ---------- Map + form row ---------- */
-    .cx-main {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        align-items: stretch;
-    }
-
-    .cx-map-col { display: flex; flex-direction: column; }
-    .cx-map-frame {
-        flex: 1;
-        min-height: 520px;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
-        background: #e8e8e8;
-    }
-    .cx-map-frame iframe {
-        width: 100%; height: 100%; min-height: 520px;
-        border: 0; display: block;
-    }
-
-    /* Get Directions: outlined green, fills green on hover */
-    .cx-directions {
-        align-self: flex-start;
-        display: inline-flex; align-items: center; gap: 10px;
-        margin-top: 20px; padding: 8px 10px 8px 24px;
-        border: 1.5px solid var(--cx-accent); border-radius: 50px;
-        background: transparent; color: var(--cx-accent);
-        font-size: 14px; font-weight: 600;
-        text-decoration: none;
-        transition: background .3s ease, color .3s ease;
-    }
-    .cx-directions span.dir-icon {
-        width: 32px; height: 32px; border-radius: 50%;
-        background: var(--cx-accent); color: #fff;
-        display: inline-flex; align-items: center; justify-content: center;
-        font-size: 13px; transition: all .3s ease;
-    }
-    .cx-directions:hover { background: var(--cx-accent); color: #fff; }
-    .cx-directions:hover span.dir-icon { background: var(--cx-gold); color: var(--cx-dark); }
-
-    /* Form card */
-    .cx-form-card {
-        background: #fff;
-        border-radius: 22px;
-        padding: 38px 36px 40px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-    }
-    .cx-form-card h2 {
-        font-size: 28px; margin: 0 0 28px; text-transform: none;
-    }
-
-    .cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 20px; }
-    .cx-grid .full { grid-column: 1 / -1; }
-
-    .cx-field label {
-        display: flex; align-items: center; gap: 7px;
-        font-size: 12px; margin-bottom: 8px;
-        color: var(--text-color, #2b2b2b);
-    }
-    .cx-field label i { color: var(--cx-accent); font-size: 12px; }
-    .cx-field label small {
-        margin-left: auto; font-size: 10px;
-        color: #777; background: #ececec; padding: 2px 9px; border-radius: 20px;
-    }
-    .cx-field input, .cx-field textarea {
-        width: 100%;
-        font-family: inherit;   /* form controls need this to use the base font */
-        font-size: 14px;
-        border: 1px solid #e6e6ec; background: #f6f6f9;
-        border-radius: 12px; padding: 13px 16px;
-        color: var(--text-color, #2b2b2b);
-        transition: border-color .25s ease, background .25s ease, box-shadow .25s ease;
-    }
-    .cx-field input::placeholder, .cx-field textarea::placeholder { color: #a4a4ae; }
-    .cx-field input:focus, .cx-field textarea:focus {
-        outline: none; background: #fff;
-        border-color: var(--cx-accent);
-        box-shadow: 0 0 0 4px var(--cx-ring);
-    }
-    .cx-field textarea { resize: vertical; min-height: 130px; }
-
-    /* honeypot (hidden spam trap) */
-    .cx-hp { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
-
-    .cx-recaptcha { margin-top: 24px; }
-
-    /* ---------- Send button: green, gold on hover (same as the navbar) ---------- */
-    .cx-submit {
-        margin-top: 30px; border: 0; border-radius: 50px;
-        padding: 14px 34px;
-        font-family: inherit;   /* buttons need this to use the base font */
-        font-size: 14px; font-weight: 600;
-        color: #fff; background: var(--cx-accent); cursor: pointer;
-        display: inline-flex; align-items: center; gap: 10px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, .15);
-        transition: all .3s ease;
-    }
-    .cx-submit:hover { background: var(--cx-gold); color: var(--cx-dark); }
-
-    /* not pressable: while sending and while the success modal is open */
-    .cx-submit:disabled,
-    .cx-submit.is-locked {
-        opacity: .55;
-        cursor: not-allowed;
-        pointer-events: none;
-        background: var(--cx-accent);
-        color: #fff;
-        box-shadow: none;
-    }
-    .cx-submit.is-sending { cursor: wait; }
-
-    .cx-status { margin-top: 18px; font-size: 14px; display: none; }
-    .cx-status.ok { display: block; color: #1a7f37; }
-    .cx-status.err { display: block; color: #c62828; }
-
-    /* success modal button: green, gold on hover (same as the navbar) */
-    #contactSuccess .bk-success-btn { background: var(--nav-green, #1F5B3A); color: #fff; }
-    #contactSuccess .bk-success-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 991px) {
-        /* hero: same as Packages / About on mobile */
-        .page-header.page-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.page-hero .page-header-box,
-        .page-header.page-hero h1,
-        .page-header.page-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.page-hero h1 {
-            font-size: 34px !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 14px !important;
-        }
-        .page-header.page-hero .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-
-        /* everything stacks in one column and can never overflow the screen */
-        .contact-section { padding: 50px 0 70px; overflow-x: hidden; }
-        .contact-section .section-row { margin-bottom: 34px; }
-
-        .cx-info-grid {
-            grid-template-columns: 1fr !important;
-            gap: 16px;
-            margin-bottom: 30px;
-        }
-        .cx-social { margin-bottom: 40px; }
-        .cx-main {
-            grid-template-columns: 1fr !important;
-            gap: 24px;
-        }
-        .cx-info-grid > *,
-        .cx-main > * { min-width: 0; width: 100%; }
-
-        .cx-map-frame,
-        .cx-map-frame iframe { min-height: 340px; }
-    }
-
-    @media (max-width: 575px) {
-        .page-header.page-hero h1 {
-            font-size: 28px !important;
-            letter-spacing: 1.5px !important;
-        }
-
-        .contact-section { padding: 40px 0 60px; }
-
-        /* info cards */
-        .cx-info-card { padding: 20px; border-radius: 18px; }
-        .cx-info-head { margin-bottom: 12px; }
-        .cx-info-head h3 { font-size: 14px; }
-        .cx-info-card p { font-size: 14px; line-height: 1.7; }
-
-        /* social */
-        .cx-social { padding: 18px 14px; border-radius: 18px; gap: 14px; margin-bottom: 30px; }
-        .cx-social-title { font-size: 14px; width: 100%; justify-content: center; }
-        .cx-social-title::before,
-        .cx-social-title::after { width: 24px; }
-        .cx-social-list { gap: 10px; }
-        .cx-social-link { font-size: 13px; padding: 5px 14px 5px 5px; gap: 8px; }
-        .cx-social-link .sc-ico { width: 30px; height: 30px; font-size: 14px; }
-
-        /* map */
-        .cx-map-frame,
-        .cx-map-frame iframe { min-height: 280px; }
-
-        /* form card */
-        .cx-form-card { padding: 24px 18px 28px; border-radius: 18px; }
-        .cx-form-card h2 { font-size: 22px; margin-bottom: 20px; }
-        .cx-grid { grid-template-columns: 1fr; gap: 18px; }
-        .cx-field input,
-        .cx-field textarea { padding: 11px 14px; }
-        .cx-field textarea { min-height: 110px; }
-
-        /* buttons: compact */
-        .cx-submit {
-            margin-top: 22px;
-            padding: 11px 26px;
-            font-size: 13.5px;
-            gap: 8px;
-        }
-        .cx-directions {
-            margin-top: 16px;
-            padding: 6px 8px 6px 18px;
-            font-size: 13px;
-            gap: 8px;
-        }
-        .cx-directions span.dir-icon { width: 28px; height: 28px; font-size: 11px; }
-    }
-
-    @media (max-width: 400px) {
-        .cx-recaptcha .g-recaptcha { transform: scale(.85); transform-origin: 0 0; }
-    }
-    /* =====================================================================
-   GOLD THEME (same as the other pages)
-   --page-bg = the gold   |   --pw-all = how strongly it covers the photo
+/* =====================================================================
+   MAP + FORM
    ===================================================================== */
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-text-muted: #4a4228;
-    --pw-all: rgba(224, 207, 134, 0.80);
+.ct-main { position: relative; padding: 16px 0 18px; }
+.cx-main { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; }
+
+.cx-map-col { display: flex; flex-direction: column; min-width: 0; }
+.cx-map-frame {
+    flex: 1; min-height: 500px; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 12px 30px rgba(20, 40, 30, 0.16); background: #e8e8e8;
 }
-html, body { background-color: var(--page-bg) !important; }
+.cx-map-frame iframe { width: 100%; height: 100%; min-height: 500px; border: 0; display: block; }
 
-/* hero fallback colour behind the rotating photos */
-body .page-header.page-hero { background-color: var(--nav-green, #111111) !important; }
+.cx-directions {
+    align-self: flex-start; display: inline-flex; align-items: center; gap: 10px;
+    margin-top: 12px; padding: 6px 8px 6px 22px;
+    border: 1.5px solid var(--cx-accent); border-radius: 50px;
+    background: rgba(255,255,255,.92); color: var(--cx-accent);
+    font-size: 14px; font-weight: 600; text-decoration: none;
+    transition: background .3s ease, color .3s ease;
+}
+.cx-directions span.dir-icon {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--cx-accent); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; transition: all .3s ease;
+}
+.cx-directions:hover { background: var(--cx-accent); color: #fff; }
+.cx-directions:hover span.dir-icon { background: var(--cx-gold); color: var(--cx-dark); }
 
-/* contact section: same gold + same wash over bg8.png */
-body .contact-section {
-    background-color: var(--page-bg) !important;
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg8.png" %}') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+.cx-form-card {
+    background: rgba(255,255,255,.97); border-radius: 24px;
+    padding: 30px 30px 32px; box-shadow: 0 12px 30px rgba(20, 40, 30, 0.16); min-width: 0;
+}
+.cx-form-card h2 { font-size: 26px; margin: 0 0 4px; text-transform: none; color: #111; }
+.cx-form-sub { margin: 0 0 20px; font-size: 14px; color: #5b6560; text-shadow: none; }
+
+.cx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 16px; }
+.cx-grid .full { grid-column: 1 / -1; }
+.cx-field label {
+    display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600;
+    margin-bottom: 6px; color: #2b3a35;
+}
+.cx-field label i { color: var(--cx-accent); font-size: 12px; }
+.cx-field label small { margin-left: auto; font-size: 10px; font-weight: 500; color: #777; background: #ececec; padding: 2px 9px; border-radius: 20px; }
+.cx-field input, .cx-field textarea {
+    width: 100%; box-sizing: border-box;
+    font-family: inherit; font-size: 14px;
+    border: 1px solid #e6e6ec; background: #f6f6f9;
+    border-radius: 12px; padding: 12px 15px; color: #2b2b2b;
+    transition: border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+.cx-field input::placeholder, .cx-field textarea::placeholder { color: #a4a4ae; }
+.cx-field input:focus, .cx-field textarea:focus {
+    outline: none; background: #fff; border-color: var(--cx-accent); box-shadow: 0 0 0 4px var(--cx-ring);
+}
+.cx-field textarea { resize: vertical; min-height: 110px; }
+
+/* honeypot (hidden spam trap) */
+.cx-hp { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
+
+.cx-recaptcha { margin-top: 16px; }
+
+.cx-submit {
+    margin-top: 18px; border: 0; border-radius: 50px; padding: 13px 32px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: #fff; background: var(--cx-accent); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .15); transition: all .3s ease;
+}
+.cx-submit:hover { background: var(--cx-gold); color: var(--cx-dark); }
+.cx-submit:disabled, .cx-submit.is-locked {
+    opacity: .55; cursor: not-allowed; pointer-events: none;
+    background: var(--cx-accent); color: #fff; box-shadow: none;
+}
+.cx-submit.is-sending { cursor: wait; }
+
+.cx-status { margin-top: 14px; font-size: 14px; display: none; }
+.cx-status.ok { display: block; color: #1a7f37; }
+.cx-status.err { display: block; color: #c62828; }
+
+/* success modal button */
+#contactSuccess .bk-success-btn { background: var(--nav-green, #1F5B3A); color: #fff; }
+#contactSuccess .bk-success-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+
+.ct-bottom-space { height: 14px; }
+
+/* =====================================================================
+   DESKTOP: faded side pictures
+   ===================================================================== */
+@media (min-width: 1200px) {
+    .ct-img {
+        display: block; position: absolute; top: 0; bottom: 0; height: 100%;
+        width: max(15vw, calc((100vw - 1240px) / 2 + 70px));
+        object-fit: cover; pointer-events: none; z-index: -1; opacity: .95;
+    }
+    .ct-img-a {
+        left: 0; object-position: 35% 50%;
+        -webkit-mask-image:
+            linear-gradient(to right, #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right, #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+                mask-composite: intersect;
+    }
+    .ct-img-b {
+        right: 0; object-position: 65% 50%;
+        -webkit-mask-image:
+            linear-gradient(to left, #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left, #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 14%, #000 86%, transparent 100%);
+                mask-composite: intersect;
+    }
+}
+@media (min-width: 1600px) { .flow .container { max-width: 1240px; } }
+
+/* =====================================================================
+   MOBILE / TABLET
+   ===================================================================== */
+@media (max-width: 991px) {
+    .page-header.page-hero {
+        width: calc(100% - 20px) !important;
+        max-width: calc(100% - 20px) !important;
+        margin: 10px 10px 0 !important;
+        border-radius: 24px !important;
+        min-height: 34vh !important;
+        padding: 115px 0 45px !important;
+    }
+    .page-header.page-hero .page-header-box,
+    .page-header.page-hero h1,
+    .page-header.page-hero nav { text-align: center !important; width: 100%; }
+    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-header.page-hero .breadcrumb { justify-content: center !important; font-size: 14px; }
+
+    .ct-wrap { overflow: hidden; }
+    .ct-top { padding: 24px 0 8px; }
+    .ct-main { padding: 12px 0 14px; }
+    .ct-img {
+        display: block !important; position: absolute !important;
+        left: 0 !important; right: 0 !important; top: 0 !important;
+        width: 100% !important; height: 100% !important;
+        object-fit: cover; object-position: 35% 40%; opacity: .45; z-index: -1 !important; pointer-events: none;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom, transparent 0, #000 10%, #000 90%, transparent 100%) !important;
+    }
+    .ct-img-b { display: none !important; }
+
+    .ct-head h2 { font-size: 34px; }
+    .ct-head { margin-bottom: 14px; }
+    .cx-info-grid { grid-template-columns: 1fr; gap: 10px; }
+    .cx-main { grid-template-columns: 1fr; gap: 14px; }
+    .cx-map-frame, .cx-map-frame iframe { min-height: 320px; }
 }
 
-/* muted text that sits directly on the gold */
-body .contact-section .section-title p { color: var(--page-text-muted) !important; }
+@media (max-width: 575px) {
+    .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
+    .ct-head h2 { font-size: 28px; }
+    .ct-head p { font-size: 14px; }
+
+    .cx-info-card { padding: 14px 16px; gap: 14px; border-radius: 18px; }
+    .cx-info-icon { width: 46px; height: 46px; flex-basis: 46px; font-size: 18px; border-radius: 14px; }
+    .cx-info-card p { font-size: 14px; }
+
+    .cx-social { border-radius: 22px; padding: 10px 12px; gap: 8px 12px; margin-top: 10px; }
+    .cx-social-title { width: 100%; text-align: center; }
+    .cx-social-link { font-size: 13px; padding: 4px 12px 4px 4px; gap: 6px; }
+    .cx-social-link .sc-ico { width: 28px; height: 28px; font-size: 13px; }
+
+    .cx-map-frame, .cx-map-frame iframe { min-height: 260px; }
+    .cx-map-frame { border-radius: 20px; }
+    .cx-directions { margin-top: 10px; padding: 5px 7px 5px 16px; font-size: 13px; gap: 8px; }
+    .cx-directions span.dir-icon { width: 28px; height: 28px; font-size: 11px; }
+
+    .cx-form-card { padding: 20px 16px 24px; border-radius: 20px; }
+    .cx-form-card h2 { font-size: 22px; }
+    .cx-form-sub { margin-bottom: 14px; font-size: 13.5px; }
+    .cx-grid { grid-template-columns: 1fr; gap: 12px; }
+    .cx-field input { font-size: 16px; padding: 11px 14px; }       /* 16px stops iOS zoom on focus */
+    .cx-field textarea { font-size: 16px; padding: 11px 14px; min-height: 100px; }
+    .cx-submit { margin-top: 14px; padding: 11px 26px; font-size: 13.5px; gap: 8px; width: 100%; justify-content: center; }
+}
+@media (max-width: 400px) {
+    .cx-recaptcha .g-recaptcha { transform: scale(.85); transform-origin: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .cx-info-card, .cx-info-card::before, .cx-info-icon, .cx-social-link { transition: none; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- Hero (same design and rotating images as the Packages / About page) -->
+<!-- Hero (same design and rotating images as the other pages) -->
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
 <div class="page-header page-hero">
-
-    <!-- Background images: same five as the Packages hero, same order -->
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -598,7 +418,7 @@ body .contact-section .section-title p { color: var(--page-text-muted) !importan
     </div></div></div>
 </div>
 
-<!-- Contact success modal (kept outside the section so the slide-in animation can't affect it) -->
+<!-- Contact success modal (kept outside the flow wrapper) -->
 <div class="bk-overlay" id="contactSuccess" aria-hidden="true">
     <div class="bk-success-box" role="dialog" aria-modal="true" aria-labelledby="cxSuccessTitle">
         <div class="bk-success-icon"><i class="fa-solid fa-check"></i></div>
@@ -608,151 +428,159 @@ body .contact-section .section-title p { color: var(--page-text-muted) !importan
     </div>
 </div>
 
-<!-- Contact -->
-<section class="contact-section">
-    <div class="container">
+<!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
+<div class="flow">
 
-        <!-- Section heading -->
-        <div class="row section-row">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <h3 class="rv rv-up" data-reveal>get in touch</h3>
-                    <h2 class="text-anime-style-3" data-cursor="-opaque">We'd Love to Hear From You</h2>
-                    <p class="rv rv-up" data-reveal style="--d:.2s">Planning a trip across Kerala or abroad? Call us, drop by, or send a message and our team will get back to you shortly.</p>
-                </div>
+    <div class="ct-wrap">
+    <img class="ct-img ct-img-a" src="{% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' %}" alt="" draggable="false" loading="lazy" decoding="async">
+    <img class="ct-img ct-img-b" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false" loading="lazy" decoding="async">
+
+    <!-- Heading + info cards + follow us -->
+    <section class="ct-top">
+        <div class="container">
+
+            <div class="ct-head">
+                <h2 class="text-anime-style-3" data-cursor="-opaque">We'd Love to Hear From You</h2>
+                <p class="wow fadeInUp" data-wow-delay="0.2s">Planning a trip across Kerala or abroad? Call us, drop by, or send a message and our team will get back to you shortly.</p>
             </div>
-        </div>
 
-        <!-- Info cards -->
-        <div class="cx-info-grid">
-            <div class="rv rv-up" data-reveal>
+            <div class="cx-info-grid">
                 <div class="cx-info-card">
-                    <div class="cx-info-head">
-                        <div class="cx-info-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                    <div class="cx-info-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                    <div class="cx-info-text">
                         <h3>Call Us</h3>
+                        <p>
+                            <a href="tel:+918848333382">+91 8848333382</a><br>
+                            <a href="tel:+919526220085">+91 9526220085</a>
+                        </p>
                     </div>
-                    <p>
-                        <a href="tel:+918848333382">+91 8848333382</a><br>
-                        <a href="tel:+919526220085">+91 9526220085</a>
-                    </p>
                 </div>
-            </div>
 
-            <div class="rv rv-up" data-reveal style="--d:.15s">
                 <div class="cx-info-card">
-                    <div class="cx-info-head">
-                        <div class="cx-info-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="cx-info-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="cx-info-text">
                         <h3>Visit Us</h3>
+                        <p>{% for line in info.address_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</p>
                     </div>
-                    <p>{% for line in info.address_lines %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</p>
                 </div>
-            </div>
 
-            <div class="rv rv-up" data-reveal style="--d:.3s">
                 <div class="cx-info-card">
-                    <div class="cx-info-head">
-                        <div class="cx-info-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="cx-info-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div class="cx-info-text">
                         <h3>Email Direct</h3>
+                        <p><a href="mailto:malabaroutes@gmail.com">malabaroutes@gmail.com</a></p>
                     </div>
-                    <p><a href="mailto:malabaroutes@gmail.com">malabaroutes@gmail.com</a></p>
                 </div>
             </div>
+
+            <!-- Follow Us (social links) -->
+            <div class="cx-social">
+                <h3 class="cx-social-title">Follow Us</h3>
+                <ul class="cx-social-list">
+                    <li>
+                        <a href="https://www.facebook.com/Mmalabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-facebook" aria-label="Malabaroutes on Facebook">
+                            <span class="sc-ico"><i class="fa-brands fa-facebook-f"></i></span>Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://x.com/malabaroutes" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-x" aria-label="Malabaroutes on X">
+                            <span class="sc-ico"><i class="fa-brands fa-x-twitter"></i></span>Twitter
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/malabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-instagram" aria-label="Malabaroutes on Instagram">
+                            <span class="sc-ico"><i class="fa-brands fa-instagram"></i></span>Instagram
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
         </div>
+    </section>
 
-        <!-- Follow Us (social links) -->
-        <div class="cx-social rv rv-up" data-reveal>
-            <h3 class="cx-social-title">Follow Us</h3>
-            <ul class="cx-social-list">
-                <li>
-                    <a href="https://www.facebook.com/Mmalabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-facebook" aria-label="Malabaroutes on Facebook">
-                        <span class="sc-ico"><i class="fa-brands fa-facebook-f"></i></span>Facebook
-                    </a>
-                </li>
-                <li>
-                    <a href="https://x.com/malabaroutes" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-x" aria-label="Malabaroutes on X">
-                        <span class="sc-ico"><i class="fa-brands fa-x-twitter"></i></span>Twitter
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.instagram.com/malabaroutes/" target="_blank" rel="noopener noreferrer" class="cx-social-link sc-instagram" aria-label="Malabaroutes on Instagram">
-                        <span class="sc-ico"><i class="fa-brands fa-instagram"></i></span>Instagram
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <!-- Map + form -->
+    <section class="ct-main">
+        <div class="container">
+            <div class="cx-main">
 
-        <!-- Map + form -->
-        <div class="cx-main">
-
-            <!-- Map -->
-            <div class="cx-map-col rv rv-left" data-reveal>
-                <div class="cx-map-frame">
-                    <iframe src="{{ info.map_embed }}"
-                            allowfullscreen
-                            referrerpolicy="no-referrer-when-downgrade"
-                            title="Our location"></iframe>
+                <!-- Map -->
+                <div class="cx-map-col">
+                    <div class="cx-map-frame">
+                        <iframe src="{{ info.map_embed }}"
+                                allowfullscreen
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade"
+                                title="Our location"></iframe>
+                    </div>
+                    <a href="{{ info.map_directions }}" target="_blank" rel="noopener" class="cx-directions">
+                        Get Directions
+                        <span class="dir-icon"><i class="fa-solid fa-location-arrow"></i></span>
+                    </a>
                 </div>
-                <a href="{{ info.map_directions }}" target="_blank" rel="noopener" class="cx-directions">
-                    Get Directions
-                    <span class="dir-icon"><i class="fa-solid fa-location-arrow"></i></span>
-                </a>
+
+                <!-- Form -->
+                <div class="cx-form-card">
+                    <h2>Send Us a Message</h2>
+                    <p class="cx-form-sub">Share a few details and we will call you back.</p>
+
+                    <form id="contactForm" method="POST" action="{% url 'contact' %}" novalidate>
+                        {% csrf_token %}
+
+                        <!-- honeypot -->
+                        <div class="cx-hp" aria-hidden="true">
+                            <label>Website</label>
+                            <input type="text" name="website" tabindex="-1" autocomplete="off">
+                        </div>
+
+                        <div class="cx-grid">
+                            <div class="cx-field">
+                                <label for="cxFirst"><i class="fa-solid fa-user"></i> First Name</label>
+                                <input type="text" id="cxFirst" name="first_name" placeholder="Your first name" autocomplete="given-name" required>
+                            </div>
+                            <div class="cx-field">
+                                <label for="cxLast"><i class="fa-solid fa-user"></i> Last Name</label>
+                                <input type="text" id="cxLast" name="last_name" placeholder="Your last name" autocomplete="family-name" required>
+                            </div>
+                            <div class="cx-field">
+                                <label for="cxEmail"><i class="fa-solid fa-envelope"></i> Email <small>optional</small></label>
+                                <input type="email" id="cxEmail" name="email" placeholder="you@example.com" autocomplete="email">
+                            </div>
+                            <div class="cx-field">
+                                <label for="cxPhone"><i class="fa-solid fa-phone"></i> Phone</label>
+                                <input type="tel" id="cxPhone" name="phone" placeholder="Your phone number" autocomplete="tel" required>
+                            </div>
+                            <div class="cx-field full">
+                                <label for="cxMessage"><i class="fa-solid fa-comment"></i> Message <small>optional</small></label>
+                                <textarea id="cxMessage" name="message" rows="4" placeholder="Tell us how we can help..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="cx-recaptcha">
+                            <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+                        </div>
+
+                        <button type="submit" class="cx-submit" id="cxSubmit">
+                            <span class="cx-submit-text">Send Message</span>
+                            <i class="fa-solid fa-paper-plane cx-submit-icon"></i>
+                        </button>
+                        <div class="cx-status" id="cxStatus" role="status" aria-live="polite"></div>
+                    </form>
+                </div>
+
             </div>
-
-            <!-- Form -->
-            <div class="cx-form-card rv rv-right" data-reveal style="--d:.15s">
-                <h2>Send Us a Message</h2>
-
-                <form id="contactForm" method="POST" action="{% url 'contact' %}" novalidate>
-                    {% csrf_token %}
-
-                    <!-- honeypot -->
-                    <div class="cx-hp" aria-hidden="true">
-                        <label>Website</label>
-                        <input type="text" name="website" tabindex="-1" autocomplete="off">
-                    </div>
-
-                    <div class="cx-grid">
-                        <div class="cx-field">
-                            <label for="cxFirst"><i class="fa-solid fa-user"></i> First Name</label>
-                            <input type="text" id="cxFirst" name="first_name" placeholder="Your first name" required>
-                        </div>
-                        <div class="cx-field">
-                            <label for="cxLast"><i class="fa-solid fa-user"></i> Last Name</label>
-                            <input type="text" id="cxLast" name="last_name" placeholder="Your last name" required>
-                        </div>
-                        <div class="cx-field">
-                            <label for="cxEmail"><i class="fa-solid fa-envelope"></i> Email <small>optional</small></label>
-                            <input type="email" id="cxEmail" name="email" placeholder="you@example.com">
-                        </div>
-                        <div class="cx-field">
-                            <label for="cxPhone"><i class="fa-solid fa-phone"></i> Phone</label>
-                            <input type="tel" id="cxPhone" name="phone" placeholder="Your phone number" required>
-                        </div>
-                        <div class="cx-field full">
-                            <label for="cxMessage"><i class="fa-solid fa-comment"></i> Message <small>optional</small></label>
-                            <textarea id="cxMessage" name="message" rows="5" placeholder="Tell us how we can help..."></textarea>
-                        </div>
-                    </div>
-
-                    <div class="cx-recaptcha">
-                        <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
-                    </div>
-
-                    <button type="submit" class="cx-submit" id="cxSubmit">
-                        <span class="cx-submit-text">Send Message</span>
-                        <i class="fa-solid fa-paper-plane cx-submit-icon"></i>
-                    </button>
-                    <div class="cx-status" id="cxStatus" role="status"></div>
-                </form>
-            </div>
-
         </div>
+    </section>
     </div>
-</section>
+    <!-- /ct-wrap -->
+
+    <div class="ct-bottom-space"></div>
+</div>
+<!-- ===== /flow ===== -->
+
 {% endblock %}
 
 {% block extra_js %}
-<!-- Hero: background images change one by one (same effect as Packages / About) -->
+<!-- Hero: background images change one by one -->
 <script>
     (function () {
         var bgs = document.querySelectorAll('.page-hero .ah-bg');
@@ -769,28 +597,6 @@ body .contact-section .section-title p { color: var(--page-text-muted) !importan
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
     (function () {
-        /* ---------- Scroll reveal: fade in AND out ---------- */
-        var targets = document.querySelectorAll('[data-reveal]');
-
-        if (targets.length) {
-            document.documentElement.classList.add('js-reveal');
-
-            if ('IntersectionObserver' in window) {
-                var io = new IntersectionObserver(function (entries) {
-                    entries.forEach(function (entry) {
-                        // add when entering the screen, remove when leaving
-                        entry.target.classList.toggle('in-view', entry.isIntersecting);
-                    });
-                }, {
-                    threshold: 0.12,
-                    rootMargin: '0px 0px -8% 0px'
-                });
-                targets.forEach(function (el) { io.observe(el); });
-            } else {
-                targets.forEach(function (el) { el.classList.add('in-view'); });
-            }
-        }
-
         /* ---------- Elements ---------- */
         var form = document.getElementById('contactForm');
         var statusEl = document.getElementById('cxStatus');

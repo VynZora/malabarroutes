@@ -5,8 +5,14 @@
 
 {% comment %}
     Fonts are NOT set on this page: they come from base.html (except the Cinzel hero heading).
-    Colours come from base.html (--accent-color, --primary-color).
+    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
     Hero = same design and rotating background images as the Packages / About hero.
+    BODY = same look as the About / Packages pages:
+      - the section owns the fixed landscape background (bg3.png)
+      - heading sits straight on the background (white glow, no panel)
+      - desktop: cards take about two thirds, a faded picture fills the other side
+        (plus one faded picture behind the heading)
+      - tablet / phone: one faded picture behind the heading, cards full width
     Book Now opens the booking modal from base.html (.open-booking + data-package).
     Card images use the `srcset` filter from templatetags/image_tags.py, so phones
     download a small version and large screens get the big one.
@@ -91,24 +97,43 @@
         text-transform: capitalize;
     }
 
-    /* ================= SECTION (bg3.png background) ================= */
+    /* ================= SECTION (same landscape background as About / Packages) ================= */
     .act-section {
         --act-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
         --act-dark: var(--nav-ink, #12281f);
         --act-gold: var(--nav-gold, #e0b14a);
+        position: relative;
+        isolation: isolate;
+        clip-path: inset(0);
+        overflow-x: clip;
         padding: 100px 0 130px;
-        background-color: #faf8f6;
-        background-image:
-            linear-gradient(rgba(252, 247, 246, 0.55), rgba(252, 247, 246, 0.55)),
-            url('{% static "malabar-static/bg3.png" %}');
-        background-size: cover, cover;
-        background-position: center, center;
-        background-repeat: no-repeat, no-repeat;
+        background-color: #e9efe6;
     }
-    .act-section .container { max-width: 1400px; }
+    .act-section::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
+    }
+    .act-section .container { max-width: 1400px; position: relative; }
+
+    /* ================= FADED PICTURES (hidden until the blocks below) ================= */
+    .act-side, .act-top { display: none; }
+
+    /* ================= HEADING (text straight on the background) ================= */
     .act-head { text-align: center; margin-bottom: 60px; }
-    .act-head h2 { font-weight: 700; font-size: 56px; color: #111; margin-bottom: 10px; }
-    .act-head p { color: #3d332a; font-weight: 500; margin: 0; }
+    .act-head h2 { font-weight: 700; font-size: 56px; color: #12281f; margin-bottom: 10px; }
+    .act-head p { color: #2b3a35; font-weight: 600; margin: 0; }
+    .act-head h2,
+    .act-head p,
+    .act-empty {
+        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+    }
+
+    /* ================= BODY: cards + side picture ================= */
+    .act-body { position: relative; isolation: isolate; }
 
     /* ================= CARD (base = 3+ cards) ================= */
     .act-card {
@@ -145,6 +170,7 @@
         font-size: 15.5px; line-height: 1.65; color: #6b625a;
         margin: 0 0 22px; max-width: 100%; padding: 0;
         display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        text-shadow: none;
     }
 
     /* footer: duration + price on top, buttons below */
@@ -174,7 +200,7 @@
         border: 1.5px solid var(--act-accent);
         color: #fff !important;
     }
-       .act-btn-fill:hover { background: var(--act-gold); border-color: var(--act-gold); color: var(--act-dark) !important; }
+    .act-btn-fill:hover { background: var(--act-gold); border-color: var(--act-gold); color: var(--act-dark) !important; }
 
     /* View Details: outlined, fills with the accent colour on hover */
     .act-btn-line {
@@ -182,9 +208,9 @@
         border: 1.5px solid var(--act-accent);
         color: var(--act-accent) !important;
     }
-        .act-btn-line:hover { background: var(--act-accent); color: #fff !important; }
+    .act-btn-line:hover { background: var(--act-accent); color: #fff !important; }
 
-    .act-empty { text-align: center; color: #6b625a; padding: 40px 0; }
+    .act-empty { text-align: center; color: #2b3a35; font-weight: 600; padding: 40px 0; }
 
     /* ================= 2 CARDS: slightly larger ================= */
     .act-n2 .act-card-img { aspect-ratio: 1.9 / 1; }
@@ -205,6 +231,61 @@
     .act-n1 .act-meta i { font-size: 17px; }
     .act-n1 .act-badge { top: 22px; left: 22px; font-size: 12.5px; padding: 10px 20px; }
     .act-n1 .act-btn { font-size: 15.5px; padding: 15px 22px; }
+
+    /* ================= DESKTOP: cards on one side, picture on the other ================= */
+    @media (min-width: 1200px) {
+
+        /* picture behind the heading (right edge of the screen) */
+        .act-top {
+            display: block; position: absolute; right: 0; top: 0;
+            width: 40vw; height: 560px;
+            object-fit: cover; object-position: 60% 50%;
+            pointer-events: none; z-index: -1; opacity: 0.9;
+            -webkit-mask-image:
+                linear-gradient(to left, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
+                linear-gradient(to bottom, transparent 0, #000 22%, #000 66%, transparent 100%);
+            -webkit-mask-composite: source-in;
+                    mask-image:
+                linear-gradient(to left, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
+                linear-gradient(to bottom, transparent 0, #000 22%, #000 66%, transparent 100%);
+                    mask-composite: intersect;
+        }
+
+        /* cards take about two thirds on the right, the left third shows the picture */
+        .act-grid { width: 66%; margin-left: auto; margin-right: 0; --bs-gutter-x: 24px; --bs-gutter-y: 24px; }
+
+        .act-side {
+            display: block; position: absolute; top: -2vw;
+            left: calc(50% - 50vw);
+            width: 46vw; height: calc(100% + 4vw);
+            object-fit: cover; object-position: 50% 55%;
+            pointer-events: none; z-index: -1; opacity: 0.95;
+            -webkit-mask-image:
+                linear-gradient(to right, #000 0, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
+                linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+            -webkit-mask-composite: source-in;
+                    mask-image:
+                linear-gradient(to right, #000 0, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
+                linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+                    mask-composite: intersect;
+        }
+    }
+
+    /* ================= TABLET / MOBILE: one faded picture behind the heading ================= */
+    @media (max-width: 1199px) {
+        .act-top {
+            display: block; position: absolute; left: 0; right: 0; top: 0;
+            width: 100%; height: 480px;
+            object-fit: cover; object-position: 60% 50%;
+            pointer-events: none; z-index: -1; opacity: 0.95;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 70%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 70%, transparent 100%);
+        }
+        .act-head h2, .act-head p {
+            color: #12281f !important;
+            text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 16px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important;
+        }
+    }
 
     /* ================= RESPONSIVE ================= */
     @media (max-width: 1399px) {
@@ -273,6 +354,7 @@
         }
 
         .act-head h2 { font-size: 28px; }
+        .act-top { height: 400px; }
 
         /* cards */
         .act-card-img, .act-n2 .act-card-img, .act-n1 .act-card-img { aspect-ratio: 1.6 / 1; }
@@ -318,34 +400,6 @@
         .act-n2 .act-card-body h3,
         .act-n1 .act-card-body h3 { font-size: 19px; }
     }
-    /* =====================================================================
-   GOLD THEME (same as About page)
-   --page-bg = the gold   |   --pw-all = how strongly it covers the photo
-   ===================================================================== */
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-text-muted: #4a4228;
-    --pw-all: rgba(224, 207, 134, 0.80);
-}
-html, body { background-color: var(--page-bg) !important; }
-
-/* hero fallback colour behind the rotating photos */
-body .page-header.page-hero { background-color: var(--nav-green, #111111) !important; }
-
-/* activities section: same gold + same wash over bg3.png */
-body .act-section {
-    background-color: var(--page-bg) !important;
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg3.png" %}') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-
-/* muted text on gold */
-body .act-head p { color: var(--page-text-muted) !important; }
 </style>
 {% endblock %}
 
@@ -377,6 +431,9 @@ body .act-head p { color: var(--page-text-muted) !important; }
 
 <!-- Activities -->
 <section class="act-section">
+    <!-- faded picture behind the heading (same photos as the About page) -->
+    <img class="act-top" src="{% static 'malabar-static/kovalam.png' %}" alt="" draggable="false">
+
     <div class="container">
         <div class="act-head">
             <h2 class="text-anime-style-3" data-cursor="-opaque">Experiences in Malabar</h2>
@@ -384,58 +441,66 @@ body .act-head p { color: var(--page-text-muted) !important; }
         </div>
 
         {% with total=activities|length %}
-        <div class="row g-4 {% if total == 1 %}act-n1{% elif total == 2 %}act-n2{% endif %}">
-            {% for a in activities %}
-            <div class="{% if total == 1 %}col-xl-6 col-lg-7 col-12{% elif total == 2 %}col-lg-6 col-12{% else %}col-xl-4 col-lg-4 col-md-6 col-12{% endif %}">
-                <div class="act-card wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' %}">
-                    <div class="act-card-img">
-                        {% if a.category %}<span class="act-badge">{{ a.category }}</span>{% endif %}
-                        <figure class="image-anime reveal">
-                            {% if a.image %}
-                            <!-- srcset filter (image_tags): small file on phones, big file on large screens.
-                                 "sizes" = how wide the card is at each screen width, so the browser picks the right file. -->
-                            <img src="{{ a.image.url }}"
-                                 srcset="{{ a.image|srcset }}"
-                                 sizes="{% if total == 1 or total == 2 %}(max-width: 991px) 100vw, 700px{% else %}(max-width: 767px) 100vw, (max-width: 991px) 50vw, 470px{% endif %}"
-                                 alt="{{ a.title }}"
-                                 loading="lazy" decoding="async">
-                            {% else %}
-                            <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ a.title }}" loading="lazy" decoding="async">
-                            {% endif %}
-                        </figure>
-                    </div>
-                    <div class="act-card-body">
-                        <h3>{{ a.title }}</h3>
-                        <p>{{ a.description|striptags|truncatewords:16 }}</p>
-                        <div class="act-card-foot">
-                            {% if a.duration or a.price %}
-                            <div class="act-meta">
-                                {% if a.duration %}
-                                <span><i class="fa-regular fa-clock"></i> {{ a.duration }}</span>
-                                {% endif %}
-                                {% if a.duration and a.price %}<span class="act-divider"></span>{% endif %}
-                                {% if a.price %}
-                                <span><i class="fa-solid fa-indian-rupee-sign"></i> From ₹{{ a.price }}</span>
-                                {% endif %}
-                            </div>
-                            {% endif %}
+        <div class="act-body">
 
-                            <div class="act-actions">
-                                <!-- opens the booking modal from base.html, with the activity name -->
-                                <a href="#" class="act-btn act-btn-fill open-booking" data-package="{{ a.title }}">
-                                    Book Now <i class="fa-solid fa-angles-right"></i>
-                                </a>
-                                <a href="{% url 'activity_detail' a.slug %}" class="act-btn act-btn-line">
-                                    View Details <i class="fa-solid fa-arrow-right"></i>
-                                </a>
+            <!-- faded picture beside the cards (desktop only) -->
+            {% if total %}
+            <img class="act-side" src="{% static 'malabar-static/wls.png' %}" alt="" draggable="false">
+            {% endif %}
+
+            <div class="row g-4 act-grid {% if total == 1 %}act-n1{% elif total == 2 %}act-n2{% endif %}">
+                {% for a in activities %}
+                <div class="{% if total == 1 %}col-xl-8 col-lg-7 col-12{% elif total == 2 %}col-lg-6 col-12{% else %}col-xl-6 col-lg-4 col-md-6 col-12{% endif %}">
+                    <div class="act-card wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' %}">
+                        <div class="act-card-img">
+                            {% if a.category %}<span class="act-badge">{{ a.category }}</span>{% endif %}
+                            <figure class="image-anime reveal">
+                                {% if a.image %}
+                                <!-- srcset filter (image_tags): small file on phones, big file on large screens.
+                                     "sizes" = how wide the card is at each screen width, so the browser picks the right file. -->
+                                <img src="{{ a.image.url }}"
+                                     srcset="{{ a.image|srcset }}"
+                                     sizes="{% if total == 1 or total == 2 %}(max-width: 991px) 100vw, 600px{% else %}(max-width: 767px) 100vw, (max-width: 991px) 50vw, (max-width: 1199px) 33vw, 470px{% endif %}"
+                                     alt="{{ a.title }}"
+                                     loading="lazy" decoding="async">
+                                {% else %}
+                                <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ a.title }}" loading="lazy" decoding="async">
+                                {% endif %}
+                            </figure>
+                        </div>
+                        <div class="act-card-body">
+                            <h3>{{ a.title }}</h3>
+                            <p>{{ a.description|striptags|truncatewords:16 }}</p>
+                            <div class="act-card-foot">
+                                {% if a.duration or a.price %}
+                                <div class="act-meta">
+                                    {% if a.duration %}
+                                    <span><i class="fa-regular fa-clock"></i> {{ a.duration }}</span>
+                                    {% endif %}
+                                    {% if a.duration and a.price %}<span class="act-divider"></span>{% endif %}
+                                    {% if a.price %}
+                                    <span><i class="fa-solid fa-indian-rupee-sign"></i> From ₹{{ a.price }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                <div class="act-actions">
+                                    <!-- opens the booking modal from base.html, with the activity name -->
+                                    <a href="#" class="act-btn act-btn-fill open-booking" data-package="{{ a.title }}">
+                                        Book Now <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                    <a href="{% url 'activity_detail' a.slug %}" class="act-btn act-btn-line">
+                                        View Details <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <div class="col-12"><p class="act-empty">No activities available right now.</p></div>
+                {% endfor %}
             </div>
-            {% empty %}
-            <div class="col-12"><p class="act-empty">No activities available right now.</p></div>
-            {% endfor %}
         </div>
         {% endwith %}
     </div>

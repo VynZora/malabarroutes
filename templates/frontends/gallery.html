@@ -4,306 +4,394 @@
 {% block title %}Gallery | Malabar{% endblock %}
 
 {% comment %}
-    Hero = same design and rotating background images as the Packages / About hero.
+    GALLERY PAGE (same design as the About / Destinations pages)
+    - Hero = same rotating background images as About / Packages / Destinations.
+    - Everything after the hero sits in ONE wrapper (.flow) that owns the fixed landscape background (bg3.png).
+    - Faded side pictures on desktop, soft backdrop on mobile.
+    - Sticky category bar (chips with counts, scrolls sideways on phones), live photo count.
+    - Tight spacing, 3 / 2 / 1 columns. Lightbox shows the full photo (no cropping).
     Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
-    Lightbox shows the full photo (no cropping).
 {% endcomment %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
-    /* ================= HERO (same design as Packages / About page) ================= */
-    .page-header.page-hero {
-        position: relative !important;
-        width: calc(100% - 32px) !important;
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;
-        border-radius: 40px !important;
-        overflow: hidden !important;
-        min-height: calc(80vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 120px !important;
-        background-color: #12281f !important;
-        background-image: none !important;   /* images come from .ah-bgs below */
-    }
-    .page-header.page-hero::before,
-    .page-header.page-hero::after { display: none !important; }
-
-    /* ---- background images: cross-fade + zoom out ---- */
-    .page-hero .ah-bgs {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: inherit;
-    }
-    .page-hero .ah-bgs::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
-        pointer-events: none;
-    }
-    .page-hero .ah-bg {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transform: scale(1);
-        transition: opacity 1.2s ease;
-    }
-    .page-hero .ah-bg.active {
-        opacity: 1;
-        animation: ahZoomOut 5.2s ease-out forwards;
-    }
-    @keyframes ahZoomOut {
-        from { transform: scale(1.2); }
-        to   { transform: scale(1); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        .page-hero .ah-bg.active { animation: none; }
-    }
-    .page-header.page-hero > .container { position: relative; z-index: 2; }
-
-    .page-hero .page-header-box { text-align: center; }
-
-    .page-header.page-hero h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        font-size: 80px;
-        letter-spacing: 6px;
-        color: #ffffff !important;
-        text-transform: none !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-        margin-bottom: 20px;
-    }
-
-    .page-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-hero .breadcrumb-item,
-    .page-hero .breadcrumb-item a,
-    .page-hero .breadcrumb-item + .breadcrumb-item::before {
-        color: #ffffff !important;
-        text-transform: capitalize;
-    }
-
-    /* ================= GALLERY ================= */
-    .gallery-section {
-        /* colours come from base.html */
-        --gal-accent: var(--nav-green, #1F5B3A);
-        --gal-dark: var(--nav-ink, #12281f);
-        --gal-gold: var(--nav-gold, #e0b14a);
-
-        padding: 90px 0 110px;
-        background-color: #faf8f6;
-        background-image:
-            linear-gradient(rgba(252, 247, 246, 0.45), rgba(252, 247, 246, 0.45)),
-            url('{% static "malabar-static/bg.png" %}');
-        background-size: cover, cover;
-        background-position: center, center;
-        background-repeat: no-repeat, no-repeat;
-    }
-    .gallery-section .container { max-width: 1480px; }
-
-    /* ---------- Category pills ---------- */
-    .gallery-filters {
-        display: flex; flex-wrap: wrap; gap: 14px;
-        margin-bottom: 50px; justify-content: center;
-    }
-    .gallery-filter-btn {
-        font-family: inherit;
-        border: 1.5px solid #dcdcdc;
-        background: #fff;
-        color: var(--text-color, #2b2b2b);
-        padding: 12px 30px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 15px;
-        cursor: pointer;
-        transition: all .3s ease;
-    }
-    /* hover: gold fill, dark text (same as the navbar Book Now) */
-    .gallery-filter-btn:hover {
-        background: var(--gal-gold);
-        border-color: var(--gal-gold);
-        color: var(--gal-dark);
-    }
-    /* active: green (stays green on hover) */
-    .gallery-filter-btn.active,
-    .gallery-filter-btn.active:hover {
-        background: var(--gal-accent);
-        border-color: var(--gal-accent);
-        color: #fff;
-    }
-
-    /* ---------- 3 per row grid ---------- */
-    .gallery-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-    }
-    .gallery-item {
-        display: block;
-        position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
-        transition: box-shadow .35s ease, transform .35s ease;
-    }
-    .gallery-item:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
-    }
-    .gallery-item.is-hidden { display: none; }
-    .gallery-item.pop-in { animation: galPop .5s ease both; }
-
-    @keyframes galPop {
-        from { opacity: 0; transform: translateY(24px) scale(.96); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .gallery-item img {
-        width: 100%;
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-        display: block;
-        transition: transform .6s ease;
-    }
-    .gallery-item:hover img { transform: scale(1.08); }
-
-    /* hover overlay with zoom icon (navbar green) */
-    .gallery-item::after {
-        content: "\f00e"; /* Font Awesome magnifier-plus */
-        font-family: "Font Awesome 6 Free";
-        font-weight: 900;
-        position: absolute; inset: 0;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 30px; color: #fff;
-        background: rgba(0, 0, 0, 0.35);
-        background: color-mix(in srgb, var(--gal-accent) 55%, transparent);
-        opacity: 0; transition: opacity .35s ease;
-    }
-    .gallery-item:hover::after { opacity: 1; }
-
-    .gallery-empty { text-align: center; color: #777; padding: 40px 0; display: none; }
-
-    /* ================= LIGHTBOX: full photo, nothing cropped ================= */
-    .gallery-popup .mfp-figure { margin: 0 auto; }
-    .gallery-popup .mfp-figure figure { margin: 0; }
-
-    .gallery-popup .mfp-img {
-        width: auto !important;
-        height: auto !important;
-        max-width: min(1100px, 92vw) !important;
-        max-height: 82vh !important;
-        padding: 0 !important;
-        margin: 0 auto;
-        aspect-ratio: auto !important;
-        object-fit: contain !important;
-        background: transparent;
-        border-radius: 16px;
-    }
-    .gallery-popup .mfp-bottom-bar { margin-top: -44px; }
-    .gallery-popup .mfp-counter { color: #f7e3d2; }
-
-    .gallery-popup.mfp-bg { opacity: 0; transition: opacity .2s ease; }
-    .gallery-popup.mfp-bg.mfp-ready { opacity: .85; }
-    .gallery-popup.mfp-bg.mfp-removing { opacity: 0; }
-    .gallery-popup.mfp-wrap .mfp-content { opacity: 0; transition: opacity .2s ease; }
-    .gallery-popup.mfp-wrap.mfp-ready .mfp-content { opacity: 1; }
-    .gallery-popup.mfp-wrap.mfp-removing .mfp-content { opacity: 0; }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 1199px) { .gallery-grid { gap: 22px; } }
-
-    @media (max-width: 991px) {
-        .page-header.page-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.page-hero .page-header-box,
-        .page-header.page-hero h1,
-        .page-header.page-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.page-hero h1 {
-            font-size: 34px !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 14px !important;
-        }
-        .page-header.page-hero .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-
-        .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
-        .gallery-section { padding: 50px 0 70px; }
-        .gallery-filters { gap: 10px; margin-bottom: 34px; }
-        .gallery-item { border-radius: 20px; }
-    }
-
-    @media (max-width: 575px) {
-        .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
-
-        .gallery-grid { grid-template-columns: 1fr; gap: 14px; }
-        .gallery-section { padding: 40px 0 60px; }
-        .gallery-filters { gap: 8px; margin-bottom: 26px; }
-        .gallery-filter-btn { padding: 8px 18px; font-size: 13px; border-width: 1.2px; }
-        .gallery-item { border-radius: 18px; }
-        .gallery-item::after { font-size: 24px; }
-
-        /* lightbox fits the phone screen */
-        .gallery-popup .mfp-img {
-            max-width: 94vw !important;
-            max-height: 74vh !important;
-            border-radius: 12px;
-        }
-    }
-    /* =====================================================================
-   GOLD THEME (same as the other pages)
-   --page-bg = the gold   |   --pw-all = how strongly it covers the photo
+/* =====================================================================
+   HERO (same design as About / Destinations)
    ===================================================================== */
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-text-muted: #4a4228;
-    --pw-all: rgba(224, 207, 134, 0.80);
+.page-header.page-hero {
+    position: relative !important;
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    margin: 16px 16px 0 !important;
+    border-radius: 40px !important;
+    overflow: hidden !important;
+    min-height: 58vh;
+    display: flex;
+    align-items: center;
+    padding: 160px 0 70px !important;
+    background-color: #12281f !important;
+    background-image: none !important;
 }
-html, body { background-color: var(--page-bg) !important; }
+.page-header.page-hero::before,
+.page-header.page-hero::after { display: none !important; }
 
-/* hero fallback colour behind the rotating photos */
-body .page-header.page-hero { background-color: var(--nav-green, #111111) !important; }
+.page-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; }
+.page-hero .ah-bgs::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: rgba(0, 0, 0, 0.30); pointer-events: none;
+}
+.page-hero .ah-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0; transform: scale(1); transition: opacity 1.2s ease;
+}
+.page-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
+@keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
+.page-header.page-hero > .container { position: relative; z-index: 2; }
+.page-hero .page-header-box { text-align: center; }
 
-/* gallery section: same gold + same wash over bg.png */
-body .gallery-section {
-    background-color: var(--page-bg) !important;
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg.png" %}') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+.page-header.page-hero h1 {
+    font-family: 'Cinzel', serif !important;
+    font-weight: 700 !important;
+    font-size: 80px;
+    letter-spacing: 6px;
+    color: #ffffff !important;
+    text-transform: none !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    margin-bottom: 20px;
+}
+.page-hero .breadcrumb { justify-content: center; margin: 0; }
+.page-hero .breadcrumb-item,
+.page-hero .breadcrumb-item a,
+.page-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: #ffffff !important;
+    text-transform: capitalize;
 }
 
-/* muted text that sits directly on the gold */
-body .gallery-empty { color: var(--page-text-muted) !important; }
+/* =====================================================================
+   ONE CONTINUOUS PAGE (everything after the hero)
+   ===================================================================== */
+.flow {
+    --gal-accent: var(--nav-green, #1F5B3A);
+    --gal-dark: var(--nav-ink, #12281f);
+    --gal-gold: var(--nav-gold, #e0b14a);
+
+    position: relative;
+    isolation: isolate;
+    clip-path: inset(0);
+    overflow-x: clip;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #e9efe6;
+}
+.flow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
+}
+@media (min-width: 1200px) { .flow .container { max-width: 1400px; } }
+@media (min-width: 1600px) { .flow .container { max-width: 1520px; } }
+
+/* faded side pictures (hidden until the desktop / mobile blocks below) */
+.gl-img { display: none; }
+
+/* white glow so plain text stays readable on the picture */
+.flow .gl-head h2, .flow .gl-head p, .flow .gl-result {
+    text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+}
+
+/* =====================================================================
+   HEADING + FLOATING CATEGORY PILL (sits under the navbar, offset measured by JS)
+   ===================================================================== */
+.gl-intro { padding: 34px 0 0; position: relative; }
+.gl-head { text-align: center; }
+.gl-head h2 {
+    font-family: 'Cormorant SC', serif !important;
+    font-weight: 700 !important; font-size: 50px; line-height: 1.1;
+    color: #111 !important; text-transform: none !important; margin: 0 0 6px;
+}
+.gl-head p { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px; color: #2b3a35; margin: 0; }
+
+.gl-bar-wrap {
+    position: sticky; top: var(--gl-top, 140px); z-index: 30;
+    padding: 12px 0 0; pointer-events: none;
+}
+.gl-bar-wrap .container { display: flex; flex-direction: column; align-items: center; }
+.gl-bar {
+    pointer-events: auto; max-width: 100%;
+    display: flex; align-items: center;
+    padding: 7px; border-radius: 60px;
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 1px solid rgba(31, 91, 58, 0.14);
+    box-shadow: 0 10px 26px rgba(20, 40, 30, 0.16);
+}
+.gl-chips {
+    display: flex; gap: 6px; max-width: 100%;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.gl-chips::-webkit-scrollbar { display: none; }
+.gallery-filter-btn {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 40px;
+    border: 0; background: transparent; color: var(--gal-accent);
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px; line-height: 1;
+    cursor: pointer; white-space: nowrap;
+    transition: background .3s ease, color .3s ease;
+}
+.gallery-filter-btn em {
+    font-style: normal; font-size: 12px; min-width: 22px; padding: 3px 6px;
+    border-radius: 20px; text-align: center; background: rgba(31, 91, 58, 0.1);
+}
+@media (hover: hover) {
+    .gallery-filter-btn:hover { background: rgba(224, 177, 74, .22); }
+}
+.gallery-filter-btn.active,
+.gallery-filter-btn.active:hover { background: var(--gal-accent); color: #fff; }
+.gallery-filter-btn.active em { background: var(--gal-gold); color: var(--gal-dark); }
+.gallery-filter-btn:focus-visible { outline: 2px solid var(--gal-gold); outline-offset: 2px; }
+
+.gl-result {
+    pointer-events: none; font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px;
+    color: #2b3a35; text-align: center; margin: 6px 0 0;
+}
+.gl-result:empty { display: none; }
+
+/* =====================================================================
+   MOSAIC GRID: one big feature tile, wide tile, small tiles (set by JS per visible photo)
+   ===================================================================== */
+.gl-body { position: relative; isolation: isolate; padding: 8px 0 16px; }
+
+.gallery-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 230px; grid-auto-flow: dense; gap: 14px;
+}
+.gallery-item {
+    position: relative; display: block; overflow: hidden;
+    border-radius: 22px; background: #dfe6e9;
+    box-shadow: 0 8px 24px rgba(20, 40, 30, 0.14);
+    transition: box-shadow .35s ease, transform .35s ease;
+    -webkit-tap-highlight-color: transparent; isolation: isolate;
+}
+.gallery-item.g-big  { grid-column: span 2; grid-row: span 2; }
+.gallery-item.g-wide { grid-column: span 2; }
+.gallery-item.is-hidden { display: none; }
+.gallery-item.pop-in { animation: galPop .5s ease both; }
+@keyframes galPop {
+    from { opacity: 0; transform: translateY(24px) scale(.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.gallery-item img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block; transition: transform .7s ease;
+}
+.gallery-item:focus-visible { outline: 3px solid var(--gal-gold); outline-offset: 3px; }
+
+/* category tag, always visible */
+.gi-tag {
+    position: absolute; top: 12px; left: 12px; z-index: 3;
+    padding: 6px 12px; border-radius: 30px;
+    background: rgba(255, 255, 255, .92); color: var(--gal-accent);
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; line-height: 1;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .12);
+}
+/* zoom button */
+.gi-zoom {
+    position: absolute; top: 10px; right: 10px; z-index: 3;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--gal-gold); color: var(--gal-dark); font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(.8); transition: opacity .3s ease, transform .3s ease;
+}
+/* hover shade (no caption: file names are not shown) */
+.gallery-item::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(to top, rgba(10, 25, 18, .45), rgba(10, 25, 18, 0) 55%);
+    opacity: 0; transition: opacity .35s ease;
+}
+@media (hover: hover) { .gallery-item:hover::after { opacity: 1; } }
+/* caption (unused) */
+.gi-cap {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+    padding: 46px 18px 16px; color: #fff;
+    background: linear-gradient(to top, rgba(10, 25, 18, .78), rgba(10, 25, 18, 0));
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px; line-height: 1.3;
+    opacity: 0; transform: translateY(12px); transition: opacity .35s ease, transform .35s ease;
+}
+.g-big .gi-cap { font-size: 20px; padding: 60px 24px 22px; }
+.gi-cap:empty { display: none; }
+
+@media (hover: hover) {
+    .gallery-item:hover { transform: translateY(-4px); box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24); }
+    .gallery-item:hover img { transform: scale(1.07); }
+    .gallery-item:hover .gi-cap { opacity: 1; transform: none; }
+    .gallery-item:hover .gi-zoom { opacity: 1; transform: none; }
+}
+@media (hover: none) {
+    .gi-cap { opacity: 1; transform: none; padding-top: 34px; font-size: 14px; }
+    .gi-zoom { display: none; }
+}
+.gallery-item:focus-visible .gi-cap, .gallery-item:focus-visible .gi-zoom { opacity: 1; transform: none; }
+
+/* empty state */
+.gallery-empty {
+    display: none; max-width: 480px; margin: 20px auto; padding: 26px 24px; text-align: center;
+    border-radius: 24px; background: rgba(255, 255, 255, .92);
+    box-shadow: 0 14px 34px rgba(20, 40, 30, .12);
+}
+.gallery-empty.show { display: block; }
+.gallery-empty i { font-size: 32px; color: var(--gal-gold); display: block; margin-bottom: 10px; }
+.gallery-empty h4 { margin: 0 0 6px; font-size: 21px; color: var(--gal-accent); text-transform: none; }
+.gallery-empty p { margin: 0 0 16px; color: #4a5565; font-size: 15px; }
+.gallery-empty button {
+    padding: 10px 24px; border-radius: 50px; border: 1.5px solid var(--gal-accent);
+    background: var(--gal-accent); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; transition: all .3s ease;
+}
+.gallery-empty button:hover { background: var(--gal-gold); border-color: var(--gal-gold); color: var(--gal-dark); }
+
+/* back to top */
+.gl-top {
+    position: fixed; right: 22px; bottom: 22px; z-index: 40;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: var(--gal-accent); color: #fff; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+    opacity: 0; visibility: hidden; transform: translateY(10px); transition: all .3s ease;
+}
+.gl-top.show { opacity: 1; visibility: visible; transform: none; }
+.gl-top:hover { background: var(--gal-gold); color: var(--gal-dark); }
+
+/* =====================================================================
+   LIGHTBOX: full photo, nothing cropped
+   ===================================================================== */
+.gallery-popup .mfp-figure { margin: 0 auto; }
+.gallery-popup .mfp-figure figure { margin: 0; }
+.gallery-popup .mfp-img {
+    width: auto !important; height: auto !important;
+    max-width: min(1100px, 92vw) !important; max-height: 82vh !important;
+    padding: 0 !important; margin: 0 auto;
+    aspect-ratio: auto !important; object-fit: contain !important;
+    background: transparent; border-radius: 16px;
+}
+.gallery-popup .mfp-bottom-bar { margin-top: -44px; }
+.gallery-popup .mfp-counter { color: #f7e3d2; }
+.gallery-popup.mfp-bg { opacity: 0; transition: opacity .2s ease; }
+.gallery-popup.mfp-bg.mfp-ready { opacity: .85; }
+.gallery-popup.mfp-bg.mfp-removing { opacity: 0; }
+.gallery-popup.mfp-wrap .mfp-content { opacity: 0; transition: opacity .2s ease; }
+.gallery-popup.mfp-wrap.mfp-ready .mfp-content { opacity: 1; }
+.gallery-popup.mfp-wrap.mfp-removing .mfp-content { opacity: 0; }
+
+/* =====================================================================
+   DESKTOP: faded side pictures (visible in the margins around the grid)
+   ===================================================================== */
+@media (min-width: 992px) {
+    .gl-img {
+        display: block; position: absolute; width: 40vw;
+        object-fit: cover; pointer-events: none; z-index: -1; opacity: .9;
+    }
+    .gl-img-a {
+        left: -3vw; top: 0; height: 55%; object-position: 30% 50%;
+        -webkit-mask-image:
+            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%);
+                mask-composite: intersect;
+    }
+    .gl-img-b {
+        right: -3vw; bottom: 0; height: 55%; object-position: 70% 50%;
+        -webkit-mask-image:
+            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%);
+                mask-composite: intersect;
+    }
+}
+
+/* =====================================================================
+   MOBILE / TABLET
+   ===================================================================== */
+@media (max-width: 991px) {
+    .page-header.page-hero {
+        width: calc(100% - 20px) !important;
+        max-width: calc(100% - 20px) !important;
+        margin: 10px 10px 0 !important;
+        border-radius: 24px !important;
+        min-height: 34vh !important;
+        padding: 115px 0 45px !important;
+    }
+    .page-header.page-hero .page-header-box,
+    .page-header.page-hero h1,
+    .page-header.page-hero nav { text-align: center !important; width: 100%; }
+    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-header.page-hero .breadcrumb { justify-content: center !important; font-size: 14px; }
+
+    .gl-intro { padding: 24px 0 0; }
+    .gl-head h2 { font-size: 34px; }
+    .gl-bar-wrap { top: var(--gl-top, 90px); padding: 8px 0 0; }
+    .gl-bar { border-radius: 40px; padding: 5px; max-width: 100%; }
+    .gl-chips {
+        -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%);
+                mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%);
+    }
+    .gl-chips::after { content: ""; flex: 0 0 24px; }
+    .gallery-filter-btn { padding: 9px 14px; font-size: 13px; gap: 6px; }
+    .gallery-filter-btn em { min-width: 20px; padding: 3px 5px; font-size: 11px; }
+
+    .gl-body { overflow: hidden; padding: 8px 0 12px; }
+    .gl-img {
+        display: block !important; position: absolute !important;
+        left: 0 !important; right: 0 !important; top: 0 !important;
+        width: 100% !important; height: 100% !important;
+        object-fit: cover; opacity: .5; z-index: -1 !important; pointer-events: none;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
+    }
+    .gl-img-b { display: none !important; }
+
+    .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 170px; gap: 12px; }
+    .gallery-item { border-radius: 18px; }
+}
+
+@media (max-width: 575px) {
+    .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
+    .gl-head h2 { font-size: 28px; }
+    .gl-head p { font-size: 14px; }
+    .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; gap: 10px; }
+    .gallery-item { border-radius: 16px; }
+    .gi-tag { top: 8px; left: 8px; padding: 5px 9px; font-size: 11px; }
+    .g-big .gi-cap { font-size: 16px; padding: 40px 16px 14px; }
+    .gl-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+
+    .gallery-popup .mfp-img { max-width: 94vw !important; max-height: 74vh !important; border-radius: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .gallery-item.pop-in { animation: none; }
+    .gallery-item, .gallery-item img, .gi-cap, .gi-zoom { transition: none; }
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- Hero (same design and rotating images as the Packages / About page) -->
+<!-- Hero (same design and rotating images as the About / Destinations pages) -->
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
 <div class="page-header page-hero">
-
-    <!-- Background images: same five as the Packages hero, same order -->
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -323,43 +411,80 @@ body .gallery-empty { color: var(--page-text-muted) !important; }
     </div></div></div>
 </div>
 
-<!-- Gallery -->
-<section class="gallery-section">
-    <div class="container">
+<!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
+<div class="flow">
 
-        <!-- Category filter -->
-        <div class="gallery-filters wow fadeInUp" data-wow-delay="0.2s">
-            <button type="button" class="gallery-filter-btn active" data-filter="all">All</button>
-            {% for category in categories %}
-            <button type="button" class="gallery-filter-btn" data-filter="{{ category.pk }}">
-                {{ category.name }}
-            </button>
-            {% endfor %}
+    <!-- Heading + sticky category bar -->
+    <section class="gl-intro">
+        <div class="container">
+            <div class="gl-head">
+                <h2 class="text-anime-style-3" data-cursor="-opaque">Our Gallery</h2>
+                <p class="wow fadeInUp" data-wow-delay="0.2s">Moments from the trips we have planned across Malabar and Kerala.</p>
+            </div>
         </div>
 
-        <!-- Images -->
-        <div class="gallery-grid" id="galleryGrid">
-            {% for img in images %}
-            <a href="{{ img.image.url }}"
-               class="gallery-item wow fadeInUp"
-               data-wow-delay="{% cycle '0s' '0.15s' '0.3s' %}"
-               data-category="{{ img.category_id }}">
-                <img src="{{ img.image.url }}"
-                     srcset="{{ img.image|srcset }}"
-                     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 470px"
-                     alt="{{ img.title }}"
-                     loading="lazy" decoding="async">
-            </a>
-            {% endfor %}
+        <div class="gl-bar-wrap">
+            <div class="container">
+                <div class="gl-bar">
+                    <div class="gl-chips" role="tablist" aria-label="Filter photos by category">
+                        <button type="button" class="gallery-filter-btn active" data-filter="all" role="tab" aria-selected="true">
+                            All <em data-count="all">0</em>
+                        </button>
+                        {% for category in categories %}
+                        <button type="button" class="gallery-filter-btn" data-filter="{{ category.pk }}" role="tab" aria-selected="false">
+                            {{ category.name }} <em data-count="{{ category.pk }}">0</em>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                <p class="gl-result" id="galleryResult" role="status" aria-live="polite"></p>
+            </div>
         </div>
+    </section>
 
-        <p class="gallery-empty" id="galleryEmpty">No images found.</p>
-    </div>
-</section>
+    <!-- Photos -->
+    <section class="gl-body">
+        {% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' as picA %}
+        {% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' as picB %}
+        <img class="gl-img gl-img-a" src="{{ picA }}" alt="" draggable="false" loading="lazy" decoding="async">
+        <img class="gl-img gl-img-b" src="{{ picB }}" alt="" draggable="false" loading="lazy" decoding="async">
+
+        <div class="container">
+            <div class="gallery-grid" id="galleryGrid">
+                {% for img in images %}
+                <a href="{{ img.image.url }}"
+                   class="gallery-item"
+                   data-category="{{ img.category_id }}"
+                   aria-label="Open photo{% if img.category %} from {{ img.category.name }}{% endif %}">
+                    <img src="{{ img.image.url }}"
+                         srcset="{{ img.image|srcset }}"
+                         sizes="(max-width: 575px) 60vw, (max-width: 991px) 40vw, 600px"
+                         alt="{% if img.category %}{{ img.category.name }}{% else %}Gallery photo{% endif %}"
+                         loading="lazy" decoding="async">
+                    {% if img.category %}<span class="gi-tag">{{ img.category.name }}</span>{% endif %}
+                    <span class="gi-zoom" aria-hidden="true"><i class="fa-solid fa-magnifying-glass-plus"></i></span>
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="gallery-empty{% if not images %} show{% endif %}" id="galleryEmpty">
+                <i class="fa-solid fa-images"></i>
+                <h4>No photos here yet</h4>
+                <p>{% if images %}Nothing in this category yet.{% else %}We are adding new photos. Check back soon.{% endif %}</p>
+                {% if images %}<button type="button" id="galleryReset">Show all photos</button>{% endif %}
+            </div>
+        </div>
+    </section>
+
+</div>
+<!-- ===== /flow ===== -->
+
+<button type="button" class="gl-top" id="glTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+
 {% endblock %}
 
 {% block extra_js %}
-<!-- Hero: background images change one by one (same effect as Packages / About) -->
+<!-- Hero: background images change one by one -->
 <script>
     (function () {
         var bgs = document.querySelectorAll('.page-hero .ah-bg');
@@ -373,38 +498,111 @@ body .gallery-empty { color: var(--page-text-muted) !important; }
     })();
 </script>
 
+<!-- Filter, mosaic layout, lightbox, navbar offset, back to top -->
 <script>
     (function () {
-        var buttons = document.querySelectorAll('.gallery-filter-btn');
-        var items = document.querySelectorAll('.gallery-item');
+        var buttons = Array.prototype.slice.call(document.querySelectorAll('.gallery-filter-btn'));
+        var items = Array.prototype.slice.call(document.querySelectorAll('.gallery-item'));
+        var grid = document.getElementById('galleryGrid');
         var empty = document.getElementById('galleryEmpty');
+        var result = document.getElementById('galleryResult');
+        var reset = document.getElementById('galleryReset');
+        var topBtn = document.getElementById('glTop');
+        var chipsBox = document.querySelector('.gl-chips');
+        var wrap = document.querySelector('.gl-bar-wrap');
 
-        buttons.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var filter = btn.getAttribute('data-filter');
-
-                buttons.forEach(function (b) { b.classList.remove('active'); });
-                btn.classList.add('active');
-
-                var visible = 0;
-                items.forEach(function (item) {
-                    var show = filter === 'all' || item.getAttribute('data-category') === filter;
-                    item.classList.remove('pop-in');
-                    item.classList.toggle('is-hidden', !show);
-
-                    if (show) {
-                        // restart the animation with a small stagger
-                        void item.offsetWidth;
-                        item.style.animationDelay = (visible % 3) * 0.08 + 's';
-                        item.classList.add('pop-in');
-                        visible++;
+        /* ---- keep the pill just under the (fixed) navbar, whatever its height ---- */
+        function navBottom() {
+            var best = 0;
+            ['header', '.main-header', '.navbar', 'nav'].forEach(function (sel) {
+                document.querySelectorAll(sel).forEach(function (el) {
+                    if (el.closest('.page-header, .flow, .breadcrumb')) return;
+                    var cs = getComputedStyle(el);
+                    if (cs.position === 'fixed' || cs.position === 'sticky') {
+                        var r = el.getBoundingClientRect();
+                        if (r.height > 30 && r.top < 200 && r.bottom > best) best = r.bottom;
                     }
                 });
-                empty.style.display = visible ? 'none' : 'block';
             });
+            return best;
+        }
+        var tick = false;
+        function setTop() {
+            tick = false;
+            var b = navBottom();
+            if (wrap) wrap.style.setProperty('--gl-top', (b ? b + 4 : (window.innerWidth < 992 ? 90 : 140)) + 'px');
+        }
+        function queue() { if (!tick) { tick = true; requestAnimationFrame(setTop); } }
+        window.addEventListener('scroll', queue, { passive: true });
+        window.addEventListener('resize', queue);
+        window.addEventListener('load', setTop);
+        setTop();
+
+        /* ---- counts on the chips ---- */
+        var counts = { all: items.length };
+        items.forEach(function (it) {
+            var c = it.getAttribute('data-category');
+            counts[c] = (counts[c] || 0) + 1;
+        });
+        document.querySelectorAll('[data-count]').forEach(function (el) {
+            el.textContent = counts[el.getAttribute('data-count')] || 0;
         });
 
-        // Lightbox (Magnific Popup is already loaded in base)
+        /* ---- mosaic pattern for the photos that are showing: big, small, small, small, small, wide ---- */
+        var PATTERN = ['g-big', '', '', '', '', 'g-wide'];
+        function layout() {
+            var n = 0;
+            items.forEach(function (it) {
+                it.classList.remove('g-big', 'g-wide');
+                if (it.classList.contains('is-hidden')) return;
+                var cls = PATTERN[n % PATTERN.length];
+                if (cls) it.classList.add(cls);
+                n++;
+            });
+        }
+
+        function setFilter(filter, fromClick) {
+            buttons.forEach(function (b) {
+                var on = b.getAttribute('data-filter') === filter;
+                b.classList.toggle('active', on);
+                b.setAttribute('aria-selected', on ? 'true' : 'false');
+                if (on && chipsBox) chipsBox.scrollTo({ left: b.offsetLeft - 20, behavior: 'smooth' });
+            });
+
+            var visible = 0;
+            items.forEach(function (item) {
+                var show = filter === 'all' || item.getAttribute('data-category') === filter;
+                item.classList.remove('pop-in');
+                item.classList.toggle('is-hidden', !show);
+                if (show) {
+                    void item.offsetWidth;
+                    item.style.animationDelay = (visible % 4) * 0.07 + 's';
+                    item.classList.add('pop-in');
+                    visible++;
+                }
+            });
+            layout();
+
+            empty.classList.toggle('show', visible === 0);
+            result.textContent = visible ? visible + (visible === 1 ? ' photo' : ' photos') : '';
+
+            // if the user had scrolled down, bring the top of the grid back into view
+            if (fromClick) {
+                var y = grid.getBoundingClientRect().top + window.pageYOffset - (navBottom() + 80);
+                if (window.pageYOffset > y) window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
+            }
+        }
+
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () { setFilter(btn.getAttribute('data-filter'), true); });
+        });
+        if (reset) reset.addEventListener('click', function () { setFilter('all', true); });
+
+        // first paint: no animation, just the mosaic
+        layout();
+        result.textContent = items.length ? items.length + (items.length === 1 ? ' photo' : ' photos') : '';
+
+        /* ---- lightbox (Magnific Popup is already loaded in base) ---- */
         if (window.jQuery && $.fn.magnificPopup) {
             $('#galleryGrid').magnificPopup({
                 delegate: 'a:not(.is-hidden)',
@@ -412,9 +610,17 @@ body .gallery-empty { color: var(--page-text-muted) !important; }
                 mainClass: 'gallery-popup',
                 removalDelay: 200,
                 gallery: { enabled: true },
-                image: { verticalFit: false }   // CSS controls the size, so the photo is never cropped
+                image: { verticalFit: false, titleSrc: function () { return ''; } }   // CSS controls the size, so the photo is never cropped
             });
         }
+
+        /* ---- back to top ---- */
+        window.addEventListener('scroll', function () {
+            topBtn.classList.toggle('show', window.pageYOffset > 900);
+        }, { passive: true });
+        topBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     })();
 </script>
 {% endblock %}

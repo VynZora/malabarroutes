@@ -30,34 +30,22 @@
     <link rel="stylesheet" href="{% static 'malabar-static/css/twentytwenty.css' %}">
     <link href="{% static 'malabar-static/css/custom.css' %}" rel="stylesheet" media="screen">
 
-<!-- Logo sizing + floating pill navbar + booking modal (shared by every page) -->
+    <!-- Logo sizing + floating pill navbar + booking modal (shared by every page) -->
 <style>
-    /* =====================================================================
-       PREMIUM PALETTE: BROWN SURFACES + EMBLEM GOLD ACCENTS + GOLD TEXT
-       Gold #A4892E (gradient #84701C to #C4AD3A) + Brown #3B2A1A.
-       Change colours ONLY here. Keep each -rgb line in sync with its hex.
-       ===================================================================== */
     :root {
-        --nav-green: #3b2a1a;             /* DARK BROWN (bar, buttons, dark surfaces) */
-        --nav-gold:  #a4892e;             /* emblem gold (accents) */
-        --nav-gold-light: #c4ad3a;        /* light gold (hover / highlight) */
-        --nav-ink:   #111111;             /* black (text on gold) */
-        --nav-cream: #a4892e;             /* gold (menu / footer text) */
-        --nav-green-rgb: 59, 42, 26;      /* same as --nav-green */
-        --nav-gold-rgb:  164, 137, 46;    /* same as --nav-gold */
-
-        --primary-color: #3b2a1a;
+        --primary-color: #111111;
         --text-color: #2b2b2b;
 
-        /* dark overlay on every hero / page-header photo */
-        --brand-green: var(--nav-green);
-        --overlay-opacity: 0.45;
-
-        /* navbar pattern strength: higher brightness = lighter brown */
-        --nav-pattern-brightness: 0.6;
-        --nav-pattern-opacity: 0.25;
+        /* ===== TEMPLATE OVERLAY GREEN (taken from your image) =====
+           Used by the dark overlay on top of every hero / page-header photo.
+           --overlay-opacity: higher = stronger green tint, lower = brighter photo (0 = no overlay). */
+        --brand-green: #265c44;
+        --overlay-opacity: 0.35;
     }
 
+    /* The theme (custom.css) draws a dark overlay on top of the hero and page-header photos.
+       This replaces its colour with the green above, on every page.
+       It is placed here, in base.html, so no change to custom.css is needed. */
     .hero .hero-section::before,
     .hero-bg-image::before,
     .page-header::before {
@@ -69,9 +57,6 @@
 
     .footer-logo img { height: 100px; width: auto; }
 
-    /* =====================================================================
-       NAVBAR (floating pill): brown bar, gold hairline, nav4.png pattern
-       ===================================================================== */
     .main-header {
         position: fixed !important;
         top: 36px;
@@ -89,42 +74,28 @@
         transform: none !important;
         top: 0 !important;
 
-        background-color: var(--nav-green) !important;
-        background-image: linear-gradient(var(--nav-green), var(--nav-green)) !important;
-        background-blend-mode: normal !important;
-        opacity: 1 !important;
-        isolation: isolate;
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.45) !important;
+        /* ===== TRANSPARENT WHITE NAVBAR + FADED PATTERN (nav.png) ===== */
+        background-color: rgba(255, 255, 255, 0.82) !important;   /* faded white: lower = more transparent, higher = more white */
+        /* image strength is built into nav.png */
+        background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+background-position: center 70% !important;   /* move the pattern up/down */
+        backdrop-filter: blur(14px) saturate(160%);
+        -webkit-backdrop-filter: blur(14px) saturate(160%);
         border-radius: 70px !important;
+        border-bottom: none !important;
         padding: 14px 36px !important;
-        box-shadow: 0 18px 44px rgba(0, 0, 0, 0.55),
-                    inset 0 1px 0 rgba(var(--nav-gold-rgb), 0.25),
-                    inset 0 -1px 0 rgba(var(--nav-gold-rgb), 0.10) !important;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10) !important;
         overflow: hidden;
     }
-
-    .main-header .header-sticky::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: url("{% static 'malabar-static/nav4.png' %}") center 70% / cover no-repeat;
-        filter: brightness(var(--nav-pattern-brightness)) contrast(1.1) saturate(0.8);
-        opacity: var(--nav-pattern-opacity);
-        pointer-events: none;
-        z-index: 0;
-    }
-    .main-header .header-sticky > * { position: relative; z-index: 1; }
-
     .main-header .navbar { background: transparent !important; padding: 0 !important; }
     .main-header .navbar > .container { max-width: 100% !important; padding: 0 !important; }
 
     .main-header .navbar-brand {
         padding: 0;
         margin: 0 20px 0 10px;
-        flex-shrink: 0 !important;
+        flex-shrink: 0 !important;                           /* stops the logo being squashed */
     }
     .main-header .navbar-brand img {
         height: 85px;
@@ -132,13 +103,13 @@
         max-width: none !important;
         flex-shrink: 0;
         object-fit: contain;
-        filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+        filter: saturate(1.4) contrast(1.15) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));   /* makes logo stand out */
     }
 
+    /* ===== NAV TEXT: plain dark text, no glow ===== */
     .main-header .nav-link {
-        color: var(--nav-cream) !important;
-        font-weight: 500;
-        letter-spacing: 0.8px;
+        color: #111111 !important;
+        font-weight: 600;
         padding: 10px 12px !important;
         white-space: nowrap;
         position: relative;
@@ -146,77 +117,227 @@
         transition: color .25s ease;
     }
     .main-header .nav-link:hover,
-    .main-header .nav-link.active { color: var(--nav-gold-light) !important; }
-    .main-header .nav-link.active::after {
-        content: "";
-        position: absolute;
-        left: 12px; right: 12px; bottom: 2px;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, var(--nav-gold-light), transparent);
-    }
+    .main-header .nav-link.active { color: #a97a14 !important; }   /* slightly deeper gold = better contrast on light bg */
 
     .main-header .btn-default { white-space: nowrap; }
-    .main-header .header-btn .btn-default {
-        background: transparent !important;
-        border: 2px solid var(--nav-gold) !important;
-        color: var(--nav-gold) !important;
-        transition: color .3s ease, border-color .3s ease, background .3s ease;
-    }
-    .main-header .header-btn .btn-default::after {
-        background: var(--nav-gold) !important;
-        background-color: var(--nav-gold) !important;
-    }
-    .main-header .header-btn .btn-default:hover {
-        background: linear-gradient(135deg, var(--nav-gold-light), var(--nav-gold)) !important;
-        border-color: var(--nav-gold-light) !important;
-        color: var(--nav-ink) !important;
-    }
-    .main-header .header-btn .btn-default::before { transition: filter .3s ease; }
-    .main-header .header-btn .btn-default:hover::before {
-        filter: brightness(0) saturate(100%);
-    }
 
+    /* Book Now button inside the mobile bar (hidden on desktop) */
     .main-header .mobile-book-btn { display: none; }
 
-    /* ---------- Packages / Destinations dropdowns (desktop) ---------- */
-    @media (min-width: 992px) {
+    @media (max-width: 991px) {
+        .main-header {
+            top: 12px;
+            width: calc(100% - 24px) !important;
+        }
         .main-header .header-sticky,
         .main-header .header-sticky.hide,
-        .main-header .header-sticky.active { overflow: visible !important; }
+        .main-header .header-sticky.active {
+            border-radius: 32px !important;
+            padding: 10px 20px !important;
+            overflow: visible;                        /* lets the mobile dropdown show below the bar */
+           background-size: cover !important;
+background-position: center 70% !important;
+        }
+        .main-header .navbar-brand { margin-left: 15px; }
+        .main-header .navbar-brand img { height: 60px; }
 
-        .main-header .pk-nav-dd { position: relative; }
-        .main-header .pk-nav-caret { font-size: 11px; margin-left: 4px; }
+        /* Book Now sits in the bar, just left of the menu button */
+        .main-header .mobile-book-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            right: 66px;                              /* distance from the menu (hamburger) button: lower = further right */
+            top: 50%;
+            transform: translateY(-50%);
+            background: #265648;
+            color: #ffffff !important;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1;
+            white-space: nowrap;
+            padding: 12px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(38, 86, 72, 0.30);
+            transition: background .25s ease;
+        }
+        .main-header .mobile-book-btn:hover { background: #c9972b; }
 
-        .main-header .pk-nav-menu {
-            position: absolute; top: 100%; left: 0; min-width: 230px;
-            margin: 8px 0 0; padding: 10px 0; list-style: none;
-            background: var(--nav-green);
-            border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
-            border-radius: 18px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.50);
-            opacity: 0; visibility: hidden; transform: translateY(10px);
-            transition: opacity .25s ease, transform .25s ease, visibility .25s;
-            z-index: 1100;
+        /* the same button now lives in the bar, so hide the copy inside the dropdown */
+        .main-header .slicknav_nav li.highlighted-menu { display: none !important; }
+
+        /* Mobile dropdown menu: white, rounded, with the same pattern */
+        .main-header .slicknav_menu {
+            background: transparent !important;
+            padding: 0 !important;
         }
-        .main-header .pk-nav-menu::before {
-            content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+        .main-header .slicknav_nav {
+            background-color: rgba(255, 255, 255, 0.85) !important;
+            background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+            background-repeat: no-repeat !important;
+            background-size: cover !important;
+            background-position: center !important;
+            border-radius: 28px !important;
+            margin-top: 8px !important;
+            padding: 10px 8px 16px !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
         }
-        .main-header .pk-nav-dd:hover .pk-nav-menu {
-            opacity: 1; visibility: visible; transform: translateY(0);
+        .main-header .slicknav_nav a {
+            background: transparent !important;
+            color: #111111 !important;
+            font-weight: 600;
+            text-shadow: none;
         }
-        .main-header .pk-nav-menu li { margin: 0; }
-        .main-header .pk-nav-menu a {
-            display: block; padding: 10px 24px; white-space: nowrap;
-            font-size: 15px; font-weight: 500; color: var(--nav-cream) !important;
-            text-decoration: none; transition: background .2s ease, color .2s ease;
+        .main-header .slicknav_nav a:hover,
+        .main-header .slicknav_nav a.active {
+            color: #a97a14 !important;
         }
-        .main-header .pk-nav-menu a:hover {
-            background: rgba(var(--nav-gold-rgb), 0.14);
-            color: var(--nav-gold-light) !important;
+
+        /* Mobile "Book Now" as a button */
+        .main-header .slicknav_nav li.highlighted-menu {
+            padding: 8px 8px 0;
         }
+        .main-header .slicknav_nav li.highlighted-menu a,
+        .main-header .slicknav_nav a.open-booking {
+            display: block !important;
+            width: 100%;
+            text-align: center !important;
+            background: #265648 !important;          /* same green as the desktop Book Now button */
+            color: #ffffff !important;
+            font-weight: 600;
+            text-shadow: none;
+            border-radius: 50px !important;
+            padding: 14px 20px !important;
+            margin: 0 !important;
+            box-shadow: 0 6px 16px rgba(38, 86, 72, 0.30);
+            transition: background .25s ease;
+        }
+        .main-header .slicknav_nav li.highlighted-menu a:hover,
+        .main-header .slicknav_nav a.open-booking:hover {
+            background: #c9972b !important;
+            color: #ffffff !important;
+        }
+        /* remove the template's decorative circles on that link */
+        .main-header .slicknav_nav li.highlighted-menu a::before,
+        .main-header .slicknav_nav li.highlighted-menu a::after,
+        .main-header .slicknav_nav li.highlighted-menu::before,
+        .main-header .slicknav_nav li.highlighted-menu::after {
+            display: none !important;
+        }
+
+        /* ---- Mobile menu: align dropdown parents with normal links ---- */
+
+/* remove the doubled padding from the row wrapper */
+.main-header .slicknav_nav .slicknav_row,
+.main-header .slicknav_nav .slicknav_item {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* inner link takes the free space, same padding as the other links */
+.main-header .slicknav_nav .slicknav_row > a {
+    flex: 1;
+    margin: 0 !important;
+}
+
+/* hide my desktop caret, keep only SlickNav's arrow on the right */
+.main-header .slicknav_nav .pk-nav-caret { display: none !important; }
+
+.main-header .slicknav_nav .slicknav_arrow {
+    flex: 0 0 auto;
+    margin: 0 18px 0 0 !important;
+    padding: 0 !important;
+    float: none !important;
+    color: #111111;
+}
+
+/* sub-links (All Packages, Beaches...) slightly indented under the parent */
+.main-header .slicknav_nav .slicknav_parent > ul a {
+    padding-left: 34px !important;
+    font-weight: 500;
+}
     }
 
-    /* ---------- Small laptops / large tablets (992px to 1199px) ---------- */
+    @media (max-width: 380px) {
+        .main-header .mobile-book-btn { right: 58px; padding: 10px 14px; font-size: 13px; }
+    }
+
+    /* ---------- Booking modal ---------- */
+    .bk-overlay {
+        position: fixed; inset: 0; z-index: 2000;
+        background: rgba(0,0,0,.6);
+        display: none; align-items: center; justify-content: center;
+        padding: 16px; overflow-y: auto;
+    }
+    .bk-overlay.open { display: flex; }
+    .bk-box {
+        background: #fff; width: 100%; max-width: 560px;
+        border-radius: 24px; padding: 32px; position: relative;
+        max-height: 92vh; overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+    .bk-close {
+        position: absolute; top: 14px; right: 18px;
+        background: none; border: 0; font-size: 28px; line-height: 1; cursor: pointer; color: #111;
+    }
+    .bk-box h3 { margin: 0 0 6px; }
+    .bk-box p.bk-sub { margin: 0 0 20px; color: #666; font-size: 14px; }
+    .bk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bk-grid .full { grid-column: 1 / -1; }
+    .bk-box label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .bk-box input, .bk-box textarea, .bk-box select {
+        width: 100%; border: 1px solid #ddd; border-radius: 12px;
+        padding: 10px 14px; font-size: 15px; font-family: inherit; background: #fff;
+    }
+    .bk-box select { cursor: pointer; }
+    .bk-box input:focus, .bk-box textarea:focus, .bk-box select:focus { outline: none; border-color: #c9972b; }
+    .bk-submit {
+        width: 100%; margin-top: 20px; border: 0; border-radius: 50px;
+        padding: 14px 20px; font-weight: 600; font-size: 16px; cursor: pointer;
+        color: #fff; background: #111;
+    }
+    .bk-submit:hover { background: #c9972b; }
+    .bk-submit:disabled { opacity: .6; cursor: wait; }
+    .bk-note { margin: 10px 0 0; font-size: 12px; color: #888; text-align: center; }
+    .bk-status { margin-top: 14px; font-size: 14px; display: none; }
+    .bk-status.ok { display: block; color: #1a7f37; }
+    .bk-status.err { display: block; color: #c62828; }
+    @media (max-width: 575px) {
+        .bk-box { padding: 24px 18px; }
+        .bk-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ---------- Success modal ---------- */
+    .bk-success-box {
+        background: #fff; width: 100%; max-width: 420px;
+        border-radius: 24px; padding: 40px 32px 32px; text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,.3);
+        animation: bkPop .3s ease;
+    }
+    @keyframes bkPop {
+        from { transform: scale(.9); opacity: 0; }
+        to   { transform: scale(1);  opacity: 1; }
+    }
+    .bk-success-icon {
+        width: 76px; height: 76px; margin: 0 auto 20px;
+        border-radius: 50%; background: #e6f6ec; color: #1a7f37;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 34px;
+    }
+    .bk-success-box h3 { margin: 0 0 10px; }
+    .bk-success-box p { margin: 0; color: #666; font-size: 15px; line-height: 1.6; }
+    .bk-success-btn {
+        margin-top: 24px; border: 0; border-radius: 50px;
+        padding: 12px 40px; font-weight: 600; cursor: pointer;
+        color: #fff; background: #111;
+    }
+    .bk-success-btn:hover { background: #c9972b; }
+
+        /* ---------- Navbar on small laptops / large tablets (992px to 1199px) ---------- */
     @media (min-width: 992px) and (max-width: 1199px) {
         .main-header {
             top: 20px;
@@ -227,13 +348,16 @@
         .main-header .header-sticky.active {
             padding: 8px 20px !important;
             border-radius: 50px !important;
+            background-size: cover !important;
         }
 
         .main-header .navbar > .container { flex-wrap: nowrap; }
 
+        /* smaller logo */
         .main-header .navbar-brand { margin: 0 6px 0 0; }
         .main-header .navbar-brand img { height: 58px; }
 
+        /* menu takes the free space, links never wrap or overflow */
         .main-header .main-menu {
             flex-grow: 1;
             align-items: center;
@@ -254,6 +378,7 @@
             font-size: 14px;
         }
 
+        /* compact Book Now button */
         .main-header .header-btn {
             flex-shrink: 0;
             margin-left: 6px;
@@ -266,297 +391,45 @@
         }
     }
 
-    /* ---------- Mobile / tablet navbar (up to 991px) ---------- */
-    @media (max-width: 991px) {
-        .main-header {
-            top: 12px;
-            width: calc(100% - 24px) !important;
-        }
-        .main-header .header-sticky,
-        .main-header .header-sticky.hide,
-        .main-header .header-sticky.active {
-            border-radius: 32px !important;
-            padding: 10px 20px !important;
-            overflow: visible;
-        }
-        .main-header .header-sticky::before {
-            background-size: 150% auto;
-            background-position: center 65%;
-        }
-        .main-header .navbar-brand { margin-left: 15px; }
-        .main-header .navbar-brand img { height: 60px; }
-
-        .main-header .mobile-book-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            right: 66px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: 2px solid var(--nav-gold);
-            color: var(--nav-gold) !important;
-            font-size: 14px;
-            font-weight: 600;
-            line-height: 1;
-            white-space: nowrap;
-            padding: 10px 16px;
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: none;
-            transition: background .25s ease, border-color .25s ease, color .25s ease;
-        }
-        .main-header .mobile-book-btn:hover,
-        .main-header .mobile-book-btn:focus,
-        .main-header .mobile-book-btn:active {
-            background: linear-gradient(135deg, var(--nav-gold-light), var(--nav-gold)) !important;
-            border-color: var(--nav-gold-light) !important;
-            color: var(--nav-ink) !important;
-            box-shadow: 0 4px 14px rgba(var(--nav-gold-rgb), 0.45) !important;
-        }
-
-        .main-header .slicknav_nav li.highlighted-menu { display: none !important; }
-
-        .main-header .slicknav_btn,
-        .main-header .slicknav_btn:hover,
-        .main-header .slicknav_btn:focus,
-        .main-header .slicknav_btn:active,
-        .main-header .slicknav_btn.slicknav_open {
-            background-color: rgba(var(--nav-gold-rgb), 0.15) !important;
-            border: 0 !important;
-            box-shadow: none !important;
-            outline: none !important;
-            transition: none !important;
-        }
-        .main-header .slicknav_btn .slicknav_icon-bar,
-        .main-header .slicknav_btn:hover .slicknav_icon-bar,
-        .main-header .slicknav_btn:focus .slicknav_icon-bar,
-        .main-header .slicknav_btn:active .slicknav_icon-bar,
-        .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
-            background-color: var(--nav-gold) !important;
-            box-shadow: none !important;
-        }
-
-        .main-header .slicknav_menu {
-            background: transparent !important;
-            padding: 0 !important;
-        }
-        .main-header .slicknav_nav {
-            background-color: var(--nav-green) !important;
-            background-image: linear-gradient(var(--nav-green), var(--nav-green)) !important;
-            background-blend-mode: normal !important;
-            opacity: 1 !important;
-            border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
-            border-radius: 28px !important;
-            margin-top: 8px !important;
-            padding: 10px 8px 16px !important;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-            position: relative;
-            overflow: hidden;
-        }
-        .main-header .slicknav_nav::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: url("{% static 'malabar-static/nav4.png' %}") center / cover no-repeat;
-            filter: brightness(var(--nav-pattern-brightness)) contrast(1.1);
-            opacity: var(--nav-pattern-opacity);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .main-header .slicknav_nav > * { position: relative; z-index: 1; }
-
-        .main-header .slicknav_nav a {
-            background: transparent !important;
-            color: var(--nav-cream) !important;
-            font-weight: 500;
-            text-shadow: none;
-        }
-        .main-header .slicknav_nav a:hover,
-        .main-header .slicknav_nav a:active {
-            background: rgba(var(--nav-gold-rgb), 0.14) !important;
-            color: var(--nav-gold-light) !important;
-        }
-        .main-header .slicknav_nav a.active { color: var(--nav-gold-light) !important; }
-
-        .main-header .slicknav_nav .slicknav_row,
-        .main-header .slicknav_nav .slicknav_item {
-            display: flex !important;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-        .main-header .slicknav_nav .slicknav_row > a {
-            flex: 1;
-            margin: 0 !important;
-        }
-        .main-header .slicknav_nav .pk-nav-caret { display: none !important; }
-        .main-header .slicknav_nav .slicknav_arrow {
-            flex: 0 0 auto;
-            margin: 0 18px 0 0 !important;
-            padding: 0 !important;
-            float: none !important;
-            color: var(--nav-cream) !important;
-        }
-        .main-header .slicknav_nav .slicknav_parent > ul a {
-            padding-left: 34px !important;
-            font-weight: 400;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .main-header .header-sticky::before { background-size: 190% auto; }
-    }
-    @media (max-width: 380px) {
-        .main-header .mobile-book-btn { right: 58px; padding: 9px 13px; font-size: 13px; }
-    }
-
-    /* =====================================================================
-       BOOKING MODAL
-       ===================================================================== */
-    .bk-overlay {
-        position: fixed; inset: 0; z-index: 2000;
-        background: rgba(var(--nav-green-rgb), 0.70);
-        display: none; align-items: center; justify-content: center;
-        padding: 16px; overflow-y: auto;
-    }
-    .bk-overlay.open { display: flex; }
-    .bk-box {
-        background: #fff; width: 100%; max-width: 560px;
-        border-radius: 24px; padding: 32px; position: relative;
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
-        max-height: 92vh; overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0,0,0,.40);
-    }
-    .bk-close {
-        position: absolute; top: 14px; right: 18px;
-        background: none; border: 0; font-size: 28px; line-height: 1; cursor: pointer; color: #111;
-        transition: color .25s ease;
-    }
-    .bk-close:hover { color: var(--nav-gold); }
-    .bk-box h3 { margin: 0 0 6px; }
-    .bk-box p.bk-sub { margin: 0 0 20px; color: #666; font-size: 14px; }
-    .bk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .bk-grid .full { grid-column: 1 / -1; }
-    .bk-box label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; }
-    .bk-box input, .bk-box textarea, .bk-box select {
-        width: 100%; border: 1px solid #ddd; border-radius: 12px;
-        padding: 10px 14px; font-size: 15px; font-family: inherit; background: #fff;
-    }
-    .bk-box select { cursor: pointer; }
-    .bk-box input:focus, .bk-box textarea:focus, .bk-box select:focus {
-        outline: none;
-        border-color: var(--nav-gold);
-        box-shadow: 0 0 0 3px rgba(var(--nav-gold-rgb), 0.18);
-    }
-    .bk-submit {
-        width: 100%; margin-top: 20px; border-radius: 50px;
-        padding: 14px 20px; font-weight: 600; font-size: 16px; cursor: pointer;
-        color: var(--nav-gold-light); background: var(--nav-green);
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.5);
-        transition: background .25s ease, color .25s ease, border-color .25s ease;
-    }
-    .bk-submit:hover {
-        background: linear-gradient(135deg, var(--nav-gold-light), var(--nav-gold));
-        border-color: var(--nav-gold-light);
-        color: var(--nav-ink);
-    }
-    .bk-submit:disabled { opacity: .6; cursor: wait; }
-    .bk-note { margin: 10px 0 0; font-size: 12px; color: #888; text-align: center; }
-    .bk-status { margin-top: 14px; font-size: 14px; display: none; }
-    .bk-status.ok { display: block; color: #1a7f37; }
-    .bk-status.err { display: block; color: #c62828; }
-    @media (max-width: 575px) {
-        .bk-box { padding: 24px 18px; }
-        .bk-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ---------- Success modal ---------- */
-    .bk-success-box {
-        background: #fff; width: 100%; max-width: 420px;
-        border-radius: 24px; padding: 40px 32px 32px; text-align: center;
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.35);
-        box-shadow: 0 20px 60px rgba(0,0,0,.40);
-        animation: bkPop .3s ease;
-    }
-    @keyframes bkPop {
-        from { transform: scale(.9); opacity: 0; }
-        to   { transform: scale(1);  opacity: 1; }
-    }
-    .bk-success-icon {
-        width: 76px; height: 76px; margin: 0 auto 20px;
-        border-radius: 50%;
-        background: var(--nav-green); color: var(--nav-gold);
-        border: 2px solid rgba(var(--nav-gold-rgb), 0.5);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 34px;
-    }
-    .bk-success-box h3 { margin: 0 0 10px; }
-    .bk-success-box p { margin: 0; color: #666; font-size: 15px; line-height: 1.6; }
-    .bk-success-btn {
-        margin-top: 24px; border-radius: 50px;
-        padding: 12px 40px; font-weight: 600; cursor: pointer;
-        color: var(--nav-gold-light); background: var(--nav-green);
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.5);
-        transition: background .25s ease, color .25s ease, border-color .25s ease;
-    }
-    .bk-success-btn:hover {
-        background: linear-gradient(135deg, var(--nav-gold-light), var(--nav-gold));
-        border-color: var(--nav-gold-light);
-        color: var(--nav-ink);
-    }
-
-    /* =====================================================================
-       PRELOADER: brown + gold ring
-       ===================================================================== */
-    .preloader {
-        background: var(--nav-green) !important;
-        background-color: var(--nav-green) !important;
-        background-image: none !important;
-        z-index: 99999 !important;
-    }
-    .preloader .loading-container .loading {
-        border-color: rgba(var(--nav-gold-rgb), 0.25) !important;
-        border-top-color: var(--nav-gold) !important;
-    }
+    /* ---------- Preloader logo size ---------- */
     .preloader #loading-icon { max-width: none !important; }
     .preloader #loading-icon img {
-        width: 80px !important;
+        width: 80px !important;      /* change this to make the preloader logo bigger / smaller */
         max-width: none !important;
         height: auto !important;
     }
 
-    /* =====================================================================
-       FOOTER: brown overlay on foot.png
-       ===================================================================== */
+    /* ---------- Preloader always on top of everything ----------
+       (so the mobile Call / Email bar, navbar and modals never show through it) */
+    .preloader { z-index: 99999 !important; }
+
+    /* ---------- Footer background image (foot.png) ---------- */
     .footer-main {
-        background-image: linear-gradient(rgba(var(--nav-green-rgb), 0.78), rgba(var(--nav-green-rgb), 0.78)), url("{% static 'malabar-static/foot.png' %}") !important;
+        /* IMAGE FADE: change both 0.55 values together (higher = image fainter + text clearer) */
+        background-image: linear-gradient(rgba(8, 28, 26, 0.55), rgba(8, 28, 26, 0.55)), url("{% static 'malabar-static/foot.png' %}") !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
         background-position: center !important;
     }
 
+    /* footer text: crisp and readable over the image */
     .footer-main,
+    .footer-main h3,
     .footer-main p,
     .footer-main a,
     .footer-main span,
     .footer-main li {
-        color: var(--nav-cream);
+        color: #ffffff;
         text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
     }
-    .footer-main h3 {
-        color: var(--nav-gold-light);
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
-    }
-    .footer-main a:hover { color: var(--nav-gold-light); }
+    .footer-main a:hover { color: #e0b14a; }
     .footer-main .footer-contact-content p,
     .footer-main .footer-contact-info-item p,
     .footer-main .about-footer-content p { opacity: 0.95; }
     .footer-main .footer-social-links a,
     .footer-main .footer-social-links i { text-shadow: none; }
 
+    /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
     .footer-main::before,
     .footer-main::after,
     .footer-main .container::before,
@@ -569,12 +442,10 @@
         display: none !important;
         background: none !important;
     }
-
-    /* =====================================================================
-       MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website)
-       ===================================================================== */
+        /* ================= MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website) ================= */
     @media (max-width: 991px) {
 
+        /* ---- hero (all pages) ---- */
         .page-header-box,
         .page-header-box h1,
         .page-header .breadcrumb {
@@ -582,6 +453,7 @@
             justify-content: flex-start !important;
         }
 
+        /* ---- theme section headings + descriptions (home, about, contact...) ---- */
         .section-title,
         .section-title-center,
         .section-title *,
@@ -598,6 +470,7 @@
             margin-right: auto !important;
         }
 
+        /* ---- Packages / Experiences / Destinations / Contact page headings ---- */
         .pk-head, .pk-head *,
         .act-head, .act-head *,
         .dest-head, .dest-head * {
@@ -608,17 +481,22 @@
             margin-right: auto !important;
         }
 
+        /* ---- Terms & Conditions heading ---- */
         .tc-title-row { justify-content: flex-start !important; }
         .tc-title-row .tc-line { display: none !important; }
 
+        /* ---- Testimonials intro ---- */
         .pc-intro, .pc-intro * { text-align: left !important; }
         .pc-eyebrow { justify-content: flex-start !important; }
         .pc-sub, .pc-swirl { margin-left: 0 !important; margin-right: auto !important; }
 
+        /* ---- FAQ intro ---- */
         .fq-left, .fq-left * { text-align: left !important; }
 
+        /* ---- Our Story ---- */
         .about-us-content, .about-us-content * { text-align: left !important; }
 
+        /* ---- Footer ---- */
         .footer-main,
         .footer-main .about-footer,
         .footer-main .about-footer-content,
@@ -644,360 +522,262 @@
         .footer-main .footer-social-links ul { justify-content: flex-start !important; padding-left: 0; }
     }
 
-    /* =====================================================================
-       MOBILE / TABLET: sticky Call + Email bar
-       ===================================================================== */
-    .mb-contact-bar { display: none; }
-
+        /* ================= MOBILE / TABLET ONLY: zoom the navbar background so the corner circles are cropped out ================= */
     @media (max-width: 991px) {
-        .mb-contact-bar {
-            position: fixed;
-            left: 0; right: 0; bottom: 0;
-            z-index: 1500;
-            display: flex;
-            background: var(--nav-green);
-            border-top: 1px solid rgba(var(--nav-gold-rgb), 0.40);
-            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.35);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
+        .main-header .header-sticky,
+        .main-header .header-sticky.hide,
+        .main-header .header-sticky.active {
+            background-size: 150% auto !important;      /* zoom: higher = more zoomed in */
+            background-position: center 65% !important; /* move the pattern up/down */
         }
-        .mb-contact-bar a {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px 10px;
-            color: var(--nav-cream) !important;
-            font-size: 15px;
-            font-weight: 700;
-            line-height: 1;
-            text-decoration: none;
-            white-space: nowrap;
-            transition: background-color .25s ease, color .25s ease;
+    }
+
+    /* very small phones: zoom a little more */
+    @media (max-width: 480px) {
+        .main-header .header-sticky,
+        .main-header .header-sticky.hide,
+        .main-header .header-sticky.active {
+            background-size: 190% auto !important;
         }
-        .mb-contact-bar a + a { border-left: 1px solid rgba(var(--nav-gold-rgb), 0.30); }
-        .mb-contact-bar a i { font-size: 16px; color: var(--nav-gold); transition: color .25s ease; }
-
-        .mb-contact-bar a:hover,
-        .mb-contact-bar a:active {
-            background: var(--nav-gold);
-            color: var(--nav-ink) !important;
-        }
-        .mb-contact-bar a:hover i,
-        .mb-contact-bar a:active i { color: var(--nav-ink); }
-
-        body { padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
     }
+    /* ===== Packages dropdown in navbar (desktop) ===== */
+@media (min-width: 992px) {
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active { overflow: visible !important; }   /* lets the dropdown hang below the bar */
 
-    /* =====================================================================
-       GOLD CARDS: every white card / box becomes gold
-       Edit --card-bg to change them all at once.
-       ===================================================================== */
-    :root {
-        --card-bg: #a4892e;
-        --card-bg-open: #c4ad3a;
-        --card-text: #111111;
-        --card-line: rgba(17, 17, 17, 0.28);
-        --card-edge: rgba(196, 173, 58, 0.60);
+    .main-header .pk-nav-dd { position: relative; }
+    .main-header .pk-nav-caret { font-size: 11px; margin-left: 4px; }
+
+    .main-header .pk-nav-menu {
+        position: absolute; top: 100%; left: 0; min-width: 230px;
+        margin: 8px 0 0; padding: 10px 0; list-style: none;
+        background: #fff; border-radius: 18px;
+        box-shadow: 0 12px 34px rgba(0,0,0,.14);
+        opacity: 0; visibility: hidden; transform: translateY(10px);
+        transition: opacity .25s ease, transform .25s ease, visibility .25s;
+        z-index: 1100;
     }
-
-    body .about-us   { --ab-tint: rgba(17, 17, 17, 0.12) !important; }
-    body .fq-section { --fq-tint: rgba(17, 17, 17, 0.12) !important; }
-    body .tc-section { --tc-tint: rgba(17, 17, 17, 0.12) !important; }
-
-    body .sv-section .sv-card,
-    body .pk-section .pk-card,
-    body .about-us .ab-row,
-    body .about-us .ab-frame,
-    body .about-us .ab-second,
-    body .ac-section .ac-card,
-    body .fq-section .fq-item,
-    body .fq-section .fq-tag,
-    body .fq-section .fq-google,
-    body .tc-section .tc-item.active,
-    body .pc-section .pc-photo,
-    body .fl-btn,
-    body .pk-heart,
-    body .top-bar .top-bar-inner {
-        background: var(--card-bg) !important;
-        background-color: var(--card-bg) !important;
+    /* invisible bridge so the menu doesn't close while the mouse moves down */
+    .main-header .pk-nav-menu::before {
+        content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
     }
-
-    body .fq-section .fq-item.open { background: var(--card-bg-open) !important; }
-    body .fq-section .fq-item.open .fq-ico { background: var(--card-bg) !important; }
-
-    body .sv-section .sv-card,
-    body .about-us .ab-row,
-    body .tc-section .tc-item.active,
-    body .fq-section .fq-item { border-color: var(--card-edge) !important; }
-    body .fl-btn { border-color: var(--card-line) !important; color: var(--card-text) !important; }
-
-    /* ---------- Services card: brown fill grows in when active ---------- */
-    body .sv-section { --sv-green: var(--nav-green); --sv-gold: var(--nav-gold-light); }
-    body .sv-card .sv-ico,
-    body .sv-card h3 { color: var(--card-text); }
-    body .sv-card p { color: var(--card-text) !important; opacity: 0.85; }
-    body .sv-card.active .sv-ico,
-    body .sv-card:focus-visible .sv-ico { color: var(--nav-gold-light); }
-    body .sv-card.active h3,
-    body .sv-card:focus-visible h3 { color: var(--nav-gold-light); }
-    body .sv-card.active p,
-    body .sv-card:focus-visible p { color: var(--nav-cream) !important; opacity: 1; }
-
-    /* ---------- text inside gold cards -> black ---------- */
-    body .pk-desc { color: var(--card-text) !important; }
-    body .ac-text,
-    body .ac-title,
-    body .ab-row-name,
-    body .tc-text p,
-    body .tc-item.active .tc-text p,
-    body .fq-q,
-    body .fq-a p,
-    body .fq-tag,
-    body .fq-google .fq-g-title,
-    body .fq-google .pc-g-score,
-    body .pk-heart { color: var(--card-text) !important; }
-    body .ab-row-no,
-    body .tc-text h3 { color: var(--card-text) !important; }
-    body .tc-item.active .tc-icon,
-    body .tc-item.active .tc-no { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .tc-no { background: rgba(17, 17, 17, 0.12); color: var(--card-text); }
-    body .ab-row:hover .ab-row-arrow { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .pc-g-base { color: rgba(17, 17, 17, 0.25); }
-
-    /* ---------- buttons that sit on gold cards ---------- */
-    body .pk-btn-fill { background: var(--nav-green); border-color: var(--nav-green); color: var(--nav-cream) !important; }
-    body .pk-btn-fill .pk-btn-ico { background: var(--nav-gold); color: var(--nav-ink); }
-    body .pk-btn-fill:hover {
-        background: var(--nav-gold-light) !important;
-        border-color: var(--nav-green) !important;
-        color: var(--nav-ink) !important;
+    .main-header .pk-nav-dd:hover .pk-nav-menu {
+        opacity: 1; visibility: visible; transform: translateY(0);
     }
-    body .pk-btn-fill:hover .pk-btn-ico { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .pk-btn-line { border-color: var(--nav-green); color: var(--card-text) !important; }
-    body .pk-btn-line .pk-btn-ico { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .pk-btn-line:hover { background: var(--nav-green); color: var(--nav-gold-light) !important; }
-    body .pk-btn-line:hover .pk-btn-ico { background: var(--nav-gold); color: var(--nav-ink); }
-
-    body .fl-btn:hover { background: var(--card-bg-open) !important; border-color: var(--nav-green) !important; color: var(--card-text) !important; }
-    body .fl-btn.active, body .fl-btn.active:hover {
-        background: var(--nav-green) !important;
-        border-color: var(--nav-green) !important;
-        color: var(--nav-gold-light) !important;
+    .main-header .pk-nav-menu li { margin: 0; }
+    .main-header .pk-nav-menu a {
+        display: block; padding: 10px 24px; white-space: nowrap;
+        font-size: 15px; font-weight: 600; color: #111 !important;
+        text-decoration: none; transition: background .2s ease, color .2s ease;
     }
-
-    body .about-us .ab-btn-fill { background: var(--nav-green); border-color: var(--nav-green); color: var(--nav-gold-light); }
-    body .about-us .ab-btn-line { border-color: var(--nav-green); color: var(--nav-green); }
-    body .about-us .ab-btn-line:hover { background: var(--nav-green); color: var(--nav-gold-light); }
-
-    /* =====================================================================
-       ACTIVITIES PAGE (act-* classes)
-       ===================================================================== */
-    body .act-section {
-        --act-accent: var(--nav-green);
-        --act-dark: var(--nav-ink);
-        --act-gold: var(--nav-gold-light);
-    }
-
-    body .act-section .act-card {
-        background: var(--card-bg) !important;
-        background-color: var(--card-bg) !important;
-        border: 1px solid var(--card-edge) !important;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18) !important;
-    }
-    body .act-section .act-card:hover {
-        box-shadow: 0 22px 46px rgba(0, 0, 0, 0.30) !important;
-    }
-    body .act-section .act-card-img { background: var(--card-bg-open) !important; }
-
-    body .act-card-body h3 { color: var(--card-text) !important; }
-    body .act-card-body p { color: var(--card-text) !important; opacity: 0.85; }
-    body .act-meta { color: var(--card-text) !important; }
-    body .act-meta i { color: var(--card-text) !important; }
-    body .act-meta .act-divider { background: var(--card-line) !important; }
-
-    body .act-badge {
-        background: var(--nav-green) !important;
-        color: var(--nav-gold-light) !important;
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.5) !important;
-    }
-
-    body .act-btn-fill {
-        background: var(--nav-green) !important;
-        border-color: var(--nav-green) !important;
-        color: var(--nav-gold-light) !important;
-    }
-    body .act-btn-fill:hover {
-        background: var(--nav-gold-light) !important;
-        border-color: var(--nav-green) !important;
-        color: var(--nav-ink) !important;
-    }
-
-    body .act-btn-line {
-        background: transparent !important;
-        border-color: var(--nav-green) !important;
-        color: var(--card-text) !important;
-    }
-    body .act-btn-line:hover {
-        background: var(--nav-green) !important;
-        border-color: var(--nav-green) !important;
-        color: var(--nav-gold-light) !important;
-    }
-
-    /* =====================================================================
-       CONTACT PAGE (cx-* classes)
-       ===================================================================== */
-    body .contact-section {
-        --cx-accent: var(--nav-green);
-        --cx-dark: var(--nav-ink);
-        --cx-gold: var(--nav-gold-light);
-        --cx-accent-soft: rgba(17, 17, 17, 0.12);
-        --cx-ring: rgba(17, 17, 17, 0.18);
-    }
-
-    body .contact-section .cx-info-card {
-        background: var(--card-bg) !important;
-        border: 1px solid var(--card-edge);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    }
-    body .contact-section .cx-info-card:hover { box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35); }
-    body .contact-section .cx-info-head h3,
-    body .contact-section .cx-info-card p,
-    body .contact-section .cx-info-card a { color: var(--card-text) !important; }
-
-    body .contact-section .cx-info-card:hover .cx-info-head h3,
-    body .contact-section .cx-info-card:hover p,
-    body .contact-section .cx-info-card:hover a { color: var(--nav-gold-light) !important; }
-    body .contact-section .cx-info-card a:hover { color: #fff !important; }
-    body .contact-section .cx-info-card:hover .cx-info-icon {
-        background: var(--nav-gold-light);
-        color: var(--nav-ink);
-    }
-
-    body .contact-section .cx-social {
-        background: var(--card-bg) !important;
-        border: 1px solid var(--card-edge);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    }
-    body .contact-section .cx-social-title { color: var(--card-text); }
-    body .contact-section .cx-social-title::before,
-    body .contact-section .cx-social-title::after { background: var(--nav-green); opacity: .6; }
-    body .contact-section .cx-social-link .sc-ico { color: var(--nav-gold-light); }
-
-    body .contact-section .cx-map-frame {
-        border: 1px solid var(--card-edge);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    }
-
-    body .contact-section .cx-directions { border-color: var(--nav-green); color: var(--card-text); }
-    body .contact-section .cx-directions span.dir-icon { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .contact-section .cx-directions:hover { background: var(--nav-green); color: var(--nav-gold-light); }
-    body .contact-section .cx-directions:hover span.dir-icon { background: var(--nav-gold-light); color: var(--nav-ink); }
-
-    body .contact-section .cx-form-card {
-        background: var(--card-bg) !important;
-        border: 1px solid var(--card-edge);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
-    }
-    body .contact-section .cx-form-card h2 { color: var(--card-text); }
-    body .contact-section .cx-field label { color: var(--card-text); }
-    body .contact-section .cx-field label i { color: var(--card-text); }
-    body .contact-section .cx-field label small {
-        background: rgba(17, 17, 17, 0.14);
-        color: var(--card-text);
-    }
-
-    body .contact-section .cx-field input,
-    body .contact-section .cx-field textarea {
-        background: #f1e8c1 !important;
-        border: 1px solid rgba(17, 17, 17, 0.25) !important;
-        color: #111 !important;
-    }
-    body .contact-section .cx-field input::placeholder,
-    body .contact-section .cx-field textarea::placeholder { color: #6e6334; }
-    body .contact-section .cx-field input:focus,
-    body .contact-section .cx-field textarea:focus {
-        background: #f7f0d3 !important;
-        border-color: var(--nav-green) !important;
-        box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.18) !important;
-    }
-
-    body .contact-section .cx-submit {
-        background: var(--nav-green);
-        color: var(--nav-gold-light);
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.5);
-    }
-    body .contact-section .cx-submit:hover {
-        background: var(--nav-gold-light);
-        color: var(--nav-ink);
-        border-color: var(--nav-green);
-    }
-    body .contact-section .cx-submit:disabled,
-    body .contact-section .cx-submit.is-locked {
-        background: var(--nav-green);
-        color: var(--nav-gold-light);
-    }
-
-    body #contactSuccess .bk-success-btn {
-        background: var(--nav-green);
-        color: var(--nav-gold-light);
-        border: 1px solid rgba(var(--nav-gold-rgb), 0.5);
-    }
-    body #contactSuccess .bk-success-btn:hover {
-        background: linear-gradient(135deg, var(--nav-gold-light), var(--nav-gold));
-        color: var(--nav-ink);
-    }
-
-    /* contact page: borders in the same gold as the cards */
-    body .contact-section .cx-social,
-    body .contact-section .cx-map-frame,
-    body .contact-section .cx-form-card,
-    body .contact-section .cx-info-card {
-        border: 1px solid var(--nav-gold) !important;
-    }
-
-    /* =====================================================================
-       SHARED GOLD PAGE THEME (one place for every page)
-       --page-bg = the page gold | --pw-all = wash strength over section photos
-       ===================================================================== */
-    :root {
-        --page-bg: #e0cf86;
-        --page-bg-soft: #ebdea0;
-        --page-text-muted: #4a4228;
-        --page-fade: rgba(224, 207, 134, 0);
-        --pw-all: rgba(224, 207, 134, 0.80);
-    }
-    html, body { background-color: var(--page-bg) !important; }
-
-    /* hero fallback colour behind the photos: brown */
-    body .page-header.page-hero,
-    body .page-header.about-hero { background-color: var(--nav-green) !important; }
-
-    /* muted text that sits directly on the gold */
-    body .section-title p,
-    body .pc-sub,
-    body .fq-text,
-    body .act-head p,
-    body .pk-head p,
-    body .pf-count,
-    body .pk-empty,
-    body .pk-nomatch,
-    body .gallery-empty,
-    body .contact-section .section-title p { color: var(--page-text-muted) !important; }
-    body .pk-section,
-body .why-choose-us,
-body .sv-section {
-    background-color: var(--page-bg) !important;
-    background-image: linear-gradient(var(--pw-all), var(--pw-all)) !important;
-    background-size: auto !important;
-    background-position: 0 0 !important;
-    background-repeat: no-repeat !important;
+    .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
 }
-body .sv-card { box-shadow: 0 8px 20px rgba(59, 42, 26, 0.15); }
-body .sv-card.active,
-body .sv-card:focus-visible,
-body .sv-grid.sv-js.sv-in .sv-card.active {
-    box-shadow: 0 12px 24px rgba(59, 42, 26, 0.28);
+/* ================= GREEN PREMIUM NAVBAR (no bubble pattern) ================= */
+:root {
+    --nav-green: #1F5B3A;     /* main green: darker = more premium, lighter = softer */
+    --nav-gold:  #e0b14a;     /* active / hover colour */
+    --nav-ink:   #12281f;     /* text colour on gold */
+}
+
+/* bar: solid green multiplied over nav4.png */
+.main-header .header-sticky,
+.main-header .header-sticky.hide,
+.main-header .header-sticky.active {
+    background-color: var(--nav-green) !important;
+    background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+    background-blend-mode: multiply !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center 70% !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 12px 36px rgba(6, 28, 20, 0.40) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+/* menu text: white, gold when active/hover */
+.main-header .nav-link { color: #ffffff !important; }
+.main-header .nav-link:hover,
+.main-header .nav-link.active { color: var(--nav-gold) !important; }
+
+/* logo: lighter shadow so it sits cleanly on green */
+.main-header .navbar-brand img {
+    filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+/* ================= Book Now (desktop): outlined white pill ================= */
+.main-header .header-btn .btn-default {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    transition: color .3s ease, border-color .3s ease, background-color .3s ease;
+}
+
+/* kill the theme's dark hover fill (it is drawn by ::after) */
+.main-header .header-btn .btn-default::after {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+}
+
+/* hover: GOLD fill, dark text, dark arrow */
+.main-header .header-btn .btn-default:hover {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+    border-color: var(--nav-gold) !important;
+    color: var(--nav-ink) !important;
+}
+.main-header .header-btn .btn-default:hover::after {
+    background: var(--nav-gold) !important;
+    background-color: var(--nav-gold) !important;
+}
+
+/* arrow icon: white normally, dark on gold hover */
+.main-header .header-btn .btn-default::before {
+    transition: filter .3s ease;
+}
+.main-header .header-btn .btn-default:hover::before {
+    filter: brightness(0) saturate(100%);   /* turns the white arrow dark */
+}
+
+/* dropdowns (Packages / Destinations): dark green panel */
+@media (min-width: 992px) {
+    .main-header .pk-nav-menu {
+        background: rgba(20, 70, 55, 0.97);
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow: 0 14px 36px rgba(6, 28, 20, 0.40);
+    }
+    .main-header .pk-nav-menu a { color: #ffffff !important; }
+    .main-header .pk-nav-menu a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--nav-gold) !important;
+    }
+}
+
+/* mobile / tablet */
+@media (max-width: 991px) {
+    .main-header .mobile-book-btn {
+        background: transparent;
+        border: 2px solid #ffffff;
+        color: #ffffff !important;
+        box-shadow: none;
+        padding: 10px 16px;
+    }
+    .main-header .mobile-book-btn:hover,
+    .main-header .mobile-book-btn:active {
+        background: var(--nav-gold) !important;
+        border-color: var(--nav-gold) !important;
+        color: var(--nav-ink) !important;
+    }
+
+    /* mobile zoom on nav4.png */
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active {
+        background-size: 150% auto !important;
+        background-position: center 65% !important;
+    }
+
+    .main-header .slicknav_nav {
+        background-color: var(--nav-green) !important;
+        background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+        background-blend-mode: multiply !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    .main-header .slicknav_nav a { color: #ffffff !important; }
+    .main-header .slicknav_nav a:hover,
+    .main-header .slicknav_nav a.active { color: var(--nav-gold) !important; }
+    .main-header .slicknav_nav .slicknav_arrow { color: #ffffff !important; }
+}
+
+/* very small phones: zoom nav4.png a little more */
+@media (max-width: 480px) {
+    .main-header .header-sticky,
+    .main-header .header-sticky.hide,
+    .main-header .header-sticky.active {
+        background-size: 190% auto !important;
+    }
+}
+/* ================= MOBILE / TABLET: gold hover on Book Now, plain menu toggle ================= */
+@media (max-width: 991px) {
+
+    /* Book Now pill in the bar */
+    .main-header .mobile-book-btn {
+        transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+    }
+    .main-header .mobile-book-btn:hover,
+    .main-header .mobile-book-btn:focus,
+    .main-header .mobile-book-btn:active {
+        background: var(--nav-gold) !important;
+        border-color: var(--nav-gold) !important;
+        color: var(--nav-ink) !important;
+        box-shadow: 0 4px 14px rgba(224, 177, 74, 0.45) !important;
+    }
+
+    /* Menu toggle (hamburger): no border, no hover / tap / open effect */
+    .main-header .slicknav_btn,
+    .main-header .slicknav_btn:hover,
+    .main-header .slicknav_btn:focus,
+    .main-header .slicknav_btn:active,
+    .main-header .slicknav_btn.slicknav_open {
+        background-color: rgba(255, 255, 255, 0.10) !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        outline: none !important;
+        transition: none !important;
+    }
+    .main-header .slicknav_btn .slicknav_icon-bar,
+    .main-header .slicknav_btn:hover .slicknav_icon-bar,
+    .main-header .slicknav_btn:focus .slicknav_icon-bar,
+    .main-header .slicknav_btn:active .slicknav_icon-bar,
+    .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
+        background-color: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    /* menu links: soft gold highlight when tapped */
+    .main-header .slicknav_nav a:hover,
+    .main-header .slicknav_nav a:active {
+        background: rgba(224, 177, 74, 0.14) !important;
+        color: var(--nav-gold) !important;
+    }
+}
+/* ================= MOBILE / TABLET: sticky Call + WhatsApp + Email bar ================= */
+.mb-contact-bar { display: none; }
+
+@media (max-width: 991px) {
+    .mb-contact-bar {
+        position: fixed; left: 0; right: 0; bottom: 0;
+        z-index: 1500;                       /* below the booking modal (2000) and the preloader (99999) */
+        display: flex;
+        background: var(--nav-green, #1F5B3A);
+        box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .mb-contact-bar a {
+        flex: 1;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 5px; padding: 10px 6px;
+        color: #ffffff !important;
+        font-size: 12.5px; font-weight: 700; line-height: 1;
+        text-decoration: none; white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+        transition: background-color .25s ease, color .25s ease;
+    }
+    .mb-contact-bar a i { font-size: 20px; }
+    .mb-contact-bar a + a { border-left: 1px solid rgba(255, 255, 255, 0.25); }
+
+    /* WhatsApp: brand green so it stands out */
+    .mb-contact-bar a.mb-wa { background: #25D366; color: #ffffff !important; }
+
+    .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f) !important; }
+    .mb-contact-bar a.mb-wa:active { background: #1ebe5a; }
+
+    /* keep the footer copyright from hiding behind the bar */
+    body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
 }
 </style>
 
@@ -1138,15 +918,7 @@ body .sv-grid.sv-js.sv-in .sv-card.active {
         </div>
     </div>
 
-    <!-- Scrolling Ticker -->
-    <div class="our-scrolling-ticker">
-        <div class="scrolling-ticker-box">
-            <div class="scrolling-content">
-                
-            </div>
-            
-        </div>
-    </div>
+    
 
     <!-- Footer -->
     <footer class="footer-main bg-section dark-section">
@@ -1223,8 +995,10 @@ body .sv-grid.sv-js.sv-in .sv-card.active {
     </footer>
 <!-- Mobile sticky contact bar -->
 <div class="mb-contact-bar">
-    <a href="tel:+918848333382"><i class="fa-solid fa-phone-volume"></i> Call Now</a>
-    <a href="mailto:malabaroutes@gmail.com"><i class="fa-solid fa-envelope"></i> Email Us</a>
+    <a href="tel:+918848333382" aria-label="Call us"><i class="fa-solid fa-phone-volume"></i><span>Call</span></a>
+    <a href="https://wa.me/919526220085?text=Hello%20Malabaroutes%2C%20I%20would%20like%20to%20plan%20a%20trip."
+       target="_blank" rel="noopener" class="mb-wa" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+    <a href="mailto:malabaroutes@gmail.com?subject=Trip%20enquiry" aria-label="Email us"><i class="fa-solid fa-envelope"></i><span>Email</span></a>
 </div>
     <!-- Scripts (order matters) -->
     <script src="{% static 'malabar-static/js/jquery-3.7.1.min.js' %}"></script>

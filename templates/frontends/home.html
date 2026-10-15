@@ -8,29 +8,17 @@
     Everything shared lives in base.html and is NOT repeated here:
     theme colours (:root), floating pill navbar, active-link highlight,
     booking modal, footer and the core scripts.
-    This file only holds the home page's own styles (extra_css),
-    its markup (content) and its own scripts (extra_js).
+
+    PAGE FLOW: everything after the hero lives inside ONE wrapper (.flow).
+    .flow owns the only background: the tall Kerala landscape. It scrolls
+    WITH the content (like one long sheet), and each text block sits on a
+    soft frosted panel so it stays readable.
+
+    Static file needed: malabar-static/Kerala_Tea_Hills_in_Sunrise_Mist.png
 {% endcomment %}
 
 {% block extra_css %}
 <style>
-    /* ================= GOLD PAGE COLOURS (was off-white #fcf7f6) =================
-       Change the gold ONLY here.
-         --page-bg   = main gold-cream (section colour + fade colour)
-         --pw-*      = strength of the gold wash over the section photos
-                       (higher alpha = photo fainter)
-       The hero, navbar, footer and preloader are not affected. */
-    :root {
-        --page-bg: #eadfae;                         /* was #fcf7f6 */
-        --page-bg-soft: #f1e8c1;                    /* lightest gold */
-        --page-text-muted: #4a4228;                 /* muted text on gold (was grey) */
-        --page-fade: rgba(234, 223, 174, 0);        /* transparent end of the fades (same colour as --page-bg) */
-        --pw-45: rgba(234, 223, 174, 0.45);
-        --pw-55: rgba(234, 223, 174, 0.55);
-        --pw-60: rgba(234, 223, 174, 0.60);
-    }
-    html, body { background-color: var(--page-bg) !important; }
-
     /* ================= HERO (inset, rounded corners) ================= */
     .hero {
         margin: 0 !important;
@@ -146,20 +134,132 @@
 
     @media (prefers-reduced-motion: reduce) { .hero .hero-bg.active { animation: none; } }
 
-    /* ================= ABOUT US background image (gold) ================= */
-    .about-us {
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(var(--pw-45), var(--pw-45)),
-            url('{% static 'malabar-static/mr5.png' %}');
-        background-size: 100% 200px, cover, cover;
-        background-position: bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat;
+    /* =====================================================================
+       ONE CONTINUOUS PAGE  (everything after the hero)
+       The tall landscape is stretched over the full height of .flow and
+       scrolls WITH the content (background-attachment: scroll).
+       ===================================================================== */
+ 
+.flow {
+    position: relative;
+    isolation: isolate;          /* keeps the fixed image behind the sections */
+    clip-path: inset(0);         /* stops the fixed image showing over the hero */
+    overflow-x: clip;
+    padding-bottom: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #e9efe6;
+}
+
+.flow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
+}
+    /* sections: no background, no borders, sit above the picture */
+    .about-us, .sv-section, .pk-section, .ac-section, .why-choose-us,
+    .ds-section, .tc-section, .pc-section, .fq-section {
+        position: relative;
+        background: none !important;
+        background-image: none !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+
+    /* one even rhythm between every section */
+    .about-us, .sv-section, .pk-section, .ac-section,
+    .ds-section, .tc-section, .pc-section, .fq-section {
+        padding-top: 45px !important;
+        padding-bottom: 45px !important;
+    }
+    .about-us { padding-top: 70px !important; }
+    .why-choose-us { padding-bottom: 45px !important; }
+    @media (max-width: 991px) {
+        .about-us, .sv-section, .pk-section, .ac-section,
+        .ds-section, .tc-section, .pc-section, .fq-section {
+            padding-top: 30px !important;
+            padding-bottom: 30px !important;
+        }
+        .about-us { padding-top: 40px !important; }
+        .why-choose-us { padding-bottom: 30px !important; }
+    }
+
+    /* ---------- frosted panels: text sits cleanly on the picture ---------- */
+    .about-us-content,
+    .sv-section .section-title,
+    .pk-section .section-title,
+    .ds-section .section-title,
+    .tc-section .section-title,
+    .ac-section .section-title,
+    .why-choose-us .section-title,
+    .why-choose-us .why-choose-list,
+    .pc-intro,
+    .pc-body,
+    .fq-left,
+    .tc-grid,
+    .ms-services .ms-nav {
+        background: rgba(252, 247, 246, 0.88);
+        -webkit-backdrop-filter: blur(8px);
+                backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        border-radius: 28px;
+        box-shadow: 0 14px 36px rgba(20, 40, 30, 0.16);
+    }
+
+    /* centred section headings: compact panel in the middle */
+    .sv-section .section-title,
+    .pk-section .section-title,
+    .ds-section .section-title,
+    .tc-section .section-title,
+    .ac-section .section-title,
+    .why-choose-us .section-title {
+        width: fit-content;
+        max-width: 820px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 24px 34px;
+    }
+    .why-choose-us .section-title { width: auto; max-width: none; margin-left: 0; margin-right: 0; margin-bottom: 20px; }
+
+    .about-us-content { padding: 36px 38px; }
+    .why-choose-us .why-choose-list { padding: 26px 28px; }
+    .pc-intro { padding: 34px 30px; }
+    .pc-body { padding: 18px 20px 20px; border-radius: 22px; }
+    .fq-left { padding: 30px 30px; }
+    .tc-grid { padding: 18px; }
+
+    /* carousel arrows + dots get a small pill so they stay visible */
+    .ms-services .ms-nav {
+        width: fit-content;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 10px 24px;
+        border-radius: 50px;
+    }
+
+    @media (max-width: 991px) {
+        .about-us-content { padding: 26px 22px; }
+        .pc-intro { padding: 26px 22px; }
+        .fq-left { padding: 26px 22px; margin-bottom: 30px; }
+        .why-choose-us .section-title { padding: 22px 22px; }
+        .sv-section .section-title,
+        .pk-section .section-title,
+        .ds-section .section-title,
+        .tc-section .section-title,
+        .ac-section .section-title { padding: 20px 22px; }
+    }
+    @media (max-width: 575px) {
+        .tc-grid { padding: 8px; }
+        .why-choose-us .why-choose-list { padding: 18px 16px; }
+        .ms-services .ms-nav { padding: 8px 16px; }
     }
 
     /* ================= ABOUT US (redesign) ================= */
-    .about-us { --ab-green: #265648; --ab-tint: #e4ece3; padding: 100px 0; position: relative; overflow: hidden; }
+    .about-us { --ab-green: #265648; --ab-tint: #e4ece3; position: relative; overflow: hidden; }
 
     .ab-collage { position: relative; width: 100%; max-width: 700px; margin: 0 auto; aspect-ratio: 1 / 1.08; }
     .ab-main {
@@ -259,8 +359,7 @@
     .about-us .ab-btn-line:hover { background: var(--ab-green); color: #fff; }
 
     @media (max-width: 991px) {
-        .about-us { padding: 60px 0; }
-        .ab-collage { margin-bottom: 44px; }
+        .ab-collage { margin-bottom: 30px; }
         .ab-leaf-1 { left: -3%; }
     }
     @media (max-width: 575px) {
@@ -343,24 +442,10 @@
         .ms-services .ms-dots { display: none; }
     }
 
-    /* ================= SERVICES (icon cards, same as the About page) =================
-       The "active" card (green fill + gold icon) is set by JS:
-       - desktop: cards light up one by one automatically, mouse hover takes over
-       - phones/tablets (no hover): the card nearest the screen centre lights up while scrolling
-       No :hover / :focus / :active rules are used, so nothing gets stuck after a tap. */
+    /* ================= SERVICES (icon cards, same as the About page) ================= */
     .sv-section {
         --sv-green: var(--nav-green, #1F5B3A);
         --sv-gold:  var(--nav-gold, #e0b14a);
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(var(--pw-45), var(--pw-45)),
-            url('{% static 'malabar-static/mr5.png' %}');
-        background-size: 100% 200px, 100% 200px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 20px 0 60px;
         position: relative;
         overflow: hidden;
     }
@@ -392,7 +477,6 @@
         touch-action: manipulation;
         transition: transform .5s cubic-bezier(.2, .7, .2, 1), border-color .4s ease, box-shadow .5s ease;
     }
-    /* green fill that grows out from the icon corner */
     .sv-card::before {
         content: "";
         position: absolute; inset: 0; z-index: -1;
@@ -429,7 +513,6 @@
     .sv-card.active .sv-ico,
     .sv-card:focus-visible .sv-ico { color: var(--sv-gold); transform: scale(1.08) rotate(-4deg); }
 
-    /* icon draws itself again when the card becomes active */
     .sv-card.active .sv-ico svg *,
     .sv-card:focus-visible .sv-ico svg * { animation: svDraw .9s ease-out both; }
     @keyframes svDraw {
@@ -445,7 +528,6 @@
         color: var(--sv-green);
         transition: color .4s ease .15s;
     }
-    /* small gold line under the title grows when active */
     .sv-card h3::after {
         content: "";
         position: absolute; left: 0; bottom: -12px;
@@ -467,7 +549,6 @@
     .sv-card.active p,
     .sv-card:focus-visible p { color: rgba(255, 255, 255, 0.84); }
 
-    /* cards rise in one by one when the section scrolls into view */
     .sv-grid.sv-js .sv-card { opacity: 0; transform: translateY(46px) scale(.96); }
     .sv-grid.sv-js.sv-in .sv-card {
         opacity: 1; transform: none;
@@ -483,7 +564,6 @@
         .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
     }
     @media (max-width: 991px) {
-        .sv-section { padding: 10px 0 40px; }
         .sv-section .section-row { margin-bottom: 0 !important; }
         .sv-section .section-title { margin-bottom: 0 !important; }
         .sv-card { padding: 28px 24px 30px; }
@@ -491,12 +571,10 @@
     }
     @media (max-width: 575px) {
         .sv-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 20px; }
-        .sv-section { padding-bottom: 28px; }
         .sv-card { padding: 24px 22px 26px; border-radius: 16px; }
         .sv-ico { width: 60px; height: 60px; margin-bottom: 20px; }
         .sv-card h3 { font-size: 21px; margin-bottom: 12px; }
         .sv-card p { font-size: 15px; }
-        /* on phones a smaller lift so cards never touch each other */
         .sv-card.active,
         .sv-grid.sv-js.sv-in .sv-card.active { transform: translateY(-4px); }
     }
@@ -523,22 +601,10 @@
         .fl-btn { padding: 8px 16px; font-size: 13px; border-width: 1.2px; }
     }
 
-    /* ================= POPULAR PACKAGES + RECENT ACTIVITIES: shared background (gold) ================= */
+    /* ================= POPULAR PACKAGES + RECENT ACTIVITIES ================= */
     .pk-section,
-    .ac-section {
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(var(--pw-45), var(--pw-45)),
-            url('{% static 'malabar-static/mr5.png' %}');
-        background-size: 100% 200px, 100% 200px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 60px 0 100px;
-        position: relative;
-    }
-        .pk-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
+    .ac-section { position: relative; }
+    .pk-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
 
     .pk-card {
         display: flex; flex-direction: column; height: 100%;
@@ -633,7 +699,7 @@
     }
 
     .pk-btn-fill { background: var(--pk-accent); border: 1.5px solid var(--pk-accent); color: #fff !important; }
-        .pk-btn-fill .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); }
+    .pk-btn-fill .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); }
     .pk-btn-fill:hover { background: var(--pk-gold); border-color: var(--pk-gold); color: var(--pk-dark) !important; }
     .pk-btn-fill:hover .pk-btn-ico { background: var(--pk-accent); color: #fff; transform: translateX(3px); }
 
@@ -641,7 +707,7 @@
     .pk-btn-line .pk-btn-ico { background: var(--pk-accent); color: #fff; }
     .pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
     .pk-btn-line:hover { background: var(--pk-accent); color: #fff !important; }
-        .pk-btn-line:hover .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); transform: translate(2px, -2px); }
+    .pk-btn-line:hover .pk-btn-ico { background: var(--pk-gold); color: var(--pk-dark); transform: translate(2px, -2px); }
 
     .pk-more { text-align: center; margin-top: 40px; }
     .pk-more a {
@@ -654,7 +720,6 @@
     .pk-more a:hover { background: #c9972b; border-color: #c9972b; }
 
     @media (max-width: 575px) {
-        .pk-section { padding-bottom: 60px; }
         .pk-card { padding: 16px 16px 20px; border-radius: 26px; }
         .pk-title { font-size: 22px; }
         .pk-desc { font-size: 15px; }
@@ -709,7 +774,7 @@
         font-size: 28px; font-weight: 600; line-height: 1.2;
         color: #1d2b24; margin: 0 0 10px; text-transform: none;
     }
-        .ac-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
+    .ac-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
     .ac-media > a { display: block; width: 100%; height: 100%; }
     .ac-title a { color: inherit; text-decoration: none; }
     .ac-title a:hover { color: var(--pk-accent); }
@@ -776,7 +841,6 @@
     .ac-more a:hover { background: #c9972b; border-color: #c9972b; }
 
     @media (max-width: 575px) {
-        .ac-section { padding-bottom: 60px; }
         .ac-title { font-size: 24px; }
         .ac-body { padding: 22px 22px 24px; }
     }
@@ -792,19 +856,6 @@
     @media (max-width: 575px) {
         .pk-card { height: auto; }
         .pk-media { height: 220px; flex-basis: 220px; }
-    }
-
-    /* ================= WHY CHOOSE US background (gold) ================= */
-    .why-choose-us {
-        background-color: var(--page-bg) !important;
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(var(--pw-45), var(--pw-45)),
-            url('{% static 'malabar-static/bg8.png' %}') !important;
-        background-size: 100% 200px, 100% 200px, cover, cover !important;
-        background-position: top, bottom, center, center !important;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat !important;
     }
 
     /* ===== Illustration straddling Packages and Why Choose Us ===== */
@@ -824,7 +875,6 @@
         transform: translate3d(var(--px, 0px), 0, 0) scale(var(--sc, 1));
     }
 
-    .sv-section    { padding-bottom: calc(var(--div-h) / 2 + 10px) !important; }
     .why-choose-us { padding-top: calc(var(--div-h) / 2 + 30px) !important; }
 
     @keyframes pkFloat {
@@ -861,7 +911,7 @@
     .why-choose-us .wc-btn:hover i { transform: translateX(4px); }
     .why-choose-us .wc-btn-fill { background: #265648; color: #fff; }
     .why-choose-us .wc-btn-fill:hover { background: #c9972b; border-color: #c9972b; color: #fff; }
-    .why-choose-us .wc-btn-line { background: transparent; color: #265648; }
+    .why-choose-us .wc-btn-line { background: rgba(252, 247, 246, 0.9); color: #265648; }
     .why-choose-us .wc-btn-line:hover { background: #265648; color: #fff; }
     @media (max-width: 991px) { .why-choose-us .wc-actions { margin-top: 36px; } }
     @media (max-width: 400px) {
@@ -902,19 +952,8 @@
         .why-choose-us .why-choose-image { width: calc(100% + 70px); margin-right: -70px; }
     }
 
-    /* ================= POPULAR DESTINATIONS (gold) ================= */
-    .ds-section {
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 200px),
-            linear-gradient(var(--pw-45), var(--pw-45)),
-            url('{% static 'malabar-static/bg7.png' %}');
-        background-size: 100% 200px, 100% 200px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 60px 0 100px; position: relative; overflow: hidden;
-    }
+    /* ================= POPULAR DESTINATIONS ================= */
+    .ds-section { position: relative; overflow: hidden; }
 
     .ds-fluid { max-width: 1640px; margin: 0 auto; padding: 0 30px; }
     .ds-section .ms-slide { padding: 0 14px; }
@@ -975,7 +1014,6 @@
         .ds-overlay { padding: 70px 18px 16px; }
     }
     @media (max-width: 575px) {
-        .ds-section { padding: 60px 0 70px; }
         .ds-fluid { padding: 0 16px; }
         .ds-section .ms-slide { padding: 0 8px; }
         .ds-card { border-radius: 24px; aspect-ratio: 4 / 4.6; }
@@ -985,18 +1023,9 @@
         .ds-go { display: flex; flex: 0 0 38px; width: 38px; height: 38px; font-size: 14px; }
     }
 
-    /* ================= TERMS & CONDITIONS (gold) ================= */
+    /* ================= TERMS & CONDITIONS ================= */
     .tc-section {
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(var(--pw-60), var(--pw-60)),
-            url('{% static 'malabar-static/mr5.png' %}');
-        background-size: 100% 160px, 100% 160px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 50px 0 90px; position: relative;
+        position: relative;
         --tc-green: var(--accent-color, #265648);
         --tc-tint: #dfe9dc;
         --tc-tint: color-mix(in srgb, var(--tc-green) 14%, #ffffff);
@@ -1063,7 +1092,6 @@
     }
     @media (max-width: 991px) { .tc-grid { grid-template-columns: 1fr; max-width: 640px; } }
     @media (max-width: 575px) {
-        .tc-section { padding: 40px 0 60px; }
         .tc-line { flex-basis: 30px; }
         .tc-item { padding: 20px 16px 24px; gap: 12px; }
         .tc-item::after { left: 16px; right: 16px; }
@@ -1072,19 +1100,10 @@
         .tc-text h3 { font-size: 16px; }
     }
 
-    /* ================= TESTIMONIALS: Postcards from the road (gold) ================= */
+    /* ================= TESTIMONIALS: Postcards from the road ================= */
     .pc-section {
         --pc-green: #12281f; --pc-gold: #c9972b;
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(var(--pw-55), var(--pw-55)),
-            url('{% static 'malabar-static/bg7.png' %}');
-        background-size: 100% 160px, 100% 160px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 100px 0 110px; position: relative; overflow: hidden;
+        position: relative; overflow: hidden;
     }
     @media (min-width: 1200px) { .pc-section .container { max-width: 1440px; } }
     @media (min-width: 1600px) { .pc-section .container { max-width: 1560px; } }
@@ -1163,7 +1182,7 @@
         stroke-dasharray: 1 7; stroke-linecap: round;
         vector-effect: non-scaling-stroke;
     }
-    .pc-body { text-align: left; padding: 0 14px; }
+    .pc-body { text-align: left; }
     .pc-stars { color: var(--pc-gold); font-size: 18px; letter-spacing: 3px; margin-bottom: 12px; }
     .pc-quote {
         position: relative; font-size: 22px; line-height: 1.5; color: var(--pc-green);
@@ -1180,8 +1199,7 @@
     .pc-author::before { content: ""; width: 28px; height: 1px; background: #8a948f; }
 
     @media (max-width: 991px) {
-        .pc-section { padding: 60px 0 70px; }
-        .pc-intro { text-align: center; padding: 0 0 40px; }
+        .pc-intro { text-align: center; padding: 26px 22px; margin-bottom: 30px; }
         .pc-eyebrow { justify-content: center; }
         .pc-sub { margin-left: auto; margin-right: auto; }
         .pc-swirl { margin: 0 auto; display: block; }
@@ -1192,27 +1210,18 @@
         .pc-author { font-size: 16px; padding-left: 34px; }
     }
 
-    /* ================= FAQ (gold) ================= */
+    /* ================= FAQ ================= */
     .fq-section {
         --fq-green: var(--accent-color, #265648);
         --fq-tint: #dfe9dc;
         --fq-tint: color-mix(in srgb, var(--fq-green) 14%, #ffffff);
-        background-color: var(--page-bg);
-        background-image:
-            linear-gradient(to bottom, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(to top, var(--page-bg) 0, var(--page-fade) 160px),
-            linear-gradient(var(--pw-60), var(--pw-60)),
-            url('{% static 'malabar-static/mr5.png' %}');
-        background-size: 100% 160px, 100% 160px, cover, cover;
-        background-position: top, bottom, center, center;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        padding: 80px 0 100px; position: relative;
+        position: relative;
     }
     @media (min-width: 1200px) { .fq-section .container { max-width: 1440px; } }
     @media (min-width: 1600px) { .fq-section .container { max-width: 1560px; } }
     .fq-section .row { align-items: stretch; }
 
-    .fq-left { position: sticky; top: 130px; padding-left: 24px; }
+    .fq-left { position: sticky; top: 130px; }
     .fq-tag {
         display: inline-flex; align-items: center; padding: 8px 18px;
         border-radius: 50px; border: 1px solid rgba(0, 0, 0, 0.1);
@@ -1250,7 +1259,7 @@
 
     .fq-list { display: flex; flex-direction: column; gap: 16px; }
     .fq-item {
-        border-radius: 22px; background: rgba(255, 255, 255, 0.78);
+        border-radius: 22px; background: rgba(255, 255, 255, 0.86);
         border: 1px solid rgba(20, 40, 30, 0.05);
         box-shadow: 0 8px 22px rgba(20, 40, 30, 0.07);
         transition: background 0.4s ease, box-shadow 0.4s ease;
@@ -1282,8 +1291,7 @@
     .fq-a p { margin: 0; padding: 0 28px 28px 62px; font-size: 16px; line-height: 1.7; color: #4a5565; }
 
     @media (max-width: 991px) {
-        .fq-section { padding: 60px 0 70px; }
-        .fq-left { position: static; padding: 0 0 36px; }
+        .fq-left { position: static; }
     }
     @media (max-width: 575px) {
         .fq-q { padding: 20px 18px; font-size: 16px; gap: 12px; }
@@ -1447,13 +1455,13 @@
         .main-header .mobile-book-btn { padding: 9px 14px; font-size: 12.5px; }
     }
 
-    /* ================= TOP CONTACT BAR: always fixed (gold) ================= */
+    /* ================= TOP CONTACT BAR: always fixed ================= */
     .top-bar {
         position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: auto !important;
         z-index: 1001; background: transparent !important; pointer-events: none;
     }
     .top-bar::after { content: none !important; display: none !important; }
-    .top-bar-inner { pointer-events: auto; background: var(--page-bg); padding: 0 18px; border-radius: 0 0 16px 16px; }
+    .top-bar-inner { pointer-events: auto; background: #fcf7f6; padding: 0 18px; border-radius: 0 0 16px 16px; }
     @media (max-width: 991px) { .top-bar-inner { padding: 0 14px; } }
 
     /* ================= TOP BAR: hidden while the preloader is showing ================= */
@@ -1475,7 +1483,6 @@
 
     /* ===== Mobile: Popular Packages (same as About page) ===== */
     @media (max-width: 575px) {
-        .pk-section { padding-top: 40px; }
         .pk-section .section-title h2 { font-size: 28px !important; }
         .pk-section .section-title p { font-size: 14px; }
         .pk-card { padding: 12px 12px 16px; border-radius: 22px; }
@@ -1521,33 +1528,6 @@
         .hero .hero-eyebrow { font-size: 12.5px; margin-bottom: 16px; }
     }
 
-    /* ================= COMPACT: Services -> Popular Packages ================= */
-    .sv-section { padding-bottom: 20px !important; }
-    .pk-section { padding-top: 20px !important; }
-
-    @media (max-width: 991px) {
-        .sv-section { padding-bottom: 10px !important; }
-        .pk-section { padding-top: 10px !important; }
-    }
-    @media (max-width: 575px) {
-        .sv-section { padding-bottom: 0 !important; }
-        .pk-section { padding-top: 10px !important; }
-    }
-
-    /* ================= COMPACT: About Us -> Services ================= */
-    .about-us { padding-bottom: 30px !important; }
-    .sv-section { padding-top: 20px !important; }
-
-    @media (max-width: 991px) {
-        .about-us { padding-bottom: 20px !important; }
-        .sv-section { padding-top: 10px !important; }
-        .ab-collage { margin-bottom: 30px; }
-    }
-    @media (max-width: 575px) {
-        .about-us { padding-bottom: 10px !important; }
-        .sv-section { padding-top: 0 !important; }
-    }
-
     /* ================= MOBILE / TABLET: taller hero image ================= */
     @media (max-width: 991px) {
         .hero .hero-section,
@@ -1557,6 +1537,7 @@
             padding: 160px 0 70px !important;
         }
     }
+
     @media (max-width: 575px) {
         .hero .hero-section,
         .hero .hero-section.hero-bg-image {
@@ -1566,7 +1547,7 @@
         }
     }
 
-    /* ================= PALETTE FROM base.html (keep at the very end) ================= */
+    /* ================= PALETTE FROM base.html ================= */
 
     /* About Us */
     .about-us { --ab-green: var(--nav-green, #1F5B3A); }
@@ -1637,89 +1618,919 @@
     .why-choose-us .why-choose-list-item .icon-box:hover {
         background-color: var(--nav-gold, #e0b14a) !important;
     }
-    /* icon turns dark so it stays readable on gold */
     .why-choose-us .why-choose-list-item:hover .icon-box img,
     .why-choose-us .why-choose-list-item .icon-box:hover img {
         filter: brightness(0) !important;
     }
 
-    /* grey paragraph text on the gold page: warm dark instead of grey */
-    body .section-title p,
-    body .pc-sub,
-    body .fq-text,
-    body .why-choose-us p,
-    body .pc-eyebrow,
-    body .about-us-content p { color: var(--page-text-muted); }
-    /* =====================================================================
-   ONE SAME GOLD ON EVERY SECTION (no fades, no bands)
-   --pw-all = how strongly the gold covers each section photo.
-              0.80 = photo faint   |   1 = perfectly flat gold, no photo
-   ===================================================================== */
-:root {
-    --pw-all: rgba(234, 223, 174, 0.80);
+    /* ================= FINAL SPACING (keep at the very end) =================
+       Packages leaves room for the divider illustration, nothing else changes */
+    .pk-section { padding-bottom: calc(var(--div-h) / 2 + 10px) !important; }
+    @media (max-width: 575px) { .pk-section { padding-bottom: calc(var(--div-h) / 2 + 6px) !important; } }
+
+ /* ===== NO PANELS: plain text straight on the background ===== */
+.flow .about-us-content,
+.flow .sv-section .section-title,
+.flow .pk-section .section-title,
+.flow .ds-section .section-title,
+.flow .tc-section .section-title,
+.flow .ac-section .section-title,
+.flow .why-choose-us .section-title,
+.flow .why-choose-us .why-choose-list,
+.flow .pc-intro,
+.flow .pc-body,
+.flow .fq-left,
+.flow .tc-grid,
+.flow .ms-services .ms-nav {
+    background: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
 
-body .about-us,
-body .sv-section,
-body .pk-section,
-body .ac-section,
-body .why-choose-us,
-body .ds-section,
-body .tc-section,
-body .pc-section,
-body .fq-section {
-    background-color: var(--page-bg) !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+/* ===== ISLAND between Destinations and Testimonials ===== */
+:root { --isl-w: min(48vw, 780px); --isl-h: calc(var(--isl-w) * 0.667); }
+
+.ds-island { position: relative; z-index: 5; height: 0; pointer-events: none; }
+.ds-island-img {
+    position: absolute;
+    right: -2vw;
+    top: calc(var(--isl-h) * -0.72);
+    width: var(--isl-w);
+    height: auto;
+    filter: drop-shadow(0 22px 30px rgba(20, 40, 30, 0.25));
+    animation: islFloat 6s ease-in-out infinite;
+}
+@keyframes islFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
 }
 
-/* each section keeps its own photo, under the same gold wash */
-body .about-us,
-body .sv-section,
-body .pk-section,
-body .ac-section,
-body .tc-section,
-body .fq-section {
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/mr5.png" %}') !important;
+.ds-route {
+    position: absolute;
+    left: 40%;
+    top: calc(var(--isl-h) * -0.30);
+    width: 60%;
+    height: 340px;
+    overflow: visible;
 }
-body .why-choose-us {
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg8.png" %}') !important;
+.ds-route path {
+    fill: none;
+    stroke: #c9972b;
+    stroke-width: 2.2;
+    stroke-dasharray: 2 8;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
 }
-body .ds-section,
-body .pc-section {
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg7.png" %}') !important;
-}
-/* slightly bolder gold (was #eadfae) */
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-fade: rgba(224, 207, 134, 0);
-    --pw-all: rgba(224, 207, 134, 0.80);   /* wash over the section photos */
-}
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-text-muted: #4a4228;
-    --page-fade: rgba(224, 207, 134, 0);
-    --pw-all: rgba(224, 207, 134, 0.80);
-}
-html, body { background-color: var(--page-bg) !important; }
-
-/* hero fallback colour behind the photos */
-body .page-header.page-hero,
-body .page-header.about-hero { background-color: var(--nav-green, #111111) !important; }
-body .hero {
-    background-color: var(--page-bg) !important;
-    background-image: none !important;
+.isl-pin { position: absolute; color: var(--nav-green, #1F5B3A); font-size: 26px; line-height: 1; }
+.isl-pin-1 { left: 52%; top: calc(var(--isl-h) * -0.30 + 40px); }
+.isl-pin-2 { right: 5%;  top: calc(var(--isl-h) * -0.30 + 300px); }
+.ds-boat {
+    position: absolute;
+    left: 66%;
+    top: calc(var(--isl-h) * -0.30 + 150px);
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--nav-green, #1F5B3A);
+    color: #fff;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
 }
 
+/* desktop: 3 cards on the left, island on the right */
+@media (min-width: 992px) {
+    .ds-section .ds-fluid {
+        width: 64%;
+        max-width: none;
+        margin: 0;
+        padding-left: 40px;
+        padding-right: 20px;
+    }
+    .ds-section .ds-card { aspect-ratio: 9 / 10; }
+    .flow .ds-section .ms-nav {
+        width: 64% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 40px !important;
+        padding-right: 20px !important;
+    }
+    .flow .pc-section { padding-top: calc(var(--isl-h) * 0.28 + 20px) !important; }
+}
+
+/* tablet + mobile: island centred, no route */
+@media (max-width: 991px) {
+    :root { --isl-w: min(86vw, 520px); }
+    .ds-island { height: auto; margin: 10px 0 0; }
+    .ds-island-img { position: relative; display: block; right: auto; top: auto; margin: 0 auto; }
+    .ds-route, .isl-pin, .ds-boat { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .ds-island-img { animation: none; }
+}
+/* ===== Island: fade the photo edges so it blends into the page ===== */
+.ds-island-img {
+    filter: none;                               /* drop shadow would outline the box */
+    width: calc(var(--isl-w) * 1.15);
+    right: -4vw;
+    top: calc(var(--isl-h) * -0.85);
+
+    -webkit-mask-image:
+        linear-gradient(to right,  transparent 0, #000 22%, #000 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+    -webkit-mask-composite: source-in;
+            mask-image:
+        linear-gradient(to right,  transparent 0, #000 22%, #000 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+            mask-composite: intersect;
+}
+
+/* testimonial cards sit in front of the island so the two sections connect */
+.flow .pc-section { z-index: 6; }
+
+@media (max-width: 991px) {
+    .ds-island-img { width: min(92vw, 560px); right: auto; top: auto; }
+}
+/* ===== Island: large, straddling Destinations and Testimonials ===== */
+:root { --isl-w: min(58vw, 980px); }
+
+.ds-island-img {
+    width: calc(var(--isl-w) * 1.1);
+    right: -5vw;
+    top: calc(var(--isl-h) * -0.60);
+}
+
+/* route, pin and boat follow the new island position */
+.ds-route  { top: calc(var(--isl-h) * -0.15); }
+.isl-pin-1 { top: calc(var(--isl-h) * -0.15 + 40px); }
+.ds-boat   { top: calc(var(--isl-h) * -0.15 + 150px); }
+.isl-pin-2 { top: calc(var(--isl-h) * -0.15 + 300px); }
+
+@media (min-width: 992px) {
+    /* cards get a bit narrower so the bigger island never covers them */
+    .ds-section .ds-fluid { width: 56%; }
+    .flow .ds-section .ms-nav { width: 56% !important; }
+
+    /* testimonials start lower so the island sits above their cards */
+    .flow .pc-section {
+        z-index: 6;
+        padding-top: calc(var(--isl-h) * 0.55 + 20px) !important;
+    }
+}
+
+@media (max-width: 991px) {
+    :root { --isl-w: min(94vw, 620px); }
+    .ds-island-img { width: var(--isl-w); right: auto; top: auto; }
+}
+/* ===== TIGHTER GAPS between ALL sections ===== */
+.flow .about-us,
+.flow .sv-section,
+.flow .pk-section,
+.flow .ac-section,
+.flow .ds-section,
+.flow .tc-section,
+.flow .pc-section,
+.flow .fq-section {
+    padding-top: 16px !important;
+    padding-bottom: 16px !important;
+}
+.flow .about-us { padding-top: 40px !important; }
+
+/* section heading blocks: less space around them */
+.flow .section-title { margin-bottom: 0 !important; }
+.flow .section-row   { margin-bottom: 10px !important; }
+.flow .sv-grid       { margin-top: 16px; }
+
+/* space under carousels and button rows */
+.flow .ms-services .ms-nav,
+.flow .pk-carousel-wrap .ms-nav,
+.flow .ds-section .ms-nav,
+.flow .pc-wrap .ms-nav { margin-top: 24px; }
+.flow .pk-more,
+.flow .ac-more { margin-top: 24px; }
+
+/* packages -> divider -> why choose us */
+.flow .pk-section { padding-bottom: calc(var(--div-h) / 2 - 10px) !important; }
+.flow .why-choose-us {
+    padding-top: calc(var(--div-h) / 2 + 6px) !important;
+    padding-bottom: 16px !important;
+}
+
+/* destinations -> island -> testimonials */
+@media (min-width: 992px) {
+    .flow .pc-section { padding-top: calc(var(--isl-h) * 0.35 + 10px) !important; }
+}
+
+@media (max-width: 991px) {
+    .flow .about-us,
+    .flow .sv-section,
+    .flow .pk-section,
+    .flow .ac-section,
+    .flow .ds-section,
+    .flow .tc-section,
+    .flow .pc-section,
+    .flow .fq-section {
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+    }
+    .flow .about-us { padding-top: 24px !important; }
+    .flow .why-choose-us { padding-top: calc(var(--div-h) / 2 + 4px) !important; padding-bottom: 10px !important; }
+}
+/* ===== Island moves up into the free space beside the destination cards ===== */
+@media (min-width: 992px) {
+    .ds-island-img {
+        top: calc(var(--isl-h) * -1.08);   /* higher = more negative */
+        right: -3vw;
+    }
+
+    /* route, pin and boat follow the island up */
+    .ds-route  { top: calc(var(--isl-h) * -0.55); }
+    .isl-pin-1 { top: calc(var(--isl-h) * -0.55 + 40px); }
+    .ds-boat   { top: calc(var(--isl-h) * -0.55 + 150px); }
+    .isl-pin-2 { top: calc(var(--isl-h) * -0.55 + 300px); }
+
+    /* the island no longer hangs over Testimonials, so keep that gap small */
+    .flow .pc-section { padding-top: 16px !important; }
+}
+/* Island: same size and position, just layered BEHIND Destinations + Testimonials */
+.flow .ds-island { z-index: 0 !important; }
+
+.flow .ds-section,
+.flow .pc-section {
+    position: relative !important;
+    z-index: 2 !important;
+}
+/* Island: slightly smaller than before */
+@media (min-width: 992px) {
+    .ds-island-img {
+        width: calc(var(--isl-w) * 1.5) !important;
+        right: -4vw !important;
+    }
+}
+/* Island: no floating, stays still */
+.ds-island-img {
+    animation: none !important;
+    transform: none !important;
+}
+/* Island: softer, longer edge fade so the top blends into the background */
+.ds-island-img {
+    -webkit-mask-image:
+        linear-gradient(to right,  transparent 0, rgba(0,0,0,.6) 14%, #000 34%, #000 80%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 18%, #000 45%, #000 80%, transparent 100%) !important;
+    -webkit-mask-composite: source-in !important;
+            mask-image:
+        linear-gradient(to right,  transparent 0, rgba(0,0,0,.6) 14%, #000 34%, #000 80%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 18%, #000 45%, #000 80%, transparent 100%) !important;
+            mask-composite: intersect !important;
+}
+
+/* ===== Maximum tight gaps between sections ===== */
+.flow .about-us,
+.flow .sv-section,
+.flow .pk-section,
+.flow .ac-section,
+.flow .ds-section,
+.flow .tc-section,
+.flow .pc-section,
+.flow .fq-section {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+.flow .about-us { padding-top: 10px !important; }
+
+/* space inside each section */
+.flow .section-row   { margin-bottom: 0 !important; }
+.flow .section-title { margin-bottom: 0 !important; padding-top: 6px !important; padding-bottom: 6px !important; }
+.flow .sv-grid       { margin-top: 4px !important; }
+
+/* space under carousels and button rows */
+.flow .ms-services .ms-nav,
+.flow .pk-carousel-wrap .ms-nav,
+.flow .ds-section .ms-nav,
+.flow .pc-wrap .ms-nav { margin-top: 6px !important; }
+.flow .pk-more,
+.flow .ac-more { margin-top: 6px !important; }
+
+/* Why Choose Us */
+.flow .why-choose-us { padding-bottom: 0 !important; }
+
+@media (min-width: 992px) {
+    .flow .pc-section { padding-top: 0 !important; }
+}
+
+@media (max-width: 991px) {
+    .flow .about-us,
+    .flow .sv-section,
+    .flow .pk-section,
+    .flow .ac-section,
+    .flow .ds-section,
+    .flow .tc-section,
+    .flow .pc-section,
+    .flow .fq-section {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .flow .about-us { padding-top: 8px !important; }
+}
+/* ===== Waterfall image: fills the left empty space, fades only toward the cards ===== */
+@media (min-width: 992px) {
+    .ds-left-img {
+        left: -2vw !important;
+        top: -16vw !important;
+        width: 50vw !important;
+        opacity: 1 !important;
+
+        -webkit-mask-image:
+            linear-gradient(to right,  #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%) !important;
+        -webkit-mask-composite: source-in !important;
+                mask-image:
+            linear-gradient(to right,  #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%) !important;
+                mask-composite: intersect !important;
+    }
+}
+/* ===== Testimonials intro: light text with dark shadow, readable on the trees ===== */
+@media (min-width: 992px) {
+    .flow .pc-sub,
+    .flow .pc-g-score {
+        color: #ffffff !important;
+        font-weight: 600;
+        text-shadow:
+            0 1px 3px rgba(0,0,0,.85),
+            0 0 10px rgba(0,0,0,.7),
+            0 0 22px rgba(0,0,0,.55);
+    }
+}
+/* ===== Tea hills image: clear and strong all the way down ===== */
+.ac-right-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .ac-section { isolation: isolate; }
+
+    .ac-right-img {
+        display: block;
+        position: absolute;
+        right: -3vw;
+        top: -16vw;
+        width: 50vw;
+        height: calc(100% + 16vw + 30vw);   /* last number = how far it reaches into Terms */
+        object-fit: cover;
+        object-position: 35% 100%;
+        pointer-events: none;
+        z-index: -1;
+
+        -webkit-mask-image:
+            linear-gradient(to left,   #000 0, #000 60%, transparent 100%),
+            linear-gradient(to bottom,
+                transparent 0,
+                rgba(0,0,0,.7) 8%,
+                #000 20%,
+                #000 60%,
+                rgba(0,0,0,.85) 80%,
+                transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left,   #000 0, #000 60%, transparent 100%),
+            linear-gradient(to bottom,
+                transparent 0,
+                rgba(0,0,0,.7) 8%,
+                #000 20%,
+                #000 60%,
+                rgba(0,0,0,.85) 80%,
+                transparent 100%);
+                mask-composite: intersect;
+    }
+}
+/* ===== Bekal Fort image: left side of Terms & Conditions, blended ===== */
+.tc-left-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .tc-section { isolation: isolate; }
+
+    .tc-left-img {
+        display: block;
+        position: absolute;
+        left: -3vw;
+        top: 2vw;                            /* moved down */
+        width: 52vw;
+        height: calc(100% + 4vw);
+        object-fit: cover;
+        object-position: 30% 50%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.9;
+
+        /* solid at the left edge, melts into the page toward the right, top and bottom */
+        -webkit-mask-image:
+            linear-gradient(to right,  #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right,  #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+                mask-composite: intersect;
+    }
+}
+/* ===== Backwaters image: right empty area of FAQ, soft blended edges ===== */
+.fq-right-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .fq-section { isolation: isolate; }
+
+    .fq-right-img {
+        display: block;
+        position: absolute;
+        right: -3vw;
+        top: 4vw;                       /* starts a bit lower, away from the tea hills above */
+        width: 44vw;
+        height: calc(100% - 4vw);
+        object-fit: cover;
+        object-position: 50% 60%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.85;
+
+        /* long fade at the top so the blue sky melts away; soft on the left and bottom */
+        -webkit-mask-image:
+            linear-gradient(to left,   #000 0, #000 40%, rgba(0,0,0,.5) 75%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.25) 15%, rgba(0,0,0,.7) 32%, #000 50%, #000 82%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left,   #000 0, #000 40%, rgba(0,0,0,.5) 75%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.25) 15%, rgba(0,0,0,.7) 32%, #000 50%, #000 82%, transparent 100%);
+                mask-composite: intersect;
+    }
+
+    .flow .fq-left .pc-eyebrow,
+    .flow .fq-left h2,
+    .flow .fq-text {
+        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+    }
+    .flow .fq-text { font-weight: 600; color: #2b3a35; }
+}
+/* ===== Varkala image: left side of FAQ, blended ===== */
+.fq-left-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .fq-section { isolation: isolate; }
+
+    .fq-left-img {
+        display: block;
+        position: absolute;
+        left: -4vw;
+        top: 6vw;                         /* starts below the Terms area, so the images don't touch */
+        width: 44vw;
+        height: calc(100% - 6vw);
+        object-fit: cover;
+        object-position: 35% 50%;         /* keeps the cliff and beach in view */
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.85;
+
+        /* solid at the left edge, long soft fade toward the questions, top and bottom */
+        -webkit-mask-image:
+            linear-gradient(to right,  #000 0, #000 30%, rgba(0,0,0,.5) 65%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.4) 12%, #000 30%, #000 80%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right,  #000 0, #000 30%, rgba(0,0,0,.5) 65%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.4) 12%, #000 30%, #000 80%, transparent 100%);
+                mask-composite: intersect;
+    }
+}
+/* ===== About Us: waterfall as faded background on the left (same as Testimonials) ===== */
+.ab-left-img { display: none; }
+
+@media (min-width: 992px) {
+    .about-us { isolation: isolate; }
+
+    .ab-left-img {
+        display: block;
+        position: absolute;
+        left: 2vw;                 /* moved right (was -2vw) */
+        top: 3vw;                  /* moved down (was 0) */
+        width: 46vw;
+        height: calc(100% - 3vw);  /* keeps the bottom edge in place */
+        object-fit: cover;
+        object-position: 30% 55%;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 1;
+
+        -webkit-mask-image:
+            linear-gradient(to right,  #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right,  #000 0, #000 55%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+                mask-composite: intersect;
+    }}
+
+    /* houseboat/hill collage and the text column move right, together */
+   /* collage + text move right together, into the empty space */
+/* About Us: shift text + collage to the right */
+/* About Us: shift text + collage to the right */
+@media (min-width: 992px) {
+    .flow .about-us .container .row {
+        transform: translateX(clamp(80px, 12vw, 230px)) !important;
+    }
+}
+/* swap sides: text on the left, collage on the right */
+.about-us .row { flex-direction: row-reverse; }
+.about-us .container { padding-left: 12px; left: 0; }
+/* About Us: make text clearly readable over the waterfall */
+@media (min-width: 992px) {
+    /* soft white haze over the picture, strongest behind the text */
+    .about-us::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 62%;
+        height: 100%;
+        z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(to right,
+            rgba(255,255,255,.80) 0,
+            rgba(255,255,255,.72) 55%,
+            rgba(255,255,255,0) 100%);
+    }
+
+    /* heading + paragraph: darker text with a white glow */
+    .about-us .ab-title-wrap p {
+        color: #1d2b24;
+        font-weight: 500;
+        text-shadow: 0 0 3px #fff, 0 0 8px rgba(255,255,255,.95), 0 0 16px rgba(255,255,255,.8);
+    }
+    .about-us .ab-title-wrap h2,
+    .about-us .ab-tag {
+        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+    }
+
+    /* the five cards: more solid so the picture doesn't show through */
+    .about-us .ab-row {
+        background: rgba(255,255,255,.96);
+    }
+}
+/* About Us waterfall: flush left, melts into the sections above and below */
+@media (min-width: 992px) {
+    /* stop the section from clipping the image */
+    .about-us { overflow: visible !important; }
+
+    .about-us .ab-left-img {
+        left: 0 !important;
+        top: 0 !important;
+        width: 52vw !important;
+        height: calc(100% + 8vw) !important;   /* runs 8vw into the Services section */
+        object-position: 30% 55%;
+
+        -webkit-mask-image:
+            linear-gradient(to right,
+                transparent 0,
+                rgba(0,0,0,.6) 4%,
+                #000 12%,
+                #000 55%,
+                rgba(0,0,0,.5) 80%,
+                transparent 100%),
+            linear-gradient(to bottom,
+                transparent 0,
+                rgba(0,0,0,.4) 8%,
+                #000 22%,
+                #000 60%,
+                rgba(0,0,0,.6) 78%,
+                rgba(0,0,0,.2) 92%,
+                transparent 100%) !important;
+        -webkit-mask-composite: source-in !important;
+                mask-image:
+            linear-gradient(to right,
+                transparent 0,
+                rgba(0,0,0,.6) 4%,
+                #000 12%,
+                #000 55%,
+                rgba(0,0,0,.5) 80%,
+                transparent 100%),
+            linear-gradient(to bottom,
+                transparent 0,
+                rgba(0,0,0,.4) 8%,
+                #000 22%,
+                #000 60%,
+                rgba(0,0,0,.6) 78%,
+                rgba(0,0,0,.2) 92%,
+                transparent 100%) !important;
+                mask-composite: intersect !important;
+    }
+
+    /* readability haze: fades out top and bottom so it leaves no edge */
+    .about-us::before {
+        width: 66%;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 80%, transparent 100%);
+    }
+}
+/* Popular Packages: cards on the left, wildlife image on the right */
+.pk-right-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .pk-section { isolation: isolate; overflow: visible !important; }
+
+    /* cards + heading stay on the left */
+    .flow .pk-section .container {
+        width: 60% !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: auto !important;
+        padding-left: 40px !important;
+        padding-right: 20px !important;
+    }
+
+    /* wls.png: extends behind the cards, strongest on the right */
+    .pk-right-img {
+        display: block;
+        position: absolute;
+        right: -2vw;
+        top: -4vw;
+        width: 72vw;                      /* was 46vw: reaches in behind the cards */
+        height: calc(100% + 16vw);
+        object-fit: cover;
+        object-position: 70% 50%;         /* keeps the main subject on the right */
+        pointer-events: none;
+        z-index: -1;
+        opacity: 1;
+
+        -webkit-mask-image:
+            linear-gradient(to left,   #000 0, #000 40%, rgba(0,0,0,.55) 65%, rgba(0,0,0,.2) 85%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.6) 6%, #000 16%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left,   #000 0, #000 40%, rgba(0,0,0,.55) 65%, rgba(0,0,0,.2) 85%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.6) 6%, #000 16%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
+                mask-composite: intersect;
+    }
+
+    /* heading stays readable over the picture */
+    .flow .pk-section .section-title h2,
+    .flow .pk-section .section-title p {
+        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+    }
+}
+/* Services: Varkala image on the left, cards on the right */
+.sv-right-img { display: none; }
+
+@media (min-width: 992px) {
+    .flow .sv-section { isolation: isolate; overflow: visible !important; }
+
+    /* cards + heading on the right, leaving room on the left */
+    .flow .sv-section .container {
+        width: 72% !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        padding-left: 20px !important;
+        padding-right: 40px !important;
+    }
+
+    /* 2 cards per row on laptops, 3 per row on wide screens */
+    .flow .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+
+    /* Varkala image: fills the left side, melts into the page */
+    .sv-right-img {
+        display: block;
+        position: absolute;
+        left: -2vw;
+        right: auto;
+        top: 0;
+        width: 36vw;                    /* was 42vw */
+        height: 100%;
+        object-fit: cover;
+        object-position: 30% 50%;       /* shows the cliff and beach */
+        pointer-events: none;
+        z-index: -1;
+
+        -webkit-mask-image:
+            linear-gradient(to right,  #000 0, #000 60%, rgba(0,0,0,.5) 82%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 8%, #000 20%, #000 80%, rgba(0,0,0,.5) 92%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right,  #000 0, #000 60%, rgba(0,0,0,.5) 82%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 8%, #000 20%, #000 80%, rgba(0,0,0,.5) 92%, transparent 100%);
+                mask-composite: intersect;
+    }
+
+    /* heading stays readable over the picture */
+    .flow .sv-section .section-title h2,
+    .flow .sv-section .section-title p {
+        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+    }
+}
+
+@media (min-width: 1500px) {
+    .flow .sv-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* Why Choose Us: text + image both move right */
+@media (min-width: 992px) {
+    .flow .why-choose-us .container .row {
+        transform: translateX(clamp(60px, 9vw, 180px)) !important;
+    }
+}
+.wc-left-img {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;                           /* was 1vw */
+    width: 56vw;                      /* was 50vw */
+    height: calc(100% + 4vw);         /* was calc(100% + 2vw) */
+    object-fit: cover;
+    object-position: 30% 50%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: .9;
+
+    -webkit-mask-image:
+        linear-gradient(to right,  #000 0, #000 45%, rgba(0,0,0,.45) 75%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 10%, #000 24%, #000 76%, rgba(0,0,0,.5) 90%, transparent 100%);
+    -webkit-mask-composite: source-in;
+            mask-image:
+        linear-gradient(to right,  #000 0, #000 45%, rgba(0,0,0,.45) 75%, transparent 100%),
+        linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 10%, #000 24%, #000 76%, rgba(0,0,0,.5) 90%, transparent 100%);
+            mask-composite: intersect;
+}
+/* ===== MOBILE / TABLET: clear picture backdrop, no cards, no extra padding ===== */
+@media (max-width: 991px) {
+
+    /* sections: a layer for the picture, small even spacing */
+    .flow .about-us, .flow .sv-section, .flow .pk-section, .flow .why-choose-us,
+    .flow .ds-section, .flow .pc-section, .flow .ac-section, .flow .tc-section,
+    .flow .fq-section {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+    }
+    .flow .about-us, .flow .sv-section, .flow .ds-section, .flow .pc-section,
+    .flow .ac-section, .flow .tc-section, .flow .fq-section {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+    .flow .pk-section { padding-top: 12px !important; }
+
+    /* pictures: strong and clear, melting only at the top and bottom edges */
+    .ab-left-img, .sv-right-img, .pk-right-img, .wc-left-img,
+    .ac-right-img, .tc-left-img, .fq-right-img {
+        display: block !important;
+        position: absolute !important;
+        left: 0 !important; right: 0 !important; top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        object-fit: cover;
+        border-radius: 0;
+        box-shadow: none;
+        opacity: 0.95 !important;
+        z-index: -1 !important;
+        pointer-events: none;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
+    }
+    .wc-left-img { opacity: 0.8 !important; }   /* the dark nets picture: a little softer */
+
+    .ab-left-img  { object-position: 30% 55%; }
+    .sv-right-img { object-position: 30% 50%; }
+    .pk-right-img { object-position: 70% 50%; }
+    .wc-left-img  { object-position: 30% 50%; }
+    .ac-right-img { object-position: 35% 80%; }
+    .tc-left-img  { object-position: 30% 50%; }
+    .fq-right-img { object-position: 50% 60%; }
+
+    .ds-left-img, .fq-left-img { display: none !important; }
+
+    /* island picture between Destinations and Testimonials */
+    .ds-island-img {
+        display: block !important;
+        position: relative !important;
+        right: auto !important; top: auto !important;
+        width: 100% !important; max-width: 640px;
+        height: 230px !important;
+        margin: 0 auto !important;
+        object-fit: cover;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%) !important;
+    }
+
+    /* NO cards, NO boxes: text sits straight on the picture */
+    .flow .about-us-content,
+    .flow .section-title,
+    .flow .why-choose-us .why-choose-list,
+    .flow .pc-intro,
+    .flow .fq-left,
+    .flow .tc-grid,
+    .flow .ms-services .ms-nav {
+        background: none !important;
+        -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    .flow .section-title { padding: 4px 0 !important; }
+
+    /* readable text: dark colour + white glow */
+    .flow .section-title h2, .flow .section-title h3, .flow .section-title p,
+    .flow .ab-title-wrap p, .flow .ab-tag,
+    .flow .why-choose-item-content h3, .flow .why-choose-item-content p,
+    .flow .tc-text h3, .flow .tc-text p,
+    .flow .fq-text, .flow .pc-eyebrow, .flow .pc-heading, .flow .pc-sub {
+        color: #12281f !important;
+        font-weight: 600;
+        text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 16px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important;
+    }
+
+    /* About Us: normal stacking */
+    .about-us .row { flex-direction: row; }
+    .about-us .container { left: auto; padding-left: calc(var(--bs-gutter-x, 1.5rem) * 0.5); }
+
+    /* Why Choose Us: icon beside the text, no overlap */
+    .why-choose-us .why-choose-list-item {
+        display: flex !important;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .why-choose-us .why-choose-list-item .icon-box {
+        position: static !important;
+        flex: 0 0 52px;
+        margin: 0 !important;
+    }
+    .why-choose-us .why-choose-item-content {
+        flex: 1;
+        min-width: 0;
+        margin: 0 !important;
+        padding-left: 0 !important;
+    }
+}
+/* ===== MOBILE / TABLET: pictures overlap neighbours and cross-fade (no seams) ===== */
+@media (max-width: 991px) {
+
+    /* stop each section from clipping its picture */
+    .flow .about-us, .flow .sv-section, .flow .pk-section, .flow .why-choose-us,
+    .flow .ac-section, .flow .tc-section, .flow .fq-section {
+        overflow: visible !important;
+    }
+
+    /* each picture reaches 60px above and below its section, with a long soft fade */
+    .ab-left-img, .sv-right-img, .pk-right-img, .wc-left-img,
+    .ac-right-img, .tc-left-img, .fq-right-img {
+        top: -60px !important;
+        height: calc(100% + 120px) !important;
+        -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0,
+            rgba(0,0,0,.35) 8%,
+            #000 22%,
+            #000 78%,
+            rgba(0,0,0,.35) 92%,
+            transparent 100%) !important;
+                mask-image: linear-gradient(to bottom,
+            transparent 0,
+            rgba(0,0,0,.35) 8%,
+            #000 22%,
+            #000 78%,
+            rgba(0,0,0,.35) 92%,
+            transparent 100%) !important;
+    }
+
+    /* island picture: overlaps the sections around it and melts into them */
+    .ds-island-img {
+        height: 260px !important;
+        margin: -40px auto !important;
+        -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0, rgba(0,0,0,.4) 12%, #000 32%, #000 68%, rgba(0,0,0,.4) 88%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom,
+            transparent 0, rgba(0,0,0,.4) 12%, #000 32%, #000 68%, rgba(0,0,0,.4) 88%, transparent 100%) !important;
+    }
+    .ds-island { position: relative; z-index: 0; }
+}
+/* ===== HERO: title + description + dots at the bottom ===== */
+.hero .hero-section,
+.hero .hero-section.hero-bg-image {
+    align-items: flex-end !important;
+    padding-bottom: 60px !important;
+}
+
+@media (max-width: 991px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        padding-bottom: 44px !important;
+    }
+}
+/* ===== remove the gap between FAQ and footer ===== */
+.flow { padding-bottom: 0 !important; }
+.flow .fq-section { padding-bottom: 24px !important; }
 </style>
 
 {% endblock %}
@@ -1814,8 +2625,12 @@ body .hero {
     </div>
 </div>
 
+<!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
+<div class="flow">
+
 <!-- About Us -->
 <div class="about-us">
+    <img class="ab-left-img" src="{% static 'malabar-static/wf.png' %}" alt="" draggable="false">
     <div class="container">
         <div class="row align-items-center">
 
@@ -1905,6 +2720,7 @@ body .hero {
 
 <!-- Malabaroutes Services (icon cards, same as the About page) -->
 <div class="sv-section">
+     <img class="sv-right-img" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false">
     <div class="container">
         <div class="row section-row align-items-center">
             <div class="col-lg-12">
@@ -1992,6 +2808,7 @@ body .hero {
 {% if featured_packages %}
 <!-- Popular Packages (filter by category, endless loop) -->
 <div class="pk-section">
+    <img class="pk-right-img" src="{% static 'malabar-static/wls.png' %}" alt="" draggable="false">
     <div class="container">
 
         <div class="row section-row align-items-center">
@@ -2080,6 +2897,7 @@ body .hero {
 
 <!-- Why Choose Us -->
 <div class="why-choose-us">
+    <img class="wc-left-img" src="{% static 'malabar-static/Golden-hour_Kochi_fishing_nets.png' %}" alt="" draggable="false">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -2177,95 +2995,17 @@ body .hero {
 </div>
 <!-- Popular Destinations End -->
 {% endif %}
-
-<!-- Terms & Conditions -->
-<div class="tc-section">
-    <div class="container">
-
-        <div class="row section-row align-items-center">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <div class="tc-title-row">
-                        <span class="tc-line"></span>
-                        <h2 class="text-anime-style-3" data-cursor="-opaque">Terms &amp; Conditions</h2>
-                        <span class="tc-line"></span>
-                    </div>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">Please read the terms and conditions carefully before booking your trip with us.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="tc-grid">
-            <div class="tc-item wow fadeInUp">
-                <span class="tc-icon"><i class="fa-solid fa-calendar-check"></i></span>
-                <span class="tc-no">01</span>
-                <div class="tc-text">
-                    <h3>Booking Confirmation</h3>
-                    <p>Your booking is confirmed when we send a written confirmation after receiving the agreed payment.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp">
-                <span class="tc-icon"><i class="fa-solid fa-coins"></i></span>
-                <span class="tc-no">02</span>
-                <div class="tc-text">
-                    <h3>Prices &amp; Payments</h3>
-                    <p>Your itinerary or invoice lists the trip price, included services, exclusions and payment due dates.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
-                <span class="tc-icon"><i class="fa-solid fa-circle-xmark"></i></span>
-                <span class="tc-no">03</span>
-                <div class="tc-text">
-                    <h3>Cancellations &amp; Refunds</h3>
-                    <p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send change or cancellation requests in writing.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
-                <span class="tc-icon"><i class="fa-solid fa-route"></i></span>
-                <span class="tc-no">04</span>
-                <div class="tc-text">
-                    <h3>Itinerary Changes</h3>
-                    <p>Weather, road conditions, safety issues or local restrictions may affect the route or activity. We will share updates and available alternatives.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
-                <span class="tc-icon"><i class="fa-solid fa-passport"></i></span>
-                <span class="tc-no">05</span>
-                <div class="tc-text">
-                    <h3>Traveller Documents &amp; Responsibilities</h3>
-                    <p>Travellers are responsible for valid travel documents, personal health needs and following local guidelines.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
-                <span class="tc-icon"><i class="fa-solid fa-shield-halved"></i></span>
-                <span class="tc-no">06</span>
-                <div class="tc-text">
-                    <h3>Travel Insurance &amp; Personal Belongings</h3>
-                    <p>We recommend suitable travel insurance. Please keep your belongings secure throughout the journey.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
-                <span class="tc-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
-                <span class="tc-no">07</span>
-                <div class="tc-text">
-                    <h3>Unforeseen Events</h3>
-                    <p>Events outside reasonable control may affect travel plans. We will provide updates and discuss practical options.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
-                <span class="tc-icon"><i class="fa-solid fa-comments"></i></span>
-                <span class="tc-no">08</span>
-                <div class="tc-text">
-                    <h3>Questions &amp; Complaints</h3>
-                    <p>Contact our team promptly if you have a concern so we can help.</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
+<!-- Island illustration between Destinations and Testimonials -->
+<div class="ds-island" aria-hidden="true">
+    <svg class="ds-route" viewBox="0 0 1000 400" preserveAspectRatio="none">
+        <path d="M0 40 C 260 40, 380 10, 520 120 S 780 330, 1000 300" />
+    </svg>
+    <span class="isl-pin isl-pin-1"><i class="fa-solid fa-location-dot"></i></span>
+    <span class="ds-boat"><i class="fa-solid fa-ship"></i></span>
+    <span class="isl-pin isl-pin-2"><i class="fa-solid fa-location-dot"></i></span>
+    <img class="ds-island-img" src="{% static 'malabar-static/kovalam.png' %}" alt="" draggable="false">
+    <img class="ds-left-img" src="{% static 'malabar-static/wf.png' %}" alt="" draggable="false">
 </div>
-<!-- Terms & Conditions End -->
-
 {% if testimonials %}
 <!-- Testimonials: Postcards from the road -->
 <div class="pc-section">
@@ -2357,6 +3097,7 @@ body .hero {
 {% if recent_activities %}
 <!-- Recent Activities -->
 <div class="ac-section">
+    <img class="ac-right-img" src="{% static 'malabar-static/hill.png' %}" alt="" draggable="false">
     <div class="container">
 
         <div class="row section-row align-items-center">
@@ -2406,8 +3147,99 @@ body .hero {
 <!-- Recent Activities End -->
 {% endif %}
 
+<!-- Terms & Conditions -->
+<div class="tc-section">
+    <img class="tc-left-img" src="{% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' %}" alt="" draggable="false">
+    <div class="container">
+
+        <div class="row section-row align-items-center">
+            <div class="col-lg-12">
+                <div class="section-title section-title-center">
+                    <div class="tc-title-row">
+                        <span class="tc-line"></span>
+                        <h2 class="text-anime-style-3" data-cursor="-opaque">Terms &amp; Conditions</h2>
+                        <span class="tc-line"></span>
+                    </div>
+                    <p class="wow fadeInUp" data-wow-delay="0.2s">Please read the terms and conditions carefully before booking your trip with us.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tc-grid">
+            <div class="tc-item wow fadeInUp">
+                <span class="tc-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                <span class="tc-no">01</span>
+                <div class="tc-text">
+                    <h3>Booking Confirmation</h3>
+                    <p>Your booking is confirmed when we send a written confirmation after receiving the agreed payment.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp">
+                <span class="tc-icon"><i class="fa-solid fa-coins"></i></span>
+                <span class="tc-no">02</span>
+                <div class="tc-text">
+                    <h3>Prices &amp; Payments</h3>
+                    <p>Your itinerary or invoice lists the trip price, included services, exclusions and payment due dates.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
+                <span class="tc-icon"><i class="fa-solid fa-circle-xmark"></i></span>
+                <span class="tc-no">03</span>
+                <div class="tc-text">
+                    <h3>Cancellations &amp; Refunds</h3>
+                    <p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send change or cancellation requests in writing.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
+                <span class="tc-icon"><i class="fa-solid fa-route"></i></span>
+                <span class="tc-no">04</span>
+                <div class="tc-text">
+                    <h3>Itinerary Changes</h3>
+                    <p>Weather, road conditions, safety issues or local restrictions may affect the route or activity. We will share updates and available alternatives.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
+                <span class="tc-icon"><i class="fa-solid fa-passport"></i></span>
+                <span class="tc-no">05</span>
+                <div class="tc-text">
+                    <h3>Traveller Documents &amp; Responsibilities</h3>
+                    <p>Travellers are responsible for valid travel documents, personal health needs and following local guidelines.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
+                <span class="tc-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <span class="tc-no">06</span>
+                <div class="tc-text">
+                    <h3>Travel Insurance &amp; Personal Belongings</h3>
+                    <p>We recommend suitable travel insurance. Please keep your belongings secure throughout the journey.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
+                <span class="tc-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                <span class="tc-no">07</span>
+                <div class="tc-text">
+                    <h3>Unforeseen Events</h3>
+                    <p>Events outside reasonable control may affect travel plans. We will provide updates and discuss practical options.</p>
+                </div>
+            </div>
+            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
+                <span class="tc-icon"><i class="fa-solid fa-comments"></i></span>
+                <span class="tc-no">08</span>
+                <div class="tc-text">
+                    <h3>Questions &amp; Complaints</h3>
+                    <p>Contact our team promptly if you have a concern so we can help.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Terms & Conditions End -->
+
 <!-- FAQ: left side sticks while the questions scroll -->
 <div class="fq-section">
+    <img class="fq-right-img" src="{% static 'malabar-static/bacck.png' %}" alt="" draggable="false">
+    <img class="fq-left-img" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false">
     <div class="container">
         <div class="row">
 
@@ -2514,6 +3346,9 @@ body .hero {
     </div>
 </div>
 <!-- FAQ End -->
+
+</div>
+<!-- ===== /flow ===== -->
 
 {% endblock %}
 
@@ -2967,15 +3802,16 @@ body .hero {
     var pkCar = initMsCarousel('pkCarousel');
 
     /* Popular Destinations: 4 on desktop, 2 on tablet, 1 on mobile */
+    /* Popular Destinations: 2 on tablet and desktop, 1 on mobile */
+    /* Popular Destinations: 3 on desktop, 2 on tablet, 1 on mobile */
     var dsCar = initMsCarousel('dsCarousel', {
         perView: function () {
             var w = window.innerWidth;
             if (w < 576) return 1;
             if (w < 992) return 2;
-            return 4;
+            return 3;
         }
     });
-
     /* Testimonials: 2 on desktop/tablet, 1 on mobile (same as About page) */
     initMsCarousel('pcCarousel', {
         perView: function () {

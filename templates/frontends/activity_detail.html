@@ -279,37 +279,6 @@
     @media (max-width: 360px) {
         .ad-btn { padding: 10px 20px; font-size: 13px; }
     }
-    /* =====================================================================
-   GOLD THEME (same as About + Activities pages)
-   --page-bg = the gold   |   --pw-all = how strongly it covers the photo
-   ===================================================================== */
-:root {
-    --page-bg: #e0cf86;
-    --page-bg-soft: #ebdea0;
-    --page-text-muted: #4a4228;
-    --pw-all: rgba(224, 207, 134, 0.80);
-}
-html, body { background-color: var(--page-bg) !important; }
-
-/* hero fallback colour behind the activity image */
-body .page-header.page-hero { background-color: var(--nav-green, #111111) !important; }
-
-/* details section: same gold + same wash over bg3.png */
-body .ad-section {
-    background-color: var(--page-bg) !important;
-    background-image:
-        linear-gradient(var(--pw-all), var(--pw-all)),
-        url('{% static "malabar-static/bg3.png" %}') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-}
-
-/* muted text that sits directly on the gold */
-body .ad-desc,
-body .ad-desc p,
-body .ad-desc li { color: var(--page-text-muted) !important; }
-body .ad-fact small { color: var(--page-text-muted); }
 </style>
 {% endblock %}
 

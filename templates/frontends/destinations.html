@@ -5,355 +5,478 @@
 {% block meta_description %}Explore our travel destinations.{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html.
-    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
-    Hero = same design and rotating background images as the About page.
-    Destinations are grouped by location. The navbar "Destinations" dropdown
-    links to /destinations/?location=<slug> to show one location.
-    Book Now opens the booking modal from base.html (.open-booking + data-package).
+    DESTINATIONS PAGE (redesigned to match the About page)
+    - HERO = same as About / Packages (rotating zoom-out background images).
+    - everything after the hero sits in ONE wrapper (.flow) that owns the fixed landscape background (bg3.png).
+    - each location group is a full-width band with its own faded side picture
+      (left / right alternating, same pictures as the About + home page).
+    - UX: sticky filter bar (location chips with counts + search box), live result count,
+      friendly empty state, ?location=<slug> support (navbar dropdown still works),
+      tap-to-open cards on touch, hover-open on desktop, keyboard accessible.
+    - Book Now opens the booking modal from base.html (.open-booking + data-package).
+    Context needed: `groups` -> each has .value (slug), .label, .destinations (unchanged).
+    Colours come from base.html: --nav-green, --nav-gold, --nav-ink.
 {% endcomment %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+
 <style>
-    /* ================= HERO (same design as About page) ================= */
-    .page-header.dest-hero {
-        position: relative !important;
-        width: calc(100% - 32px) !important;
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;
-        border-radius: 40px !important;
-        overflow: hidden !important;
-        min-height: calc(80vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 120px !important;
-        background-color: #12281f !important;
-        background-image: none !important;   /* images come from .ah-bgs below */
-    }
-    .page-header.dest-hero::before,
-    .page-header.dest-hero::after { display: none !important; }
+/* =====================================================================
+   HERO (same design as About page)
+   ===================================================================== */
+.page-header.dest-hero {
+    position: relative !important;
+    width: calc(100% - 32px) !important;
+    max-width: calc(100% - 32px) !important;
+    margin: 16px 16px 0 !important;
+    border-radius: 40px !important;
+    overflow: hidden !important;
+    min-height: 58vh;
+    display: flex;
+    align-items: center;
+    padding: 160px 0 70px !important;
+    background-color: #12281f !important;
+    background-image: none !important;
+}
+.page-header.dest-hero::before,
+.page-header.dest-hero::after { display: none !important; }
 
-    /* ---- background images: cross-fade + zoom out, same as the About hero ---- */
-    .dest-hero .ah-bgs {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: inherit;
-    }
-    .dest-hero .ah-bgs::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
-        pointer-events: none;
-    }
-    .dest-hero .ah-bg {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transform: scale(1);
-        transition: opacity 1.2s ease;
-    }
-    .dest-hero .ah-bg.active {
-        opacity: 1;
-        animation: ahZoomOut 5.2s ease-out forwards;
-    }
-    @keyframes ahZoomOut {
-        from { transform: scale(1.2); }
-        to   { transform: scale(1); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        .dest-hero .ah-bg.active { animation: none; }
-    }
-    .page-header.dest-hero > .container { position: relative; z-index: 2; }
+.dest-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; }
+.dest-hero .ah-bgs::after {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: rgba(0, 0, 0, 0.30); pointer-events: none;
+}
+.dest-hero .ah-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0; transform: scale(1); transition: opacity 1.2s ease;
+}
+.dest-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
+@keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .dest-hero .ah-bg.active { animation: none; } }
+.page-header.dest-hero > .container { position: relative; z-index: 2; }
+.page-header.dest-hero .page-header-box { text-align: center; }
 
-    .page-header.dest-hero .page-header-box { text-align: center; }
+.page-header.dest-hero h1 {
+    font-family: 'Cinzel', serif !important;
+    font-weight: 700 !important;
+    font-size: 80px;
+    letter-spacing: 6px;
+    color: #ffffff !important;
+    text-transform: none !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    margin-bottom: 20px;
+}
+.dest-hero .breadcrumb { justify-content: center; margin: 0; }
+.dest-hero .breadcrumb-item,
+.dest-hero .breadcrumb-item a,
+.dest-hero .breadcrumb-item + .breadcrumb-item::before {
+    color: #ffffff !important;
+    text-transform: capitalize;
+}
 
-    .page-header.dest-hero h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        font-size: 80px;
-        letter-spacing: 6px;
-        color: #ffffff !important;
-        text-transform: none !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-        margin-bottom: 20px;
-    }
-    .page-header.dest-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-header.dest-hero .breadcrumb-item,
-    .page-header.dest-hero .breadcrumb-item a,
-    .page-header.dest-hero .breadcrumb-item + .breadcrumb-item::before {
-        color: #ffffff !important;
-        text-transform: capitalize;
-    }
+/* =====================================================================
+   ONE CONTINUOUS PAGE (everything after the hero)
+   ===================================================================== */
+.flow {
+    --dest-accent: var(--nav-green, #1F5B3A);
+    --dest-dark: var(--nav-ink, #12281f);
+    --dest-gold: var(--nav-gold, #e0b14a);
 
-    /* ================= DESTINATIONS SECTION (bg5.png as page background) ================= */
-    .dest-page {
-        /* colours come from base.html */
-        --dest-accent: var(--nav-green, #1F5B3A);
-        --dest-dark: var(--nav-ink, #12281f);
-        --dest-gold: var(--nav-gold, #e0b14a);
+    position: relative;
+    isolation: isolate;
+    clip-path: inset(0);
+    overflow-x: clip;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #e9efe6;
+}
+.flow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
+}
 
-        padding: 90px 0 100px;
-        background-color: #f2fdff;
-        background-image:
-            linear-gradient(rgba(242, 253, 255, 0.35), rgba(242, 253, 255, 0.35)),
-            url('{% static 'malabar-static/bg5.png' %}');
-        background-size: cover, cover;
-        background-position: center, center;
-        background-repeat: no-repeat, no-repeat;
-    }
-    .dest-head { text-align: center; margin-bottom: 50px; }
-    .dest-head h2 { font-size: 44px; margin: 0 0 10px; }
-    .dest-head p { color: #444; margin: 0; }
+/* white glow so plain text stays readable straight on the picture */
+.flow .dest-head h2,
+.flow .dest-head p,
+.flow .dg-head h3,
+.flow .dg-count,
+.flow .dest-result {
+    text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+}
 
-    /* ================= LOCATION GROUPS ================= */
-    .dest-group { margin-bottom: 80px; scroll-margin-top: 110px; }
-    .dest-group:last-child { margin-bottom: 0; }
-    .dest-group-head { display: flex; align-items: center; gap: 24px; margin: 0 0 34px; }
-    .dest-group-head h3 {
-        margin: 0; font-size: 38px; font-weight: 700; color: #1b1b1b;
-        text-transform: none; white-space: nowrap;
-    }
-    .dest-group-head h3::before, .dest-group-head h3::after { display: none !important; content: none !important; }
-    .dest-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--dest-gold), rgba(224, 177, 74, 0)); }
+/* =====================================================================
+   INTRO + STICKY FILTER BAR
+   ===================================================================== */
+.dest-intro { padding: 34px 0 0; position: relative; }
+.dest-head { text-align: center; }
+.dest-head h2 {
+    font-family: 'Cormorant SC', serif !important;
+    font-weight: 700 !important;
+    font-size: 50px;
+    line-height: 1.1;
+    color: #111 !important;
+    text-transform: none !important;
+    margin: 0 0 6px;
+}
+.dest-head p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; font-size: 16px; color: #2b3a35; margin: 0;
+}
 
-    .dest-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 28px;
-    }
-    .dest-item { display: block; }
+.dest-bar-wrap {
+    position: sticky;
+    top: 88px;                 /* sits just under the navbar: adjust if your navbar is taller */
+    z-index: 30;
+    padding: 8px 0 0;
+    pointer-events: none;      /* only the bar itself catches clicks */
+}
+.dest-bar {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 12px 10px 14px;
+    border-radius: 60px;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    border: 1px solid rgba(31, 91, 58, 0.14);
+    box-shadow: 0 12px 30px rgba(20, 40, 30, 0.14);
+}
+.dest-chips {
+    flex: 1; min-width: 0;
+    display: flex; gap: 8px;
+    overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px;
+}
+.dest-chips::-webkit-scrollbar { display: none; }
+.dest-chip {
+    flex: 0 0 auto;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 40px;
+    border: 1.5px solid rgba(31, 91, 58, 0.25);
+    background: transparent; color: var(--dest-accent);
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px; line-height: 1;
+    cursor: pointer; white-space: nowrap;
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+.dest-chip em {
+    font-style: normal; font-size: 12px;
+    min-width: 22px; padding: 3px 6px; border-radius: 20px; text-align: center;
+    background: rgba(31, 91, 58, 0.1); transition: background .3s ease;
+}
+@media (hover: hover) { .dest-chip:hover { border-color: var(--dest-gold); background: rgba(224, 177, 74, .18); } }
+.dest-chip.active:hover { background: var(--dest-accent); border-color: var(--dest-accent); }
+.dest-chip.active { background: var(--dest-accent); border-color: var(--dest-accent); color: #fff; }
+.dest-chip.active em { background: var(--dest-gold); color: var(--dest-dark); }
+.dest-chip:focus-visible, .dest-search input:focus-visible { outline: 2px solid var(--dest-gold); outline-offset: 2px; }
 
-    /* ================= CARD ================= */
-    .dest-card {
-        position: relative;
-        display: block;
-        width: 100%;
-        border-radius: 28px;
-        overflow: hidden;
-        isolation: isolate;
-        aspect-ratio: 3 / 4.2;
-        background: #dfe6e9;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
-        cursor: pointer;
-        outline: none;
-        z-index: 1;
-        -webkit-tap-highlight-color: transparent;
-        transition: transform .4s ease, box-shadow .4s ease;
-    }
+.dest-search { position: relative; flex: 0 0 240px; }
+.dest-search i {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; color: var(--dest-accent); pointer-events: none;
+}
+.dest-search input {
+    width: 100%; box-sizing: border-box;
+    padding: 11px 38px 11px 40px; border-radius: 40px;
+    border: 1.5px solid rgba(31, 91, 58, 0.25); background: #fff;
+    font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px; color: #1d2b24;
+}
+.dest-search input::placeholder { color: #7b867f; }
+.dest-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    width: 26px; height: 26px; border: 0; border-radius: 50%;
+    background: rgba(31, 91, 58, .12); color: var(--dest-accent); font-size: 12px;
+    display: none; align-items: center; justify-content: center; cursor: pointer;
+}
+.dest-search.has-text .dest-clear { display: flex; }
 
-    .dest-media {
-        position: absolute;
-        inset: 0;
-        transition: transform .6s ease;
-    }
-    .dest-card figure.reveal {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-    }
-    .dest-card figure.reveal img {
-        width: 100%;
-        height: 100%;
+.dest-result {
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+    color: #2b3a35; text-align: center; margin: 4px 0 0;
+}
+.dest-result:empty { display: none; }
+
+/* =====================================================================
+   LOCATION BANDS (each has a faded side picture, like the About page)
+   ===================================================================== */
+.dg {
+    position: relative;
+    isolation: isolate;
+    padding: 10px 0 14px;
+    scroll-margin-top: 150px;
+}
+.dg[hidden], .dest-item[hidden] { display: none !important; }
+.dg-img { display: none; }
+
+.dg-head { display: flex; align-items: center; gap: 18px; margin: 0 0 14px; }
+.dg-head h3 {
+    margin: 0; white-space: nowrap; text-transform: none;
+    font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 38px; line-height: 1.1; color: #111;
+}
+.dg-head h3::before, .dg-head h3::after { display: none !important; content: none !important; }
+.dg-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--dest-gold), rgba(224, 177, 74, 0)); }
+.dg-count {
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+    color: #2b3a35; white-space: nowrap;
+}
+
+.dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.dest-item { display: block; }
+
+/* =====================================================================
+   CARD
+   ===================================================================== */
+.dest-card {
+    position: relative; display: block; width: 100%;
+    border-radius: 28px; overflow: hidden; isolation: isolate;
+    aspect-ratio: 3 / 3.7; background: #dfe6e9;
+    box-shadow: 0 10px 30px rgba(20, 40, 30, .14);
+    cursor: pointer; outline: none; z-index: 1;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+.dest-card:focus-visible { outline: 3px solid var(--dest-gold); outline-offset: 3px; }
+.dest-media { position: absolute; inset: 0; transition: transform .6s ease; }
+.dest-card figure.reveal { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
+.dest-card figure.reveal img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; display: block; }
+.dest-card .image-anime::after { display: none; }
+.dest-card::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.40), rgba(0,0,0,0) 55%);
+    opacity: 0; transition: opacity .4s ease; pointer-events: none;
+}
+
+/* little location tag, top-left */
+.dest-tag {
+    position: absolute; top: 16px; left: 16px; z-index: 3;
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 30px;
+    background: rgba(255, 255, 255, .92); color: var(--dest-accent);
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; line-height: 1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
+}
+.dest-tag i { font-size: 12px; color: var(--dest-gold); }
+
+/* bottom panel: white by default -> green when opened */
+.dest-panel {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+    padding: 22px; text-align: center;
+    background: #fff; color: #111; border-radius: 40px;
+    transition: background .35s ease, color .35s ease, border-radius .35s ease, padding .35s ease;
+}
+.dest-name { margin: 0; font-family: inherit; font-size: 24px; font-weight: 600; color: inherit; text-transform: none; }
+
+.dest-hint {
+    display: none; margin-top: 6px; font-size: 12.5px; font-weight: 500; color: #6b756f;
+}
+@media (hover: none) { .dest-hint { display: block; } }
+
+.dest-more {
+    display: grid; grid-template-rows: 0fr; opacity: 0;
+    transition: grid-template-rows .5s ease, opacity .4s ease .05s;
+}
+.dest-more-inner { min-height: 0; overflow: hidden; }
+.dest-more p { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: inherit; text-shadow: none; }
+
+.dest-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
+.dest-btn {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 14px; border-radius: 50px;
+    font-weight: 600; font-size: 15px; line-height: 1.2;
+    text-decoration: none; white-space: nowrap; transition: all .3s ease;
+}
+.dest-btn i { font-size: 12px; transition: transform .3s ease; }
+.dest-btn:hover i { transform: translateX(3px); }
+.dest-btn-fill { background: #fff; border: 1.5px solid #fff; color: var(--dest-accent) !important; }
+.dest-btn-fill:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark) !important; }
+.dest-btn-line { background: transparent; border: 1.5px solid rgba(255, 255, 255, .9); color: #fff !important; }
+.dest-btn-line:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark) !important; }
+
+/* open state (touch / focus) */
+.dest-card.is-open, .dest-card:focus-within {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .22); z-index: 5;
+}
+.dest-card.is-open .dest-media, .dest-card:focus-within .dest-media { transform: scale(1.06); }
+.dest-card.is-open::after, .dest-card:focus-within::after { opacity: 1; }
+.dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel {
+    background: var(--dest-accent); color: #fff; border-radius: 28px; padding: 24px 22px 26px;
+}
+.dest-card.is-open .dest-hint, .dest-card:focus-within .dest-hint { display: none; }
+.dest-card.is-open .dest-more, .dest-card:focus-within .dest-more { grid-template-rows: 1fr; opacity: 1; }
+
+/* open state (mouse hover, desktop only) */
+@media (hover: hover) {
+    .dest-card:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 18px 40px rgba(0, 0, 0, .22); z-index: 5; }
+    .dest-card:hover .dest-media { transform: scale(1.06); }
+    .dest-card:hover::after { opacity: 1; }
+    .dest-card:hover .dest-panel { background: var(--dest-accent); color: #fff; border-radius: 28px; padding: 24px 22px 26px; }
+    .dest-card:hover .dest-more { grid-template-rows: 1fr; opacity: 1; }
+}
+
+/* scroll-in (only when JS is running) */
+.dest-js .dest-item { opacity: 0; transform: translateY(34px); }
+.dest-js .dest-item.in {
+    opacity: 1; transform: none;
+    transition: opacity .7s ease var(--d, 0s), transform .8s cubic-bezier(.2, .7, .2, 1) var(--d, 0s);
+}
+@media (prefers-reduced-motion: reduce) {
+    .dest-js .dest-item { opacity: 1; transform: none; }
+    .dest-card, .dest-media, .dest-more, .dest-panel { transition: none; }
+}
+
+/* empty states */
+.dest-empty {
+    display: none; max-width: 520px; margin: 20px auto; padding: 26px 24px; text-align: center;
+    border-radius: 24px; background: rgba(255, 255, 255, .92);
+    box-shadow: 0 14px 34px rgba(20, 40, 30, .12);
+}
+.dest-empty.show, .dest-empty.always { display: block; }
+.dest-empty i { font-size: 34px; color: var(--dest-gold); margin-bottom: 12px; display: block; }
+.dest-empty h4 { margin: 0 0 8px; font-size: 22px; color: var(--dest-accent); text-transform: none; }
+.dest-empty p { margin: 0 0 18px; color: #4a5565; font-size: 15px; text-shadow: none; }
+.dest-empty button {
+    padding: 11px 24px; border-radius: 50px; border: 1.5px solid var(--dest-accent);
+    background: var(--dest-accent); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
+    transition: all .3s ease;
+}
+.dest-empty button:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark); }
+
+/* back to top */
+.dest-top {
+    position: fixed; right: 22px; bottom: 22px; z-index: 40;
+    width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: var(--dest-accent); color: #fff; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+    opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: all .3s ease;
+}
+.dest-top.show { opacity: 1; visibility: visible; transform: none; }
+.dest-top:hover { background: var(--dest-gold); color: var(--dest-dark); }
+
+.dest-bottom-space { height: 14px; }
+
+/* =====================================================================
+   DESKTOP: faded side pictures (same style as the About page)
+   ===================================================================== */
+@media (min-width: 992px) {
+    .dg-img {
+        display: block; position: absolute; top: 0;
+        width: 46vw; height: 100%;
         object-fit: cover;
-        aspect-ratio: auto;
+        pointer-events: none; z-index: -1; opacity: .9;
     }
-    .dest-card .image-anime::after { display: none; }
+    .dg-left .dg-img {
+        left: -3vw; object-position: 30% 50%;
+        -webkit-mask-image:
+            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+                mask-composite: intersect;
+    }
+    .dg-right .dg-img {
+        right: -3vw; object-position: 70% 50%;
+        -webkit-mask-image:
+            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+        -webkit-mask-composite: source-in;
+                mask-image:
+            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
+                mask-composite: intersect;
+    }
+}
+@media (min-width: 1200px) { .flow .container { max-width: 1400px; } }
+@media (min-width: 1600px) { .flow .container { max-width: 1520px; } }
 
-    .dest-card::after {
-        content: "";
-        position: absolute; inset: 0;
-        background: linear-gradient(to top, rgba(0,0,0,.35), rgba(0,0,0,0) 55%);
-        opacity: 0;
-        transition: opacity .4s ease;
-        pointer-events: none;
+/* =====================================================================
+   MOBILE / TABLET
+   ===================================================================== */
+@media (max-width: 991px) {
+    .page-header.dest-hero {
+        width: calc(100% - 20px) !important;
+        max-width: calc(100% - 20px) !important;
+        margin: 10px 10px 0 !important;
+        border-radius: 24px !important;
+        min-height: 34vh !important;
+        padding: 115px 0 45px !important;
     }
+    .page-header.dest-hero .page-header-box,
+    .page-header.dest-hero h1,
+    .page-header.dest-hero nav { text-align: center !important; width: 100%; }
+    .page-header.dest-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-header.dest-hero .breadcrumb { justify-content: center !important; font-size: 14px; }
 
-    /* bottom panel: WHITE by default -> GREEN when opened */
-    .dest-panel {
-        position: absolute;
-        left: 0; right: 0; bottom: 0;
-        z-index: 2;
-        padding: 22px 22px;
-        text-align: center;
-        background: #ffffff;
-        color: #111111;
-        border-radius: 40px;
-        transition: background .35s ease, color .35s ease,
-                    border-radius .35s ease, padding .35s ease;
+    .dest-intro { padding: 24px 0 0; }
+    .dest-head h2 { font-size: 34px; }
+    .dest-bar-wrap { top: 72px; padding: 6px 0 0; }
+    .dest-bar { flex-direction: column; align-items: stretch; gap: 8px; border-radius: 22px; padding: 8px; }
+    .dest-search { flex: 0 0 auto; }
+    .dest-chips {
+        margin: 0 -8px; padding: 2px 8px; gap: 6px;
+        scroll-snap-type: x proximity;
+        -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 34px), transparent 100%);
+                mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 34px), transparent 100%);
     }
-    .dest-name {
-        margin: 0;
-        font-family: inherit;
-        font-size: 24px;
-        font-weight: 600;
-        color: inherit;
-        text-transform: none;
-    }
+    .dest-chips::after { content: ""; flex: 0 0 26px; }
+    .dest-chip { scroll-snap-align: start; padding: 8px 12px; font-size: 13px; gap: 6px; }
+    .dest-chip em { min-width: 20px; padding: 3px 5px; font-size: 11px; }
+    .dest-search input { padding: 9px 36px 9px 38px; }
+    .dest-search i { left: 14px; }
 
-    .dest-more {
-        display: grid;
-        grid-template-rows: 0fr;
-        opacity: 0;
-        transition: grid-template-rows .5s ease, opacity .4s ease .05s;
+    .dg { overflow: hidden; padding: 8px 0 10px; scroll-margin-top: 200px; }
+    .dg-img {
+        display: block !important; position: absolute !important;
+        left: 0 !important; right: 0 !important; top: 0 !important;
+        width: 100% !important; height: 100% !important;
+        object-fit: cover; opacity: .55; z-index: -1 !important; pointer-events: none;
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
+                mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
     }
-    .dest-more-inner { min-height: 0; overflow: hidden; }
-    .dest-more p {
-        margin: 14px 0 0;
-        font-size: 15px;
-        line-height: 1.6;
-        color: inherit;
-    }
+    .dg-head h3 { font-size: 30px; }
+    .dest-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
 
-    .dest-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
-    .dest-btn {
-        flex: 1;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 11px 14px;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 15px;
-        line-height: 1.2;
-        text-decoration: none;
-        white-space: nowrap;
-        transition: all .3s ease;
-    }
-    .dest-btn i { font-size: 12px; transition: transform .3s ease; }
-    .dest-btn:hover i { transform: translateX(3px); }
+@media (max-width: 575px) {
+    .page-header.dest-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
 
-    /* View more: white, gold on hover (same as the navbar) */
-    .dest-btn-fill {
-        background: #ffffff;
-        border: 1.5px solid #ffffff;
-        color: var(--dest-accent) !important;
-    }
-    .dest-btn-fill:hover {
-        background: var(--dest-gold);
-        border-color: var(--dest-gold);
-        color: var(--dest-dark) !important;
-    }
+    .dest-head h2 { font-size: 28px; }
+    .dest-head p { font-size: 14px; }
+    .dest-chip { padding: 8px 13px; font-size: 13px; }
+    .dest-search input { font-size: 16px; } /* stops iOS zoom on focus */
 
-    /* Book Now: outlined white, gold on hover (same as the navbar) */
-    .dest-btn-line {
-        background: transparent;
-        border: 1.5px solid rgba(255, 255, 255, .9);
-        color: #ffffff !important;
-    }
-    .dest-btn-line:hover {
-        background: var(--dest-gold);
-        border-color: var(--dest-gold);
-        color: var(--dest-dark) !important;
-    }
+    .dg-head { gap: 12px; margin-bottom: 10px; }
+    .dg-head h3 { font-size: 26px; white-space: normal; }
+    .dg-line { display: none; }
+    .dg-head { justify-content: space-between; }
 
-    /* open state (touch / focus) */
-    .dest-card.is-open,
-    .dest-card:focus-within {
-        transform: translateY(-6px) scale(1.03);
-        box-shadow: 0 18px 40px rgba(0, 0, 0, .18);
-        z-index: 5;
-    }
-    .dest-card.is-open .dest-media,
-    .dest-card:focus-within .dest-media { transform: scale(1.06); }
-    .dest-card.is-open::after,
-    .dest-card:focus-within::after { opacity: 1; }
-    .dest-card.is-open .dest-panel,
-    .dest-card:focus-within .dest-panel {
-        background: var(--dest-accent);
-        color: #ffffff;
-        border-radius: 28px;
-        padding: 24px 22px 26px;
-    }
-    .dest-card.is-open .dest-more,
-    .dest-card:focus-within .dest-more { grid-template-rows: 1fr; opacity: 1; }
-
-    /* open state (mouse hover, desktop only) */
-    @media (hover: hover) {
-        .dest-card:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, .18);
-            z-index: 5;
-        }
-        .dest-card:hover .dest-media { transform: scale(1.06); }
-        .dest-card:hover::after { opacity: 1; }
-        .dest-card:hover .dest-panel {
-            background: var(--dest-accent);
-            color: #ffffff;
-            border-radius: 28px;
-            padding: 24px 22px 26px;
-        }
-        .dest-card:hover .dest-more { grid-template-rows: 1fr; opacity: 1; }
-    }
-
-    .dest-empty { text-align: center; color: #555; grid-column: 1 / -1; }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 991px) {
-        .page-header.dest-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.dest-hero .page-header-box,
-        .page-header.dest-hero h1,
-        .page-header.dest-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.dest-hero h1 {
-            font-size: 34px !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 14px !important;
-        }
-        .page-header.dest-hero .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-
-        .dest-page { padding: 50px 0 60px; }
-        .dest-head { margin-bottom: 34px; }
-        .dest-head h2 { font-size: 32px; }
-        .dest-head p { font-size: 15px; }
-        .dest-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .dest-group { margin-bottom: 56px; }
-        .dest-group-head h3 { font-size: 28px; }
-    }
-
-    @media (max-width: 575px) {
-        .page-header.dest-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
-
-        .dest-head h2 { font-size: 28px; }
-        .dest-grid { grid-template-columns: 1fr; gap: 18px; }
-        .dest-group-head h3 { font-size: 22px; white-space: normal; }
-
-        .dest-card { border-radius: 24px; aspect-ratio: 4 / 4.6; }
-        .dest-panel { padding: 14px 14px; border-radius: 30px; }
-        .dest-name { font-size: 19px; }
-        .dest-card.is-open .dest-panel,
-        .dest-card:focus-within .dest-panel { padding: 18px 16px 20px; border-radius: 24px; }
-        .dest-more p { font-size: 13.5px; line-height: 1.55; margin-top: 10px; }
-
-        .dest-actions { gap: 8px; margin-top: 14px; }
-        .dest-btn { padding: 9px 8px; font-size: 13px; gap: 6px; border-width: 1.2px; }
-        .dest-btn i { font-size: 10px; }
-    }
-
-    @media (max-width: 360px) {
-        .dest-btn { padding: 8px 6px; font-size: 12px; }
-        .dest-name { font-size: 18px; }
-    }
+    .dest-grid { grid-template-columns: 1fr; gap: 12px; }
+    .dest-card { border-radius: 24px; aspect-ratio: 4 / 3.8; }
+    .dest-tag { top: 12px; left: 12px; padding: 6px 12px; font-size: 12px; }
+    .dest-panel { padding: 14px; border-radius: 30px; }
+    .dest-name { font-size: 19px; }
+    .dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel { padding: 18px 16px 20px; border-radius: 24px; }
+    .dest-more p { font-size: 13.5px; line-height: 1.55; margin-top: 10px; }
+    .dest-actions { gap: 8px; margin-top: 14px; }
+    .dest-btn { padding: 9px 8px; font-size: 13px; gap: 6px; border-width: 1.2px; }
+    .dest-btn i { font-size: 10px; }
+    .dest-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+}
+@media (max-width: 360px) {
+    .dest-btn { padding: 8px 6px; font-size: 12px; }
+    .dest-name { font-size: 18px; }
+}
 </style>
 {% endblock %}
 
@@ -363,8 +486,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
 <div class="page-header dest-hero">
-
-    <!-- Background images: same five as the About hero, same order -->
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -390,71 +511,142 @@
     </div>
 </div>
 
-<!-- Destinations, grouped by location -->
-<section class="dest-page">
-    <div class="container">
-        <div class="dest-head">
-            <h2 class="text-anime-style-3" data-cursor="-opaque">Our Destinations</h2>
-            <p class="wow fadeInUp" data-wow-delay="0.2s">Pick a place and let us plan the journey.</p>
+<!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
+<div class="flow">
+
+    <!-- Heading + sticky filter bar -->
+    <section class="dest-intro">
+        <div class="container">
+            <div class="dest-head">
+                <h2 class="text-anime-style-3" data-cursor="-opaque">Our Destinations</h2>
+                <p class="wow fadeInUp" data-wow-delay="0.2s">Pick a place and let us plan the journey.</p>
+            </div>
         </div>
 
-        {% for group in groups %}
-        <div class="dest-group" id="loc-{{ group.value }}">
-            <div class="dest-group-head">
-                <h3>{{ group.label }}</h3>
-                <span class="dest-line"></span>
+        {% if groups %}
+        <div class="dest-bar-wrap">
+            <div class="container">
+                <div class="dest-bar" role="search">
+                    <div class="dest-chips" id="destChips" role="tablist" aria-label="Filter by location">
+                        <button type="button" class="dest-chip active" data-filter="all" role="tab" aria-selected="true">
+                            All <em class="dest-chip-count" data-total="1">0</em>
+                        </button>
+                        {% for group in groups %}
+                        <button type="button" class="dest-chip" data-filter="{{ group.value }}" role="tab" aria-selected="false">
+                            {{ group.label }} <em>{{ group.destinations|length }}</em>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                    <label class="dest-search" id="destSearchBox">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span class="visually-hidden" style="position:absolute;left:-9999px;">Search destinations</span>
+                        <input type="search" id="destSearch" placeholder="Search a destination" autocomplete="off">
+                        <button type="button" class="dest-clear" id="destClear" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
+                    </label>
+                </div>
+                <p class="dest-result" id="destResult" role="status" aria-live="polite"></p>
             </div>
+        </div>
+        {% endif %}
+    </section>
 
-            <div class="dest-grid">
-                {% for d in group.destinations %}
-                <div class="dest-item">
-                    <div class="dest-card" tabindex="0">
-                        {% if d.image %}
-                        <div class="dest-media">
-                            <figure class="image-anime reveal">
-                                <img src="{{ d.image.url }}"
-                                     srcset="{{ d.image|srcset }}"
-                                     sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
-                                     alt="{{ d.name }}"
-                                     loading="lazy" decoding="async">
-                            </figure>
-                        </div>
-                        {% endif %}
+    {% static 'malabar-static/wf.png' as pic1 %}
+    {% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' as pic2 %}
+    {% static 'malabar-static/wls.png' as pic3 %}
+    {% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' as pic4 %}
+    {% static 'malabar-static/kovalam.png' as pic5 %}
+    {% static 'malabar-static/bacck.png' as pic6 %}
 
-                        <div class="dest-panel">
-                            <h3 class="dest-name">{{ d.name }}</h3>
-                            <div class="dest-more">
-                                <div class="dest-more-inner">
-                                    {% if d.description %}
-                                    <p>{{ d.description|striptags|truncatewords:20 }}</p>
-                                    {% endif %}
-                                    <div class="dest-actions">
-                                        <!-- opens the booking modal from base.html, with the destination name -->
-                                        <a href="#" class="dest-btn dest-btn-line open-booking" data-package="{{ d.name }}">
-                                            Book Now <i class="fa-solid fa-angles-right"></i>
-                                        </a>
-                                        <a href="{% url 'destination_detail' d.slug %}" class="dest-btn dest-btn-fill">
-                                            View more <i class="fa-solid fa-arrow-right"></i>
-                                        </a>
+    <!-- Destinations, grouped by location -->
+    <div id="destGroups">
+        {% for group in groups %}
+        {% cycle pic1 pic2 pic3 pic4 pic5 pic6 as sidepic silent %}
+        <section class="dg {% if forloop.counter0|divisibleby:2 %}dg-left{% else %}dg-right{% endif %}" id="loc-{{ group.value }}" data-loc="{{ group.value }}">
+            <img class="dg-img" src="{{ sidepic }}" alt="" draggable="false" loading="lazy" decoding="async">
+
+            <div class="container">
+                <div class="dg-head">
+                    <h3>{{ group.label }}</h3>
+                    <span class="dg-line"></span>
+                    <span class="dg-count"><span class="dg-n">{{ group.destinations|length }}</span> places</span>
+                </div>
+
+                <div class="dest-grid">
+                    {% for d in group.destinations %}
+                    <div class="dest-item" data-name="{{ d.name|lower }}">
+                        <div class="dest-card" tabindex="0" role="group" aria-label="{{ d.name }}">
+                            {% if d.image %}
+                            <div class="dest-media">
+                                <figure class="image-anime reveal">
+                                    <img src="{{ d.image.url }}"
+                                         srcset="{{ d.image|srcset }}"
+                                         sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
+                                         alt="{{ d.name }}"
+                                         loading="lazy" decoding="async">
+                                </figure>
+                            </div>
+                            {% endif %}
+
+                            <span class="dest-tag"><i class="fa-solid fa-location-dot"></i>{{ group.label }}</span>
+
+                            <div class="dest-panel">
+                                <h3 class="dest-name">{{ d.name }}</h3>
+                                <div class="dest-hint">Tap to see details</div>
+                                <div class="dest-more">
+                                    <div class="dest-more-inner">
+                                        {% if d.description %}
+                                        <p>{{ d.description|striptags|truncatewords:20 }}</p>
+                                        {% endif %}
+                                        <div class="dest-actions">
+                                            <a href="#" class="dest-btn dest-btn-line open-booking" data-package="{{ d.name }}">
+                                                Book Now <i class="fa-solid fa-angles-right"></i>
+                                            </a>
+                                            <a href="{% url 'destination_detail' d.slug %}" class="dest-btn dest-btn-fill">
+                                                View more <i class="fa-solid fa-arrow-right"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+            </div>
+        </section>
+        {% empty %}
+        <div class="container">
+            <div class="dest-empty always">
+                <i class="fa-solid fa-compass"></i>
+                <h4>No destinations yet</h4>
+                <p>We are adding new places. Check back soon, or contact us and we will plan a trip for you.</p>
+                <a href="{% url 'contact' %}"><button type="button">Contact us</button></a>
             </div>
         </div>
-        {% empty %}
-        <p class="dest-empty">No destinations added yet.</p>
         {% endfor %}
     </div>
-</section>
+
+    <!-- Shown when search / filter finds nothing -->
+    <div class="container">
+        <div class="dest-empty" id="destNone">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+            <h4>No destinations found</h4>
+            <p>Try a different name, or show all locations.</p>
+            <button type="button" id="destReset">Show all destinations</button>
+        </div>
+    </div>
+
+    <div class="dest-bottom-space"></div>
+</div>
+<!-- ===== /flow ===== -->
+
+<button type="button" class="dest-top" id="destTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
 
 {% endblock %}
 
 {% block extra_js %}
-<!-- Hero: background images change one by one (same effect as the About hero) -->
+<!-- Hero: background images change one by one -->
 <script>
     (function () {
         var bgs = document.querySelectorAll('.dest-hero .ah-bg');
@@ -463,38 +655,188 @@
         setInterval(function () {
             bgs[current].classList.remove('active');
             current = (current + 1) % bgs.length;
-            bgs[current].classList.add('active');   /* re-adding restarts the zoom-out */
+            bgs[current].classList.add('active');
         }, 5000);
     })();
 </script>
 
+<!-- Cards: tap to open on touch, scroll-in animation -->
 <script>
     (function () {
         var cards = document.querySelectorAll('.dest-card');
         if (!cards.length) return;
-
-        // Touch devices: tap to open a card, tap again (or elsewhere) to close
         var touchOnly = window.matchMedia('(hover: none)');
 
         function closeAll(except) {
-            cards.forEach(function (c) {
-                if (c !== except) c.classList.remove('is-open');
-            });
+            cards.forEach(function (c) { if (c !== except) c.classList.remove('is-open'); });
         }
-
         cards.forEach(function (card) {
             card.addEventListener('click', function (e) {
-                if (!touchOnly.matches) return;            // desktop uses CSS hover
-                if (e.target.closest('.dest-btn')) return; // Book Now / View more keep working
-
+                if (!touchOnly.matches) return;
+                if (e.target.closest('.dest-btn')) return;
                 var wasOpen = card.classList.contains('is-open');
                 closeAll(card);
                 card.classList.toggle('is-open', !wasOpen);
             });
+            // Enter / Space opens the card for keyboard users on touch-style devices
+            card.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') card.blur();
+            });
         });
-
         document.addEventListener('click', function (e) {
             if (!e.target.closest('.dest-card')) closeAll(null);
+        });
+
+        // scroll-in reveal (staggered by column)
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var items = Array.prototype.slice.call(document.querySelectorAll('.dest-item'));
+        if (reduce || !('IntersectionObserver' in window)) return;
+
+        var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 992 ? 2 : 3);
+        items.forEach(function (it, i) { it.style.setProperty('--d', ((i % cols) * 0.1) + 's'); });
+        document.querySelector('.flow').classList.add('dest-js');
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function (it) { io.observe(it); });
+
+        // items revealed again after filtering must not stay invisible
+        window.destRevealAll = function () {
+            items.forEach(function (it) { it.classList.add('in'); });
+        };
+    })();
+</script>
+
+<!-- Filter chips + search + ?location=<slug> + back to top -->
+<script>
+    (function () {
+        var chipsBox = document.getElementById('destChips');
+        var groups = Array.prototype.slice.call(document.querySelectorAll('.dg'));
+        if (!chipsBox || !groups.length) return;
+
+        var chips = Array.prototype.slice.call(chipsBox.querySelectorAll('.dest-chip'));
+        var search = document.getElementById('destSearch');
+        var searchBox = document.getElementById('destSearchBox');
+        var clearBtn = document.getElementById('destClear');
+        var result = document.getElementById('destResult');
+        var none = document.getElementById('destNone');
+        var resetBtn = document.getElementById('destReset');
+        var topBtn = document.getElementById('destTop');
+
+        var state = { loc: 'all', q: '' };
+
+        // total count on the "All" chip
+        var totalEl = chipsBox.querySelector('[data-total]');
+        if (totalEl) totalEl.textContent = document.querySelectorAll('.dest-item').length;
+
+        function apply(scrollToGroup) {
+            var q = state.q.trim().toLowerCase();
+            var shown = 0;
+
+            groups.forEach(function (g) {
+                var locOk = state.loc === 'all' || g.getAttribute('data-loc') === state.loc;
+                var n = 0;
+                g.querySelectorAll('.dest-item').forEach(function (it) {
+                    var ok = locOk && (!q || (it.getAttribute('data-name') || '').indexOf(q) > -1);
+                    it.hidden = !ok;
+                    if (ok) n++;
+                });
+                g.hidden = n === 0;
+                var nEl = g.querySelector('.dg-n');
+                if (nEl) nEl.textContent = n;
+                shown += n;
+            });
+
+            if (window.destRevealAll) window.destRevealAll();
+
+            none.classList.toggle('show', shown === 0);
+            searchBox.classList.toggle('has-text', q.length > 0);
+
+            if (shown === 0) result.textContent = '';
+            else if (q || state.loc !== 'all') result.textContent = 'Showing ' + shown + (shown === 1 ? ' destination' : ' destinations');
+            else result.textContent = '';
+
+            if (scrollToGroup) {
+                var first = groups.filter(function (g) { return !g.hidden; })[0];
+                var top = document.querySelector('.dest-intro');
+                var target = first || top;
+                if (target) {
+                    var y = target.getBoundingClientRect().top + window.pageYOffset - 150;
+                    window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
+                }
+            }
+        }
+
+        function setChip(loc) {
+            var found = chips.some(function (c) { return c.getAttribute('data-filter') === loc; });
+            state.loc = found ? loc : 'all';
+            chips.forEach(function (c) {
+                var on = c.getAttribute('data-filter') === state.loc;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-selected', on ? 'true' : 'false');
+                if (on && c.scrollIntoView) {
+                    // keep the active chip visible inside the scrolling chip row
+                    chipsBox.scrollTo({ left: c.offsetLeft - 20, behavior: 'smooth' });
+                }
+            });
+        }
+
+        function updateUrl() {
+            if (!window.history || !history.replaceState) return;
+            var url = new URL(window.location.href);
+            if (state.loc === 'all') url.searchParams.delete('location');
+            else url.searchParams.set('location', state.loc);
+            history.replaceState(null, '', url.toString());
+        }
+
+        chips.forEach(function (c) {
+            c.addEventListener('click', function () {
+                setChip(c.getAttribute('data-filter'));
+                updateUrl();
+                apply(true);
+            });
+        });
+
+        var t;
+        search.addEventListener('input', function () {
+            state.q = search.value;
+            clearTimeout(t);
+            t = setTimeout(function () { apply(false); }, 120);
+        });
+        clearBtn.addEventListener('click', function () {
+            search.value = ''; state.q = ''; apply(false); search.focus();
+        });
+        resetBtn.addEventListener('click', function () {
+            search.value = ''; state.q = '';
+            setChip('all'); updateUrl(); apply(true);
+        });
+
+        // navbar dropdown links: /destinations/?location=<slug>
+        var param = new URLSearchParams(window.location.search).get('location');
+        if (param) {
+            setChip(param);
+            apply(false);
+            // wait for layout, then bring the chosen location into view
+            window.addEventListener('load', function () {
+                var g = document.getElementById('loc-' + state.loc);
+                if (g && !g.hidden) {
+                    var y = g.getBoundingClientRect().top + window.pageYOffset - 150;
+                    window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
+                }
+            });
+        } else {
+            apply(false);
+        }
+
+        // back to top
+        window.addEventListener('scroll', function () {
+            topBtn.classList.toggle('show', window.pageYOffset > 900);
+        }, { passive: true });
+        topBtn.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     })();
 </script>

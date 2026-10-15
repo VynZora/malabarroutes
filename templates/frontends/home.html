@@ -2531,6 +2531,65 @@
 /* ===== remove the gap between FAQ and footer ===== */
 .flow { padding-bottom: 0 !important; }
 .flow .fq-section { padding-bottom: 24px !important; }
+/* ================= ROUTE MAP: dotted road connecting every picture ================= */
+.rt-layer { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.rt-svg { position: absolute; left: 0; top: 0; overflow: visible; }
+
+.rt-ghost, .rt-dots {
+    fill: none; stroke: #c9972b; stroke-width: 4;
+    stroke-linecap: round; stroke-dasharray: 1 12;
+}
+.rt-ghost { opacity: .28; }                                     /* the whole road, faint */
+.rt-dots  { filter: drop-shadow(0 0 2px rgba(255,255,255,.95)); } /* the part already travelled */
+
+/* location pins */
+.rt-pin {
+    position: absolute; transform: translate(-50%, -100%) scale(.6);
+    opacity: .35; transition: opacity .5s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
+}
+.rt-pin.on { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+.rt-pin i {
+    display: block; font-size: 36px; line-height: 1;
+    color: var(--nav-green, #1F5B3A);
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.35));
+}
+.rt-pin::after {                                  /* pulse ring on the ground */
+    content: ""; position: absolute; left: 50%; bottom: -5px;
+    width: 18px; height: 7px; margin-left: -9px; border-radius: 50%;
+    background: rgba(31, 91, 58, .35);
+}
+.rt-pin.on::after { animation: rtPulse 2s ease-out infinite; }
+@keyframes rtPulse {
+    0%   { transform: scale(.6); opacity: .9; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+.rt-pin b {                                       /* place name label */
+    position: absolute; top: 4px; white-space: nowrap;
+    padding: 5px 12px; border-radius: 30px;
+    background: #fff; color: var(--nav-green, #1F5B3A);
+    font-size: 13px; font-weight: 600; line-height: 1;
+    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+}
+.rt-pin.to-right b { left: calc(100% + 8px); }
+.rt-pin.to-left  b { right: calc(100% + 8px); }
+
+/* moving navigation dot */
+.rt-puck {
+    position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px;
+    border-radius: 50%; background: var(--nav-green, #1F5B3A);
+    border: 3px solid #fff; box-shadow: 0 0 0 0 rgba(31,91,58,.5), 0 3px 8px rgba(0,0,0,.35);
+    animation: rtPuck 1.8s ease-out infinite;
+}
+@keyframes rtPuck { to { box-shadow: 0 0 0 14px rgba(31,91,58,0), 0 3px 8px rgba(0,0,0,.35); } }
+
+/* the old island route / pins / boat are replaced by this road */
+.ds-route, .isl-pin, .ds-boat { display: none !important; }
+
+@media (max-width: 991px) { .rt-layer { display: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+    .rt-pin, .rt-pin.on { transition: none; }
+    .rt-pin.on::after, .rt-puck { animation: none; }
+}
 </style>
 
 {% endblock %}
@@ -3960,5 +4019,143 @@
         }, { threshold: 0.15 }).observe(grid);
     })();
 </script>
+<!-- Route map: dotted road + location pins connecting every picture -->
+<script>
+(function () {
+    var flow = document.querySelector('.flow');
+    if (!flow) return;
 
+    /* [picture selector, x position in picture (0-1), y position in picture (0-1), label]
+       change the two numbers to move a pin inside its picture; delete a row to remove a stop */
+    var STOPS = [
+        ['.ab-left-img',   0.38, 0.45, 'Waterfalls'],
+        ['.sv-right-img',  0.42, 0.50, 'Varkala'],
+        ['.pk-right-img',  0.78, 0.50, 'Wildlife'],
+        ['.wc-left-img',   0.38, 0.50, 'Kochi'],
+        ['.ds-island-img', 0.55, 0.50, 'Kovalam'],
+        ['.ac-right-img',  0.60, 0.30, 'Munnar'],
+        ['.tc-left-img',   0.38, 0.50, 'Bekal'],
+        ['.fq-right-img',  0.60, 0.55, 'Backwaters']
+    ];
+
+    var NS = 'http://www.w3.org/2000/svg';
+    var layer = document.createElement('div');
+    layer.className = 'rt-layer';
+    layer.setAttribute('aria-hidden', 'true');
+    layer.innerHTML =
+        '<svg class="rt-svg">' +
+          '<defs><mask id="rtMask" maskUnits="userSpaceOnUse">' +
+            '<path class="rt-mask" fill="none" stroke="#fff" stroke-width="18" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>' +
+          '</mask></defs>' +
+          '<path class="rt-ghost"/>' +
+          '<path class="rt-dots" mask="url(#rtMask)"/>' +
+        '</svg>' +
+        '<span class="rt-puck"></span>';
+    flow.appendChild(layer);
+
+    var svg = layer.querySelector('svg');
+    var ghost = layer.querySelector('.rt-ghost');
+    var dots = layer.querySelector('.rt-dots');
+    var maskPath = layer.querySelector('.rt-mask');
+    var puck = layer.querySelector('.rt-puck');
+
+    var pins = [], samples = [], total = 0;
+
+    function build() {
+        pins.forEach(function (p) { p.el.remove(); });
+        pins = []; samples = []; total = 0;
+
+        if (window.innerWidth < 992) return;
+
+        var fr = flow.getBoundingClientRect();
+        var W = flow.offsetWidth, H = flow.offsetHeight;
+        svg.setAttribute('width', W);
+        svg.setAttribute('height', H);
+        svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+        /* stop positions, taken from where each picture really is on the page */
+        var pts = [];
+        STOPS.forEach(function (s) {
+            var el = flow.querySelector(s[0]);
+            if (!el) return;
+            var r = el.getBoundingClientRect();
+            if (!r.width || !r.height) return;
+            var x = r.left - fr.left + r.width * s[1];
+            var y = r.top - fr.top + r.height * s[2];
+            pts.push({ x: Math.max(60, Math.min(W - 60, x)), y: y, label: s[3] });
+        });
+        pts.sort(function (a, b) { return a.y - b.y; });
+        pts = pts.filter(function (p, i) { return i === 0 || p.y - pts[i - 1].y > 60; });
+        if (pts.length < 2) return;
+
+        /* road: starts under the hero, curves from stop to stop */
+        var d = 'M' + (W / 2) + ' 0';
+        var prev = { x: W / 2, y: 0 };
+        pts.forEach(function (p) {
+            var dy = p.y - prev.y;
+            d += ' C' + prev.x + ' ' + (prev.y + dy * 0.55) + ' ' + p.x + ' ' + (p.y - dy * 0.55) + ' ' + p.x + ' ' + p.y;
+            prev = p;
+        });
+        ghost.setAttribute('d', d);
+        dots.setAttribute('d', d);
+        maskPath.setAttribute('d', d);
+
+        total = ghost.getTotalLength();
+        for (var L = 0; L <= total; L += 8) {
+            var pt = ghost.getPointAtLength(L);
+            samples.push({ len: L, x: pt.x, y: pt.y });
+        }
+
+        /* pins, each tied to the point of the road nearest to it */
+        pts.forEach(function (p) {
+            var best = 0, bd = Infinity;
+            samples.forEach(function (s) {
+                var dd = (s.x - p.x) * (s.x - p.x) + (s.y - p.y) * (s.y - p.y);
+                if (dd < bd) { bd = dd; best = s.len; }
+            });
+            var el = document.createElement('span');
+            el.className = 'rt-pin ' + (p.x > W / 2 ? 'to-left' : 'to-right');
+            el.style.left = p.x + 'px';
+            el.style.top = p.y + 'px';
+            el.innerHTML = '<i class="fa-solid fa-location-dot"></i><b>' + p.label + '</b>';
+            layer.appendChild(el);
+            pins.push({ el: el, len: best });
+        });
+        update();
+    }
+
+    /* the road fills in and the dot travels as you scroll */
+    function update() {
+        if (!total || !samples.length) return;
+        var fr = flow.getBoundingClientRect();
+        var yc = window.innerHeight * 0.6 - fr.top;       /* a point 60% down the screen, inside .flow */
+
+        var L = 0;
+        for (var i = 0; i < samples.length; i++) {
+            if (samples[i].y <= yc) L = samples[i].len; else break;
+        }
+        L = Math.max(0, Math.min(total, L));
+
+        maskPath.style.strokeDashoffset = String(1 - L / total);
+        var p = ghost.getPointAtLength(L);
+        puck.style.left = p.x + 'px';
+        puck.style.top = p.y + 'px';
+        pins.forEach(function (pin) { pin.el.classList.toggle('on', L >= pin.len - 12); });
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { ticking = false; update(); });
+    }, { passive: true });
+
+    var rt;
+    function rebuild() { clearTimeout(rt); rt = setTimeout(build, 150); }
+    window.addEventListener('resize', rebuild);
+    window.addEventListener('load', function () { build(); setTimeout(build, 800); });
+    if ('ResizeObserver' in window) new ResizeObserver(rebuild).observe(flow);
+    build();
+})();
+</script>
 {% endblock %}

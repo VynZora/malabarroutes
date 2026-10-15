@@ -1081,6 +1081,75 @@
     .pk-title { min-height: 0; }
     .pk-loc { font-size: 13px; margin-bottom: 8px; }
 }
+/* ===== Testimonials: all text sits on clean white cards above the image ===== */
+
+/* intro card: "Malabar, remembered", subtitle, swirl, Google rating */
+.flow .pc-intro {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(31, 91, 58, 0.30) !important;
+    border-radius: 26px !important;
+    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.12) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+            backdrop-filter: blur(6px) !important;
+    padding: 28px 30px !important;
+}
+.flow .pc-eyebrow   { color: #3d4742 !important; }
+.flow .pc-heading   { color: #12281f !important; }
+.flow .pc-sub       { color: #2b3a35 !important; }
+.flow .pc-g-score   { color: #3d4742 !important; }
+
+/* review card text: quote, stars, author */
+.flow .pc-body {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(31, 91, 58, 0.20) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.12) !important;
+    padding: 20px 18px 18px !important;
+}
+.flow .pc-quote  { color: #12281f !important; }
+.flow .pc-author { color: #2b3a35 !important; }
+
+@media (max-width: 991px) {
+    .flow .pc-intro { margin-bottom: 20px; }
+}
+@media (max-width: 575px) {
+    .flow .pc-intro { padding: 20px 18px !important; border-radius: 20px !important; }
+    .flow .pc-body  { padding: 16px 14px !important; }
+}
+/* ===== Testimonials: no white boxes, text clear over a darkened photo ===== */
+
+/* remove the white cards */
+.flow .pc-intro,
+.flow .pc-body {
+    background: none !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+}
+.flow .pc-intro { padding: 0 20px 0 0 !important; }
+.flow .pc-body  { padding: 0 14px !important; }
+
+/* darken the Kovalam photo so white text stands out */
+.flow .pc-left-img { filter: brightness(0.55) saturate(1.05); }
+
+/* intro text: white */
+.flow .pc-intro .pc-eyebrow,
+.flow .pc-intro .pc-heading,
+.flow .pc-intro .pc-sub,
+.flow .pc-intro .pc-g-score { color: #ffffff !important; }
+
+/* keep the dotted route line inside its card */
+.flow .pc-path { left: 0 !important; width: 100% !important; }
+
+/* tablet/mobile: the photo is the backdrop for everything, so review text goes white too */
+@media (max-width: 991px) {
+    .flow .pc-quote,
+    .flow .pc-author { color: #ffffff !important; }
+    .flow .pc-author::before { background: #ffffff; }
+}
+
 </style>
 {% endblock %}
 

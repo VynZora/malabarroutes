@@ -429,8 +429,8 @@ background-position: center 70% !important;
     .footer-main .footer-social-links a,
     .footer-main .footer-social-links i { text-shadow: none; }
 
-    /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
-    .footer-main::before,
+     /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows
+       (footer-main::before is NOT in this list, it is used for the torn edge below) */
     .footer-main::after,
     .footer-main .container::before,
     .footer-main .container::after,
@@ -441,6 +441,35 @@ background-position: center 70% !important;
         content: none !important;
         display: none !important;
         background: none !important;
+    }
+
+    /* ===== Footer: square corners, full width, no gap, torn-paper top edge (crt.png) ===== */
+    .footer-main {
+        border-radius: 0 !important;       /* removes the curved corners */
+        margin: 0 !important;              /* removes the gap around the footer */
+        width: 100% !important;            /* fills the full width */
+        max-width: 100% !important;
+        position: relative;
+        overflow: visible !important;
+    }
+    .footer-main::before {
+        content: "" !important;
+        display: block !important;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -74px;                         /* move up/down until the torn edge sits right on the footer line */
+        height: 90px;                       /* thickness of the torn strip */
+        background: url("{% static 'malabar-static/crt.png' %}") center center / 100% auto no-repeat !important;
+        pointer-events: none;
+        z-index: 2;
+    }
+    @media (max-width: 991px) {
+        .footer-main::before {
+            top: -40px;
+            height: 50px;
+            background-size: 200% auto !important;
+        }
     }
         /* ================= MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website) ================= */
     @media (max-width: 991px) {
@@ -794,6 +823,38 @@ background-position: center 70% !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
     border-top-color: var(--nav-gold, #e0b14a) !important;
 }
+        /* ===== Footer: torn top edge cut into the footer itself (crt1.png used as a mask, no paper on top) ===== */
+    .footer-main {
+        border-radius: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: -5vw 0 0 !important;            /* footer overlaps the FAQ background, so the torn gaps show it */
+        position: relative;
+        overflow: visible !important;
+        overflow-x: clip !important;
+
+        -webkit-mask-image: url("{% static 'malabar-static/crt1.png' %}"), linear-gradient(#000, #000);
+                mask-image: url("{% static 'malabar-static/crt1.png' %}"), linear-gradient(#000, #000);
+        -webkit-mask-size: 100% auto, 100% calc(100% - 4vw);
+                mask-size: 100% auto, 100% calc(100% - 4vw);
+        -webkit-mask-position: center -13.7vw, 0 4vw;     /* first number: which part of the picture (the torn strip) is used */
+                mask-position: center -13.7vw, 0 4vw;
+        -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+        -webkit-mask-composite: source-over;
+                mask-composite: add;
+    }
+    .footer-main::before { content: none !important; display: none !important; }
+
+    @media (max-width: 991px) {
+        .footer-main {
+            margin-top: -14vw !important;
+            -webkit-mask-size: 300% auto, 100% calc(100% - 12.5vw);
+                    mask-size: 300% auto, 100% calc(100% - 12.5vw);
+            -webkit-mask-position: center -41vw, 0 12.5vw;
+                    mask-position: center -41vw, 0 12.5vw;
+        }
+    }
 </style>
 
     {% block extra_css %}{% endblock %}
@@ -937,6 +998,7 @@ background-position: center 70% !important;
 
     <!-- Footer -->
     <footer class="footer-main bg-section dark-section">
+        
         <div class="container">
             <div class="row">
                 <div class="col-lg-4">

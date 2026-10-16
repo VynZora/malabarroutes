@@ -4425,6 +4425,52 @@ body { background: var(--footer-gap) !important; }
         -webkit-mask-size: 100% calc(100% - 70px), 100% 110px !important;
                 mask-size: 100% calc(100% - 70px), 100% 110px !important;
     }
+}
+/* =====================================================================
+   MOBILE / TOUCH: Why Choose Us, no gold fill on tap
+   ===================================================================== */
+@media (max-width: 991px), (hover: none) {
+
+    /* the growing fill circle is removed completely */
+    html .flow .why-choose-us .why-choose-list-item::before,
+    html .flow .why-choose-us .why-choose-list-item::after,
+    html .flow .why-choose-us .why-choose-list-item .icon-box::before,
+    html .flow .why-choose-us .why-choose-list-item .icon-box::after {
+        content: none !important;
+        display: none !important;
+        background: none !important;
+        transform: none !important;
+    }
+
+    /* tapped / focused / "hovered": nothing changes colour */
+    html .flow .why-choose-us .why-choose-list-item,
+    html .flow .why-choose-us .why-choose-list-item:hover,
+    html .flow .why-choose-us .why-choose-list-item:active,
+    html .flow .why-choose-us .why-choose-list-item:focus-within {
+        background: none !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    html .flow .why-choose-us .why-choose-list-item .icon-box,
+    html .flow .why-choose-us .why-choose-list-item:hover .icon-box,
+    html .flow .why-choose-us .why-choose-list-item:active .icon-box,
+    html .flow .why-choose-us .why-choose-list-item .icon-box:hover {
+        background-color: #f3eeee !important;   /* the light icon box you had before */
+    }
+
+    html .flow .why-choose-us .why-choose-list-item .icon-box img,
+    html .flow .why-choose-us .why-choose-list-item:hover .icon-box img,
+    html .flow .why-choose-us .why-choose-list-item:active .icon-box img {
+        filter: none !important;
+    }
+
+    /* text stays dark and visible */
+    html .flow .why-choose-us .why-choose-list-item:hover .why-choose-item-content h3,
+    html .flow .why-choose-us .why-choose-list-item:hover .why-choose-item-content p,
+    html .flow .why-choose-us .why-choose-list-item:active .why-choose-item-content h3,
+    html .flow .why-choose-us .why-choose-list-item:active .why-choose-item-content p {
+        color: #12281f !important;
+    }
 }              /* pins, labels and moving dot: above everything */
 </style>
 <script>

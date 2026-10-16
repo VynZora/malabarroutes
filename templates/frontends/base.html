@@ -438,8 +438,8 @@ background-position: center 70% !important;
     .footer-main .footer-social-links a,
     .footer-main .footer-social-links i { text-shadow: none; }
 
-     /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows
-       (footer-main::before is NOT in this list, it is used for the torn edge below) */
+     /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
+    .footer-main::before,
     .footer-main::after,
     .footer-main .container::before,
     .footer-main .container::after,
@@ -452,34 +452,6 @@ background-position: center 70% !important;
         background: none !important;
     }
 
-    /* ===== Footer: square corners, full width, no gap, torn-paper top edge (crt.png) ===== */
-    .footer-main {
-        border-radius: 0 !important;       /* removes the curved corners */
-        margin: 0 !important;              /* removes the gap around the footer */
-        width: 100% !important;            /* fills the full width */
-        max-width: 100% !important;
-        position: relative;
-        overflow: visible !important;
-    }
-    .footer-main::before {
-        content: "" !important;
-        display: block !important;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: -74px;                         /* move up/down until the torn edge sits right on the footer line */
-        height: 90px;                       /* thickness of the torn strip */
-        background: url("{% static 'malabar-static/crt.png' %}") center center / 100% auto no-repeat !important;
-        pointer-events: none;
-        z-index: 2;
-    }
-    @media (max-width: 991px) {
-        .footer-main::before {
-            top: -40px;
-            height: 50px;
-            background-size: 200% auto !important;
-        }
-    }
         /* ================= MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website) ================= */
     @media (max-width: 991px) {
 
@@ -832,44 +804,7 @@ background-position: center 70% !important;
     border-color: rgba(255, 255, 255, 0.25) !important;
     border-top-color: var(--nav-gold, #e0b14a) !important;
 }
-        /* ===== Footer: torn top edge cut into the footer itself (crt1.png used as a mask, no paper on top) ===== */
-    .footer-main {
-        border-radius: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: -5vw 0 0 !important;            /* footer overlaps the FAQ background, so the torn gaps show it */
-        position: relative;
-        overflow: visible !important;
-        overflow-x: clip !important;
 
-        -webkit-mask-image: url("{% static 'malabar-static/crt1.png' %}"), linear-gradient(#000, #000);
-                mask-image: url("{% static 'malabar-static/crt1.png' %}"), linear-gradient(#000, #000);
-        -webkit-mask-size: 100% auto, 100% calc(100% - 4vw);
-                mask-size: 100% auto, 100% calc(100% - 4vw);
-        -webkit-mask-position: center -13.7vw, 0 4vw;     /* first number: which part of the picture (the torn strip) is used */
-                mask-position: center -13.7vw, 0 4vw;
-        -webkit-mask-repeat: no-repeat;
-                mask-repeat: no-repeat;
-        -webkit-mask-composite: source-over;
-                mask-composite: add;
-    }
-    .footer-main::before { content: none !important; display: none !important; }
-
-    @media (max-width: 991px) {
-        .footer-main {
-            margin-top: -14vw !important;
-            -webkit-mask-size: 300% auto, 100% calc(100% - 12.5vw);
-                    mask-size: 300% auto, 100% calc(100% - 12.5vw);
-            -webkit-mask-position: center -41vw, 0 12.5vw;
-                    mask-position: center -41vw, 0 12.5vw;
-        }
-    }
-    /* footer content starts BELOW the torn edge, so nothing is cut off */
-.footer-main > .container { padding-top: 5vw !important; }
-
-@media (max-width: 991px) {
-    .footer-main > .container { padding-top: 16vw !important; }
-}
 /* one heading font for the whole website (font only, no sizes) */
 h1, h2, h3, h4, h5, h6,
 .section-title h2, .hero-title, .hero-title-top, .hero-title-bottom,
@@ -877,6 +812,48 @@ h1, h2, h3, h4, h5, h6,
     font-family: 'EB Garamond', Georgia, serif !important;
 }
 
+/* ================= FOOTER: torn-paper top edge (single block) ================= */
+
+/* colour shown through the torn gaps: set this to the exact colour of the section above the footer */
+:root { --footer-gap: #eee5d2; }
+
+html,
+body { background: var(--footer-gap) !important; }
+
+.footer-main {
+    --torn-h: 70px;       /* height of the torn strip */
+
+    position: relative;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;             /* no pull-up: the whole tear stays visible below the section above */
+    overflow: visible !important;
+    z-index: 2;
+
+    -webkit-mask-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(#000, #000) !important;
+            mask-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(#000, #000) !important;
+    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+            mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+    -webkit-mask-position: top left, bottom left !important;
+            mask-position: top left, bottom left !important;
+    -webkit-mask-repeat: no-repeat !important;
+            mask-repeat: no-repeat !important;
+    -webkit-mask-composite: source-over !important;
+            mask-composite: add !important;
+}
+
+/* footer content starts below the lowest point of the tear */
+.footer-main > .container { padding-top: calc(var(--torn-h) * 0.75 + 30px) !important; }
+
+/* taller torn edge on desktop */
+@media (min-width: 992px) {
+    .footer-main { --torn-h: 110px; }
+}
 </style>
 
     {% block extra_css %}{% endblock %}

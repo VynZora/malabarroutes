@@ -5357,6 +5357,18 @@ html .flow .sv-d-bar span.run { animation: svDFill var(--sv-dur, 2s) linear forw
     }
     html .flow .sv-d-slides { width: 100%; }
 }
+/* MOBILE / TABLET: lighter text in Why Choose Us + Terms */
+@media (max-width: 991px) {
+    html .flow .why-choose-us .why-choose-item-content p,
+    html .flow .tc-text p {
+        font-weight: 400 !important;
+    }
+
+    html .flow .why-choose-us .why-choose-item-content h3,
+    html .flow .tc-text h3 {
+        font-weight: 500 !important;
+    }
+}
 
 </style>
 <script>

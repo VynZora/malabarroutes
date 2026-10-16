@@ -18,7 +18,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Marcellus&display=swap" rel="stylesheet">
+        <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Marcellus&display=swap" rel="stylesheet">
 
+    <!-- ADD THIS LINE HERE -->
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Template CSS -->
+    <link href="{% static 'malabar-static/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <!-- Template CSS -->
     <link href="{% static 'malabar-static/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'malabar-static/css/slicknav.min.css' %}" rel="stylesheet">
@@ -855,6 +864,19 @@ background-position: center 70% !important;
                     mask-position: center -41vw, 0 12.5vw;
         }
     }
+    /* footer content starts BELOW the torn edge, so nothing is cut off */
+.footer-main > .container { padding-top: 5vw !important; }
+
+@media (max-width: 991px) {
+    .footer-main > .container { padding-top: 16vw !important; }
+}
+/* one heading font for the whole website (font only, no sizes) */
+h1, h2, h3, h4, h5, h6,
+.section-title h2, .hero-title, .hero-title-top, .hero-title-bottom,
+.ac-title, .pk-title, .ds-name, .pc-heading, .page-header-box h1 {
+    font-family: 'EB Garamond', Georgia, serif !important;
+}
+
 </style>
 
     {% block extra_css %}{% endblock %}

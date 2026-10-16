@@ -4409,7 +4409,23 @@ body { background: var(--footer-gap) !important; }
 
 @media (max-width: 575px) {
     html .flow::before { background-size: 460px 460px; opacity: .18; }
-}               /* pins, labels and moving dot: above everything */
+} 
+/* desktop: same tear as mobile, drawn on a 1920-wide SVG so the noise is not stretched */
+@media (min-width: 992px) {
+    .hero .hero-section,
+    .hero .hero-section.hero-bg-image {
+        padding-bottom: 130px !important;
+
+        -webkit-mask-image:
+            linear-gradient(#000, #000),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E") !important;
+                mask-image:
+            linear-gradient(#000, #000),
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E") !important;
+        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px !important;
+                mask-size: 100% calc(100% - 70px), 100% 110px !important;
+    }
+}              /* pins, labels and moving dot: above everything */
 </style>
 <script>
 (function () {

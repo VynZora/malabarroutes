@@ -4471,7 +4471,893 @@ body { background: var(--footer-gap) !important; }
     html .flow .why-choose-us .why-choose-list-item:active .why-choose-item-content p {
         color: #12281f !important;
     }
-}              /* pins, labels and moving dot: above everything */
+} 
+/* =====================================================================
+   DESCRIPTIONS UNDER TITLES: normal weight (not bold)
+   ===================================================================== */
+html .flow .about-us .ab-title-wrap p,
+html .flow .section-title p,
+html .flow .pc-sub,
+html .flow .fq-text,
+html .flow .pc-intro .pc-sub,
+html .flow .why-choose-us .section-title p {
+    font-weight: 400 !important;
+}   
+/* ===== SERVICES: one big card at a time ===== */
+html .flow .sv-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    max-width: 760px;
+    margin: 24px auto 0 !important;
+    gap: 0 !important;
+}
+
+html .flow .sv-grid .sv-card {
+    grid-area: 1 / 1;                 /* all cards share one spot */
+    min-height: 400px;
+    padding: 56px 52px 60px;
+    border-radius: 28px;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(34px) scale(.96);
+    transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .6s,
+                border-color .4s ease, box-shadow .5s ease;
+}
+html .flow .sv-grid .sv-card.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+}
+
+/* bigger content */
+html .flow .sv-grid .sv-ico { width: 110px; height: 110px; margin-bottom: 36px; }
+html .flow .sv-grid .sv-card h3 { font-size: 36px; margin-bottom: 34px; }
+html .flow .sv-grid .sv-card h3::after { height: 4px; }
+html .flow .sv-grid .sv-card.active h3::after { width: 80px; }
+html .flow .sv-grid .sv-card p { font-size: 20px; line-height: 1.7; max-width: 560px; }
+
+/* dots under the card */
+.sv-dots { display: flex; justify-content: center; gap: 8px; margin-top: 26px; }
+.sv-dot {
+    width: 10px; height: 10px; padding: 0; border: 0; border-radius: 10px;
+    background: rgba(0,0,0,.22); cursor: pointer; transition: all .3s ease;
+}
+.sv-dot.active { width: 30px; background: var(--nav-green, #1F5B3A); }
+
+@media (max-width: 991px) {
+    html .flow .sv-grid { max-width: 640px; }
+    html .flow .sv-grid .sv-card { min-height: 340px; padding: 40px 32px 44px; }
+    html .flow .sv-grid .sv-ico { width: 90px; height: 90px; margin-bottom: 28px; }
+    html .flow .sv-grid .sv-card h3 { font-size: 30px; margin-bottom: 28px; }
+    html .flow .sv-grid .sv-card p { font-size: 18px; }
+}
+@media (max-width: 575px) {
+    html .flow .sv-grid .sv-card { min-height: 300px; padding: 30px 24px 34px; border-radius: 22px; }
+    html .flow .sv-grid .sv-ico { width: 72px; height: 72px; margin-bottom: 22px; }
+    html .flow .sv-grid .sv-card h3 { font-size: 25px; margin-bottom: 22px; }
+    html .flow .sv-grid .sv-card p { font-size: 16px; }
+}  
+/* =====================================================================
+   SERVICES: FINAL BLOCK (replaces all earlier Services card CSS)
+   ===================================================================== */
+
+/* section: moved slightly up */
+html .flow .sv-section {
+    margin-top: -30px !important;         /* more negative = higher */
+    padding-top: 10px !important;
+}
+html .flow .sv-section .section-row { margin-bottom: 20px !important; }
+
+/* card area: centred, never wider than its column (fixes the left cut-off) */
+@media (min-width: 992px) {
+    html .flow .sv-section .container {
+        width: 100% !important;
+        max-width: 1140px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 24px !important;
+        padding-right: 24px !important;
+    }
+    /* keeps the card clear of the Varkala picture on the left */
+    html .flow .sv-section .sv-stick,
+    html .flow .sv-section .sv-dots {
+        margin-left: auto;
+        margin-right: 0;
+        width: min(900px, 100%);
+    }
+}
+
+html .flow .sv-grid {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    box-sizing: border-box;
+}
+
+html .flow .sv-grid .sv-card {
+    grid-area: 1 / 1;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 320px;
+    padding: 40px 48px 44px;
+    border-radius: 28px;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(34px) scale(.96);
+    transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .6s,
+                border-color .4s ease, box-shadow .5s ease;
+}
+html .flow .sv-grid .sv-card.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+}
+
+html .flow .sv-grid .sv-ico { width: 90px; height: 90px; margin-bottom: 26px; }
+html .flow .sv-grid .sv-card h3 { font-size: 30px; margin-bottom: 28px; }
+html .flow .sv-grid .sv-card h3::after { height: 4px; }
+html .flow .sv-grid .sv-card.active h3::after { width: 70px; }
+html .flow .sv-grid .sv-card p { font-size: 18px; line-height: 1.7; max-width: 640px; }
+
+/* pinned block (card + dots) */
+.sv-stick { position: sticky; top: 90px; z-index: 3; }
+
+/* dots */
+.sv-dots { display: flex; justify-content: center; gap: 8px; margin-top: 22px; }
+.sv-dot {
+    width: 10px; height: 10px; padding: 0; border: 0; border-radius: 10px;
+    background: rgba(0,0,0,.22); cursor: pointer; transition: all .3s ease;
+}
+.sv-dot.active { width: 30px; background: var(--nav-green, #1F5B3A); }
+
+/* tablet */
+@media (max-width: 991px) {
+    html .flow .sv-section { margin-top: -16px !important; }
+    .sv-stick { top: 76px; }
+    html .flow .sv-grid .sv-card { padding: 32px 26px 36px; min-height: 290px; }
+}
+
+/* phone */
+@media (max-width: 575px) {
+    html .flow .sv-grid .sv-card { padding: 26px 22px 30px; min-height: 260px; border-radius: 22px; }
+    html .flow .sv-grid .sv-ico { width: 68px; height: 68px; margin-bottom: 20px; }
+    html .flow .sv-grid .sv-card h3 { font-size: 24px; margin-bottom: 20px; }
+    html .flow .sv-grid .sv-card p { font-size: 15.5px; }
+}
+/* ===== SERVICES: longer card, moved slightly left ===== */
+@media (min-width: 992px) {
+    html .flow .sv-section { --sv-w: 780px; }   /* card width. Higher = longer */
+
+    html .flow .sv-section .container {
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding-left: 24px !important;
+        padding-right: 120px !important;         /* gap from the right edge. Higher = further left */
+    }
+
+    /* heading, description, card and dots all share the same width and right edge */
+    html .flow .sv-section .section-title,
+    html .flow .sv-section .sv-stick,
+    html .flow .sv-section .sv-grid,
+    html .flow .sv-section .sv-dots {
+        width: min(var(--sv-w), 100%) !important;
+        max-width: none !important;
+        margin-left: auto !important;
+        margin-right: 0 !important;
+        box-sizing: border-box;
+    }
+
+    /* the grid inside the pinned wrapper just fills it */
+    html .flow .sv-section .sv-stick .sv-grid { width: 100% !important; }
+
+    /* content sized for the wider card */
+    html .flow .sv-grid .sv-card { padding: 40px 44px 44px; min-height: 300px; }
+    html .flow .sv-grid .sv-card p { max-width: 100%; font-size: 17px; }
+}
+/* ===== SERVICES: bigger picture, moved slightly down ===== */
+@media (min-width: 992px) {
+    html .flow .sv-section .sv-right-img {
+        left: -2vw !important;
+        top: 1.5vw !important;                  /* was -2vw. Higher = picture moves further down */
+        width: 54vw !important;                 /* Higher = bigger picture, smaller gap */
+        height: calc(100% + 4vw) !important;    /* was 6vw: shorter so the bottom doesn't drop too far */
+        object-fit: cover;
+        object-position: 30% 50%;
+
+        /* stays solid for longer, then fades into the card area */
+        -webkit-mask-image:
+            linear-gradient(to right, #000 0, #000 72%, rgba(0,0,0,.5) 88%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 84%, rgba(0,0,0,.5) 94%, transparent 100%) !important;
+        -webkit-mask-composite: source-in !important;
+                mask-image:
+            linear-gradient(to right, #000 0, #000 72%, rgba(0,0,0,.5) 88%, transparent 100%),
+            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 84%, rgba(0,0,0,.5) 94%, transparent 100%) !important;
+                mask-composite: intersect !important;
+    }
+
+    /* card position unchanged */
+    html .flow .sv-section .container { padding-right: 90px !important; }
+} 
+/* ===== SERVICES: all services on the left, cycling image on the right ===== */
+html .flow .sv-wide-list { margin: 0 0 22px; }
+html .flow .sv-li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 9px 10px;
+    margin: 0 -10px;
+    border-radius: 14px;
+    border-bottom: 0;
+    cursor: pointer;
+    transition: background .4s ease;
+}
+html .flow .sv-li-body { flex: 1; min-width: 0; }
+html .flow .sv-li-body b {
+    display: block;
+    font-weight: 600;
+    line-height: 32px;
+    transition: color .3s ease;
+}
+html .flow .sv-li-desc {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .45s ease;
+}
+html .flow .sv-li-desc > p {
+    overflow: hidden;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #5b6560;
+}
+html .flow .sv-li.active { background: #f6e6c6; }
+html .flow .sv-li.active .sv-li-desc { grid-template-rows: 1fr; }
+html .flow .sv-li.active .sv-li-desc > p { padding-bottom: 6px; }
+html .flow .sv-li.active .sv-wide-tick { background: var(--nav-green, #1F5B3A); color: var(--nav-gold, #e0b14a); }
+html .flow .sv-li:hover:not(.active) { background: rgba(246, 230, 198, .5); }
+
+/* right side: stacked pictures that cross-fade */
+html .flow .sv-wide-img { position: relative; min-height: 460px; }
+html .flow .sv-wide-img .sv-pic {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.08);
+    transition: opacity .9s ease, transform 5s ease-out;
+}
+html .flow .sv-wide-img .sv-pic.active { opacity: 1; transform: scale(1); }
+
+html .flow .sv-pic-label {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 2;
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, .92);
+    color: var(--nav-green, #1F5B3A);
+    font-family: 'EB Garamond', serif;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+@media (max-width: 991px) {
+    html .flow .sv-wide-img { min-height: 260px; }
+}
+@media (max-width: 575px) {
+    html .flow .sv-li-desc > p { font-size: 14.5px; }
+    html .flow .sv-wide-img { min-height: 230px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html .flow .sv-wide-img .sv-pic { transition: opacity .3s ease; transform: none; }
+}    
+/* ===== SERVICES CARD: base layout + one-by-one list reveal ===== */
+html .flow .sv-section { --sv-w: 900px; }
+
+html .flow .sv-wide {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 36px;
+    align-items: stretch;
+    width: 100%;
+    margin: 0 auto;
+    padding: 18px;
+    box-sizing: border-box;
+    background: #fdf8ee;
+    border-radius: 28px;
+    box-shadow: 0 14px 36px rgba(20, 40, 30, 0.14);
+    position: relative;
+    z-index: 3;
+}
+html .flow .sv-wide-text { padding: 18px 8px 18px 26px; min-width: 0; }
+
+html .flow .sv-wide-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c9972b;
+}
+html .flow .sv-wide-text h3 {
+    margin: 0 0 14px;
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(30px, 3vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: none;
+    color: #12281f;
+}
+
+html .flow .sv-wide-list {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+}
+html .flow .sv-wide-list li {
+    font-family: 'EB Garamond', serif;
+    font-size: 19px;
+    color: #12281f;
+}
+html .flow .sv-wide-tick {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f6e6c6;
+    color: #c9972b;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .3s ease, color .3s ease;
+}
+/* ===== SERVICES CARD: button, picture, responsive + smooth groups of 3 ===== */
+
+/* list: groups of 3 stacked in the same spot (fixed height, cross-fade) */
+html .flow .sv-wide-list.sv-grouped { display: grid; }
+
+html .flow .sv-group {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(18px);
+    pointer-events: none;
+    transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .7s;
+}
+html .flow .sv-group.on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+}
+
+/* items inside the visible group rise in one after another */
+html .flow .sv-group .sv-li {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .6s ease, transform .6s ease, background .4s ease;
+}
+html .flow .sv-group.on .sv-li { opacity: 1; transform: none; }
+html .flow .sv-group.on .sv-li:nth-child(1) { transition-delay: .05s; }
+html .flow .sv-group.on .sv-li:nth-child(2) { transition-delay: .18s; }
+html .flow .sv-group.on .sv-li:nth-child(3) { transition-delay: .31s; }
+
+html .flow .sv-wide.sv-measuring * { transition: none !important; }
+
+/* button */
+html .flow .sv-wide-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: var(--nav-green, #1F5B3A);
+    color: #fff;
+    font-family: 'EB Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .3s ease, color .3s ease;
+}
+html .flow .sv-wide-btn i { color: var(--nav-gold, #e0b14a); transition: transform .3s ease, color .3s ease; }
+html .flow .sv-wide-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+html .flow .sv-wide-btn:hover i { color: var(--nav-ink, #12281f); transform: translateX(4px); }
+
+/* picture column */
+html .flow .sv-wide-img {
+    position: relative;
+    min-height: 460px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #e4ece3;
+}
+
+/* desktop: same width and right edge as the section heading */
+@media (min-width: 992px) {
+    html .flow .sv-section .sv-wide {
+        width: min(var(--sv-w), 100%);
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+
+/* tablet + phone: stacked, picture on top */
+@media (max-width: 991px) {
+    html .flow .sv-wide { grid-template-columns: 1fr; gap: 18px; }
+    html .flow .sv-wide-text { padding: 14px 10px 4px; }
+    html .flow .sv-wide-img { order: -1; min-height: 260px; }
+}
+@media (max-width: 575px) {
+    html .flow .sv-wide { padding: 12px; border-radius: 22px; }
+    html .flow .sv-wide-list li { font-size: 16px; }
+    html .flow .sv-wide-btn { padding: 12px 22px; font-size: 16px; }
+    html .flow .sv-wide-img { min-height: 230px; }
+}
+/* ===== SERVICES on mobile / tablet: heading starts BELOW the picture band, no overlap ===== */
+@media (max-width: 991px) {
+    html .flow .sv-section {
+        margin-top: 0 !important;                              /* cancel the -16px / -30px pull-up */
+        padding-top: calc(var(--svp, 46vw) + 2vw) !important;  /* room for the picture band */
+        padding-bottom: 9vw !important;
+    }
+
+    /* the band stays at the top of the section, behind everything */
+    html .flow .sv-section > img.sv-right-img {
+        top: 0 !important;
+        height: var(--svp, 46vw) !important;
+    }
+
+    /* space between the description and the card */
+    html .flow .sv-section .section-row { margin-bottom: 18px !important; }
+
+    /* the card always sits above the picture */
+    html .flow .sv-section .sv-wide { position: relative; z-index: 3; }
+}
+/* ===== SERVICES: one separate card per service ===== */
+html .flow .sv-cards { width: 100%; position: relative; z-index: 3; }
+
+@media (min-width: 992px) {
+    html .flow .sv-section .sv-cards {
+        width: min(var(--sv-w, 900px), 100%);
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+
+/* all cards stacked in the same spot: the stage is as tall as the tallest card */
+html .flow .sv-stage { display: grid; }
+
+html .flow .sv-c {
+    grid-area: 1 / 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 30px;
+    align-items: stretch;
+    padding: 18px;
+    box-sizing: border-box;
+    background: #fdf8ee;
+    border-radius: 28px;
+    box-shadow: 0 14px 36px rgba(20, 40, 30, 0.14);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(40px) scale(.97);
+    transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .6s;
+}
+html .flow .sv-c.on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+}
+html .flow .sv-c.out { transform: translateX(-40px) scale(.97); }
+
+html .flow .sv-c-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 8px 20px 26px;
+    min-width: 0;
+}
+html .flow .sv-c-count {
+    margin-bottom: 18px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c9972b;
+}
+html .flow .sv-c-ico {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    background: var(--nav-green, #1F5B3A);
+    color: var(--nav-gold, #e0b14a);
+    font-size: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+html .flow .sv-c-text h3 {
+    margin: 0 0 14px;
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(32px, 3vw, 44px);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: none;
+    color: #12281f;
+}
+html .flow .sv-c-text p {
+    margin: 0 0 26px;
+    font-family: 'EB Garamond', serif;
+    font-size: 20px;
+    line-height: 1.55;
+    color: #5b6560;
+}
+html .flow .sv-c-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: var(--nav-green, #1F5B3A);
+    color: #fff;
+    font-family: 'EB Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .3s ease, color .3s ease;
+}
+html .flow .sv-c-btn i { color: var(--nav-gold, #e0b14a); transition: transform .3s ease, color .3s ease; }
+html .flow .sv-c-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+html .flow .sv-c-btn:hover i { color: var(--nav-ink, #12281f); transform: translateX(4px); }
+
+html .flow .sv-c-img {
+    min-height: 400px;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #e4ece3;
+}
+html .flow .sv-c-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.08);
+    transition: transform 5s ease-out;
+}
+html .flow .sv-c.on .sv-c-img img { transform: scale(1); }
+
+/* arrows + dots */
+html .flow .sv-c-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 22px;
+}
+html .flow .sv-c-arrow {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid var(--nav-green, #1F5B3A);
+    background: transparent;
+    color: var(--nav-green, #1F5B3A);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+html .flow .sv-c-arrow:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
+html .flow .sv-c-dots { display: flex; align-items: center; gap: 8px; }
+html .flow .sv-c-dots button {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: rgba(18, 40, 31, .25);
+    cursor: pointer;
+    transition: width .3s ease, background .3s ease;
+}
+html .flow .sv-c-dots button.active { width: 30px; background: var(--nav-green, #1F5B3A); }
+
+/* tablet + phone: picture on top, text below */
+@media (max-width: 991px) {
+    html .flow .sv-c { grid-template-columns: 1fr; gap: 16px; }
+    html .flow .sv-c-img { order: -1; min-height: 260px; }
+    html .flow .sv-c-text { padding: 6px 10px 12px; }
+}
+@media (max-width: 575px) {
+    html .flow .sv-c { padding: 12px; border-radius: 22px; }
+    html .flow .sv-c-img { min-height: 220px; }
+    html .flow .sv-c-ico { width: 52px; height: 52px; font-size: 21px; }
+    html .flow .sv-c-text h3 { font-size: 28px; }
+    html .flow .sv-c-text p { font-size: 17px; margin-bottom: 20px; }
+    html .flow .sv-c-btn { padding: 12px 22px; font-size: 16px; }
+    html .flow .sv-c-dots { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    html .flow .sv-c, html .flow .sv-c-img img { transition: opacity .3s ease; transform: none !important; }
+}
+/* ===== SERVICES: stacked photo deck ===== */
+html .flow .sv-section { --sv-w: 960px; }
+
+html .flow .sv-d {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 44px;
+    position: relative;
+    z-index: 3;
+}
+
+/* ---- the deck ---- */
+html .flow .sv-d-deck {
+    position: relative;
+    flex: 0 0 400px;
+    width: 400px;
+    height: 520px;
+    margin: 14px 44px 14px 10px;
+}
+html .flow .sv-d-card {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #cfe0d6;
+    border: 6px solid #fdf8ee;
+    box-shadow: 0 14px 30px rgba(20, 40, 30, 0.25);
+    cursor: pointer;
+    outline: none;
+    transition: transform .6s cubic-bezier(.2, .7, .2, 1), opacity .5s ease, filter .5s ease;
+    will-change: transform;
+}
+html .flow .sv-d-card:focus-visible { box-shadow: 0 0 0 3px var(--nav-gold, #e0b14a), 0 14px 30px rgba(20, 40, 30, 0.25); }
+html .flow .sv-d-card > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.12);
+    transition: transform 5s ease-out;
+}
+html .flow .sv-d-card.top > img { transform: scale(1); }
+
+/* dark strip behind the name */
+html .flow .sv-d-card::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 48%;
+    background: linear-gradient(to top, rgba(10, 25, 18, .78), rgba(10, 25, 18, 0));
+    pointer-events: none;
+}
+html .flow .sv-d-ico {
+    position: absolute;
+    top: 14px; left: 14px;
+    z-index: 2;
+    width: 46px; height: 46px;
+    border-radius: 50%;
+    background: var(--nav-green, #1F5B3A);
+    color: var(--nav-gold, #e0b14a);
+    font-size: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+html .flow .sv-d-no {
+    position: absolute;
+    top: 20px; right: 18px;
+    z-index: 2;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--nav-gold, #e0b14a);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+}
+html .flow .sv-d-nm {
+    position: absolute;
+    left: 18px; right: 18px; bottom: 16px;
+    z-index: 2;
+    font-family: 'EB Garamond', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .5);
+}
+
+/* the top card flies off to the left */
+html .flow .sv-d-card.fly {
+    transform: translateX(-130%) rotate(-14deg) !important;
+    opacity: 0 !important;
+}
+
+/* ---- the cream panel ---- */
+html .flow .sv-d-panel {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 520px;
+    padding: 30px 34px 26px;
+    background: #fdf8ee;
+    border-radius: 28px;
+    box-shadow: 0 14px 36px rgba(20, 40, 30, 0.14);
+    overflow: hidden;
+}
+
+/* all slides share one spot: the panel is as tall as the tallest */
+html .flow .sv-d-slides { display: grid; }
+html .flow .sv-d-slide {
+    grid-area: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(34px);
+    transition: opacity .45s ease, transform .6s cubic-bezier(.2, .7, .2, 1), visibility .45s;
+}
+html .flow .sv-d-slide.on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition-delay: .12s;
+}
+
+html .flow .sv-d-count {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #c9972b;
+}
+html .flow .sv-d-bigico {
+    width: 60px; height: 60px;
+    margin: 16px 0;
+    border-radius: 50%;
+    background: var(--nav-green, #1F5B3A);
+    color: var(--nav-gold, #e0b14a);
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+html .flow .sv-d-slide h3 {
+    margin: 0 0 10px;
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(30px, 3vw, 42px);
+    font-weight: 700;
+    line-height: 1.1;
+    text-transform: none;
+    color: #12281f;
+}
+html .flow .sv-d-slide p {
+    margin: 0 0 24px;
+    font-family: 'EB Garamond', serif;
+    font-size: 20px;
+    line-height: 1.5;
+    color: #5b6560;
+}
+html .flow .sv-d-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 28px;
+    border-radius: 12px;
+    background: var(--nav-green, #1F5B3A);
+    color: #fff;
+    font-family: 'EB Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .3s ease, color .3s ease;
+}
+html .flow .sv-d-btn i { color: var(--nav-gold, #e0b14a); transition: transform .3s ease, color .3s ease; }
+html .flow .sv-d-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+html .flow .sv-d-btn:hover i { color: var(--nav-ink, #12281f); transform: translateX(4px); }
+
+/* arrows + dots */
+html .flow .sv-d-nav { display: flex; align-items: center; gap: 14px; margin-top: 24px; }
+html .flow .sv-d-arrow {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--nav-green, #1F5B3A);
+    background: transparent;
+    color: var(--nav-green, #1F5B3A);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+html .flow .sv-d-arrow:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
+html .flow .sv-d-dots { display: flex; align-items: center; gap: 7px; }
+html .flow .sv-d-dots button {
+    width: 9px; height: 9px;
+    padding: 0; border: 0;
+    border-radius: 9px;
+    background: rgba(18, 40, 31, .25);
+    cursor: pointer;
+    transition: width .3s ease, background .3s ease;
+}
+html .flow .sv-d-dots button.active { width: 26px; background: var(--nav-green, #1F5B3A); }
+
+/* gold timer bar along the bottom */
+html .flow .sv-d-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; }
+html .flow .sv-d-bar span { display: block; height: 100%; width: 0; background: var(--nav-gold, #e0b14a); }
+html .flow .sv-d-bar span.run { animation: svDFill var(--sv-dur, 2s) linear forwards; }
+@keyframes svDFill { to { width: 100%; } }
+
+/* desktop: same right edge as the heading */
+@media (min-width: 992px) {
+    html .flow .sv-section .sv-cards {
+        width: min(var(--sv-w, 960px), 100%);
+        margin-left: auto;
+        margin-right: 0;
+    }
+}
+
+/* tablet */
+@media (max-width: 991px) {
+    html .flow .sv-d { gap: 28px; }
+    html .flow .sv-d-panel { max-width: 460px; padding: 26px 26px 24px; }
+}
+
+/* phone: deck on top, panel under it */
+@media (max-width: 767px) {
+    html .flow .sv-d { flex-direction: column; gap: 22px; }
+    html .flow .sv-d-deck { flex-basis: auto; width: 230px; height: 300px; margin: 8px 30px 8px 8px; }
+    html .flow .sv-d-nm { font-size: 26px; }
+    html .flow .sv-d-panel { width: 100%; max-width: none; padding: 22px 20px 22px; border-radius: 24px; }
+    html .flow .sv-d-slide p { font-size: 17.5px; margin-bottom: 20px; }
+    html .flow .sv-d-slide h3 { font-size: 30px; }
+    html .flow .sv-d-bigico { width: 52px; height: 52px; font-size: 21px; margin: 12px 0; }
+    html .flow .sv-d-btn { padding: 11px 22px; font-size: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html .flow .sv-d-card, html .flow .sv-d-card > img, html .flow .sv-d-slide { transition: opacity .3s ease; }
+    html .flow .sv-d-card.fly { transform: none !important; }
+    html .flow .sv-d-bar span.run { animation: none; width: 100%; }
+}
+/* FIX: panel collapsed on mobile (flex-basis 0 in a column layout) */
+@media (max-width: 767px) {
+    html .flow .sv-d-panel {
+        flex: 0 0 auto !important;   /* height comes from the content, not 0 */
+        width: 100%;
+        height: auto;
+        min-height: 0;
+    }
+    html .flow .sv-d-slides { width: 100%; }
+}
+
 </style>
 <script>
 (function () {
@@ -4497,6 +5383,78 @@ body { background: var(--footer-gap) !important; }
     }
     if (img.complete) run(); else img.addEventListener('load', run);
 })();
+</script>
+<!-- Services: one wide card, changes while scrolling -->
+<script>
+    (function () {
+        var grid = document.querySelector('.sv-grid');
+        if (!grid) return;
+        var cards = Array.prototype.slice.call(grid.querySelectorAll('.sv-card'));
+        if (!cards.length) return;
+        var container = grid.parentNode;
+        var row = container.querySelector('.section-row');
+
+        /* pin wrapper: card + dots */
+        var stick = document.createElement('div');
+        stick.className = 'sv-stick';
+        container.insertBefore(stick, grid);
+        stick.appendChild(grid);
+
+        var dotsBox = document.createElement('div');
+        dotsBox.className = 'sv-dots';
+        var dots = cards.map(function (c, i) {
+            var d = document.createElement('button');
+            d.type = 'button';
+            d.className = 'sv-dot';
+            d.setAttribute('aria-label', 'Show service ' + (i + 1));
+            d.addEventListener('click', function () { scrollToCard(i); });
+            dotsBox.appendChild(d);
+            return d;
+        });
+        stick.appendChild(dotsBox);
+
+        var cur = -1, step = 0, headH = 0, stickTop = 110;
+
+        function show(i) {
+            if (i === cur) return;
+            cur = i;
+            cards.forEach(function (c, k) { c.classList.toggle('active', k === cur); });
+            dots.forEach(function (d, k) { d.classList.toggle('active', k === cur); });
+        }
+
+        /* how much scrolling it takes to change one card, and room below for it */
+        function measure() {
+            step = window.innerHeight * 0.45;
+            stickTop = parseFloat(getComputedStyle(stick).top) || 110;
+            headH = row ? row.offsetHeight + (parseFloat(getComputedStyle(row).marginBottom) || 0) : 0;
+            container.style.paddingBottom = (step * (cards.length - 1)) + 'px';
+        }
+
+        function update() {
+            var top = container.getBoundingClientRect().top;
+            var scrolled = stickTop - top - headH;      /* distance scrolled while the card is pinned */
+            var i = Math.floor(Math.max(0, scrolled) / step);
+            show(Math.min(cards.length - 1, i));
+        }
+
+        function scrollToCard(i) {
+            var top = container.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({ top: top + headH - stickTop + i * step + 2, behavior: 'smooth' });
+        }
+
+        var ticking = false;
+        window.addEventListener('scroll', function () {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(function () { ticking = false; update(); });
+        }, { passive: true });
+        window.addEventListener('resize', function () { measure(); update(); });
+        window.addEventListener('load', function () { measure(); update(); });
+
+        measure();
+        show(0);
+        update();
+    })();
 </script>
 {% endblock %}
 
@@ -4688,10 +5646,10 @@ body { background: var(--footer-gap) !important; }
 </div>
 <!-- About Us End -->
 
-<!-- Malabaroutes Services (icon cards, same as the About page) -->
+<!-- Malabaroutes Services (stacked photo deck) -->
 <div class="sv-section">
-    
-     <img class="sv-right-img" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false">
+
+    <img class="sv-right-img" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false">
     <div class="container">
         <div class="row section-row align-items-center">
             <div class="col-lg-12">
@@ -4702,76 +5660,140 @@ body { background: var(--footer-gap) !important; }
             </div>
         </div>
 
-        <div class="sv-grid">
+        <div class="sv-cards" id="svCards">
+            <div class="sv-d">
 
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="9" y="6" width="30" height="36" rx="3"/><path pathLength="1" d="M16 15h16M16 21h10"/><circle pathLength="1" cx="29" cy="32" r="5"/><path pathLength="1" d="M26.7 32l1.8 1.8 3.2-3.6"/></svg></span>
-                <h3>Visa</h3>
-                <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
-            </a>
+                <!-- the deck of photos -->
+                <div class="sv-d-deck">
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Visa">
+                        <img src="{% static 'malabar-static/back.jpg' %}" alt="Visa" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-file-circle-check"></i></span>
+                        <span class="sv-d-no">01</span>
+                        <span class="sv-d-nm">Visa</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Passport">
+                        <img src="{% static 'malabar-static/bacck.png' %}" alt="Passport" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-passport"></i></span>
+                        <span class="sv-d-no">02</span>
+                        <span class="sv-d-nm">Passport</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Tickets">
+                        <img src="{% static 'malabar-static/kovalam.png' %}" alt="Tickets" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-ticket"></i></span>
+                        <span class="sv-d-no">03</span>
+                        <span class="sv-d-nm">Tickets</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="House Boat">
+                        <img src="{% static 'malabar-static/mr33.png' %}" alt="House Boat" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-ship"></i></span>
+                        <span class="sv-d-no">04</span>
+                        <span class="sv-d-nm">House Boat</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Packages">
+                        <img src="{% static 'malabar-static/wls.png' %}" alt="Packages" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-suitcase-rolling"></i></span>
+                        <span class="sv-d-no">05</span>
+                        <span class="sv-d-nm">Packages</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Travel Guides">
+                        <img src="{% static 'malabar-static/hill.png' %}" alt="Travel Guides" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-map-location-dot"></i></span>
+                        <span class="sv-d-no">06</span>
+                        <span class="sv-d-nm">Travel Guides</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Car Rentals">
+                        <img src="{% static 'malabar-static/Golden-hour_Kochi_fishing_nets.png' %}" alt="Car Rentals" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-car"></i></span>
+                        <span class="sv-d-no">07</span>
+                        <span class="sv-d-nm">Car Rentals</span>
+                    </div>
+                    <div class="sv-d-card" tabindex="0" role="button" aria-label="Taxi Services">
+                        <img src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="Taxi Services" draggable="false">
+                        <span class="sv-d-ico"><i class="fa-solid fa-taxi"></i></span>
+                        <span class="sv-d-no">08</span>
+                        <span class="sv-d-nm">Taxi Services</span>
+                    </div>
+                </div>
 
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="10" y="5" width="28" height="38" rx="3"/><circle pathLength="1" cx="24" cy="21" r="8"/><path pathLength="1" d="M16 21h16M24 13c-3.5 3-3.5 13 0 16M24 13c3.5 3 3.5 13 0 16M17 36h14"/></svg></span>
-                <h3>Passport</h3>
-                <p>We help you with fast processing of passport applications, renewals and replacement.</p>
-            </a>
+                <!-- the cream panel -->
+                <div class="sv-d-panel">
+                    <div class="sv-d-slides">
 
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M42 6L6 21l15 6 6 15z"/><path pathLength="1" d="M42 6L21 27"/></svg></span>
-                <h3>Tickets</h3>
-                <p>Let us help you, we will take care of your tickets at the lowest cost available.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 01 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-file-circle-check"></i></span>
+                            <h3>Visa</h3>
+                            <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
 
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M6 30h36l-5 9H11z"/><path pathLength="1" d="M13 30v-8h22v8"/><path pathLength="1" d="M18 22v-5h12v5"/><path pathLength="1" d="M6 44c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0"/></svg></span>
-                <h3>House Boat</h3>
-                <p>Explore Kerala backwaters on a perfect Houseboat Cruise with tasty food and awesome sightseeing.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 02 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-passport"></i></span>
+                            <h3>Passport</h3>
+                            <p>Fast processing of passport applications, renewals and replacement.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
 
-            <a href="{% url 'packages' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><rect pathLength="1" x="6" y="14" width="36" height="26" rx="4"/><path pathLength="1" d="M17 14v-4a3 3 0 013-3h8a3 3 0 013 3v4M6 26h36M20 26v4h8v-4"/></svg></span>
-                <h3>Packages</h3>
-                <p>Book International or national Holiday Packages at best prices and plan memorable Holidays.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 03 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-ticket"></i></span>
+                            <h3>Tickets</h3>
+                            <p>We take care of your tickets at the lowest cost available.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
 
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true"><path pathLength="1" d="M24 44S11 32.5 11 23a13 13 0 0126 0c0 9.5-13 21-13 21z"/><circle pathLength="1" cx="24" cy="23" r="5"/></svg></span>
-                <h3>Travel Guides</h3>
-                <p>Local experts help you discover Malabar's culture and hidden places.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 04 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-ship"></i></span>
+                            <h3>House Boat</h3>
+                            <p>Explore Kerala backwaters on a perfect houseboat cruise with tasty food and awesome sightseeing.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
 
-            <!-- Car Rentals: side-view car with windows, door handles and wheels -->
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
-                    <path pathLength="1" d="M8 34H5.5A1.5 1.5 0 0 1 4 32.5V27C4 25.7 4.9 24.6 6.1 24.2L13 22L17 15.5H31L35 22L41.9 24.2C43.1 24.6 44 25.7 44 27V32.5A1.5 1.5 0 0 1 42.5 34H40"/>
-                    <path pathLength="1" d="M16 34H32"/>
-                    <path pathLength="1" d="M13 22H35"/>
-                    <path pathLength="1" d="M24 15.5V22"/>
-                    <path pathLength="1" d="M18 27.5H21"/>
-                    <path pathLength="1" d="M27 27.5H30"/>
-                    <path pathLength="1" d="M39 27.5H41.5"/>
-                    <circle pathLength="1" cx="12" cy="34" r="4"/>
-                    <circle pathLength="1" cx="36" cy="34" r="4"/>
-                </svg></span>
-                <h3>Car Rentals</h3>
-                <p>Never spoil your memorable moments looking for a rental car, we'll take care of that.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 05 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-suitcase-rolling"></i></span>
+                            <h3>Packages</h3>
+                            <p>International and national holiday packages at the best prices.</p>
+                            <a href="{% url 'packages' %}" class="sv-d-btn">View Packages <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
 
-            <!-- Taxi Services: side-view car with roof sign and stripe -->
-            <a href="{% url 'contact' %}" class="sv-card">
-                <span class="sv-ico"><svg viewBox="0 0 48 48" aria-hidden="true">
-                    <rect pathLength="1" x="19" y="6" width="10" height="5" rx="1.5"/>
-                    <path pathLength="1" d="M24 11V17.5"/>
-                    <path pathLength="1" d="M8 36H5.5A1.5 1.5 0 0 1 4 34.5V29C4 27.7 4.9 26.6 6.1 26.2L13 24L17 17.5H31L35 24L41.9 26.2C43.1 26.6 44 27.7 44 29V34.5A1.5 1.5 0 0 1 42.5 36H40"/>
-                    <path pathLength="1" d="M16 36H32"/>
-                    <path pathLength="1" d="M13 24H35"/>
-                    <path pathLength="1" d="M4.5 30.5H43.5"/>
-                    <circle pathLength="1" cx="12" cy="36" r="4"/>
-                    <circle pathLength="1" cx="36" cy="36" r="4"/>
-                </svg></span>
-                <h3>Taxi Services</h3>
-                <p>Never spoil your memorable moments looking for a taxi, we'll take care of that.</p>
-            </a>
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 06 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-map-location-dot"></i></span>
+                            <h3>Travel Guides</h3>
+                            <p>Local experts help you discover Malabar's culture and hidden places.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 07 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-car"></i></span>
+                            <h3>Car Rentals</h3>
+                            <p>Never spend your memorable moments looking for a rental car, we'll take care of that.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+
+                        <div class="sv-d-slide">
+                            <span class="sv-d-count">Service 08 / 08</span>
+                            <span class="sv-d-bigico"><i class="fa-solid fa-taxi"></i></span>
+                            <h3>Taxi Services</h3>
+                            <p>Never spend your memorable moments looking for a taxi, we'll take care of that.</p>
+                            <a href="{% url 'contact' %}" class="sv-d-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+
+                    </div>
+
+                    <div class="sv-d-nav">
+                        <button type="button" class="sv-d-arrow sv-d-prev" aria-label="Previous service"><i class="fa-solid fa-arrow-left"></i></button>
+                        <div class="sv-d-dots"></div>
+                        <button type="button" class="sv-d-arrow sv-d-next" aria-label="Next service"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <div class="sv-d-bar"><span></span></div>
+                </div>
+
+            </div>
         </div>
     </div>
 </div>
@@ -6061,6 +7083,179 @@ if ('ResizeObserver' in window) {
     window.addEventListener('load', function () { build(); setTimeout(build, 800); });
     if ('ResizeObserver' in window) new ResizeObserver(rebuild).observe(flow);
     build();
+})();
+
+</script>
+<script>
+(function () {
+    var box = document.getElementById('svCards');
+    if (!box) return;
+    var cards = Array.prototype.slice.call(box.querySelectorAll('.sv-c'));
+    var dotsBox = box.querySelector('.sv-c-dots');
+    var DUR = 2000, cur = 0, timer = null;
+
+    var dots = cards.map(function (c, k) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.setAttribute('aria-label', 'Show service ' + (k + 1));
+        d.addEventListener('click', function () { show(k); start(); });
+        dotsBox.appendChild(d);
+        return d;
+    });
+
+    function show(i) {
+        var next = (i + cards.length) % cards.length;
+        if (next === cur && cards[cur].classList.contains('on')) return;
+        cards.forEach(function (c, k) {
+            c.classList.toggle('on', k === next);
+            c.classList.toggle('out', k !== next && k < next);
+        });
+        dots.forEach(function (d, k) { d.classList.toggle('active', k === next); });
+        cur = next;
+    }
+
+    function start() { stop(); timer = setInterval(function () { show(cur + 1); }, DUR); }
+    function stop() { if (timer) clearInterval(timer); timer = null; }
+
+    box.querySelector('.sv-c-next').addEventListener('click', function () { show(cur + 1); start(); });
+    box.querySelector('.sv-c-prev').addEventListener('click', function () { show(cur - 1); start(); });
+    box.addEventListener('mouseenter', stop);
+    box.addEventListener('mouseleave', start);
+
+    show(0);
+
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+            if (en[0].isIntersecting) start(); else stop();
+        }, { threshold: 0.2 }).observe(box);
+    } else { start(); }
+})();
+</script>
+<script>
+(function () {
+    var box = document.getElementById('svCards');
+    if (!box) return;
+
+    var cards = Array.prototype.slice.call(box.querySelectorAll('.sv-d-card'));
+    var slides = Array.prototype.slice.call(box.querySelectorAll('.sv-d-slide'));
+    var dotsBox = box.querySelector('.sv-d-dots');
+    var bar = box.querySelector('.sv-d-bar span');
+    var n = cards.length;
+    var DUR = 2000, FLY = 450;
+    var cur = 0, timer = null, busy = false, inView = false, hovering = false;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    box.style.setProperty('--sv-dur', DUR + 'ms');
+
+    var dots = cards.map(function (c, k) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.setAttribute('aria-label', 'Show service ' + (k + 1));
+        d.addEventListener('click', function () { jump(k); start(); });
+        dotsBox.appendChild(d);
+        return d;
+    });
+
+    /* where every card sits in the stack */
+    function place() {
+        cards.forEach(function (c, i) {
+            var p = (i - cur + n) % n;
+            c.style.zIndex = 20 - p;
+            c.classList.toggle('top', p === 0);
+            if (p > 3) {
+                c.style.opacity = 0;
+                c.style.transform = 'translate(54px, -42px) scale(.8)';
+                c.style.filter = 'none';
+                return;
+            }
+            c.style.opacity = 1;
+            c.style.transform = 'translate(' + (p * 18) + 'px,' + (-p * 14) + 'px) scale(' + (1 - p * 0.05) + ') rotate(' + (p * 2.2) + 'deg)';
+            c.style.filter = p ? 'brightness(' + (1 - p * 0.12) + ')' : 'none';
+        });
+    }
+
+    /* text panel, dots, timer bar */
+    function showText() {
+        slides.forEach(function (s, k) { s.classList.toggle('on', k === cur); });
+        dots.forEach(function (d, k) { d.classList.toggle('active', k === cur); });
+        restartBar();
+    }
+
+    function restartBar() {
+        bar.classList.remove('run');
+        void bar.offsetWidth;
+        if (!hovering && timer) bar.classList.add('run');
+        else if (hovering) { bar.style.width = '100%'; return; }
+        bar.style.width = '';
+    }
+
+    /* the top card flies off, then the stack moves up */
+    function jump(target) {
+        target = (target + n) % n;
+        if (busy || target === cur) return;
+        busy = true;
+        var top = cards[cur];
+
+        if (reduce) {
+            cur = target; place(); showText(); busy = false;
+            return;
+        }
+
+        top.classList.add('fly');
+        setTimeout(function () {
+            top.style.transition = 'none';
+            cur = target;
+            place();
+            top.classList.remove('fly');
+            void top.offsetWidth;
+            top.style.transition = '';
+            showText();
+            busy = false;
+        }, FLY);
+    }
+
+    function start() {
+        stop();
+        if (!inView || hovering) return;
+        timer = setInterval(function () { jump(cur + 1); }, DUR);
+        restartBar();
+    }
+    function stop() {
+        if (timer) clearInterval(timer);
+        timer = null;
+    }
+
+    /* controls */
+    box.querySelector('.sv-d-next').addEventListener('click', function () { jump(cur + 1); start(); });
+    box.querySelector('.sv-d-prev').addEventListener('click', function () { jump(cur - 1); start(); });
+
+    cards.forEach(function (c, i) {
+        c.addEventListener('click', function () { if (i !== cur) { jump(i); start(); } });
+        c.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(cur + 1); start(); }
+        });
+    });
+
+    /* hover pauses (mouse only) */
+    box.addEventListener('pointerenter', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        hovering = true; stop(); bar.classList.remove('run'); bar.style.width = '100%';
+    });
+    box.addEventListener('pointerleave', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        hovering = false; bar.style.width = ''; start();
+    });
+
+    place();
+    showText();
+
+    /* run only while on screen */
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function (en) {
+            inView = en[0].isIntersecting;
+            if (inView) start(); else { stop(); bar.classList.remove('run'); }
+        }, { threshold: 0.25 }).observe(box);
+    } else { inView = true; start(); }
 })();
 </script>
 {% endblock %}

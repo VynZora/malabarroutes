@@ -18,16 +18,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Marcellus&display=swap" rel="stylesheet">
-        <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Marcellus&display=swap" rel="stylesheet">
-
-    <!-- ADD THIS LINE HERE -->
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Template CSS -->
-    <link href="{% static 'malabar-static/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <!-- Template CSS -->
     <link href="{% static 'malabar-static/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'malabar-static/css/slicknav.min.css' %}" rel="stylesheet">
@@ -89,7 +81,7 @@
         background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
-background-position: center 70% !important;   /* move the pattern up/down */
+        background-position: center 70% !important;   /* move the pattern up/down */
         backdrop-filter: blur(14px) saturate(160%);
         -webkit-backdrop-filter: blur(14px) saturate(160%);
         border-radius: 70px !important;
@@ -144,8 +136,8 @@ background-position: center 70% !important;   /* move the pattern up/down */
             border-radius: 32px !important;
             padding: 10px 20px !important;
             overflow: visible;                        /* lets the mobile dropdown show below the bar */
-           background-size: cover !important;
-background-position: center 70% !important;
+            background-size: cover !important;
+            background-position: center 70% !important;
         }
         .main-header .navbar-brand { margin-left: 15px; }
         .main-header .navbar-brand img { height: 60px; }
@@ -237,38 +229,38 @@ background-position: center 70% !important;
 
         /* ---- Mobile menu: align dropdown parents with normal links ---- */
 
-/* remove the doubled padding from the row wrapper */
-.main-header .slicknav_nav .slicknav_row,
-.main-header .slicknav_nav .slicknav_item {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 !important;
-    margin: 0 !important;
-}
+        /* remove the doubled padding from the row wrapper */
+        .main-header .slicknav_nav .slicknav_row,
+        .main-header .slicknav_nav .slicknav_item {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
 
-/* inner link takes the free space, same padding as the other links */
-.main-header .slicknav_nav .slicknav_row > a {
-    flex: 1;
-    margin: 0 !important;
-}
+        /* inner link takes the free space, same padding as the other links */
+        .main-header .slicknav_nav .slicknav_row > a {
+            flex: 1;
+            margin: 0 !important;
+        }
 
-/* hide my desktop caret, keep only SlickNav's arrow on the right */
-.main-header .slicknav_nav .pk-nav-caret { display: none !important; }
+        /* hide my desktop caret, keep only SlickNav's arrow on the right */
+        .main-header .slicknav_nav .pk-nav-caret { display: none !important; }
 
-.main-header .slicknav_nav .slicknav_arrow {
-    flex: 0 0 auto;
-    margin: 0 18px 0 0 !important;
-    padding: 0 !important;
-    float: none !important;
-    color: #111111;
-}
+        .main-header .slicknav_nav .slicknav_arrow {
+            flex: 0 0 auto;
+            margin: 0 18px 0 0 !important;
+            padding: 0 !important;
+            float: none !important;
+            color: #111111;
+        }
 
-/* sub-links (All Packages, Beaches...) slightly indented under the parent */
-.main-header .slicknav_nav .slicknav_parent > ul a {
-    padding-left: 34px !important;
-    font-weight: 500;
-}
+        /* sub-links (All Packages, Beaches...) slightly indented under the parent */
+        .main-header .slicknav_nav .slicknav_parent > ul a {
+            padding-left: 34px !important;
+            font-weight: 500;
+        }
     }
 
     @media (max-width: 380px) {
@@ -302,8 +294,7 @@ background-position: center 70% !important;
         width: 100%; border: 1px solid #ddd; border-radius: 12px;
         padding: 10px 14px; font-size: 15px; font-family: inherit; background: #fff;
     }
-    .bk-box select { cursor: pointer; }
-    .bk-box input:focus, .bk-box textarea:focus, .bk-box select:focus { outline: none; border-color: #c9972b; }
+    .bk-box input:focus, .bk-box textarea:focus { outline: none; border-color: #c9972b; }
     .bk-submit {
         width: 100%; margin-top: 20px; border: 0; border-radius: 50px;
         padding: 14px 20px; font-weight: 600; font-size: 16px; cursor: pointer;
@@ -319,6 +310,33 @@ background-position: center 70% !important;
         .bk-box { padding: 24px 18px; }
         .bk-grid { grid-template-columns: 1fr; }
     }
+
+    /* ---------- Custom package dropdown (replaces the native <select>) ---------- */
+    .bk-dd { position: relative; }
+    .bk-dd-btn {
+        width: 100%; display: flex; align-items: center; justify-content: space-between;
+        gap: 10px; text-align: left; cursor: pointer;
+        border: 1px solid #ddd; border-radius: 12px; background: #fff;
+        padding: 10px 14px; font-size: 15px; font-family: inherit; color: #111;
+    }
+    .bk-dd-btn span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bk-dd-btn i { font-size: 12px; flex: 0 0 auto; transition: transform .2s ease; }
+    .bk-dd.open .bk-dd-btn { border-color: #c9972b; }
+    .bk-dd.open .bk-dd-btn i { transform: rotate(180deg); }
+    .bk-dd-list {
+        display: none; position: absolute; left: 0; right: 0; top: calc(100% + 6px);
+        margin: 0; padding: 6px 0; list-style: none;
+        background: #fff; border: 1px solid #eee; border-radius: 14px;
+        box-shadow: 0 12px 30px rgba(0,0,0,.15);
+        max-height: 220px; overflow-y: auto; z-index: 10;
+    }
+    .bk-dd.open .bk-dd-list { display: block; }
+    .bk-dd-list li {
+        padding: 10px 14px; font-size: 14px; line-height: 1.35;
+        cursor: pointer; color: #111; margin: 0;
+    }
+    .bk-dd-list li:hover { background: #faf3e3; color: #a97a14; }
+    .bk-dd-list li.selected { background: #f3ead2; font-weight: 600; }
 
     /* ---------- Success modal ---------- */
     .bk-success-box {
@@ -346,7 +364,7 @@ background-position: center 70% !important;
     }
     .bk-success-btn:hover { background: #c9972b; }
 
-        /* ---------- Navbar on small laptops / large tablets (992px to 1199px) ---------- */
+    /* ---------- Navbar on small laptops / large tablets (992px to 1199px) ---------- */
     @media (min-width: 992px) and (max-width: 1199px) {
         .main-header {
             top: 20px;
@@ -438,7 +456,7 @@ background-position: center 70% !important;
     .footer-main .footer-social-links a,
     .footer-main .footer-social-links i { text-shadow: none; }
 
-     /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
+    /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
     .footer-main::before,
     .footer-main::after,
     .footer-main .container::before,
@@ -452,7 +470,7 @@ background-position: center 70% !important;
         background: none !important;
     }
 
-        /* ================= MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website) ================= */
+    /* ================= MOBILE: ALL TEXT ALIGNED TO THE LEFT (whole website) ================= */
     @media (max-width: 991px) {
 
         /* ---- hero (all pages) ---- */
@@ -532,7 +550,7 @@ background-position: center 70% !important;
         .footer-main .footer-social-links ul { justify-content: flex-start !important; padding-left: 0; }
     }
 
-        /* ================= MOBILE / TABLET ONLY: zoom the navbar background so the corner circles are cropped out ================= */
+    /* ================= MOBILE / TABLET ONLY: zoom the navbar background so the corner circles are cropped out ================= */
     @media (max-width: 991px) {
         .main-header .header-sticky,
         .main-header .header-sticky.hide,
@@ -550,310 +568,315 @@ background-position: center 70% !important;
             background-size: 190% auto !important;
         }
     }
+
     /* ===== Packages dropdown in navbar (desktop) ===== */
-@media (min-width: 992px) {
-    .main-header .header-sticky,
-    .main-header .header-sticky.hide,
-    .main-header .header-sticky.active { overflow: visible !important; }   /* lets the dropdown hang below the bar */
+    @media (min-width: 992px) {
+        .main-header .header-sticky,
+        .main-header .header-sticky.hide,
+        .main-header .header-sticky.active { overflow: visible !important; }   /* lets the dropdown hang below the bar */
 
-    .main-header .pk-nav-dd { position: relative; }
-    .main-header .pk-nav-caret { font-size: 11px; margin-left: 4px; }
+        .main-header .pk-nav-dd { position: relative; }
+        .main-header .pk-nav-caret { font-size: 11px; margin-left: 4px; }
 
-    .main-header .pk-nav-menu {
-        position: absolute; top: 100%; left: 0; min-width: 230px;
-        margin: 8px 0 0; padding: 10px 0; list-style: none;
-        background: #fff; border-radius: 18px;
-        box-shadow: 0 12px 34px rgba(0,0,0,.14);
-        opacity: 0; visibility: hidden; transform: translateY(10px);
-        transition: opacity .25s ease, transform .25s ease, visibility .25s;
-        z-index: 1100;
-    }
-    /* invisible bridge so the menu doesn't close while the mouse moves down */
-    .main-header .pk-nav-menu::before {
-        content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
-    }
-    .main-header .pk-nav-dd:hover .pk-nav-menu {
-        opacity: 1; visibility: visible; transform: translateY(0);
-    }
-    .main-header .pk-nav-menu li { margin: 0; }
-    .main-header .pk-nav-menu a {
-        display: block; padding: 10px 24px; white-space: nowrap;
-        font-size: 15px; font-weight: 600; color: #111 !important;
-        text-decoration: none; transition: background .2s ease, color .2s ease;
-    }
-    .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
-}
-/* ================= GREEN PREMIUM NAVBAR (no bubble pattern) ================= */
-:root {
-    --nav-green: #1F5B3A;     /* main green: darker = more premium, lighter = softer */
-    --nav-gold:  #e0b14a;     /* active / hover colour */
-    --nav-ink:   #12281f;     /* text colour on gold */
-}
-
-/* bar: solid green multiplied over nav4.png */
-.main-header .header-sticky,
-.main-header .header-sticky.hide,
-.main-header .header-sticky.active {
-    background-color: var(--nav-green) !important;
-    background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
-    background-blend-mode: multiply !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center 70% !important;
-    border: 1px solid rgba(255, 255, 255, 0.16) !important;
-    box-shadow: 0 12px 36px rgba(6, 28, 20, 0.40) !important;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-}
-
-/* menu text: white, gold when active/hover */
-.main-header .nav-link { color: #ffffff !important; }
-.main-header .nav-link:hover,
-.main-header .nav-link.active { color: var(--nav-gold) !important; }
-
-/* logo: lighter shadow so it sits cleanly on green */
-.main-header .navbar-brand img {
-    filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
-}
-
-/* ================= Book Now (desktop): outlined white pill ================= */
-.main-header .header-btn .btn-default {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border: 2px solid #ffffff !important;
-    color: #ffffff !important;
-    transition: color .3s ease, border-color .3s ease, background-color .3s ease;
-}
-
-/* kill the theme's dark hover fill (it is drawn by ::after) */
-.main-header .header-btn .btn-default::after {
-    background: var(--nav-gold) !important;
-    background-color: var(--nav-gold) !important;
-}
-
-/* hover: GOLD fill, dark text, dark arrow */
-.main-header .header-btn .btn-default:hover {
-    background: var(--nav-gold) !important;
-    background-color: var(--nav-gold) !important;
-    border-color: var(--nav-gold) !important;
-    color: var(--nav-ink) !important;
-}
-.main-header .header-btn .btn-default:hover::after {
-    background: var(--nav-gold) !important;
-    background-color: var(--nav-gold) !important;
-}
-
-/* arrow icon: white normally, dark on gold hover */
-.main-header .header-btn .btn-default::before {
-    transition: filter .3s ease;
-}
-.main-header .header-btn .btn-default:hover::before {
-    filter: brightness(0) saturate(100%);   /* turns the white arrow dark */
-}
-
-/* dropdowns (Packages / Destinations): dark green panel */
-@media (min-width: 992px) {
-    .main-header .pk-nav-menu {
-        background: rgba(20, 70, 55, 0.97);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        box-shadow: 0 14px 36px rgba(6, 28, 20, 0.40);
-    }
-    .main-header .pk-nav-menu a { color: #ffffff !important; }
-    .main-header .pk-nav-menu a:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: var(--nav-gold) !important;
-    }
-}
-
-/* mobile / tablet */
-@media (max-width: 991px) {
-    .main-header .mobile-book-btn {
-        background: transparent;
-        border: 2px solid #ffffff;
-        color: #ffffff !important;
-        box-shadow: none;
-        padding: 10px 16px;
-    }
-    .main-header .mobile-book-btn:hover,
-    .main-header .mobile-book-btn:active {
-        background: var(--nav-gold) !important;
-        border-color: var(--nav-gold) !important;
-        color: var(--nav-ink) !important;
+        .main-header .pk-nav-menu {
+            position: absolute; top: 100%; left: 0; min-width: 230px;
+            margin: 8px 0 0; padding: 10px 0; list-style: none;
+            background: #fff; border-radius: 18px;
+            box-shadow: 0 12px 34px rgba(0,0,0,.14);
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity .25s ease, transform .25s ease, visibility .25s;
+            z-index: 1100;
+        }
+        /* invisible bridge so the menu doesn't close while the mouse moves down */
+        .main-header .pk-nav-menu::before {
+            content: ""; position: absolute; top: -12px; left: 0; right: 0; height: 12px;
+        }
+        .main-header .pk-nav-dd:hover .pk-nav-menu {
+            opacity: 1; visibility: visible; transform: translateY(0);
+        }
+        .main-header .pk-nav-menu li { margin: 0; }
+        .main-header .pk-nav-menu a {
+            display: block; padding: 10px 24px; white-space: nowrap;
+            font-size: 15px; font-weight: 600; color: #111 !important;
+            text-decoration: none; transition: background .2s ease, color .2s ease;
+        }
+        .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
     }
 
-    /* mobile zoom on nav4.png */
+    /* ================= GREEN PREMIUM NAVBAR (no bubble pattern) ================= */
+    :root {
+        --nav-green: #1F5B3A;     /* main green: darker = more premium, lighter = softer */
+        --nav-gold:  #e0b14a;     /* active / hover colour */
+        --nav-ink:   #12281f;     /* text colour on gold */
+    }
+
+    /* bar: solid green multiplied over nav4.png */
     .main-header .header-sticky,
     .main-header .header-sticky.hide,
     .main-header .header-sticky.active {
-        background-size: 150% auto !important;
-        background-position: center 65% !important;
-    }
-
-    .main-header .slicknav_nav {
         background-color: var(--nav-green) !important;
         background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
         background-blend-mode: multiply !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
-        background-position: center !important;
-        border: 1px solid rgba(255, 255, 255, 0.16);
+        background-position: center 70% !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 12px 36px rgba(6, 28, 20, 0.40) !important;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
     }
-    .main-header .slicknav_nav a { color: #ffffff !important; }
-    .main-header .slicknav_nav a:hover,
-    .main-header .slicknav_nav a.active { color: var(--nav-gold) !important; }
-    .main-header .slicknav_nav .slicknav_arrow { color: #ffffff !important; }
-}
 
-/* very small phones: zoom nav4.png a little more */
-@media (max-width: 480px) {
-    .main-header .header-sticky,
-    .main-header .header-sticky.hide,
-    .main-header .header-sticky.active {
-        background-size: 190% auto !important;
-    }
-}
-/* ================= MOBILE / TABLET: gold hover on Book Now, plain menu toggle ================= */
-@media (max-width: 991px) {
+    /* menu text: white, gold when active/hover */
+    .main-header .nav-link { color: #ffffff !important; }
+    .main-header .nav-link:hover,
+    .main-header .nav-link.active { color: var(--nav-gold) !important; }
 
-    /* Book Now pill in the bar */
-    .main-header .mobile-book-btn {
-        transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+    /* logo: lighter shadow so it sits cleanly on green */
+    .main-header .navbar-brand img {
+        filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
     }
-    .main-header .mobile-book-btn:hover,
-    .main-header .mobile-book-btn:focus,
-    .main-header .mobile-book-btn:active {
+
+    /* ================= Book Now (desktop): outlined white pill ================= */
+    .main-header .header-btn .btn-default {
+        background: rgba(255, 255, 255, 0.06) !important;
+        border: 2px solid #ffffff !important;
+        color: #ffffff !important;
+        transition: color .3s ease, border-color .3s ease, background-color .3s ease;
+    }
+
+    /* kill the theme's dark hover fill (it is drawn by ::after) */
+    .main-header .header-btn .btn-default::after {
         background: var(--nav-gold) !important;
+        background-color: var(--nav-gold) !important;
+    }
+
+    /* hover: GOLD fill, dark text, dark arrow */
+    .main-header .header-btn .btn-default:hover {
+        background: var(--nav-gold) !important;
+        background-color: var(--nav-gold) !important;
         border-color: var(--nav-gold) !important;
         color: var(--nav-ink) !important;
-        box-shadow: 0 4px 14px rgba(224, 177, 74, 0.45) !important;
+    }
+    .main-header .header-btn .btn-default:hover::after {
+        background: var(--nav-gold) !important;
+        background-color: var(--nav-gold) !important;
     }
 
-    /* Menu toggle (hamburger): no border, no hover / tap / open effect */
-    .main-header .slicknav_btn,
-    .main-header .slicknav_btn:hover,
-    .main-header .slicknav_btn:focus,
-    .main-header .slicknav_btn:active,
-    .main-header .slicknav_btn.slicknav_open {
-        background-color: rgba(255, 255, 255, 0.10) !important;
-        border: 0 !important;
-        box-shadow: none !important;
-        outline: none !important;
-        transition: none !important;
+    /* arrow icon: white normally, dark on gold hover */
+    .main-header .header-btn .btn-default::before {
+        transition: filter .3s ease;
     }
-    .main-header .slicknav_btn .slicknav_icon-bar,
-    .main-header .slicknav_btn:hover .slicknav_icon-bar,
-    .main-header .slicknav_btn:focus .slicknav_icon-bar,
-    .main-header .slicknav_btn:active .slicknav_icon-bar,
-    .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
-        background-color: #ffffff !important;
-        box-shadow: none !important;
+    .main-header .header-btn .btn-default:hover::before {
+        filter: brightness(0) saturate(100%);   /* turns the white arrow dark */
     }
 
-    /* menu links: soft gold highlight when tapped */
-    .main-header .slicknav_nav a:hover,
-    .main-header .slicknav_nav a:active {
-        background: rgba(224, 177, 74, 0.14) !important;
-        color: var(--nav-gold) !important;
+    /* dropdowns (Packages / Destinations): dark green panel */
+    @media (min-width: 992px) {
+        .main-header .pk-nav-menu {
+            background: rgba(20, 70, 55, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 14px 36px rgba(6, 28, 20, 0.40);
+        }
+        .main-header .pk-nav-menu a { color: #ffffff !important; }
+        .main-header .pk-nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--nav-gold) !important;
+        }
     }
-}
-/* ================= MOBILE / TABLET: sticky Call + WhatsApp + Email bar ================= */
-.mb-contact-bar { display: none; }
 
-@media (max-width: 991px) {
-    .mb-contact-bar {
-        position: fixed; left: 0; right: 0; bottom: 0;
-        z-index: 1500;                       /* below the booking modal (2000) and the preloader (99999) */
-        display: flex;
-        background: var(--nav-green, #1F5B3A);
-        box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* mobile / tablet */
+    @media (max-width: 991px) {
+        .main-header .mobile-book-btn {
+            background: transparent;
+            border: 2px solid #ffffff;
+            color: #ffffff !important;
+            box-shadow: none;
+            padding: 10px 16px;
+        }
+        .main-header .mobile-book-btn:hover,
+        .main-header .mobile-book-btn:active {
+            background: var(--nav-gold) !important;
+            border-color: var(--nav-gold) !important;
+            color: var(--nav-ink) !important;
+        }
+
+        /* mobile zoom on nav4.png */
+        .main-header .header-sticky,
+        .main-header .header-sticky.hide,
+        .main-header .header-sticky.active {
+            background-size: 150% auto !important;
+            background-position: center 65% !important;
+        }
+
+        .main-header .slicknav_nav {
+            background-color: var(--nav-green) !important;
+            background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+            background-blend-mode: multiply !important;
+            background-repeat: no-repeat !important;
+            background-size: cover !important;
+            background-position: center !important;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+        }
+        .main-header .slicknav_nav a { color: #ffffff !important; }
+        .main-header .slicknav_nav a:hover,
+        .main-header .slicknav_nav a.active { color: var(--nav-gold) !important; }
+        .main-header .slicknav_nav .slicknav_arrow { color: #ffffff !important; }
     }
-    .mb-contact-bar a {
-        flex: 1;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        gap: 5px; padding: 10px 6px;
-        color: #ffffff !important;
-        font-size: 12.5px; font-weight: 700; line-height: 1;
-        text-decoration: none; white-space: nowrap;
-        -webkit-tap-highlight-color: transparent;
-        transition: background-color .25s ease, color .25s ease;
+
+    /* very small phones: zoom nav4.png a little more */
+    @media (max-width: 480px) {
+        .main-header .header-sticky,
+        .main-header .header-sticky.hide,
+        .main-header .header-sticky.active {
+            background-size: 190% auto !important;
+        }
     }
-    .mb-contact-bar a i { font-size: 20px; }
-    .mb-contact-bar a + a { border-left: 1px solid rgba(255, 255, 255, 0.25); }
 
-    /* WhatsApp: brand green so it stands out */
-    .mb-contact-bar a.mb-wa { background: #25D366; color: #ffffff !important; }
+    /* ================= MOBILE / TABLET: gold hover on Book Now, plain menu toggle ================= */
+    @media (max-width: 991px) {
 
-    .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f) !important; }
-    .mb-contact-bar a.mb-wa:active { background: #1ebe5a; }
+        /* Book Now pill in the bar */
+        .main-header .mobile-book-btn {
+            transition: background-color .25s ease, border-color .25s ease, color .25s ease;
+        }
+        .main-header .mobile-book-btn:hover,
+        .main-header .mobile-book-btn:focus,
+        .main-header .mobile-book-btn:active {
+            background: var(--nav-gold) !important;
+            border-color: var(--nav-gold) !important;
+            color: var(--nav-ink) !important;
+            box-shadow: 0 4px 14px rgba(224, 177, 74, 0.45) !important;
+        }
 
-    /* keep the footer copyright from hiding behind the bar */
-    body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
-}
-/* ================= PRELOADER: same green as the navbar ================= */
-.preloader {
-    background-color: var(--nav-green, #1F5B3A) !important;
-    background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
-    background-blend-mode: multiply !important;
-    background-repeat: no-repeat !important;
-    background-size: cover !important;
-    background-position: center !important;
-}
+        /* Menu toggle (hamburger): no border, no hover / tap / open effect */
+        .main-header .slicknav_btn,
+        .main-header .slicknav_btn:hover,
+        .main-header .slicknav_btn:focus,
+        .main-header .slicknav_btn:active,
+        .main-header .slicknav_btn.slicknav_open {
+            background-color: rgba(255, 255, 255, 0.10) !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            transition: none !important;
+        }
+        .main-header .slicknav_btn .slicknav_icon-bar,
+        .main-header .slicknav_btn:hover .slicknav_icon-bar,
+        .main-header .slicknav_btn:focus .slicknav_icon-bar,
+        .main-header .slicknav_btn:active .slicknav_icon-bar,
+        .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
 
-/* spinning ring: gold so it stands out on the green */
-.preloader .loading {
-    border-color: rgba(255, 255, 255, 0.25) !important;
-    border-top-color: var(--nav-gold, #e0b14a) !important;
-}
+        /* menu links: soft gold highlight when tapped */
+        .main-header .slicknav_nav a:hover,
+        .main-header .slicknav_nav a:active {
+            background: rgba(224, 177, 74, 0.14) !important;
+            color: var(--nav-gold) !important;
+        }
+    }
 
-/* one heading font for the whole website (font only, no sizes) */
-h1, h2, h3, h4, h5, h6,
-.section-title h2, .hero-title, .hero-title-top, .hero-title-bottom,
-.ac-title, .pk-title, .ds-name, .pc-heading, .page-header-box h1 {
-    font-family: 'EB Garamond', Georgia, serif !important;
-}
+    /* ================= MOBILE / TABLET: sticky Call + WhatsApp + Email bar ================= */
+    .mb-contact-bar { display: none; }
 
-/* ================= FOOTER: torn-paper top edge (single block) ================= */
+    @media (max-width: 991px) {
+        .mb-contact-bar {
+            position: fixed; left: 0; right: 0; bottom: 0;
+            z-index: 1500;                       /* below the booking modal (2000) and the preloader (99999) */
+            display: flex;
+            background: var(--nav-green, #1F5B3A);
+            box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        .mb-contact-bar a {
+            flex: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 5px; padding: 10px 6px;
+            color: #ffffff !important;
+            font-size: 12.5px; font-weight: 700; line-height: 1;
+            text-decoration: none; white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color .25s ease, color .25s ease;
+        }
+        .mb-contact-bar a i { font-size: 20px; }
+        .mb-contact-bar a + a { border-left: 1px solid rgba(255, 255, 255, 0.25); }
 
-/* colour shown through the torn gaps: set this to the exact colour of the section above the footer */
-:root { --footer-gap: #eee5d2; }
+        /* WhatsApp: brand green so it stands out */
+        .mb-contact-bar a.mb-wa { background: #25D366; color: #ffffff !important; }
 
-html,
-body { background: var(--footer-gap) !important; }
+        .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f) !important; }
+        .mb-contact-bar a.mb-wa:active { background: #1ebe5a; }
 
-.footer-main {
-    --torn-h: 70px;       /* height of the torn strip */
+        /* keep the footer copyright from hiding behind the bar */
+        body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+    }
 
-    position: relative;
-    border-radius: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;             /* no pull-up: the whole tear stays visible below the section above */
-    overflow: visible !important;
-    z-index: 2;
+    /* ================= PRELOADER: same green as the navbar ================= */
+    .preloader {
+        background-color: var(--nav-green, #1F5B3A) !important;
+        background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
+        background-blend-mode: multiply !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        background-position: center !important;
+    }
 
-    -webkit-mask-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(#000, #000) !important;
-            mask-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(#000, #000) !important;
-    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-            mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-    -webkit-mask-position: top left, bottom left !important;
-            mask-position: top left, bottom left !important;
-    -webkit-mask-repeat: no-repeat !important;
-            mask-repeat: no-repeat !important;
-    -webkit-mask-composite: source-over !important;
-            mask-composite: add !important;
-}
+    /* spinning ring: gold so it stands out on the green */
+    .preloader .loading {
+        border-color: rgba(255, 255, 255, 0.25) !important;
+        border-top-color: var(--nav-gold, #e0b14a) !important;
+    }
 
-/* footer content starts below the lowest point of the tear */
-.footer-main > .container { padding-top: calc(var(--torn-h) * 0.75 + 30px) !important; }
+    /* one heading font for the whole website (font only, no sizes) */
+    h1, h2, h3, h4, h5, h6,
+    .section-title h2, .hero-title, .hero-title-top, .hero-title-bottom,
+    .ac-title, .pk-title, .ds-name, .pc-heading, .page-header-box h1 {
+        font-family: 'EB Garamond', Georgia, serif !important;
+    }
 
-/* taller torn edge on desktop */
-@media (min-width: 992px) {
-    .footer-main { --torn-h: 110px; }
-}
+    /* ================= FOOTER: torn-paper top edge (single block) ================= */
+
+    /* colour shown through the torn gaps: set this to the exact colour of the section above the footer */
+    :root { --footer-gap: #eee5d2; }
+
+    html,
+    body { background: var(--footer-gap) !important; }
+
+    .footer-main {
+        --torn-h: 70px;       /* height of the torn strip */
+
+        position: relative;
+        border-radius: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;             /* no pull-up: the whole tear stays visible below the section above */
+        overflow: visible !important;
+        z-index: 2;
+
+        -webkit-mask-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
+            linear-gradient(#000, #000) !important;
+                mask-image:
+            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
+            linear-gradient(#000, #000) !important;
+        -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+                mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+        -webkit-mask-position: top left, bottom left !important;
+                mask-position: top left, bottom left !important;
+        -webkit-mask-repeat: no-repeat !important;
+                mask-repeat: no-repeat !important;
+        -webkit-mask-composite: source-over !important;
+                mask-composite: add !important;
+    }
+
+    /* footer content starts below the lowest point of the tear */
+    .footer-main > .container { padding-top: calc(var(--torn-h) * 0.75 + 30px) !important; }
+
+    /* taller torn edge on desktop */
+    @media (min-width: 992px) {
+        .footer-main { --torn-h: 110px; }
+    }
 </style>
 
     {% block extra_css %}{% endblock %}
@@ -868,7 +891,7 @@ body { background: var(--footer-gap) !important; }
         </div>
     </div>
 
-    
+
     <!-- Header -->
     <header class="main-header">
         <div class="header-sticky">
@@ -883,28 +906,26 @@ body { background: var(--footer-gap) !important; }
                             <ul class="navbar-nav mr-auto" id="menu">
                                 <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About Us</a></li>
-                               <li class="nav-item pk-nav-dd">
-    <a class="nav-link" href="{% url 'packages' %}">Packages <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
-    <ul class="pk-nav-menu">
-        
-        {% for c in nav_categories %}
-        <li><a href="{% url 'packages' %}?category={{ c.value }}">{{ c.label }}</a></li>
-        {% endfor %}
-    </ul>
-</li>
+                                <li class="nav-item pk-nav-dd">
+                                    <a class="nav-link" href="{% url 'packages' %}">Packages <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
+                                    <ul class="pk-nav-menu">
+                                        {% for c in nav_categories %}
+                                        <li><a href="{% url 'packages' %}?category={{ c.value }}">{{ c.label }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
                                 <li class="nav-item"><a class="nav-link" href="{% url 'activities' %}">Experiences</a></li>
                                 <li class="nav-item pk-nav-dd">
-    <a class="nav-link" href="{% url 'destinations' %}">Destinations <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
-    <ul class="pk-nav-menu">
-        
-        {% for l in nav_locations %}
-        <li><a href="{% url 'destinations' %}?location={{ l.value }}">{{ l.label }}</a></li>
-        {% endfor %}
-    </ul>
-</li>
+                                    <a class="nav-link" href="{% url 'destinations' %}">Destinations <i class="fa-solid fa-angle-down pk-nav-caret"></i></a>
+                                    <ul class="pk-nav-menu">
+                                        {% for l in nav_locations %}
+                                        <li><a href="{% url 'destinations' %}?location={{ l.value }}">{{ l.label }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
 
                                 <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
-                               
+
                                 <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact Us</a></li>
                                 <li class="nav-item highlighted-menu"><a class="nav-link open-booking" href="#">Book Now</a></li>
                             </ul>
@@ -952,13 +973,21 @@ body { background: var(--footer-gap) !important; }
                         <input type="number" id="bkGuests" name="guests" min="1" value="2">
                     </div>
                     <div class="full">
-                        <label for="bkPackage">Package / Interest</label>
-                        <select id="bkPackage" name="package">
-                            <option value="">Select a package</option>
-                            {% for p in booking_packages %}
-                            <option value="{{ p }}">{{ p }}</option>
-                            {% endfor %}
-                        </select>
+                        <label id="bkPackageLabel">Package / Interest</label>
+                        <!-- hidden input keeps the same name="package", so the Django view needs no change -->
+                        <input type="hidden" id="bkPackage" name="package" value="">
+                        <div class="bk-dd" id="bkDropdown">
+                            <button type="button" class="bk-dd-btn" id="bkDropdownBtn" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bkPackageLabel">
+                                <span id="bkDropdownLabel">Select a package</span>
+                                <i class="fa-solid fa-angle-down"></i>
+                            </button>
+                            <ul class="bk-dd-list" id="bkDropdownList" role="listbox">
+                                <li data-value="" class="selected" role="option">Select a package</li>
+                                {% for p in booking_packages %}
+                                <li data-value="{{ p }}" role="option">{{ p }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                     <div>
                         <label for="bkStart">Start date *</label>
@@ -993,11 +1022,10 @@ body { background: var(--footer-gap) !important; }
         </div>
     </div>
 
-    
 
     <!-- Footer -->
     <footer class="footer-main bg-section dark-section">
-        
+
         <div class="container">
             <div class="row">
                 <div class="col-lg-4">
@@ -1018,8 +1046,8 @@ body { background: var(--footer-gap) !important; }
                             <div class="icon-box"><img src="{% static 'malabar-static/images/icon-phone.svg' %}" alt=""></div>
                             <div class="footer-contact-content">
                                 <h3>For more information</h3>
-                                <p><a href="tel:+919446062666">+91 8848333382</a></p>
-                                <p><a href="tel:+919446062666">+91 9526220085</a></p>
+                                <p><a href="tel:+918848333382">+91 8848333382</a></p>
+                                <p><a href="tel:+919526220085">+91 9526220085</a></p>
                             </div>
                         </div>
                     </div>
@@ -1034,7 +1062,7 @@ body { background: var(--footer-gap) !important; }
                         </div>
                         <div class="footer-contact-info-item">
                             <h3>Email</h3>
-                            <p><a href="mailto:info@malabaroutes.com">malabaroutes@gmail.com</a></p>
+                            <p><a href="mailto:malabaroutes@gmail.com">malabaroutes@gmail.com</a></p>
                         </div>
                     </div>
                 </div>
@@ -1069,13 +1097,15 @@ body { background: var(--footer-gap) !important; }
             </div>
         </div>
     </footer>
-<!-- Mobile sticky contact bar -->
-<div class="mb-contact-bar">
-    <a href="tel:+918848333382" aria-label="Call us"><i class="fa-solid fa-phone-volume"></i><span>Call</span></a>
-    <a href="https://wa.me/919526220085?text=Hello%20Malabaroutes%2C%20I%20would%20like%20to%20plan%20a%20trip."
-       target="_blank" rel="noopener" class="mb-wa" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
-    <a href="mailto:malabaroutes@gmail.com?subject=Trip%20enquiry" aria-label="Email us"><i class="fa-solid fa-envelope"></i><span>Email</span></a>
-</div>
+
+    <!-- Mobile sticky contact bar -->
+    <div class="mb-contact-bar">
+        <a href="tel:+918848333382" aria-label="Call us"><i class="fa-solid fa-phone-volume"></i><span>Call</span></a>
+        <a href="https://wa.me/919526220085?text=Hello%20Malabaroutes%2C%20I%20would%20like%20to%20plan%20a%20trip."
+           target="_blank" rel="noopener" class="mb-wa" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+        <a href="mailto:malabaroutes@gmail.com?subject=Trip%20enquiry" aria-label="Email us"><i class="fa-solid fa-envelope"></i><span>Email</span></a>
+    </div>
+
     <!-- Scripts (order matters) -->
     <script src="{% static 'malabar-static/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'malabar-static/js/bootstrap.min.js' %}"></script>
@@ -1096,6 +1126,7 @@ body { background: var(--footer-gap) !important; }
     <script src="{% static 'malabar-static/js/jquery.mb.YTPlayer.min.js' %}"></script>
     <script src="{% static 'malabar-static/js/wow.min.js' %}"></script>
     <script src="{% static 'malabar-static/js/function.js' %}"></script>
+
 <script>
     (function () {
         var header = document.querySelector('.main-header');
@@ -1123,10 +1154,60 @@ body { background: var(--footer-gap) !important; }
         var form = document.getElementById('bookingForm');
         var statusEl = document.getElementById('bkStatus');
         var submitBtn = document.getElementById('bkSubmit');
-        var pkgSelect = document.getElementById('bkPackage');
+        var pkgSelect = document.getElementById('bkPackage');   // hidden input that holds the chosen package
         var startInput = document.getElementById('bkStart');
         var endInput = document.getElementById('bkEnd');
         if (!modal || !form) return;
+
+        // ----- Custom package dropdown -----
+        var ddWrap = document.getElementById('bkDropdown');
+        var ddBtn = document.getElementById('bkDropdownBtn');
+        var ddLabel = document.getElementById('bkDropdownLabel');
+        var ddList = document.getElementById('bkDropdownList');
+
+        function closeDropdown() {
+            ddWrap.classList.remove('open');
+            ddBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        function chooseOption(value, text) {
+            pkgSelect.value = value;
+            ddLabel.textContent = text || 'Select a package';
+            Array.prototype.forEach.call(ddList.children, function (li) {
+                li.classList.toggle('selected', li.getAttribute('data-value') === value);
+            });
+        }
+
+        // Pre-select a package (adds it to the list if it isn't there)
+        function setPackage(name) {
+            var found = null;
+            Array.prototype.forEach.call(ddList.children, function (li) {
+                if (li.getAttribute('data-value') === name) found = li;
+            });
+            if (!found) {
+                found = document.createElement('li');
+                found.setAttribute('data-value', name);
+                found.setAttribute('role', 'option');
+                found.textContent = name;
+                ddList.insertBefore(found, ddList.children[1] || null);
+            }
+            chooseOption(name, name);
+        }
+
+        ddBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var open = ddWrap.classList.toggle('open');
+            ddBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        ddList.addEventListener('click', function (e) {
+            var li = e.target.closest('li');
+            if (!li) return;
+            chooseOption(li.getAttribute('data-value'), li.textContent.trim());
+            closeDropdown();
+        });
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('#bkDropdown')) closeDropdown();
+        });
 
         // Block past dates; end date can't be before start date
         var today = new Date().toISOString().split('T')[0];
@@ -1142,21 +1223,6 @@ body { background: var(--footer-gap) !important; }
             statusEl.className = 'bk-status' + (type ? ' ' + type : '');
         }
 
-        // Pre-select a package (adds it to the dropdown if it isn't listed)
-        function setPackage(name) {
-            var found = false;
-            for (var i = 0; i < pkgSelect.options.length; i++) {
-                if (pkgSelect.options[i].value === name) { found = true; break; }
-            }
-            if (!found) {
-                var opt = document.createElement('option');
-                opt.value = name;
-                opt.textContent = name;
-                pkgSelect.insertBefore(opt, pkgSelect.options[1] || null);
-            }
-            pkgSelect.value = name;
-        }
-
         function openModal(pkg) {
             if (pkg) setPackage(pkg);
             setStatus('');
@@ -1164,6 +1230,7 @@ body { background: var(--footer-gap) !important; }
             document.body.style.overflow = 'hidden';
         }
         function closeModal() {
+            closeDropdown();
             modal.classList.remove('open');
             document.body.style.overflow = '';
         }
@@ -1189,7 +1256,11 @@ body { background: var(--footer-gap) !important; }
             if (e.target.closest('[data-success-close]') || e.target === successModal) closeSuccess();
         });
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') { closeModal(); closeSuccess(); }
+            if (e.key === 'Escape') {
+                if (ddWrap.classList.contains('open')) { closeDropdown(); return; }
+                closeModal();
+                closeSuccess();
+            }
         });
 
         function val(name) { return form.elements[name].value.trim(); }
@@ -1248,6 +1319,7 @@ body { background: var(--footer-gap) !important; }
                 if (res.ok && res.d.ok) {
                     setStatus('');
                     form.reset();
+                    chooseOption('', '');   // reset the custom dropdown too
                     showSuccess();
                 } else {
                     setStatus(res.d.error || 'We could not email your enquiry, but WhatsApp has opened.', 'err');
@@ -1260,6 +1332,7 @@ body { background: var(--footer-gap) !important; }
         });
     })();
 </script>
+
 <script>
 (function () {
     var today = new Date().toISOString().split('T')[0];

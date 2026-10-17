@@ -5,33 +5,40 @@
 {% block title %}Home | Malabar{% endblock %}
 
 {% comment %}
-    HOME PAGE: torn-paper design (like the reference template)
+    HOME PAGE: torn-paper design with a scattered-dot paper texture
     - Hero is unchanged.
     - Every section after it is a flat colour band with a torn-paper top edge:
-      cream -> tan -> cream -> GREEN (was black) -> tan -> gold -> cream -> tan -> cream
-    - No background pictures. Only real content photos (packages, destinations,
-      activities, testimonials) and the two About photos are used.
+      cream -> tan -> cream -> GREEN -> tan -> gold -> cream -> tan -> cream
+    - ONE texture on every band: soft scattered dots (see --pat-brown / --pat-light).
+      Brown dots on cream + tan, cream dots on green + gold.
+    - No background pictures. Only real content photos.
     - Navbar, booking modal, footer and core scripts still come from base.html.
     - Packages, Destinations and Testimonials are sliding carousels (3 cards visible).
+    - Activities: normal grid on tablet/desktop, sliding carousel on mobile (<= 767px).
 {% endcomment %}
 
 {% block extra_css %}
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 /* =====================================================================
-   HERO (unchanged design: full-bleed, torn bottom edge, tabs on the right)
+   PAPER TEXTURE: scattered dots (220 x 220 tile, seamless)
+   To make the dots stronger or softer, change the opacity='...' value
+   inside each data-URI (.42 brown / .34 light).
    ===================================================================== */
 :root {
     --paper: #f2e2c6;
 
-    /* paper-grain texture: brown for cream/tan bands */
-    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.54 0 0 0 0 0.42 0 0 0 0 0.18 0 0 0 1.2 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    /* brown scattered dots: cream + tan bands */
+    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 
-    /* same grain in cream for the green and gold bands */
-    --pat-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.96 0 0 0 0 0.92 0 0 0 0 0.85 0 0 0 1.2 -.35'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.28'/%3E%3C/svg%3E");
+    /* same dots in cream: green + gold bands */
+    --pat-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%23f7ecd5' opacity='.34'%3E%3Ccircle cx='75' cy='40' r='1.3'/%3E%3Ccircle cx='24' cy='117' r='1.9'/%3E%3Ccircle cx='127' cy='192' r='1.6'/%3E%3Ccircle cx='24' cy='28' r='2.2'/%3E%3Ccircle cx='199' cy='136' r='1.3'/%3E%3Ccircle cx='125' cy='89' r='1.6'/%3E%3Ccircle cx='19' cy='182' r='1.9'/%3E%3Ccircle cx='146' cy='31' r='1.6'/%3E%3Ccircle cx='70' cy='169' r='1.6'/%3E%3Ccircle cx='202' cy='26' r='1.9'/%3E%3Ccircle cx='182' cy='200' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 }
 
+/* =====================================================================
+   HERO (unchanged design: full-bleed, torn bottom edge, tabs on the right)
+   ===================================================================== */
 .hero { position: relative; margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px !important; }
 
 .hero .hero-section,
@@ -260,29 +267,31 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
 
 /* ================= CAROUSEL (3 visible, then slide) ================= */
-.cs { --cs-gap: 34px; --cs-pad: 36px; position: relative; }
+/* --cs-pad must stay SMALLER than --cs-gap, otherwise the edge of the next/previous card peeks into the side padding */
+.cs { --cs-gap: 34px; --cs-pad: 26px; position: relative; }
 .cs-track {
-    display: flex; gap: var(--cs-gap);
+    display: flex; gap: var(--cs-gap); align-items: stretch;
     overflow-x: auto; overflow-y: hidden;
-    scroll-snap-type: x mandatory; scroll-behavior: smooth; scroll-padding-inline: var(--cs-pad);
+    scroll-snap-type: none; scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain;
     /* side/bottom padding keeps card shadows and tilted frames from being clipped */
     margin: 0 calc(var(--cs-pad) * -1); padding: 26px var(--cs-pad) 46px;
 }
 .cs-track::-webkit-scrollbar { display: none; }
-.cs-track > * { flex: 0 0 calc((100% - (var(--cs-gap) * 2)) / 3); min-width: 0; scroll-snap-align: start; }
+.cs-track > * { flex: 0 0 calc((100% - (var(--cs-gap) * 2)) / 3); min-width: 0; }
 .cs-nav { display: flex; justify-content: center; gap: 14px; margin-top: 6px; }
 .cs-nav[hidden] { display: none; }
 .cs-btn {
     width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--gold); background: var(--gold); color: #fff;
     display: inline-flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: all .3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 .cs-btn:hover { background: var(--green); border-color: var(--green); }
 .cs-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .sec-gold .cs-btn { background: #fff; border-color: #fff; color: var(--gold); }
 .sec-gold .cs-btn:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
 @media (max-width: 991px) {
-    .cs { --cs-gap: 24px; }
+    .cs { --cs-gap: 24px; --cs-pad: 16px; }
     .cs-track > * { flex-basis: calc((100% - var(--cs-gap)) / 2); }
 }
 @media (max-width: 575px) {
@@ -294,7 +303,6 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 /* ================= ABOUT (cream) ================= */
 .about-us.sec { padding-top: 70px; }
 .ab-collage { position: relative; max-width: 560px; margin: 0 auto; aspect-ratio: 1 / .78; }
-/* white frame removed: photos sit directly on the paper */
 .ab-photo { position: absolute; background: transparent; padding: 0; box-shadow: 0 18px 34px rgba(60, 40, 10, .28); }
 .ab-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .ab-photo-1 { left: 0; top: 0; width: 80%; height: 76%; }
@@ -312,7 +320,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (max-width: 991px) { .ab-collage { margin-bottom: 40px; } }
 @media (max-width: 575px) { .ab-list { grid-template-columns: 1fr; } }
 
-/* ================= SERVICES (tan): icon columns like the Event Calendars ================= */
+/* ================= SERVICES (tan): icon columns ================= */
 .sv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
 .sv-item { text-align: center; padding: 0 6px; }
 .sv-ico {
@@ -329,23 +337,54 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (max-width: 991px) { .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 22px; } }
 @media (max-width: 575px) { .sv-grid { gap: 32px 14px; } .sv-ico { width: 62px; height: 62px; font-size: 24px; } .sv-item h3 { font-size: 19px; } .sv-item p { font-size: 13.5px; } }
 
-/* ================= PACKAGES (cream): photo cards like the reference ================= */
-.pk-card { display: flex; flex-direction: column; background: #fff; padding: 0; box-shadow: 0 18px 34px rgba(60, 40, 10, .2); transition: transform .4s ease, box-shadow .4s ease; }
-.pk-card:hover { transform: translateY(-8px); box-shadow: 0 26px 44px rgba(60, 40, 10, .28); }
-.pk-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #e3d3b4; }
+/* ================= PACKAGES (cream): rounded cards, text + two pill buttons ================= */
+.pk-cs { --pk-green: var(--green); --pk-ink: #1a1a1a; }
+.pk-card {
+    display: flex; flex-direction: column; background: #fff; padding: 0;
+    border-radius: 28px; overflow: hidden;
+    box-shadow: 0 12px 32px rgba(60, 40, 10, .14);
+    transition: transform .4s ease, box-shadow .4s ease;
+    font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
+}
+.pk-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(60, 40, 10, .2); }
+.pk-media { position: relative; aspect-ratio: 3 / 2; overflow: hidden; isolation: isolate; border-radius: 28px; background: #e3d3b4; }
+.pk-media a { display: block; width: 100%; height: 100%; }
 .pk-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
-.pk-card:hover .pk-media img { transform: scale(1.07); }
-.pk-tag { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 50px; background: var(--green); color: #fff; font-size: 13px; font-weight: 600; }
-.pk-tag i { color: var(--nav-gold, #e0b14a); }
-.pk-body { padding: 22px 14px 26px; text-align: center; display: flex; flex-direction: column; flex: 1; }
-.pk-title { margin: 0 0 18px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 24px; line-height: 1.25; text-transform: none; min-height: 2.5em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.pk-title a { color: var(--ink); text-decoration: none; }
-.pk-title a:hover { color: var(--gold); }
-.pk-actions { margin-top: auto; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.pk-actions .tn-btn { padding: 11px 22px; font-size: 11px; }
-@media (max-width: 575px) { .pk-title { font-size: 22px; } }
+.pk-card:hover .pk-media img { transform: scale(1.06); }
+.pk-tag { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 50px; background: rgba(255, 255, 255, .94); color: var(--pk-ink); font-size: 12.5px; font-weight: 600; }
+.pk-tag i { color: var(--gold); }
+.pk-body { display: flex; flex-direction: column; flex: 1; padding: 22px 22px 26px; text-align: left; }
+.pk-title { margin: 0 0 20px; font-family: inherit; font-variant: normal; font-weight: 700; letter-spacing: 0; font-size: 24px; line-height: 1.25; text-transform: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pk-title a { color: var(--pk-ink); text-decoration: none; }
+.pk-title a:hover { color: var(--pk-green); }
+.pk-actions { margin-top: auto; display: flex; gap: 10px; }
+.pk-btn {
+    flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 8px;
+    min-height: 46px; padding: 0 8px 0 18px; border-radius: 50px; border: 1px solid var(--pk-green);
+    font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer;
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+.pk-btn span.pk-ic { flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: transform .3s ease; }
+.pk-btn-fill { background: var(--pk-green); color: #fff !important; }
+.pk-btn-fill .pk-ic { background: #12281f; color: #fff; }
+.pk-btn-fill:hover { background: #12281f; border-color: #12281f; }
+.pk-btn-fill:hover .pk-ic { background: var(--gold); }
+.pk-btn-line { background: #fff; color: var(--pk-green) !important; }
+.pk-btn-line .pk-ic { background: var(--pk-green); color: #fff; }
+.pk-btn-line .pk-ic i { transform: rotate(-45deg); }
+.pk-btn-line:hover { background: var(--pk-green); color: #fff !important; }
+.pk-btn-line:hover .pk-ic { background: #fff; color: var(--pk-green); }
+.pk-cs .cs-btn { width: 44px; height: 44px; background: #fff; border: 1px solid rgba(0, 0, 0, .08); color: var(--pk-ink); font-size: 14px; box-shadow: 0 4px 12px rgba(60, 40, 10, .12); }
+.pk-cs .cs-btn:hover { background: var(--pk-green); border-color: var(--pk-green); color: #fff; }
+@media (max-width: 575px) {
+    .pk-card { border-radius: 24px; }
+    .pk-media { border-radius: 24px; }
+    .pk-title { font-size: 21px; }
+    .pk-body { padding: 18px 18px 22px; }
+    .pk-btn { font-size: 12.5px; padding-left: 14px; }
+}
 
-/* ================= WHY CHOOSE US (GREEN band, replaces the black one) ================= */
+/* ================= WHY CHOOSE US (GREEN band) ================= */
 .sec-dark .tn-title { color: #f4ead8; }
 .sec-dark .tn-text { color: rgba(244, 234, 216, .82); }
 .wc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
@@ -378,7 +417,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .ds-card:hover .ds-go { background: var(--gold); color: var(--ink); }
 @media (max-width: 575px) { .ds-name { font-size: 21px; } }
 
-/* ================= TESTIMONIALS (gold band, like "Join our community") ================= */
+/* ================= TESTIMONIALS (gold band) ================= */
 .sec-gold .tn-eyebrow { color: var(--ink); }
 .sec-gold .tn-title { color: #fff; }
 .sec-gold .tn-text { color: rgba(255, 255, 255, .92); }
@@ -394,49 +433,78 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .g-base { color: #d9d9d9; }
 .g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
 
-.tm-card { display: flex; flex-direction: column; background: #fbf3e2; padding: 30px 30px 26px; box-shadow: 0 16px 32px rgba(60, 40, 10, .3); text-align: left; position: relative; border-top: 5px solid var(--green); }
-.tm-card::before { content: ""; position: absolute; top: -14px; right: 26px; width: 84px; height: 24px; transform: rotate(3deg); background: rgba(18, 40, 31, .35); }
-.tm-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
-.tm-mark { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--green); color: var(--gold); font-size: 20px; box-shadow: 0 6px 14px rgba(18, 40, 31, .25); }
-.tm-stars { color: var(--gold); letter-spacing: 3px; font-size: 14px; white-space: nowrap; }
-.tm-quote { flex: 1; margin: 0 0 22px; font-family: 'EB Garamond', serif; font-style: italic; font-size: 21px; line-height: 1.55; color: var(--ink); }
-.tm-foot { display: flex; align-items: center; gap: 14px; padding-top: 18px; border-top: 1.5px dashed rgba(201, 151, 43, .6); }
-.tm-av { flex: 0 0 56px; width: 56px; height: 56px; border-radius: 50%; overflow: hidden; border: 2.5px solid var(--gold); background: #dfe5e2; display: flex; align-items: center; justify-content: center; }
-.tm-av img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.tm-av svg { width: 60%; fill: #6f9a8e; }
-.tm-meta { min-width: 0; }
-.tm-name { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--green); line-height: 1.3; }
-.tm-role { margin-top: 3px; font-size: 12px; letter-spacing: .5px; color: var(--text); }
-.tm-role i { color: var(--gold); margin-right: 5px; }
+/* ---- review cards: polaroid photo + pin, text below ---- */
+.tm-card {
+    position: relative; display: flex; flex-direction: column; text-align: left;
+    padding: 0; background: none; border-radius: 0; box-shadow: none;
+    transition: transform .4s ease;
+}
+.tm-card:hover { transform: translateY(-6px); }
 
-/* testimonial card: folded corner + paper "falling" entrance */
+.tm-media { position: relative; padding: 8px 4px 0; }
+.tm-photo {
+    position: relative; background: #fff; padding: 8px; border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(60, 40, 10, .25);
+    transform: rotate(-2deg); transition: transform .5s ease;
+}
+.tm-card:nth-child(3n+2) .tm-photo { transform: rotate(1.6deg); }
+.tm-card:nth-child(3n+3) .tm-photo { transform: rotate(-1deg); }
+.tm-card:hover .tm-photo { transform: rotate(0); }
+.tm-photo::before {
+    content: ""; position: absolute; top: -13px; left: 50%; width: 86px; height: 24px; z-index: 2;
+    transform: translateX(-50%) rotate(-2deg); background: rgba(201, 151, 43, .45);
+}
+.tm-photo img, .tm-ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+.tm-ph { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #dde4e1 0%, #c5d0cd 100%); }
+.tm-ph svg { width: 46%; fill: #6f9b8d; }
+
+.tm-wave { position: relative; height: 16px; margin: 8px calc(var(--cs-gap) / -2) 20px; }
+.tm-wave svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.tm-pin {
+    position: absolute; left: 50%; top: -21px; z-index: 3; transform: translateX(-50%);
+    font-size: 22px; line-height: 1; color: var(--gold);
+}
+
+.tm-stars { margin-bottom: 12px; color: var(--gold); font-size: 15px; letter-spacing: 3px; white-space: nowrap; }
+.tm-quote {
+    position: relative; flex: 1; margin: 0 0 18px; padding-left: 38px;
+    font-size: 17px; line-height: 1.65; color: var(--ink);
+}
+.tm-quote::before {
+    content: "\201D"; position: absolute; left: 2px; top: -8px;
+    font-family: 'EB Garamond', serif; font-style: italic; font-weight: 800;
+    font-size: 54px; line-height: 1; color: var(--gold);
+}
+.tm-name {
+    display: flex; align-items: center; gap: 12px; padding-left: 38px;
+    font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3;
+}
+.tm-name::before { content: ""; flex: 0 0 28px; height: 1px; background: rgba(18, 40, 31, .55); }
+
+.sec-gold .tm-wave path { stroke: #fff8e6; }
+.sec-gold .tm-pin { color: #fff8e6; filter: drop-shadow(0 2px 3px rgba(60, 40, 10, .35)); }
+.sec-gold .tm-stars { color: #fff8e6; }
+.sec-gold .tm-quote::before { color: #fff8e6; }
+.sec-gold .tm-quote, .sec-gold .tm-name { color: var(--ink); }
+
 .tm-card:nth-child(1) { --i: 0; } .tm-card:nth-child(2) { --i: 1; } .tm-card:nth-child(3) { --i: 2; }
 .tm-card:nth-child(4) { --i: 3; } .tm-card:nth-child(5) { --i: 4; } .tm-card:nth-child(6) { --i: 5; }
-.tm-card { transform-origin: 50% 0; }
-.tm-card::after {
-    content: ""; position: absolute; right: 0; bottom: 0; width: 38px; height: 38px; pointer-events: none;
-    background: linear-gradient(315deg, var(--gold) 0 50%, #c9ad74 50%, #efe1bf 60%, #f8eed6 100%);
-    transition: width .35s ease, height .35s ease;
+.rv-ready .cs.in .tm-card { animation: tmRise .9s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * .12s + .1s) both; }
+@keyframes tmRise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .rv-ready .cs.in .tm-card { animation: none; } }
+@media (max-width: 575px) {
+    .tm-quote { font-size: 16px; }
 }
-.tm-card:hover::after { width: 56px; height: 56px; }
-.rv-ready .tm-card { opacity: 0; }
-.rv-ready .cs.in .tm-card { animation: tmFall 1.4s cubic-bezier(.3, .6, .3, 1) calc(var(--i, 0) * .18s + .15s) forwards; }
-.rv-ready .cs.in .tm-card::after { animation: tmFold .7s ease-out calc(var(--i, 0) * .18s + 1.3s) backwards; }
-@keyframes tmFall {
-    0%   { opacity: 0; transform: perspective(900px) rotateX(-88deg); }
-    30%  { opacity: 1; }
-    55%  { transform: perspective(900px) rotateX(16deg); }
-    72%  { transform: perspective(900px) rotateX(-7deg); }
-    86%  { transform: perspective(900px) rotateX(3deg); }
-    100% { opacity: 1; transform: perspective(900px) rotateX(0); }
-}
-@keyframes tmFold { from { width: 0; height: 0; } to { width: 38px; height: 38px; } }
-@media (prefers-reduced-motion: reduce) {
-    .rv-ready .tm-card { opacity: 1; }
-    .rv-ready .cs.in .tm-card, .rv-ready .cs.in .tm-card::after { animation: none; }
+@media (hover: none) {
+    .tm-card:hover { transform: none; }
+    .tm-card:hover .tm-photo { transform: rotate(-2deg); }
+    .tm-card:nth-child(3n+2):hover .tm-photo { transform: rotate(1.6deg); }
+    .tm-card:nth-child(3n+3):hover .tm-photo { transform: rotate(-1deg); }
 }
 
-/* ================= ACTIVITIES (cream) ================= */
+/* ================= ACTIVITIES (cream) =================
+   Desktop / tablet (>= 768px): normal grid.
+   Mobile (<= 767px): sliding carousel.                                      */
 .ac-grid { display: grid; gap: 34px; grid-template-columns: repeat(3, minmax(0, 1fr)); justify-content: center; }
 .ac-grid.ac-n1 { grid-template-columns: minmax(0, 900px); }
 .ac-grid.ac-n2 { grid-template-columns: repeat(2, minmax(0, 520px)); }
@@ -454,8 +522,23 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .ac-title a:hover { color: var(--gold); }
 .ac-text { margin: 0 0 22px; font-size: 15px; line-height: 1.7; color: var(--text); }
 .ac-body .tn-btn { margin-top: auto; }
-@media (max-width: 991px) { .ac-grid.ac-n3, .ac-grid.ac-n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 767px) { .ac-grid, .ac-grid.ac-n1, .ac-grid.ac-n2, .ac-grid.ac-n3 { grid-template-columns: minmax(0, 1fr); } }
+
+@media (min-width: 768px) {
+    .cs-track.ac-grid {
+        overflow: visible; scroll-snap-type: none;
+        margin: 0; padding: 0; gap: 34px;
+    }
+}
+@media (max-width: 991px) and (min-width: 768px) {
+    .cs-track.ac-grid.ac-n3, .cs-track.ac-grid.ac-n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+    .cs-track.ac-grid {
+        display: flex; grid-template-columns: none; gap: var(--cs-gap);
+    }
+    .cs-track.ac-grid > .ac-card { flex: 0 0 100%; width: 100%; min-width: 0; }
+    .ac-title { font-size: 24px; }
+}
 
 /* ================= TERMS (tan): icon columns ================= */
 .tc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
@@ -522,6 +605,28 @@ html, body { background: var(--footer-gap) !important; }
             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
             linear-gradient(#000, #000) !important;
     }
+}
+
+/* =====================================================================
+   CAROUSEL FIXES
+   ===================================================================== */
+.cs-track > .ac-card,
+.cs-track > .pk-card,
+.cs-track > .tm-card { height: auto; }
+
+@media (hover: none) {
+    .pk-card:hover { transform: none; box-shadow: 0 12px 32px rgba(60, 40, 10, .14); }
+    .ac-card:hover { transform: none; box-shadow: 0 18px 34px rgba(60, 40, 10, .2); }
+    .pk-cs .cs-btn:hover { background: #fff; border-color: rgba(0, 0, 0, .08); color: var(--pk-ink); }
+    .pk-card:hover .pk-media img,
+    .ac-card:hover .ac-media img,
+    .ds-card:hover img { transform: none; }
+    .ds-card:nth-child(3n+1):hover { transform: rotate(-1.2deg); }
+    .ds-card:nth-child(3n+2):hover { transform: rotate(.8deg); }
+    .ds-card:nth-child(3n+3):hover { transform: rotate(-.6deg); }
+    .ds-card:hover .ds-go { background: transparent; color: var(--gold); }
+    .cs-btn:hover { background: var(--gold); border-color: var(--gold); }
+    .sec-gold .cs-btn:hover { background: #fff; border-color: #fff; color: var(--gold); }
 }
 </style>
 {% endblock %}
@@ -733,7 +838,7 @@ html, body { background: var(--footer-gap) !important; }
             <p class="tn-text">Handpicked tour packages across Malabar and Kerala, planned with care and priced fairly.</p>
         </div>
 
-        <div class="cs rv" data-carousel>
+        <div class="cs pk-cs rv" data-carousel>
             <div class="cs-track pk-grid">
                 {% for p in featured_packages|slice:":6" %}
                 <article class="pk-card">
@@ -751,8 +856,8 @@ html, body { background: var(--footer-gap) !important; }
                     <div class="pk-body">
                         <h3 class="pk-title"><a href="{% url 'package_detail' p.slug %}">{{ p.name }}</a></h3>
                         <div class="pk-actions">
-                            <a href="{% url 'package_detail' p.slug %}" class="tn-btn tn-btn-line">Details</a>
-                            <a href="#" class="tn-btn open-booking" data-package="{{ p.name }}">Book Now</a>
+                            <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ p.name }}">Book Now <span class="pk-ic"><i class="fa-solid fa-ticket"></i></span></a>
+                            <a href="{% url 'package_detail' p.slug %}" class="pk-btn pk-btn-line">View More <span class="pk-ic"><i class="fa-solid fa-arrow-right"></i></span></a>
                         </div>
                     </div>
                 </article>
@@ -863,27 +968,27 @@ html, body { background: var(--footer-gap) !important; }
             <div class="cs-track tm-grid">
                 {% for t in testimonials|slice:":6" %}
                 <article class="tm-card">
-                    <div class="tm-top">
-                        <span class="tm-mark" aria-hidden="true"><i class="fa-solid fa-quote-left"></i></span>
-                        <div class="tm-stars" aria-label="5 out of 5 stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
-                    </div>
-                    <p class="tm-quote">{{ t.review|striptags|truncatewords:26 }}</p>
-                    <div class="tm-foot">
-                        <div class="tm-av">
+                    <div class="tm-media">
+                        <div class="tm-photo">
                             {% if t.image %}
                             <img src="{{ t.image.url }}"
                                  srcset="{{ t.image|srcset }}"
-                                 sizes="60px"
+                                 sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
                                  alt="{{ t.name }}" loading="lazy" decoding="async" draggable="false">
                             {% else %}
-                            <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="36" r="15"/><path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/></svg>
+                            <div class="tm-ph"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="36" r="15"/><path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/></svg></div>
                             {% endif %}
                         </div>
-                        <div class="tm-meta">
-                            <div class="tm-name">{{ t.name }}</div>
-                            <div class="tm-role"><i class="fa-solid fa-circle-check"></i>Verified traveller</div>
-                        </div>
                     </div>
+
+                    <div class="tm-wave" aria-hidden="true">
+                        <i class="fa-solid fa-location-dot tm-pin"></i>
+                        <svg viewBox="0 0 100 12" preserveAspectRatio="none"><path d="M0 9 Q50 1 100 9" fill="none" stroke="#c9972b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 7" vector-effect="non-scaling-stroke"/></svg>
+                    </div>
+
+                    <div class="tm-stars" aria-label="5 out of 5 stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="tm-quote">{{ t.review|striptags|truncatewords:26 }}</p>
+                    <div class="tm-name">{{ t.name }}</div>
                 </article>
                 {% endfor %}
             </div>
@@ -897,7 +1002,10 @@ html, body { background: var(--footer-gap) !important; }
 {% endif %}
 
 {% if recent_activities %}
-<!-- ============ EXPERIENCES & ACTIVITIES (cream) ============ -->
+<!-- ============ EXPERIENCES & ACTIVITIES (cream) ============
+     Grid on tablet/desktop, sliding carousel on mobile (<= 767px).
+     NOTE: the .rv reveal class is on the wrapper, not on each card,
+     because cards hidden off-screen inside the carousel would never reveal. -->
 <section class="sec sec-cream">
     <div class="container">
         <div class="tn-head rv">
@@ -906,28 +1014,34 @@ html, body { background: var(--footer-gap) !important; }
             <p class="tn-text">Discover the most loved things to do across Malabar and Kerala.</p>
         </div>
 
-        <div class="ac-grid ac-n{{ recent_activities|length }}">
-            {% for a in recent_activities %}
-            {% url 'activity_detail' a.slug as act_url %}
-            <article class="ac-card rv" style="--d: {% cycle '0s' '.1s' '.2s' %}">
-                <div class="ac-media">
-                    <a href="{{ act_url }}" draggable="false">
-                        {% if a.image %}
-                        <img src="{{ a.image.url }}"
-                             srcset="{{ a.image|srcset }}"
-                             sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
-                             alt="{{ a.title }}" loading="lazy" decoding="async">
-                        {% endif %}
-                    </a>
-                    {% if a.category %}<span class="ac-pill"><i class="fa-solid fa-leaf"></i>{{ a.category }}</span>{% endif %}
-                </div>
-                <div class="ac-body">
-                    <h3 class="ac-title"><a href="{{ act_url }}">{{ a.title }}</a></h3>
-                    <p class="ac-text">{% if recent_activities|length == 1 %}{{ a.description|striptags|truncatewords:45 }}{% else %}{{ a.description|striptags|truncatewords:18 }}{% endif %}</p>
-                    <a href="#" class="tn-btn open-booking" data-package="{{ a.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
-                </div>
-            </article>
-            {% endfor %}
+        <div class="cs rv" data-carousel>
+            <div class="cs-track ac-grid ac-n{{ recent_activities|length }}">
+                {% for a in recent_activities %}
+                {% url 'activity_detail' a.slug as act_url %}
+                <article class="ac-card">
+                    <div class="ac-media">
+                        <a href="{{ act_url }}" draggable="false">
+                            {% if a.image %}
+                            <img src="{{ a.image.url }}"
+                                 srcset="{{ a.image|srcset }}"
+                                 sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+                                 alt="{{ a.title }}" loading="lazy" decoding="async" draggable="false">
+                            {% endif %}
+                        </a>
+                        {% if a.category %}<span class="ac-pill"><i class="fa-solid fa-leaf"></i>{{ a.category }}</span>{% endif %}
+                    </div>
+                    <div class="ac-body">
+                        <h3 class="ac-title"><a href="{{ act_url }}">{{ a.title }}</a></h3>
+                        <p class="ac-text">{% if recent_activities|length == 1 %}{{ a.description|striptags|truncatewords:45 }}{% else %}{{ a.description|striptags|truncatewords:18 }}{% endif %}</p>
+                        <a href="#" class="tn-btn open-booking" data-package="{{ a.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="cs-nav">
+                <button type="button" class="cs-btn cs-prev" aria-label="Previous activities"><i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" class="cs-btn cs-next" aria-label="Next activities"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
         </div>
 
         {% url 'activities' as all_act_url %}
@@ -1112,7 +1226,8 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Carousels: Packages, Destinations, Testimonials (3 visible, slide one card at a time) -->
+<!-- Carousels: Packages, Destinations, Testimonials, Activities (mobile only for grid)
+     Index-based sliding: always lands exactly on a card. -->
 <script>
     (function () {
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1123,22 +1238,41 @@ html, body { background: var(--footer-gap) !important; }
             var prev = root.querySelector('.cs-prev');
             var next = root.querySelector('.cs-next');
             if (!track || !track.children.length) return;
-            var timer = null, paused = false;
+            var timer = null, paused = false, resizeT = null, resumeT = null, settleT = null, touching = false;
 
-            function stepWidth() {
-                var first = track.children[0];
-                var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-                return first.getBoundingClientRect().width + gap;
-            }
-            function overflowing() { return track.scrollWidth > track.clientWidth + 4; }
-            function atEnd() { return track.scrollLeft + track.clientWidth >= track.scrollWidth - 4; }
+            function padLeft() { return parseFloat(getComputedStyle(track).paddingLeft) || 0; }
+            function maxScroll() { return track.scrollWidth - track.clientWidth; }
+            function overflowing() { return maxScroll() > 4; }
+            function atEnd() { return track.scrollLeft >= maxScroll() - 4; }
             function atStart() { return track.scrollLeft <= 4; }
 
-            function go(dir) {
-                if (dir > 0 && atEnd()) track.scrollTo({ left: 0, behavior: 'smooth' });
-                else if (dir < 0 && atStart()) track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
-                else track.scrollBy({ left: dir * stepWidth(), behavior: 'smooth' });
+            function offsetOf(i) {
+                var c = track.children[i];
+                return track.scrollLeft
+                    + c.getBoundingClientRect().left
+                    - track.getBoundingClientRect().left
+                    - padLeft();
             }
+            function currentIndex() {
+                var best = 0, bestD = Infinity;
+                for (var i = 0; i < track.children.length; i++) {
+                    var d = Math.abs(offsetOf(i) - track.scrollLeft);
+                    if (d < bestD) { bestD = d; best = i; }
+                }
+                return best;
+            }
+            function goTo(i) {
+                var n = track.children.length;
+                i = Math.max(0, Math.min(n - 1, i));
+                var left = Math.max(0, Math.min(offsetOf(i), maxScroll()));
+                track.scrollTo({ left: left, behavior: reduce ? 'auto' : 'smooth' });
+            }
+            function go(dir) {
+                if (dir > 0 && atEnd()) goTo(0);
+                else if (dir < 0 && atStart()) track.scrollTo({ left: maxScroll(), behavior: reduce ? 'auto' : 'smooth' });
+                else goTo(currentIndex() + dir);
+            }
+
             function refresh() {
                 var show = overflowing();
                 if (nav) nav.hidden = !show;
@@ -1153,14 +1287,43 @@ html, body { background: var(--footer-gap) !important; }
             if (prev) prev.addEventListener('click', function () { go(-1); });
             if (next) next.addEventListener('click', function () { go(1); });
 
-            ['mouseenter', 'focusin', 'touchstart'].forEach(function (ev) {
+            ['mouseenter', 'focusin'].forEach(function (ev) {
                 root.addEventListener(ev, function () { paused = true; }, { passive: true });
             });
-            ['mouseleave', 'focusout', 'touchend'].forEach(function (ev) {
+            ['mouseleave', 'focusout'].forEach(function (ev) {
                 root.addEventListener(ev, function () { paused = false; }, { passive: true });
             });
+            root.addEventListener('touchstart', function () {
+                touching = true; paused = true; clearTimeout(resumeT);
+            }, { passive: true });
+            root.addEventListener('touchend', function () {
+                touching = false;
+                clearTimeout(resumeT);
+                resumeT = setTimeout(function () { paused = false; }, 3000);
+                clearTimeout(settleT); settleT = setTimeout(settle, 140);
+            }, { passive: true });
+            root.addEventListener('touchcancel', function () { touching = false; }, { passive: true });
 
-            window.addEventListener('resize', function () { refresh(); start(); });
+            function settle() {
+                if (touching || !overflowing()) return;
+                var i = currentIndex();
+                var target = Math.max(0, Math.min(offsetOf(i), maxScroll()));
+                if (Math.abs(target - track.scrollLeft) > 2) goTo(i);
+            }
+            track.addEventListener('scroll', function () {
+                clearTimeout(settleT);
+                settleT = setTimeout(settle, 140);
+            }, { passive: true });
+
+            function onResize() {
+                clearTimeout(resizeT);
+                resizeT = setTimeout(function () {
+                    refresh();
+                    if (overflowing()) goTo(currentIndex());
+                    start();
+                }, 150);
+            }
+            window.addEventListener('resize', onResize);
             window.addEventListener('load', function () { refresh(); start(); });
             refresh();
             start();

@@ -678,6 +678,27 @@ html, body { background: var(--footer-gap) !important; }
     .ds-card:hover .ds-go { background: transparent; color: var(--gold); }
     .cs-btn:hover { background: var(--gold); border-color: var(--gold); }
 }
+/* =====================================================================
+   MOBILE: everything left-aligned (<= 767px)
+   ===================================================================== */
+@media (max-width: 767px) {
+    /* section headings + intro text */
+    .tn-head { text-align: left; margin: 0 0 40px; max-width: 100%; }
+    .tn-head .tn-text { margin: 0; }
+
+    /* services + terms icon columns */
+    .sv-item, .tc-item { text-align: left; }
+    .sv-ico, .tc-ico { margin: 0 0 16px; }
+
+    /* activities cards */
+    .ac-body { align-items: flex-start; text-align: left; }
+
+    /* centred buttons under sections */
+    .tn-center { text-align: left; }
+
+    /* carousel arrows */
+    .cs-nav { justify-content: flex-start; }
+}
 </style>
 {% endblock %}
 

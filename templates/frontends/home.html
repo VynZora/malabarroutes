@@ -8,18 +8,31 @@
     HOME PAGE: torn-paper design with a scattered-dot paper texture
     - Hero is unchanged.
     - Every section after it is a flat colour band with a torn-paper top edge.
-      Colours now strictly ALTERNATE (no two same-colour bands touch):
-      cream (About) -> tan (Services) -> cream (Packages) -> GREEN (Why us)
-      -> tan (Destinations) -> cream (Testimonials) -> tan (Activities)
-      -> cream (Terms) -> tan (FAQ)
-    - The old GOLD band is gone. Testimonials is now cream.
+      Colours ALTERNATE (no two same-colour bands touch):
+      cream (About) -> tan (Services) -> cream (Packages) -> tan (Why us)
+      -> cream (Destinations) -> tan (Testimonials) -> cream (Activities)
+      -> tan (Terms) -> cream (FAQ)
     - ONE texture on every band: soft scattered dots (see --pat-brown / --pat-light).
-      Brown dots on cream + tan, cream dots on green.
-    - No background pictures. Only real content photos.
+    - CARDS (Packages, Destinations, Activities, Testimonials) and FAQ questions
+      have NO solid fill: they are the same paper as the band behind them,
+      outlined with a hand-torn paper edge (SVG filter #paperTorn, defined just
+      under <div class="flow">). To make the edge rougher / smoother, change
+      scale="5" inside that filter. To change the line colour, change --edge.
+    - HOVER: every card turns SAND on hover (colour = --sand-hover in .flow) and is
+      INTERACTIVE (follows the mouse). Each section has its own effect:
+        Packages     = 3D tilt + depth + moving glare
+        Destinations = "cream panel": a cream paper panel rises over the caption, soft cream glow follows the mouse, arrow grows into an Explore pill
+        Testimonials = "travel postcard": lift + tilt, photo straightens, tape tightens, route moves and pin travels
+        Activities   = card drifts toward the cursor + glare + title underline
+        FAQ          = glare + gold bar + number slides
+      (script: "Interactive cards" near the bottom; effects are skipped on touch screens)
+    - BUTTONS: the Packages "Book Now" / "View More" buttons are gold
+      (colours = --gold / --gold-deep / --btn-ink in .flow).
+    - GOLD UPDATE: the old maroon circles / fills / hovers are now gold
+      (--green in .flow now points to --gold-deep).
     - Navbar, booking modal, footer and core scripts still come from base.html.
     - Packages, Destinations and Testimonials are sliding carousels (3 cards visible).
-    - Activities: normal grid on tablet/desktop, sliding carousel on mobile (<= 767px).
-    - To change any band colour later, just swap its class: sec-cream / sec-tan / sec-dark.
+    - Activities: sliding carousel as well (one card per swipe on mobile).
 {% endcomment %}
 
 {% block extra_css %}
@@ -28,8 +41,6 @@
 <style>
 /* =====================================================================
    PAPER TEXTURE: scattered dots (220 x 220 tile, seamless)
-   To make the dots stronger or softer, change the opacity='...' value
-   inside each data-URI (.42 brown / .34 light).
    ===================================================================== */
 :root {
     --paper: #f2e2c6;
@@ -37,7 +48,7 @@
     /* brown scattered dots: cream + tan bands */
     --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 
-    /* same dots in cream: green band */
+    /* same dots in cream: dark band */
     --pat-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%23f7ecd5' opacity='.34'%3E%3Ccircle cx='75' cy='40' r='1.3'/%3E%3Ccircle cx='24' cy='117' r='1.9'/%3E%3Ccircle cx='127' cy='192' r='1.6'/%3E%3Ccircle cx='24' cy='28' r='2.2'/%3E%3Ccircle cx='199' cy='136' r='1.3'/%3E%3Ccircle cx='125' cy='89' r='1.6'/%3E%3Ccircle cx='19' cy='182' r='1.9'/%3E%3Ccircle cx='146' cy='31' r='1.6'/%3E%3Ccircle cx='70' cy='169' r='1.6'/%3E%3Ccircle cx='202' cy='26' r='1.9'/%3E%3Ccircle cx='182' cy='200' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 }
 
@@ -54,7 +65,7 @@
     min-height: 100vh !important; min-height: 100svh !important;
     display: flex; align-items: flex-end !important;
     padding: 180px 0 130px !important;
-    background-color: #12281f; background-image: none !important;
+    background-color: #2a0c0f; background-image: none !important;
     -webkit-mask-image:
         linear-gradient(#000, #000),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
@@ -80,7 +91,7 @@
 @keyframes heroZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
 .hero .hero-bgs::before, .hero .hero-bgs::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .hero .hero-bgs::before { opacity: 0; }
-.hero .hero-bgs::after { background: linear-gradient(0deg, rgba(8,22,16,.84) 0, rgba(8,22,16,.46) 38%, rgba(8,22,16,0) 72%); }
+.hero .hero-bgs::after { background: linear-gradient(0deg, rgba(30,6,8,.84) 0, rgba(30,6,8,.46) 38%, rgba(30,6,8,0) 72%); }
 .hero .hero-section > .container { position: relative; z-index: 2; max-width: 100% !important; padding: 0 90px !important; }
 @media (prefers-reduced-motion: reduce) { .hero .hero-bg.active { animation: none; } }
 
@@ -132,25 +143,25 @@
     font-size: 16px; font-weight: 600; line-height: 1; text-decoration: none; cursor: pointer;
     transition: background .3s ease, color .3s ease, border-color .3s ease;
 }
-.hero .hero-btn-fill { background: var(--nav-gold, #e0b14a); border: 1.5px solid var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+.hero .hero-btn-fill { background: var(--nav-gold, #e0b14a); border: 1.5px solid var(--nav-gold, #e0b14a); color: var(--nav-ink, #2a0c0f); }
 .hero .hero-btn-fill:hover { background: #fff; border-color: #fff; }
 .hero .hero-btn-line { background: rgba(255,255,255,.1); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1.5px solid rgba(255,255,255,.7); color: #fff; }
-.hero .hero-btn-line:hover { background: #fff; color: var(--nav-ink, #12281f); }
+.hero .hero-btn-line:hover { background: #fff; color: var(--nav-ink, #2a0c0f); }
 .hero .hero-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
 
 .hero .hero-dots { display: flex; flex-direction: column; justify-content: flex-end; align-items: stretch; gap: 10px; margin: 0 !important; }
 .hero .hero-dot {
     position: relative; overflow: hidden; width: 100%; height: auto; display: flex; align-items: center; gap: 14px;
     padding: 15px 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,.24);
-    background: rgba(10,25,18,.38); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    background: rgba(30,6,8,.38); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
     color: #fff; font: inherit; font-size: 16px; font-weight: 500; text-align: left; cursor: pointer;
     transition: background .35s ease, color .35s ease, border-color .35s ease;
 }
 .hero .hero-dot i { width: 20px; text-align: center; font-size: 16px; color: var(--nav-gold, #e0b14a); }
-.hero .hero-dot:hover { background: rgba(10,25,18,.6); }
+.hero .hero-dot:hover { background: rgba(30,6,8,.6); }
 .hero .hero-dot:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-.hero .hero-dot.active { background: rgba(255,255,255,.94); border-color: transparent; color: var(--nav-ink, #12281f); }
-.hero .hero-dot.active i { color: var(--nav-green, #1F5B3A); }
+.hero .hero-dot.active { background: rgba(255,255,255,.94); border-color: transparent; color: var(--nav-ink, #2a0c0f); }
+.hero .hero-dot.active i { color: var(--nav-gold, #e0b14a); }   /* GOLD (was maroon) */
 .hero .hero-dot::after { content: ""; position: absolute; left: 0; bottom: 0; width: 100%; height: 3px; background: var(--nav-gold, #e0b14a); transform: scaleX(0); transform-origin: left; }
 .hero .hero-dot.active::after { animation: heroTab 5s linear forwards; }
 @keyframes heroTab { to { transform: scaleX(1); } }
@@ -205,10 +216,14 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .flow {
     --cream: #f2e2c6;
     --tan:   #e8d3b0;
-    --gold:  #c9972b;   /* accent colour only (buttons, icons, stars). No longer a band colour. */
-    --green: var(--nav-green, #1F5B3A);
-    --ink:   var(--nav-ink, #12281f);
+    --gold:  #c9972b;   /* accent colour (buttons, icons, stars) */
+    --gold-deep: #a97a14;   /* gold hover / outline colour */
+    --btn-ink:   #2b2112;   /* text + icon circle on gold buttons */
+    --sand-hover: #e0c898;  /* card background on hover (sand). Lighter: #e8d3ac, deeper: #d8bd8a */
+    --green: var(--gold-deep);   /* GOLD UPDATE: was var(--nav-green, #5A1A1F) maroon. Now every "green" hover / circle is deep gold */
+    --ink:   var(--nav-ink, #2a0c0f);
     --text:  #5b6560;
+    --edge:  rgba(139, 107, 46, .7);      /* torn-paper outline colour on cards + FAQ */
     --torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 60' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='30' width='2120' height='80' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
     position: relative; width: 100%; overflow-x: clip; background: var(--cream);
 }
@@ -228,7 +243,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .sec > .container { position: relative; z-index: 1; }
 .sec-cream { --bg: var(--cream); }
 .sec-tan   { --bg: var(--tan); }
-.sec-dark  { --bg: var(--green); }   /* = --nav-green from base.html (#1F5B3A) */
+.sec-dark  { --bg: var(--green); }   /* now deep gold (was maroon) */
 @media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
 /* wider band for the Popular Packages section so the bigger cards have room */
 @media (min-width: 1400px) { .sec.sec-wide > .container { max-width: 1400px; } }
@@ -272,6 +287,40 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .rv-ready .rv.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
 
+/* =====================================================================
+   TORN-PAPER CARDS  (Packages, Destinations, Activities, Testimonials, FAQ)
+   No solid fill: the card is the same paper (colour + dots) as the band
+   behind it. Only a hand-torn outline separates it, so it looks cut out
+   of the same sheet. The outline is a pseudo-element run through the
+   #paperTorn SVG filter (defined once under <div class="flow">).
+   On HOVER the torn shape fills with sand (--sand-hover).
+   ===================================================================== */
+.pk-card, .ac-card, .ds-card, .tm-card, .fq-item {
+    position: relative; isolation: isolate;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: 0 !important;
+}
+.pk-card::before, .ac-card::before, .ds-card::before, .tm-card::before, .fq-item::before {
+    /* NO fill at rest, NO real shadow. Only a very faint, lighter, fibrous torn rim
+       so the card reads as an area of the same paper, not a separate box.
+       Want it even fainter? lower the .3 / .18 / .08 values. Want it stronger? raise them. */
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    border-radius: 3px;
+    background: transparent;
+    box-shadow:
+        inset 0 0 0 3px rgba(255, 252, 244, .3),
+        inset 0 0 12px 3px rgba(255, 252, 244, .18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+            filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+/* HOVER: the torn card fills with sand and gets a little extra rim so it feels lifted */
+.pk-card:hover::before, .ac-card:hover::before, .ds-card:hover::before, .tm-card:hover::before, .fq-item:hover::before {
+    background-color: var(--sand-hover);
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3);
+}
+
 /* ================= CAROUSEL (3 visible, then slide) ================= */
 /* --cs-pad must stay SMALLER than --cs-gap, otherwise the edge of the next/previous card peeks into the side padding */
 .cs { --cs-gap: 34px; --cs-pad: 26px; position: relative; }
@@ -280,7 +329,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     overflow-x: auto; overflow-y: hidden;
     scroll-snap-type: none; scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain;
-    /* side/bottom padding keeps card shadows and tilted frames from being clipped */
+    /* side/bottom padding keeps the torn outline from being clipped */
     margin: 0 calc(var(--cs-pad) * -1); padding: 26px var(--cs-pad) 46px;
 }
 .cs-track::-webkit-scrollbar { display: none; }
@@ -331,7 +380,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     width: 74px; height: 74px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     background: #f7ecd5; color: var(--gold); font-size: 28px; transition: all .35s ease;
 }
-.sv-item:hover .sv-ico { background: var(--green); color: var(--gold); transform: translateY(-5px); }
+.sv-item:hover .sv-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-5px); }   /* GOLD (was maroon) */
 .sv-item h3 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 22px; text-transform: none; color: var(--ink); }
 .sv-item p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.65; color: var(--text); }
 .sv-item a { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); text-decoration: none; }
@@ -341,29 +390,26 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (max-width: 991px) { .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 22px; } }
 @media (max-width: 575px) { .sv-grid { gap: 32px 14px; } .sv-ico { width: 62px; height: 62px; font-size: 24px; } .sv-item h3 { font-size: 19px; } .sv-item p { font-size: 13.5px; } }
 
-/* ================= PACKAGES (cream): LARGER rounded cards, text + two pill buttons =================
-   Size changes vs the old card: photo 3:2 -> 5:4 (taller), title 24px -> 29px,
-   body padding 22px -> 28px, buttons 46px -> 54px, tag + icons bigger, section 1240px -> 1400px.
-   To make the card even bigger or smaller, change the numbers marked "SIZE" below.            */
+/* ================= PACKAGES (cream): torn-paper cards, text + two pill buttons ================= */
 .pk-cs { --pk-green: var(--green); --pk-ink: #1a1a1a; }
 .pk-card {
-        display: flex; flex-direction: column; background: var(--tan); padding: 0;
-    border-radius: 32px; overflow: hidden;
-    border: 2px solid #b8923f;
-    box-shadow: none;
-        transition: transform .4s ease, box-shadow .4s ease;
+    --edge-r: 30px;
+    display: flex; flex-direction: column; padding: 20px;
+    border-radius: 30px;
+    transition: transform .4s ease;
     font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
 }
 .pk-card:hover { transform: translateY(-6px); }
-.pk-media { position: relative; aspect-ratio: 5 / 4; /* SIZE: photo height (3/2 = short, 1/1 = square) */ overflow: hidden; isolation: isolate; border-radius: 32px; background: #e3d3b4; }
+.pk-media { position: relative; aspect-ratio: 5 / 4; overflow: hidden; isolation: isolate; border-radius: 20px; background: #e3d3b4; }
 .pk-media a { display: block; width: 100%; height: 100%; }
 .pk-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
 .pk-card:hover .pk-media img { transform: scale(1.06); }
-.pk-tag { position: absolute; left: 18px; top: 18px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 50px; background: rgba(255, 255, 255, .94); color: var(--pk-ink); font-size: 14px; font-weight: 600; }
+.pk-tag { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 50px; background: rgba(255, 255, 255, .94); color: var(--pk-ink); font-size: 14px; font-weight: 600; }
 .pk-tag i { color: var(--gold); }
-.pk-body { display: flex; flex-direction: column; flex: 1; padding: 28px 28px 32px; /* SIZE: inner spacing */ text-align: left; }
-.pk-title { margin: 0 0 12px; font-family: inherit; font-variant: normal; font-weight: 700; letter-spacing: 0; font-size: 29px; /* SIZE: title */ line-height: 1.22; text-transform: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pk-body { display: flex; flex-direction: column; flex: 1; padding: 24px 14px 8px; text-align: left; }
+.pk-title { margin: 0 0 12px; font-family: inherit; font-variant: normal; font-weight: 700; letter-spacing: 0; font-size: 29px; line-height: 1.22; text-transform: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pk-title a { color: var(--pk-ink); text-decoration: none; }
+.pk-title a:hover { color: var(--pk-green); }
 .pk-loc {
     display: flex; align-items: center; gap: 8px;
     margin: 0 0 10px;
@@ -376,79 +422,130 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     margin: 0 0 24px;
     font-size: 15px; line-height: 1.65;
     color: var(--text);
-    /* max 3 lines so all cards stay equal height */
     display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-}.pk-title a:hover { color: var(--pk-green); }
+}
 .pk-actions { margin-top: auto; display: flex; gap: 12px; }
 .pk-btn {
     flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px;
-    min-height: 54px; /* SIZE: button height */ padding: 0 10px 0 22px; border-radius: 50px; border: 1px solid var(--pk-green);
+    min-height: 54px; padding: 0 10px 0 22px; border-radius: 50px; border: 1px solid var(--gold);
     font-family: inherit; font-size: 14.5px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer;
     transition: background .3s ease, color .3s ease, border-color .3s ease;
 }
-.pk-btn span.pk-ic { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform .3s ease; }
-.pk-btn-fill { background: var(--pk-green); color: #fff !important; }
-.pk-btn-fill .pk-ic { background: #12281f; color: #fff; }
-.pk-btn-fill:hover { background: #12281f; border-color: #12281f; }
-.pk-btn-fill:hover .pk-ic { background: var(--gold); }
-.pk-btn-line { background: #fff; color: var(--pk-green) !important; }
-.pk-btn-line .pk-ic { background: var(--pk-green); color: #fff; }
+.pk-btn span.pk-ic { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform .3s ease, background .3s ease, color .3s ease; }
+
+/* "Book Now": solid GOLD, dark text, dark icon circle. Hover: deeper gold, white text. */
+.pk-btn-fill { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-fill .pk-ic { background: var(--btn-ink); color: #fff; }
+.pk-btn-fill:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff !important; }
+.pk-btn-fill:hover .pk-ic { background: var(--btn-ink); color: var(--gold); }
+
+/* "View More": gold outline, fills gold on hover */
+.pk-btn-line { background: transparent; border-color: var(--gold-deep); color: var(--btn-ink) !important; }
+.pk-btn-line .pk-ic { background: var(--gold); color: var(--btn-ink); }
 .pk-btn-line .pk-ic i { transform: rotate(-45deg); }
-.pk-btn-line:hover { background: var(--pk-green); color: #fff !important; }
-.pk-btn-line:hover .pk-ic { background: #fff; color: var(--pk-green); }
-.pk-cs .cs-btn { width: 52px; height: 52px; background: #fff; border: 1px solid rgba(0, 0, 0, .08); color: var(--pk-ink); font-size: 16px; box-shadow: 0 4px 12px rgba(60, 40, 10, .12); }
-.pk-cs .cs-btn:hover { background: var(--pk-green); border-color: var(--pk-green); color: #fff; }
+.pk-btn-line:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-line:hover .pk-ic { background: var(--btn-ink); color: var(--gold); }
+
+.pk-cs .cs-btn { width: 52px; height: 52px; background: transparent; border: 2px solid var(--edge); color: var(--pk-ink); font-size: 16px; box-shadow: none; }
+.pk-cs .cs-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink); }   /* GOLD (was maroon) */
 @media (max-width: 991px) {
     .pk-title { font-size: 27px; }
 }
 @media (max-width: 575px) {
-    .pk-card { border-radius: 26px; }
-    .pk-media { border-radius: 26px; aspect-ratio: 4 / 3.3; }
-    .pk-tag { left: 14px; top: 14px; padding: 8px 15px; font-size: 13px; }
-        .pk-title { font-size: 24px; margin-bottom: 10px; }
-         .pk-loc { font-size: 14px; margin-bottom: 8px; }
+    .pk-card { --edge-r: 24px; border-radius: 24px; padding: 16px; }
+    .pk-media { border-radius: 16px; aspect-ratio: 4 / 3.3; }
+    .pk-tag { left: 12px; top: 12px; padding: 8px 15px; font-size: 13px; }
+    .pk-title { font-size: 24px; margin-bottom: 10px; }
+    .pk-loc { font-size: 14px; margin-bottom: 8px; }
     .pk-desc { font-size: 14px; margin-bottom: 20px; }
-    .pk-body { padding: 22px 22px 26px; }
+    .pk-body { padding: 20px 12px 14px; }
     .pk-btn { font-size: 13.5px; min-height: 50px; padding: 0 8px 0 18px; }
     .pk-btn span.pk-ic { flex-basis: 32px; width: 32px; height: 32px; }
 }
 
-/* ================= WHY CHOOSE US (GREEN band) ================= */
-.sec-dark .tn-title { color: #f4ead8; }
-.sec-dark .tn-text { color: rgba(244, 234, 216, .82); }
+/* ================= WHY CHOOSE US (tan band) =================
+   HOVER DESIGN: a sand wash wipes in from the left, a gold bar grows down the
+   left edge, the icon spins a full turn and flips to dark, the text slides right.
+   (The card itself does not move: the .rv reveal class owns its transform.) */
 .wc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
 .wc-items { display: flex; flex-direction: column; gap: 22px; }
-.wc-item { display: flex; gap: 18px; padding: 24px; border: 1px solid rgba(224, 177, 74, .45); background: rgba(0, 0, 0, .12); transition: background .35s ease, border-color .35s ease; }
-.wc-item:hover { background: rgba(0, 0, 0, .22); border-color: var(--nav-gold, #e0b14a); }
+.wc-item {
+    position: relative; display: flex; gap: 18px; padding: 24px 24px 24px 30px;
+    overflow: hidden; isolation: isolate; cursor: default;
+    border: 1px solid rgba(169, 122, 20, .45); background: rgba(255, 252, 244, .35);
+}
+/* sand wash that wipes in from the left */
+.wc-item::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--sand-hover);
+    transform: scaleX(0); transform-origin: left center;
+    transition: transform .55s cubic-bezier(.2, .7, .2, 1);
+}
+/* gold bar that grows down the left edge */
+.wc-item::after {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+    background: var(--gold);
+    transform: scaleY(0); transform-origin: top center;
+    transition: transform .45s ease .1s;
+}
 .wc-item i {
     flex: 0 0 56px; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
     background: var(--gold); color: var(--ink); font-size: 22px;
+    transition: transform .7s cubic-bezier(.2, .7, .2, 1), background-color .35s ease, color .35s ease;
 }
-.wc-item h3 { margin: 0 0 6px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 22px; text-transform: none; color: var(--gold); }
-.wc-item p { margin: 0; font-size: 15px; line-height: 1.7; color: rgba(244, 234, 216, .8); }
-.sec-dark .tn-btn-line { color: var(--gold) !important; }
-.sec-dark .tn-btn-line:hover { color: var(--ink) !important; }
-.sec-dark .tn-btn:hover { background: #f4ead8; border-color: #f4ead8; color: var(--ink) !important; }
+.wc-item > div { transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
+.wc-item h3 { margin: 0 0 6px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 22px; text-transform: none; color: var(--ink); transition: color .35s ease; }
+.wc-item p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--text); }
+.wc-item:hover { border-color: var(--gold); }
+.wc-item:hover::before { transform: scaleX(1); }
+.wc-item:hover::after { transform: scaleY(1); }
+.wc-item:hover i { transform: rotate(360deg) scale(1.1); background: var(--btn-ink); color: var(--gold); }
+.wc-item:hover > div { transform: translateX(8px); }
+.wc-item:hover h3 { color: var(--gold-deep); }
 @media (max-width: 991px) { .wc-wrap { grid-template-columns: 1fr; gap: 36px; } }
+@media (hover: none) {
+    .wc-item:hover::before { transform: scaleX(0); }
+    .wc-item:hover::after { transform: scaleY(0); }
+    .wc-item:hover i { transform: none; background: var(--gold); color: var(--ink); }
+    .wc-item:hover > div { transform: none; }
+    .wc-item:hover h3 { color: var(--ink); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .wc-item::before, .wc-item::after, .wc-item i, .wc-item > div { transition: none; }
+}
 
-/* ================= DESTINATIONS (tan): framed photos ================= */
-.ds-card { position: relative; display: block; aspect-ratio: 4 / 4.6; background: transparent; padding: 0; box-shadow: 0 18px 34px rgba(60, 40, 10, .25); text-decoration: none; overflow: hidden; transition: transform .4s ease; }
-.ds-card:nth-child(3n+1) { transform: rotate(-1.2deg); }
-.ds-card:nth-child(3n+2) { transform: rotate(.8deg); }
-.ds-card:nth-child(3n+3) { transform: rotate(-.6deg); }
-.ds-card:hover { transform: rotate(0) translateY(-8px); }
-.ds-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
-.ds-card:hover img { transform: scale(1.06); }
-.ds-overlay { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; gap: 12px; padding: 80px 18px 18px; background: linear-gradient(to top, rgba(18, 40, 31, .9) 0, rgba(18, 40, 31, .5) 45%, rgba(18, 40, 31, 0) 100%); }
+/* ================= DESTINATIONS (tan): photo inside a torn-paper outline ================= */
+.ds-card {
+    --edge-r: 8px;
+    display: block; aspect-ratio: 4 / 4.6; padding: 16px; box-sizing: border-box;
+    text-decoration: none; transition: transform .4s ease;
+}
+.ds-card:hover { transform: translateY(-8px); }
+.ds-card img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 4px; }
+.ds-overlay { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; display: flex; align-items: flex-end; gap: 12px; padding: 80px 18px 18px; border-radius: 0 0 4px 4px; background: none; isolation: isolate; overflow: hidden; }
+/* dark gradient (fades out on hover) */
+.ds-overlay::after {
+    content: ""; position: absolute; inset: 0; z-index: -2;
+    background: linear-gradient(to top, rgba(42, 10, 14, .9) 0, rgba(42, 10, 14, .5) 45%, rgba(42, 10, 14, 0) 100%);
+    transition: opacity .45s ease;
+}
+/* cream paper panel that rises from the bottom */
+.ds-overlay::before {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; top: 46px; z-index: -1;
+    background: #f2e2c6 var(--pat-brown) 0 0 / 220px 220px;
+    border-top: 2px dashed var(--gold);
+    transform: translateY(105%);
+    transition: transform .55s cubic-bezier(.2, .7, .2, 1);
+}
+.ds-card:hover .ds-overlay::before { transform: translateY(0); }
+.ds-card:hover .ds-overlay::after { opacity: 0; }
 .ds-pin { color: var(--gold); font-size: 18px; line-height: 1.3; }
 .ds-name { flex: 1; min-width: 0; margin: 0; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 700; letter-spacing: 1px; font-size: 24px; line-height: 1.2; color: #f4ead8; text-transform: none; }
 .ds-go { flex: 0 0 38px; width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--gold); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .3s ease; }
-.ds-card:hover .ds-go { background: var(--gold); color: var(--ink); }
+.ds-card:hover .ds-go { background: var(--gold); border-color: var(--gold); color: var(--btn-ink); }
 @media (max-width: 575px) { .ds-name { font-size: 21px; } }
 
-/* ================= TESTIMONIALS (CREAM band) =================
-   Uses the normal cream-band colours (ink title, grey text, gold accents),
-   so the old .sec-gold overrides were removed.                              */
+/* ================= TESTIMONIALS (CREAM band) ================= */
 .g-badge { display: inline-flex; align-items: center; gap: 12px; margin-top: 22px; padding: 12px 22px; background: #fff; box-shadow: 0 10px 24px rgba(60, 40, 10, .18); }
 .g-logo { font-size: 22px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
 .g-logo b { font-weight: inherit; }
@@ -461,18 +558,18 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .g-base { color: #d9d9d9; }
 .g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
 
-/* ---- review cards: polaroid photo + pin, text below ---- */
+/* ---- review cards: torn-paper outline, photo + pin, text below ---- */
 .tm-card {
-    position: relative; display: flex; flex-direction: column; text-align: left;
-    padding: 0; background: none; border-radius: 0; box-shadow: none;
+    --edge-r: 10px;
+    display: flex; flex-direction: column; text-align: left;
+    padding: 26px 26px 30px; border-radius: 10px;
     transition: transform .4s ease;
 }
 .tm-card:hover { transform: translateY(-6px); }
 
-.tm-media { position: relative; padding: 8px 4px 0; }
+.tm-media { position: relative; padding: 8px 0 0; }
 .tm-photo {
-    position: relative; background: #fff; padding: 8px; border-radius: 12px;
-    box-shadow: 0 10px 24px rgba(60, 40, 10, .25);
+    position: relative; background: transparent; padding: 0; border-radius: 6px;
     transform: rotate(-2deg); transition: transform .5s ease;
 }
 .tm-card:nth-child(3n+2) .tm-photo { transform: rotate(1.6deg); }
@@ -486,7 +583,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .tm-ph { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #dde4e1 0%, #c5d0cd 100%); }
 .tm-ph svg { width: 46%; fill: #6f9b8d; }
 
-.tm-wave { position: relative; height: 16px; margin: 8px calc(var(--cs-gap) / -2) 20px; }
+.tm-wave { position: relative; height: 16px; margin: 14px 0 20px; }
 .tm-wave svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .tm-pin {
     position: absolute; left: 50%; top: -21px; z-index: 3; transform: translateX(-50%);
@@ -507,15 +604,16 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     display: flex; align-items: center; gap: 12px; padding-left: 38px;
     font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3;
 }
-.tm-name::before { content: ""; flex: 0 0 28px; height: 1px; background: rgba(18, 40, 31, .55); }
+.tm-name::before { content: ""; flex: 0 0 28px; height: 1px; background: rgba(42, 12, 15, .55); }
 
 .tm-card:nth-child(1) { --i: 0; } .tm-card:nth-child(2) { --i: 1; } .tm-card:nth-child(3) { --i: 2; }
 .tm-card:nth-child(4) { --i: 3; } .tm-card:nth-child(5) { --i: 4; } .tm-card:nth-child(6) { --i: 5; }
-.rv-ready .cs.in .tm-card { animation: tmRise .9s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * .12s + .1s) both; }
+.rv-ready .cs.in .tm-card { animation: tmRise .9s cubic-bezier(.2, .7, .2, 1) calc(var(--i, 0) * .12s + .1s) backwards; }
 @keyframes tmRise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .rv-ready .cs.in .tm-card { animation: none; } }
 @media (max-width: 575px) {
     .tm-quote { font-size: 16px; }
+    .tm-card { padding: 18px 18px 22px; }
 }
 @media (hover: none) {
     .tm-card:hover { transform: none; }
@@ -524,19 +622,16 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     .tm-card:nth-child(3n+3):hover .tm-photo { transform: rotate(-1deg); }
 }
 
-/* ================= ACTIVITIES (tan) =================
-   Desktop / tablet (>= 768px): normal grid.
-   Mobile (<= 767px): sliding carousel (one card per swipe).      */
-
-.ac-card { display: flex; flex-direction: column; background: #fff; padding: 0; box-shadow: 0 18px 34px rgba(60, 40, 10, .2); transition: transform .4s ease; }
+/* ================= ACTIVITIES (tan): torn-paper cards ================= */
+.ac-card { --edge-r: 12px; display: flex; flex-direction: column; padding: 18px; border-radius: 12px; transition: transform .4s ease; }
 .ac-card:hover { transform: translateY(-8px); }
-.ac-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #e3d3b4; }
+.ac-media { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 6px; background: #e3d3b4; }
 .ac-media a { display: block; width: 100%; height: 100%; }
 .ac-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
 .ac-card:hover .ac-media img { transform: scale(1.07); }
-.ac-pill { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 50px; background: var(--green); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-.ac-pill i { color: var(--nav-gold, #e0b14a); }
-.ac-body { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px 16px 28px; }
+.ac-pill { position: absolute; left: 12px; top: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border-radius: 50px; background: var(--gold); color: var(--btn-ink); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }   /* GOLD (was maroon) */
+.ac-pill i { color: var(--btn-ink); }
+.ac-body { flex: 1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px 10px 18px; }
 .ac-title { margin: 0 0 10px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 26px; line-height: 1.2; text-transform: none; }
 .ac-title a { color: var(--ink); text-decoration: none; }
 .ac-title a:hover { color: var(--gold); }
@@ -576,7 +671,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
         overflow-y: hidden !important;
         margin: 0 calc(var(--cs-pad) * -1);
         padding: 26px var(--cs-pad) 46px;
-        scroll-snap-type: none;          /* JS slider handles snapping, same as packages/testimonials */
+        scroll-snap-type: none;
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-x: contain;
@@ -595,26 +690,29 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .tc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
 .tc-item { text-align: center; }
 .tc-ico { width: 70px; height: 70px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f7ecd5; color: var(--gold); font-size: 26px; transition: all .35s ease; }
-.tc-item:hover .tc-ico { background: var(--green); transform: translateY(-5px); }
+.tc-item:hover .tc-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-5px); }   /* GOLD (was maroon) */
 .tc-item h3 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 20px; line-height: 1.25; text-transform: none; color: var(--ink); }
 .tc-item p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--text); }
 @media (max-width: 991px) { .tc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 22px; } }
 @media (max-width: 575px) { .tc-grid { grid-template-columns: 1fr; } }
 
-/* ================= FAQ (tan) ================= */
+/* ================= FAQ (tan): torn-paper question boxes ================= */
 .fq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 56px; align-items: start; }
 .fq-left { position: sticky; top: 120px; }
 .fq-left .g-badge { box-shadow: 0 10px 24px rgba(60, 40, 10, .18); }
-.fq-list { display: flex; flex-direction: column; gap: 14px; }
-.fq-item { background: #fbf3e2; border: 1px solid rgba(201, 151, 43, .3); box-shadow: 0 8px 20px rgba(60, 40, 10, .08); transition: background .35s ease; }
-.fq-item.open { background: #fff; border-color: var(--gold); }
+.fq-list { display: flex; flex-direction: column; gap: 22px; }
+.fq-item { --edge-r: 10px; border-radius: 10px; transition: background-color .35s ease; }
+/* open item: same paper, just a touch lighter so the active question stands out */
+.fq-item.open::before { box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3); }
 .fq-q { width: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; background: transparent; border: 0; text-align: left; cursor: pointer; font-family: 'EB Garamond', serif; font-size: 21px; font-weight: 700; line-height: 1.3; color: var(--ink); }
 .fq-no { color: var(--gold); }
 .fq-qt { flex: 1; min-width: 0; }
 .fq-ico { position: relative; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #f7ecd5; }
-.fq-item.open .fq-ico { background: var(--green); }
-.fq-ico::before, .fq-ico::after { content: ""; position: absolute; left: 50%; top: 50%; width: 13px; height: 2px; background: var(--gold); transform: translate(-50%, -50%); transition: transform .3s ease; }
+.fq-item.open .fq-ico { background: var(--gold); }   /* GOLD (was maroon) */
+.fq-ico::before, .fq-ico::after { content: ""; position: absolute; left: 50%; top: 50%; width: 13px; height: 2px; background: var(--gold); transform: translate(-50%, -50%); transition: transform .3s ease, background-color .3s ease; }
 .fq-ico::after { transform: translate(-50%, -50%) rotate(90deg); }
+.fq-item.open .fq-ico::before,
+.fq-item.open .fq-ico::after { background: var(--btn-ink); }   /* dark plus/minus so it shows on the gold circle */
 .fq-item.open .fq-ico::after { transform: translate(-50%, -50%) rotate(0); }
 .fq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
 .fq-item.open .fq-a { grid-template-rows: 1fr; }
@@ -624,7 +722,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (max-width: 575px) { .fq-q { padding: 18px 16px; font-size: 18px; } .fq-a p { padding: 0 16px 20px; } }
 
 /* ================= FOOTER: torn-paper top edge ================= */
-:root { --footer-gap: #e8d3b0; }  /* matches the last band (FAQ = tan) so there is no colour gap behind the torn footer edge */
+:root { --footer-gap: #f2e2c6; }  /* matches the last band (FAQ = cream) so there is no colour gap behind the torn footer edge */
 html, body { background: var(--footer-gap) !important; }
 .footer-main {
     --torn-h: 70px;
@@ -659,6 +757,150 @@ html, body { background: var(--footer-gap) !important; }
 }
 
 /* =====================================================================
+   INTERACTIVE CARD HOVERS  (mouse only; the script sets --mx --my --dx --dy --rx --ry)
+   --mx / --my : cursor position inside the card (%)     --dx / --dy : -1 .. 1 from the centre
+   --rx / --ry : tilt angles (Packages + Testimonials)
+   Common to all: sand fill (from the torn ::before above) + a soft light "glare"
+   (::after) that follows the cursor. Everything below is per section.
+   ===================================================================== */
+.pk-card::after, .ac-card::after, .ds-card::after, .tm-card::after, .fq-item::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px;
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255, 252, 244, .8), rgba(255, 252, 244, 0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn);
+    opacity: 0; transition: opacity .35s ease;
+}
+.pk-card:hover::after, .ac-card:hover::after, .ds-card:hover::after, .tm-card:hover::after, .fq-item:hover::after { opacity: 1; }
+
+/* ---- PACKAGES: 3D tilt with depth ---- */
+.pk-card { transition: transform .25s ease-out; transform-style: preserve-3d; will-change: transform; }
+.pk-card:hover { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-8px); }
+.pk-media, .pk-body { transition: transform .35s ease-out; }
+.pk-card:hover .pk-media { transform: translateZ(26px); }
+.pk-card:hover .pk-body { transform: translateZ(14px); }
+
+/* ---- DESTINATIONS: "cream panel" hover ----
+   A cream paper panel rises from the bottom over the caption, the name turns dark ink,
+   a soft cream glow follows the mouse, the pin hops and the arrow grows into an "Explore" pill.
+   (Panel colour: #f2e2c6. Panel height: change top: 46px, smaller = taller.) */
+.ds-pic { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 4px; }
+/* cream glow that follows the mouse (replaces the old dark torch) */
+.ds-pic::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(circle 150px at var(--mx, 50%) var(--my, 50%), rgba(255, 246, 225, .38), rgba(255, 246, 225, 0) 70%);
+    opacity: 0; transition: opacity .4s ease;
+}
+.ds-card:hover .ds-pic::before { opacity: 1; }
+.ds-card img { transition: transform .6s cubic-bezier(.2, .7, .2, 1), filter .5s ease; will-change: transform; }
+.ds-card:hover img { transform: scale(1.05); filter: saturate(1.1) brightness(1.04); }
+.ds-name { transition: transform .4s cubic-bezier(.2, .7, .2, 1), color .35s ease; }
+.ds-card:hover .ds-name { transform: translateY(-4px); color: var(--ink); }
+.ds-card:hover .ds-pin { animation: dsPinHop .6s ease; }
+@keyframes dsPinHop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px); } 70% { transform: translateY(-2px); } }
+/* arrow button -> "Explore" pill */
+.ds-go { flex: 0 0 auto; width: auto; min-width: 38px; padding: 0 12px; border-radius: 50px; overflow: hidden; }
+.ds-go::before {
+    content: "Explore"; display: block; max-width: 0; margin-right: 0; opacity: 0; overflow: hidden; white-space: nowrap;
+    font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .5px;
+    transition: max-width .4s ease, margin .4s ease, opacity .3s ease;
+}
+.ds-go i { transition: transform .4s ease; }
+.ds-card:hover .ds-go::before { max-width: 70px; margin-right: 8px; opacity: 1; }
+.ds-card:hover .ds-go i { transform: rotate(-45deg); }
+
+/* ---- TESTIMONIALS: "travel postcard" hover ----
+   Card lifts + tilts, photo straightens and pops, tape tightens, the dotted route
+   starts moving and the pin travels along it, stars pop, name gets a gold line. */
+.tm-card { transition: transform .4s cubic-bezier(.2, .7, .2, 1); will-change: transform; }
+.tm-card:hover { transform: translateY(-10px) rotate(-.7deg); }
+.tm-card:nth-child(even):hover { transform: translateY(-10px) rotate(.7deg); }
+
+/* photo straightens, lifts and gets a soft shadow */
+.tm-photo { transition: transform .5s cubic-bezier(.2, .7, .2, 1), box-shadow .5s ease; }
+.tm-card:hover .tm-photo { transform: rotate(0) translateY(-4px) scale(1.035); box-shadow: 0 16px 26px rgba(60, 40, 10, .28); }
+
+/* tape tightens and gets stronger */
+.tm-photo::before { transition: transform .45s cubic-bezier(.3, 1.6, .5, 1), background-color .35s ease; }
+.tm-card:hover .tm-photo::before { transform: translateX(-50%) rotate(2deg) scaleX(1.15); background: rgba(201, 151, 43, .7); }
+
+/* dotted route moves, pin travels along it */
+.tm-wave path { stroke-dashoffset: 0; }
+.tm-card:hover .tm-wave path { animation: tmRoute 1s linear infinite; }
+@keyframes tmRoute { to { stroke-dashoffset: -7.1; } }
+.tm-pin { transition: left .9s cubic-bezier(.3, 1.3, .5, 1); }
+.tm-card:hover .tm-pin { left: 90%; }
+
+/* stars pop one by one */
+.tm-stars i { display: inline-block; transition: transform .4s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-card:hover .tm-stars i { transform: translateY(-4px) scale(1.25) rotate(-8deg); }
+.tm-card:hover .tm-stars i:nth-child(2) { transition-delay: .06s; }
+.tm-card:hover .tm-stars i:nth-child(3) { transition-delay: .12s; }
+.tm-card:hover .tm-stars i:nth-child(4) { transition-delay: .18s; }
+.tm-card:hover .tm-stars i:nth-child(5) { transition-delay: .24s; }
+
+/* quote mark swings, text nudges right */
+.tm-quote { transition: transform .45s cubic-bezier(.2, .7, .2, 1); }
+.tm-card:hover .tm-quote { transform: translateX(4px); }
+.tm-quote::before { transform-origin: left top; transition: transform .45s cubic-bezier(.3, 1.6, .5, 1); }
+.tm-card:hover .tm-quote::before { transform: scale(1.2) rotate(-6deg); }
+
+/* name: the small line grows and turns gold */
+.tm-name { transition: color .35s ease; }
+.tm-name::before { transition: flex-basis .45s cubic-bezier(.2, .7, .2, 1), background-color .35s ease, height .35s ease; }
+.tm-card:hover .tm-name { color: var(--gold-deep); }
+.tm-card:hover .tm-name::before { flex-basis: 64px; height: 2px; background: var(--gold); }
+
+/* ---- ACTIVITIES: card drifts toward the cursor, pill slides, title underline draws ---- */
+.ac-card { transition: transform .25s ease-out; will-change: transform; }
+.ac-card:hover { transform: translate(calc(var(--dx, 0) * 8px), calc(-8px + var(--dy, 0) * 8px)); }
+.ac-card:hover .ac-media img { transform: scale(1.1); }
+.ac-pill { transition: transform .4s cubic-bezier(.3, 1.6, .5, 1); }
+.ac-card:hover .ac-pill { transform: translateX(6px) rotate(-3deg); }
+.ac-title a { background: linear-gradient(var(--gold), var(--gold)) no-repeat left bottom / 0 2px; transition: background-size .45s ease, color .3s ease; padding-bottom: 3px; }
+.ac-card:hover .ac-title a { background-size: 100% 2px; }
+
+/* ---- FAQ: gold bar grows, number slides, plus icon turns ---- */
+.fq-q { position: relative; }
+.fq-q::before {
+    content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 2px;
+    background: var(--gold); transform: scaleY(0); transition: transform .35s ease;
+}
+.fq-item:hover .fq-q::before, .fq-item.open .fq-q::before { transform: scaleY(1); }
+.fq-no { display: inline-block; transition: transform .35s ease; }
+.fq-item:hover .fq-no { transform: translateX(4px); }
+.fq-ico { transition: transform .4s ease, background-color .35s ease; }
+.fq-item:hover .fq-ico { transform: rotate(90deg); }
+
+/* touch screens + reduced motion: no mouse effects */
+@media (hover: none) {
+    .pk-card:hover, .tm-card:hover, .ac-card:hover, .ds-card:hover { transform: none; }
+    .pk-card:hover .pk-media, .pk-card:hover .pk-body { transform: none; }
+    .ds-card:hover img { transform: none; filter: none; }
+    .ds-card:hover .ds-pic::before { opacity: 0; }
+    .ds-card:hover .ds-overlay::before { transform: translateY(105%); }
+    .ds-card:hover .ds-overlay::after { opacity: 1; }
+    .ds-card:hover .ds-name { color: #f4ead8; }
+    .ds-card:hover .ds-go::before { max-width: 0; margin-right: 0; opacity: 0; }
+    .ds-card:hover .ds-go i { transform: none; }
+    .ac-card:hover .ac-pill, .tm-card:hover .tm-stars i, .tm-card:hover .tm-quote::before, .ds-card:hover .ds-name { transform: none; }
+    .fq-item:hover .fq-ico, .fq-item:hover .fq-no { transform: none; }
+    .tm-card:hover .tm-photo { box-shadow: none; }
+    .tm-card:hover .tm-photo::before { transform: translateX(-50%) rotate(-2deg); background: rgba(201, 151, 43, .45); }
+    .tm-card:hover .tm-pin { left: 50%; }
+    .tm-card:hover .tm-quote { transform: none; }
+    .tm-card:hover .tm-wave path { animation: none; }
+    .tm-card:hover .tm-name { color: var(--ink); }
+    .tm-card:hover .tm-name::before { flex-basis: 28px; height: 1px; background: rgba(42, 12, 15, .55); }
+    .pk-card:hover::after, .ac-card:hover::after, .ds-card:hover::after, .tm-card:hover::after, .fq-item:hover::after { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pk-card:hover, .tm-card:hover, .ac-card:hover { transform: none; }
+    .pk-card:hover .pk-media, .pk-card:hover .pk-body, .ds-card:hover img, .tm-card:hover .tm-stars i { transform: none; }
+    .ds-card:hover .ds-pin { animation: none; }
+    .tm-card:hover .tm-wave path { animation: none; }
+    .tm-card:hover .tm-pin { left: 50%; }
+}
+
+/* =====================================================================
    CAROUSEL FIXES
    ===================================================================== */
 .cs-track > .ac-card,
@@ -666,22 +908,18 @@ html, body { background: var(--footer-gap) !important; }
 .cs-track > .tm-card { height: auto; }
 
 @media (hover: none) {
-    .pk-card:hover { transform: none; }
-        .ac-card:hover { transform: none; box-shadow: 0 18px 34px rgba(60, 40, 10, .2); }
-    .pk-cs .cs-btn:hover { background: #fff; border-color: rgba(0, 0, 0, .08); color: var(--pk-ink); }
+    .pk-card:hover, .ac-card:hover, .ds-card:hover { transform: none; }
+    .pk-cs .cs-btn:hover { background: transparent; border-color: var(--edge); color: var(--pk-ink); }
     .pk-card:hover .pk-media img,
-    .ac-card:hover .ac-media img,
-    .ds-card:hover img { transform: none; }
-    .ds-card:nth-child(3n+1):hover { transform: rotate(-1.2deg); }
-    .ds-card:nth-child(3n+2):hover { transform: rotate(.8deg); }
-    .ds-card:nth-child(3n+3):hover { transform: rotate(-.6deg); }
+    .ac-card:hover .ac-media img { transform: none; }
     .ds-card:hover .ds-go { background: transparent; color: var(--gold); }
     .cs-btn:hover { background: var(--gold); border-color: var(--gold); }
+    /* touch screens: no sticky sand fill after a tap */
+    .pk-card:hover::before, .ac-card:hover::before, .ds-card:hover::before, .tm-card:hover::before { background-color: transparent; }
 }
 
 </style>
 {% endblock %}
-
 {% block content %}
 <!-- Top contact bar (home page only) -->
 <div class="top-bar">
@@ -777,6 +1015,22 @@ html, body { background: var(--footer-gap) !important; }
 </div>
 
 <div class="flow">
+
+<!-- Torn-paper outline filter, used by every card + FAQ box (see .pk-card::before etc.).
+     Rougher torn edge: raise scale (11). Smoother: lower it. Finer tears: raise baseFrequency. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+        <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
+            <!-- big irregular tears -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="11" result="big"/>
+            <feDisplacementMap in="SourceGraphic" in2="big" scale="20" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <!-- fine fibrous roughness along the tear -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="4" result="fine"/>
+            <feDisplacementMap in="d1" in2="fine" scale="5" xChannelSelector="G" yChannelSelector="R" result="d2"/>
+            <feGaussianBlur in="d2" stdDeviation="0.45"/>
+        </filter>
+    </defs>
+</svg>
 
 <!-- ============ ABOUT (cream) ============ -->
 <section class="about-us sec sec-cream">
@@ -912,7 +1166,8 @@ html, body { background: var(--footer-gap) !important; }
                         <p class="pk-loc"><i class="fa-solid fa-location-dot"></i><span>{{ loc|truncatechars:45 }}</span></p>
                         {% endif %}
                         {% endwith %}
-                        {% endwith %}                        {% if p.description %}
+                        {% endwith %}
+                        {% if p.description %}
                         <p class="pk-desc">{{ p.description|striptags|truncatewords:18 }}</p>
                         {% endif %}
                         <div class="pk-actions">
@@ -934,8 +1189,8 @@ html, body { background: var(--footer-gap) !important; }
 </section>
 {% endif %}
 
-<!-- ============ WHY CHOOSE US (GREEN band) ============ -->
-<section class="sec sec-dark">
+<!-- ============ WHY CHOOSE US (tan) ============ -->
+<section class="sec sec-tan">
     <div class="container">
         <div class="wc-wrap">
             <div class="rv">
@@ -969,8 +1224,8 @@ html, body { background: var(--footer-gap) !important; }
 </section>
 
 {% if destinations %}
-<!-- ============ POPULAR DESTINATIONS (tan) ============ -->
-<section class="sec sec-tan">
+<!-- ============ POPULAR DESTINATIONS (cream) ============ -->
+<section class="sec sec-cream">
     <div class="container">
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Destinations</div>
@@ -982,12 +1237,14 @@ html, body { background: var(--footer-gap) !important; }
             <div class="cs-track ds-grid">
                 {% for d in destinations|slice:":6" %}
                 <a href="{% url 'destination_detail' d.slug %}" class="ds-card" draggable="false">
-                    {% if d.image %}
-                    <img src="{{ d.image.url }}"
-                         srcset="{{ d.image|srcset }}"
-                         sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
-                         alt="{{ d.name }}" loading="lazy" decoding="async" draggable="false">
-                    {% endif %}
+                    <div class="ds-pic">
+                        {% if d.image %}
+                        <img src="{{ d.image.url }}"
+                             srcset="{{ d.image|srcset }}"
+                             sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
+                             alt="{{ d.name }}" loading="lazy" decoding="async" draggable="false">
+                        {% endif %}
+                    </div>
                     <div class="ds-overlay">
                         <span class="ds-pin"><i class="fa-solid fa-location-dot"></i></span>
                         <h3 class="ds-name">{{ d.name }}</h3>
@@ -1006,8 +1263,8 @@ html, body { background: var(--footer-gap) !important; }
 {% endif %}
 
 {% if testimonials %}
-<!-- ============ TESTIMONIALS (CREAM band, was gold) ============ -->
-<section class="sec sec-cream">
+<!-- ============ TESTIMONIALS (tan) ============ -->
+<section class="sec sec-tan">
     <div class="container">
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Testimonials</div>
@@ -1062,11 +1319,10 @@ html, body { background: var(--footer-gap) !important; }
 {% endif %}
 
 {% if recent_activities %}
-<!-- ============ EXPERIENCES & ACTIVITIES (tan) ============
-     Grid on tablet/desktop, sliding carousel on mobile (<= 767px).
+<!-- ============ EXPERIENCES & ACTIVITIES (cream) ============
      NOTE: the .rv reveal class is on the wrapper, not on each card,
      because cards hidden off-screen inside the carousel would never reveal. -->
-<section class="sec sec-tan">
+<section class="sec sec-cream">
     <div class="container">
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Activities</div>
@@ -1112,8 +1368,8 @@ html, body { background: var(--footer-gap) !important; }
 </section>
 {% endif %}
 
-<!-- ============ TERMS & CONDITIONS (cream) ============ -->
-<section class="sec sec-cream">
+<!-- ============ TERMS & CONDITIONS (tan) ============ -->
+<section class="sec sec-tan">
     <div class="container">
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Terms</div>
@@ -1166,8 +1422,8 @@ html, body { background: var(--footer-gap) !important; }
     </div>
 </section>
 
-<!-- ============ FAQ (tan) ============ -->
-<section class="sec sec-tan">
+<!-- ============ FAQ (cream) ============ -->
+<section class="sec sec-cream">
     <div class="container">
         <div class="fq-wrap">
 
@@ -1286,7 +1542,7 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Carousels: Packages, Destinations, Testimonials, Activities (mobile only for grid)
+<!-- Carousels: Packages, Destinations, Testimonials, Activities
      Index-based sliding: always lands exactly on a card.
      When the track uses CSS scroll-snap, the JS "settle" step is skipped. -->
 <script>
@@ -1372,7 +1628,7 @@ html, body { background: var(--footer-gap) !important; }
 
             function settle() {
                 if (!overflowing()) return;
-                if (touching) { settleT = setTimeout(settle, 120); return; }   // retry instead of giving up
+                if (touching) { settleT = setTimeout(settle, 120); return; }
                 var i = currentIndex();
                 var target = Math.max(0, Math.min(offsetOf(i), maxScroll()));
                 if (Math.abs(target - track.scrollLeft) > 2) goTo(i);
@@ -1417,6 +1673,50 @@ html, body { background: var(--footer-gap) !important; }
                     item.classList.add('open');
                     this.setAttribute('aria-expanded', 'true');
                 }
+            });
+        });
+    })();
+</script>
+
+<!-- Interactive cards: tells the CSS where the mouse is inside each card -->
+<script>
+    (function () {
+        if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        /* [selector, max tilt in degrees] */
+        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.ac-card', 0], ['.ds-card', 0], ['.fq-item', 0]];
+
+        groups.forEach(function (g) {
+            var max = g[1];
+            document.querySelectorAll(g[0]).forEach(function (el) {
+                var raf = 0, last = null;
+
+                el.addEventListener('pointermove', function (ev) {
+                    if (ev.pointerType !== 'mouse') return;
+                    last = ev;
+                    if (raf) return;
+                    raf = requestAnimationFrame(function () {
+                        raf = 0;
+                        var r = el.getBoundingClientRect();
+                        if (!r.width || !r.height) return;
+                        var x = Math.min(1, Math.max(0, (last.clientX - r.left) / r.width));
+                        var y = Math.min(1, Math.max(0, (last.clientY - r.top) / r.height));
+                        el.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+                        el.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+                        el.style.setProperty('--dx', ((x - 0.5) * 2).toFixed(3));
+                        el.style.setProperty('--dy', ((y - 0.5) * 2).toFixed(3));
+                        if (max) {
+                            el.style.setProperty('--rx', ((0.5 - y) * 2 * max).toFixed(2) + 'deg');
+                            el.style.setProperty('--ry', ((x - 0.5) * 2 * max).toFixed(2) + 'deg');
+                        }
+                    });
+                });
+
+                el.addEventListener('pointerleave', function () {
+                    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+                    ['--rx', '--ry', '--dx', '--dy'].forEach(function (v) { el.style.removeProperty(v); });
+                });
             });
         });
     })();

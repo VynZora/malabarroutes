@@ -37,21 +37,30 @@
         --primary-color: #111111;
         --text-color: #2b2b2b;
 
-        /* ===== TEMPLATE OVERLAY GREEN (taken from your image) =====
-           Used by the dark overlay on top of every hero / page-header photo.
-           --overlay-opacity: higher = stronger green tint, lower = brighter photo (0 = no overlay). */
-        --brand-green: #265c44;
+        /* ===== THEME COLOURS (sand, taken from your image) =====
+           --theme-sand : main theme colour (navbar, mobile bar, preloader)
+           --theme-ink  : dark text colour used on top of the sand
+           --theme-gold : accent for active / hover states (deeper gold = readable on sand) */
+        --theme-sand: #E8D3AC;
+        --theme-ink:  #2b2112;
+        --theme-gold: #a97a14;
+
+        /* ===== HERO / PAGE-HEADER PHOTO OVERLAY =====
+           A sand overlay would wash out the white hero text, so the overlay uses a deep
+           brown from the same family. To use pure sand instead, set --overlay-color: #E8D3AC;
+           --overlay-opacity: higher = stronger tint, lower = brighter photo (0 = no overlay). */
+        --overlay-color: #3b2d17;
         --overlay-opacity: 0.35;
     }
 
     /* The theme (custom.css) draws a dark overlay on top of the hero and page-header photos.
-       This replaces its colour with the green above, on every page.
+       This replaces its colour on every page.
        It is placed here, in base.html, so no change to custom.css is needed. */
     .hero .hero-section::before,
     .hero-bg-image::before,
     .page-header::before {
-        background: var(--brand-green) !important;
-        background-color: var(--brand-green) !important;
+        background: var(--overlay-color) !important;
+        background-color: var(--overlay-color) !important;
         background-image: none !important;
         opacity: var(--overlay-opacity) !important;
     }
@@ -75,9 +84,8 @@
         transform: none !important;
         top: 0 !important;
 
-        /* ===== TRANSPARENT WHITE NAVBAR + FADED PATTERN (nav.png) ===== */
-        background-color: rgba(255, 255, 255, 0.82) !important;   /* faded white: lower = more transparent, higher = more white */
-        /* image strength is built into nav.png */
+        /* ===== NAVBAR BACKGROUND + FADED PATTERN (nav4.png) ===== */
+        background-color: var(--theme-sand) !important;
         background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
@@ -104,12 +112,12 @@
         max-width: none !important;
         flex-shrink: 0;
         object-fit: contain;
-        filter: saturate(1.4) contrast(1.15) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));   /* makes logo stand out */
+        filter: brightness(0.6) saturate(1.5) contrast(1.2);   /* darker, richer logo: lower brightness = darker */
     }
 
     /* ===== NAV TEXT: plain dark text, no glow ===== */
     .main-header .nav-link {
-        color: #111111 !important;
+        color: var(--theme-ink) !important;
         font-weight: 600;
         padding: 10px 12px !important;
         white-space: nowrap;
@@ -118,7 +126,7 @@
         transition: color .25s ease;
     }
     .main-header .nav-link:hover,
-    .main-header .nav-link.active { color: #a97a14 !important; }   /* slightly deeper gold = better contrast on light bg */
+    .main-header .nav-link.active { color: var(--theme-gold) !important; }
 
     .main-header .btn-default { white-space: nowrap; }
 
@@ -151,7 +159,7 @@
             right: 66px;                              /* distance from the menu (hamburger) button: lower = further right */
             top: 50%;
             transform: translateY(-50%);
-            background: #265648;
+            background: var(--theme-ink);
             color: #ffffff !important;
             font-size: 14px;
             font-weight: 600;
@@ -160,21 +168,21 @@
             padding: 12px 18px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(38, 86, 72, 0.30);
+            box-shadow: 0 4px 12px rgba(43, 33, 18, 0.30);
             transition: background .25s ease;
         }
-        .main-header .mobile-book-btn:hover { background: #c9972b; }
+        .main-header .mobile-book-btn:hover { background: var(--theme-gold); }
 
         /* the same button now lives in the bar, so hide the copy inside the dropdown */
         .main-header .slicknav_nav li.highlighted-menu { display: none !important; }
 
-        /* Mobile dropdown menu: white, rounded, with the same pattern */
+        /* Mobile dropdown menu: sand, rounded, with the same pattern */
         .main-header .slicknav_menu {
             background: transparent !important;
             padding: 0 !important;
         }
         .main-header .slicknav_nav {
-            background-color: rgba(255, 255, 255, 0.85) !important;
+            background-color: var(--theme-sand) !important;
             background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
             background-repeat: no-repeat !important;
             background-size: cover !important;
@@ -186,13 +194,13 @@
         }
         .main-header .slicknav_nav a {
             background: transparent !important;
-            color: #111111 !important;
+            color: var(--theme-ink) !important;
             font-weight: 600;
             text-shadow: none;
         }
         .main-header .slicknav_nav a:hover,
         .main-header .slicknav_nav a.active {
-            color: #a97a14 !important;
+            color: var(--theme-gold) !important;
         }
 
         /* Mobile "Book Now" as a button */
@@ -204,19 +212,19 @@
             display: block !important;
             width: 100%;
             text-align: center !important;
-            background: #265648 !important;          /* same green as the desktop Book Now button */
+            background: var(--theme-ink) !important;
             color: #ffffff !important;
             font-weight: 600;
             text-shadow: none;
             border-radius: 50px !important;
             padding: 14px 20px !important;
             margin: 0 !important;
-            box-shadow: 0 6px 16px rgba(38, 86, 72, 0.30);
+            box-shadow: 0 6px 16px rgba(43, 33, 18, 0.30);
             transition: background .25s ease;
         }
         .main-header .slicknav_nav li.highlighted-menu a:hover,
         .main-header .slicknav_nav a.open-booking:hover {
-            background: #c9972b !important;
+            background: var(--theme-gold) !important;
             color: #ffffff !important;
         }
         /* remove the template's decorative circles on that link */
@@ -253,7 +261,7 @@
             margin: 0 18px 0 0 !important;
             padding: 0 !important;
             float: none !important;
-            color: #111111;
+            color: var(--theme-ink);
         }
 
         /* sub-links (All Packages, Beaches...) slightly indented under the parent */
@@ -430,31 +438,16 @@
        (so the mobile Call / Email bar, navbar and modals never show through it) */
     .preloader { z-index: 99999 !important; }
 
-    /* ---------- Footer background image (foot.png) ---------- */
+    /* ---------- Footer background image (foot.png) ----------
+       ORIGINAL COLOUR: the sand tint, the sand background colour and the dark text
+       override were removed. The footer now shows foot.png as it is, with the theme's
+       own footer colour and text colour (from custom.css). */
     .footer-main {
-        /* IMAGE FADE: change both 0.55 values together (higher = image fainter + text clearer) */
-        background-image: linear-gradient(rgba(8, 28, 26, 0.55), rgba(8, 28, 26, 0.55)), url("{% static 'malabar-static/foot.png' %}") !important;
+        background-image: url("{% static 'malabar-static/foot.png' %}") !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
         background-position: center !important;
     }
-
-    /* footer text: crisp and readable over the image */
-    .footer-main,
-    .footer-main h3,
-    .footer-main p,
-    .footer-main a,
-    .footer-main span,
-    .footer-main li {
-        color: #ffffff;
-        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
-    }
-    .footer-main a:hover { color: #e0b14a; }
-    .footer-main .footer-contact-content p,
-    .footer-main .footer-contact-info-item p,
-    .footer-main .about-footer-content p { opacity: 0.95; }
-    .footer-main .footer-social-links a,
-    .footer-main .footer-social-links i { text-shadow: none; }
 
     /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
     .footer-main::before,
@@ -603,44 +596,44 @@
         .main-header .pk-nav-menu a:hover { background: #faf3e3; color: #a97a14 !important; }
     }
 
-    /* ================= GREEN PREMIUM NAVBAR (no bubble pattern) ================= */
+    /* ================= SAND PREMIUM NAVBAR (no bubble pattern) ================= */
     :root {
-        --nav-green: #1F5B3A;     /* main green: darker = more premium, lighter = softer */
-        --nav-gold:  #e0b14a;     /* active / hover colour */
-        --nav-ink:   #12281f;     /* text colour on gold */
+        --nav-sand: #E8D3AC;      /* main colour: the sand from your image */
+        --nav-gold: #a97a14;      /* active / hover colour (deeper gold = readable on sand) */
+        --nav-ink:  #2b2112;      /* dark text colour */
     }
 
-    /* bar: solid green multiplied over nav4.png */
+    /* bar: solid sand multiplied over nav4.png */
     .main-header .header-sticky,
     .main-header .header-sticky.hide,
     .main-header .header-sticky.active {
-        background-color: var(--nav-green) !important;
+        background-color: var(--nav-sand) !important;
         background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
         background-blend-mode: multiply !important;
         background-repeat: no-repeat !important;
         background-size: cover !important;
         background-position: center 70% !important;
-        border: 1px solid rgba(255, 255, 255, 0.16) !important;
-        box-shadow: 0 12px 36px rgba(6, 28, 20, 0.40) !important;
+        border: 1px solid rgba(43, 33, 18, 0.14) !important;
+        box-shadow: 0 12px 36px rgba(43, 33, 18, 0.18) !important;
         -webkit-backdrop-filter: none;
         backdrop-filter: none;
     }
 
-    /* menu text: white, gold when active/hover */
-    .main-header .nav-link { color: #ffffff !important; }
+    /* menu text: dark, gold when active/hover */
+    .main-header .nav-link { color: var(--nav-ink) !important; }
     .main-header .nav-link:hover,
     .main-header .nav-link.active { color: var(--nav-gold) !important; }
 
-    /* logo: lighter shadow so it sits cleanly on green */
+    /* logo: lighter shadow so it sits cleanly on sand */
     .main-header .navbar-brand img {
-        filter: saturate(1.2) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+        filter: brightness(0.6) saturate(1.5) contrast(1.2);   /* darker, richer logo: lower brightness = darker */
     }
 
-    /* ================= Book Now (desktop): outlined white pill ================= */
+    /* ================= Book Now (desktop): outlined dark pill ================= */
     .main-header .header-btn .btn-default {
-        background: rgba(255, 255, 255, 0.06) !important;
-        border: 2px solid #ffffff !important;
-        color: #ffffff !important;
+        background: rgba(43, 33, 18, 0.05) !important;
+        border: 2px solid var(--nav-ink) !important;
+        color: var(--nav-ink) !important;
         transition: color .3s ease, border-color .3s ease, background-color .3s ease;
     }
 
@@ -650,36 +643,37 @@
         background-color: var(--nav-gold) !important;
     }
 
-    /* hover: GOLD fill, dark text, dark arrow */
+    /* hover: GOLD fill, white text, white arrow */
     .main-header .header-btn .btn-default:hover {
         background: var(--nav-gold) !important;
         background-color: var(--nav-gold) !important;
         border-color: var(--nav-gold) !important;
-        color: var(--nav-ink) !important;
+        color: #ffffff !important;
     }
     .main-header .header-btn .btn-default:hover::after {
         background: var(--nav-gold) !important;
         background-color: var(--nav-gold) !important;
     }
 
-    /* arrow icon: white normally, dark on gold hover */
+    /* arrow icon: dark normally, white on gold hover */
     .main-header .header-btn .btn-default::before {
         transition: filter .3s ease;
-    }
-    .main-header .header-btn .btn-default:hover::before {
         filter: brightness(0) saturate(100%);   /* turns the white arrow dark */
     }
+    .main-header .header-btn .btn-default:hover::before {
+        filter: brightness(0) invert(1);        /* white arrow */
+    }
 
-    /* dropdowns (Packages / Destinations): dark green panel */
+    /* dropdowns (Packages / Destinations): sand panel */
     @media (min-width: 992px) {
         .main-header .pk-nav-menu {
-            background: rgba(20, 70, 55, 0.97);
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow: 0 14px 36px rgba(6, 28, 20, 0.40);
+            background: rgba(232, 211, 172, 0.98);
+            border: 1px solid rgba(43, 33, 18, 0.14);
+            box-shadow: 0 14px 36px rgba(43, 33, 18, 0.22);
         }
-        .main-header .pk-nav-menu a { color: #ffffff !important; }
+        .main-header .pk-nav-menu a { color: var(--nav-ink) !important; }
         .main-header .pk-nav-menu a:hover {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(43, 33, 18, 0.07);
             color: var(--nav-gold) !important;
         }
     }
@@ -688,8 +682,8 @@
     @media (max-width: 991px) {
         .main-header .mobile-book-btn {
             background: transparent;
-            border: 2px solid #ffffff;
-            color: #ffffff !important;
+            border: 2px solid var(--nav-ink);
+            color: var(--nav-ink) !important;
             box-shadow: none;
             padding: 10px 16px;
         }
@@ -697,7 +691,7 @@
         .main-header .mobile-book-btn:active {
             background: var(--nav-gold) !important;
             border-color: var(--nav-gold) !important;
-            color: var(--nav-ink) !important;
+            color: #ffffff !important;
         }
 
         /* mobile zoom on nav4.png */
@@ -709,18 +703,18 @@
         }
 
         .main-header .slicknav_nav {
-            background-color: var(--nav-green) !important;
+            background-color: var(--nav-sand) !important;
             background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
             background-blend-mode: multiply !important;
             background-repeat: no-repeat !important;
             background-size: cover !important;
             background-position: center !important;
-            border: 1px solid rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(43, 33, 18, 0.14);
         }
-        .main-header .slicknav_nav a { color: #ffffff !important; }
+        .main-header .slicknav_nav a { color: var(--nav-ink) !important; }
         .main-header .slicknav_nav a:hover,
         .main-header .slicknav_nav a.active { color: var(--nav-gold) !important; }
-        .main-header .slicknav_nav .slicknav_arrow { color: #ffffff !important; }
+        .main-header .slicknav_nav .slicknav_arrow { color: var(--nav-ink) !important; }
     }
 
     /* very small phones: zoom nav4.png a little more */
@@ -744,8 +738,8 @@
         .main-header .mobile-book-btn:active {
             background: var(--nav-gold) !important;
             border-color: var(--nav-gold) !important;
-            color: var(--nav-ink) !important;
-            box-shadow: 0 4px 14px rgba(224, 177, 74, 0.45) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px rgba(169, 122, 20, 0.40) !important;
         }
 
         /* Menu toggle (hamburger): no border, no hover / tap / open effect */
@@ -754,7 +748,7 @@
         .main-header .slicknav_btn:focus,
         .main-header .slicknav_btn:active,
         .main-header .slicknav_btn.slicknav_open {
-            background-color: rgba(255, 255, 255, 0.10) !important;
+            background-color: rgba(43, 33, 18, 0.08) !important;
             border: 0 !important;
             box-shadow: none !important;
             outline: none !important;
@@ -765,14 +759,14 @@
         .main-header .slicknav_btn:focus .slicknav_icon-bar,
         .main-header .slicknav_btn:active .slicknav_icon-bar,
         .main-header .slicknav_btn.slicknav_open .slicknav_icon-bar {
-            background-color: #ffffff !important;
+            background-color: var(--nav-ink) !important;
             box-shadow: none !important;
         }
 
         /* menu links: soft gold highlight when tapped */
         .main-header .slicknav_nav a:hover,
         .main-header .slicknav_nav a:active {
-            background: rgba(224, 177, 74, 0.14) !important;
+            background: rgba(169, 122, 20, 0.12) !important;
             color: var(--nav-gold) !important;
         }
     }
@@ -785,36 +779,36 @@
             position: fixed; left: 0; right: 0; bottom: 0;
             z-index: 1500;                       /* below the booking modal (2000) and the preloader (99999) */
             display: flex;
-            background: var(--nav-green, #1F5B3A);
-            box-shadow: 0 -6px 20px rgba(6, 28, 20, 0.28);
+            background: var(--nav-sand, #E8D3AC);
+            box-shadow: 0 -6px 20px rgba(43, 33, 18, 0.18);
             padding-bottom: env(safe-area-inset-bottom, 0px);
         }
         .mb-contact-bar a {
             flex: 1;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 5px; padding: 10px 6px;
-            color: #ffffff !important;
+            color: var(--nav-ink, #2b2112) !important;
             font-size: 12.5px; font-weight: 700; line-height: 1;
             text-decoration: none; white-space: nowrap;
             -webkit-tap-highlight-color: transparent;
             transition: background-color .25s ease, color .25s ease;
         }
         .mb-contact-bar a i { font-size: 20px; }
-        .mb-contact-bar a + a { border-left: 1px solid rgba(255, 255, 255, 0.25); }
+        .mb-contact-bar a + a { border-left: 1px solid rgba(43, 33, 18, 0.18); }
 
         /* WhatsApp: brand green so it stands out */
         .mb-contact-bar a.mb-wa { background: #25D366; color: #ffffff !important; }
 
-        .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f) !important; }
+        .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #a97a14); color: #ffffff !important; }
         .mb-contact-bar a.mb-wa:active { background: #1ebe5a; }
 
         /* keep the footer copyright from hiding behind the bar */
         body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
     }
 
-    /* ================= PRELOADER: same green as the navbar ================= */
+    /* ================= PRELOADER: same sand as the navbar ================= */
     .preloader {
-        background-color: var(--nav-green, #1F5B3A) !important;
+        background-color: var(--nav-sand, #E8D3AC) !important;
         background-image: url("{% static 'malabar-static/nav4.png' %}") !important;
         background-blend-mode: multiply !important;
         background-repeat: no-repeat !important;
@@ -822,10 +816,34 @@
         background-position: center !important;
     }
 
-    /* spinning ring: gold so it stands out on the green */
+    /* spinning ring: gold so it stands out on the sand */
     .preloader .loading {
-        border-color: rgba(255, 255, 255, 0.25) !important;
-        border-top-color: var(--nav-gold, #e0b14a) !important;
+        border-color: rgba(43, 33, 18, 0.20) !important;
+        border-top-color: var(--nav-gold, #a97a14) !important;
+    }
+
+    /* ================= PAGE BUTTONS (.btn-default): replaces the old maroon =================
+       Applies to every button on the pages. The navbar Book Now keeps its own style above. */
+    :root { --btn-brown: #3b2d17; }   /* button colour: change this one value to recolour all page buttons */
+
+    .btn-default:not(.main-header .btn-default) {
+        background-color: var(--btn-brown) !important;
+        color: #ffffff !important;
+    }
+    /* round icon / arrow circle on the button */
+    .btn-default:not(.main-header .btn-default)::before {
+        background-color: var(--theme-gold) !important;
+    }
+    /* hover fill (drawn by ::after) */
+    .btn-default:not(.main-header .btn-default)::after {
+        background-color: var(--theme-gold) !important;
+    }
+    .btn-default:not(.main-header .btn-default):hover {
+        background-color: var(--theme-gold) !important;
+        color: #ffffff !important;
+    }
+    .btn-default:not(.main-header .btn-default):hover::before {
+        background-color: var(--btn-brown) !important;
     }
 
     /* one heading font for the whole website (font only, no sizes) */
@@ -876,6 +894,33 @@
     /* taller torn edge on desktop */
     @media (min-width: 992px) {
         .footer-main { --torn-h: 110px; }
+    }
+
+    /* ================= BUTTONS: gold (all .btn-default buttons outside the navbar) =================
+       The navbar Book Now keeps its own outlined style above (it is more specific, so it wins). */
+    :root {
+        --btn-gold:      #c9972b;   /* button colour */
+        --btn-gold-dark: #a97a14;   /* hover colour */
+        --btn-ink:       #2b2112;   /* button text */
+    }
+    .btn-default,
+    .btn-default.btn-highlighted {
+        background: var(--btn-gold) !important;
+        background-color: var(--btn-gold) !important;
+        border-color: var(--btn-gold) !important;
+        color: var(--btn-ink) !important;
+        transition: color .3s ease, border-color .3s ease, background-color .3s ease;
+    }
+    /* the theme draws its hover fill with ::after */
+    .btn-default::after,
+    .btn-default.btn-highlighted::after {
+        background: var(--btn-gold-dark) !important;
+        background-color: var(--btn-gold-dark) !important;
+    }
+    .btn-default:hover,
+    .btn-default.btn-highlighted:hover {
+        border-color: var(--btn-gold-dark) !important;
+        color: #ffffff !important;
     }
 </style>
 

@@ -1,294 +1,326 @@
 {% extends "frontends/base.html" %}
 {% load static image_tags %}
-
 {% block title %}{{ activity.title }} | Malabar{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html.
-    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
-    Hero = same design as the About page (inset, rounded), using the activity image.
-    Book Now buttons open the booking modal from base.html (.open-booking + data-package).
-    Sidebar "More Experiences" shows full names (wrapped, bold), nothing is cut.
-    The main activity image uses the `srcset` filter from templatetags/image_tags.py.
+    ACTIVITY DETAIL PAGE: same torn-paper design and animations as the Package detail page.
+    - HERO: full-bleed, torn bottom edge, the activity's own image (title + breadcrumb centered on mobile).
+    - Band 1 (cream): title + facts, image, description, and the sticky sidebar (More Experiences + Book card).
+      Main column slides in from the RIGHT, sidebar from the LEFT (replays on scroll).
+    - Band 2 (tan): "Ready to experience it?" with the airplane flying along its dotted trail, then Book Now.
+    - Book Now buttons open the booking modal from base.html (.open-booking + data-package).
+    - Main image uses the `srcset` filter from templatetags/image_tags.py.
+
+    IMAGES: p4-trail.png and p4-plane.png in static/malabar-static/
 {% endcomment %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&family=Cinzel:wght@500;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-    /* ================= HERO (same design as About page, activity image) ================= */
+/* ===================== PAPER TEXTURE ===================== */
+:root {
+    --paper: #f2e2c6;
+    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ===================== HERO (About hero design, package image) ===================== */
+.ah-wrap { position: relative; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px; }
+.page-header.page-hero {
+    position: relative !important; width: 100% !important; max-width: 100% !important; margin: 0 !important;
+    border-radius: 0 !important; overflow: hidden !important; min-height: 80vh;
+    display: flex; align-items: center; padding: 200px 0 150px !important;
+    background-color: #222 !important;
+    background-image: linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.30)),
+        url('{% if activity.image %}{{ activity.image.url }}{% else %}{% static "malabar-static/mr5.webp" %}{% endif %}') !important;
+    background-size: cover, cover !important; background-position: center, center !important; background-repeat: no-repeat, no-repeat !important;
+}
+.page-header.page-hero::before, .page-header.page-hero::after { display: none !important; }
+.page-hero > .container { width: 100%; }
+.page-hero .page-header-box { text-align: center; }
+.page-header.page-hero h1 {
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 58px; line-height: 1.2; letter-spacing: 4px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 12px rgba(0,0,0,.5); margin: 0 auto 20px; max-width: 1000px;
+}
+.page-hero .breadcrumb { justify-content: center; margin: 0; }
+.page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
+
+.page-header.page-hero {
+    padding-bottom: 96px !important;
+    -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+            mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% calc(100% - 45px), 100% 70px; mask-size: 100% calc(100% - 45px), 100% 70px;
+    -webkit-mask-position: top, bottom; mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-composite: source-over; mask-composite: add;
+}
+@media (min-width: 992px) {
     .page-header.page-hero {
-        width: calc(100% - 32px) !important;      /* white gap on left and right */
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;           /* white gap on top */
-        border-radius: 40px !important;           /* rounded corners */
-        overflow: hidden !important;              /* clips the image to the curve */
-        min-height: calc(75vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 110px !important;
-        background-color: #222 !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)),   /* overlay: change .45 to adjust */
-            url('{% if activity.image %}{{ activity.image.url }}{% else %}{% static "malabar-static/mr5.webp" %}{% endif %}') !important;
-        background-size: cover, cover !important;
-        background-position: center, center !important;
-        background-repeat: no-repeat, no-repeat !important;
+        padding-bottom: 150px !important;
+        -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+                mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px; mask-size: 100% calc(100% - 70px), 100% 110px;
     }
-    .page-header.page-hero::before,
-    .page-header.page-hero::after { display: none !important; }
+}
+@media (max-width: 991px) {
+    .page-header.page-hero { min-height: 56vh; padding-top: 150px !important; }
+    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-hero .breadcrumb { font-size: 14px; }
+}
+@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
 
-    .page-hero .page-header-box { text-align: center; }
-    .page-hero h1 {
-        font-weight: 700 !important; font-size: 58px;
-        line-height: 1.2; letter-spacing: 4px; color: #ffffff !important; text-transform: none !important;
-        text-shadow: 0 2px 12px rgba(0,0,0,.5); margin: 0 auto 20px; max-width: 1000px;
+/* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
+@media (max-width: 991px) {
+    .page-header.page-hero { justify-content: center; text-align: center !important; }
+    .page-hero > .container,
+    .page-hero .row,
+    .page-hero [class*="col-"],
+    .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
+    .page-header.page-hero h1,
+    .page-header.page-hero h1 * {            /* also covers the split-text line/word wrappers */
+        text-align: center !important;
     }
-    .page-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-hero .breadcrumb-item, .page-hero .breadcrumb-item a,
-    .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #ffffff !important; text-transform: capitalize; }
-
-    @media (max-width: 991px) {
-        .page-header.page-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 55vh;
-            padding: 150px 0 70px !important;
-        }
-        .page-hero h1 { font-size: 36px; letter-spacing: 2px; }
+    .page-header.page-hero h1 {
+        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
+        padding-left: 12px; padding-right: 12px;
     }
-    @media (max-width: 575px) {
-        .page-hero h1 { font-size: 28px; letter-spacing: 1px; }
+    .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
+}
+
+/* ===================== TORN-PAPER PAGE ===================== */
+.flow {
+    --cream: #f2e2c6; --tan: #e8d3b0;
+    --gold: #c9972b; --gold-deep: #a97a14; --btn-ink: #2b2112; --sand-hover: #e0c898;
+    --green: var(--gold-deep);
+    --ink: var(--nav-ink, #2a0c0f); --text: #5b6560;
+    --edge: rgba(139, 107, 46, .7);
+    --torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 60' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='30' width='2120' height='80' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    position: relative; width: 100%; overflow-x: clip; background: var(--cream);
+}
+.sec { position: relative; background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 0; padding: 90px 0 100px; }
+.sec + .sec::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -54px; height: 56px; z-index: 0; pointer-events: none;
+    background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 54px;
+    -webkit-mask-image: var(--torn); mask-image: var(--torn);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.sec > .container { position: relative; z-index: 1; }
+.sec-cream { --bg: var(--cream); }
+.sec-tan { --bg: var(--tan); }
+@media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
+@media (max-width: 991px) { .sec { padding: 64px 0 70px; } }
+@media (max-width: 575px) { .sec { padding: 52px 0 58px; } }
+.ad-main-sec { padding-top: 70px; }
+
+/* headings + text */
+.tn-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.tn-eyebrow i { font-size: 13px; }
+.tn-title { margin: 0 0 16px; color: var(--ink); text-transform: none; font-variant: small-caps; font-family: 'EB Garamond', serif; font-weight: 800; letter-spacing: 1.5px; line-height: 1.12; font-size: clamp(30px, 3.6vw, 48px); }
+.tn-title::before, .tn-title::after, .ad-label::before, .ad-label::after, .ad-box h3::before, .ad-box h3::after { display: none !important; content: none !important; }
+.tn-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
+.tn-head { text-align: center; max-width: 720px; margin: 0 auto 46px; }
+
+/* buttons */
+.tn-btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 13px 30px; border-radius: 50px;
+    border: 1.5px solid var(--gold); background: var(--gold); color: #fff !important;
+    font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all .3s ease;
+}
+.tn-btn i { font-size: 11px; transition: transform .3s ease; }
+.tn-btn:hover { background: var(--green); border-color: var(--green); }
+.tn-btn:hover i { transform: translateX(4px); }
+.tn-btn-light { background: var(--btn-ink); border-color: var(--btn-ink); color: var(--gold) !important; width: 100%; justify-content: center; }
+.tn-btn-light:hover { background: #fff; border-color: #fff; color: var(--btn-ink) !important; }
+
+/* scroll reveal */
+.rv-ready .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
+.rv-ready .rv.in { opacity: 1; transform: none; }
+/* directional reveal: right-side content slides in from the RIGHT, left-side content from the LEFT (replays on scroll) */
+.rv-ready .rv-left  { transform: translateX(-110px); }
+.rv-ready .rv-right { transform: translateX(110px); }
+.rv-ready .rv-left, .rv-ready .rv-right { transition: opacity 1s ease var(--d, 0s), transform 1.2s cubic-bezier(.16,.8,.24,1) var(--d, 0s); }
+@media (max-width: 767px) { .rv-ready .rv-left { transform: translateX(-60px); } .rv-ready .rv-right { transform: translateX(60px); } }
+@media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
+
+/* ===================== MAIN COLUMN ===================== */
+.ad-stack { display: flex; flex-direction: column; gap: 38px; }
+.ad-title { margin: 0; }
+.ad-facts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+.ad-fact { display: flex; align-items: center; gap: 12px; background: #f7ecd5; border: 1px solid var(--edge); border-radius: 50px; padding: 10px 24px 10px 12px; }
+.ad-fact i { flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--btn-ink); font-size: 16px; }
+.ad-fact small { display: block; font-size: 11px; color: #8a7a55; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; }
+.ad-fact strong { font-size: 16px; color: var(--ink); font-weight: 600; }
+
+/* photo with tape, like the Home collage */
+.ad-image { position: relative; width: 100%; box-shadow: 0 18px 34px rgba(60,40,10,.28); }
+.ad-image::after { content: ""; position: absolute; top: -12px; left: 50%; width: 92px; height: 26px; transform: translateX(-50%) rotate(-3deg); background: rgba(201,151,43,.55); z-index: 2; }
+.ad-image figure { margin: 0; overflow: hidden; }
+.ad-image img { width: 100%; height: auto; max-height: 520px; object-fit: cover; display: block; }
+
+.ad-label { margin: 0 0 16px; padding: 0; text-transform: none; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1.2px; font-size: 30px; color: var(--ink); }
+.ad-desc, .ad-desc p { font-size: 16.5px; line-height: 1.85; color: var(--text); }
+.ad-desc p { margin-bottom: 16px; }
+.ad-desc p:last-child { margin-bottom: 0; }
+.ad-desc ul { padding-left: 20px; }
+.ad-desc li { margin-bottom: 8px; color: var(--text); line-height: 1.7; }
+.ad-desc h2, .ad-desc h3, .ad-desc h4 { color: var(--ink); }
+
+/* ===================== SIDEBAR ===================== */
+.ad-sidebar { position: sticky; top: 120px; display: flex; flex-direction: column; gap: 30px; }
+
+/* torn-paper box (More Packages) */
+.ad-box { position: relative; isolation: isolate; padding: 30px; border-radius: 6px; -webkit-tap-highlight-color: transparent; }
+.ad-box h3 { margin: 0 0 18px; padding: 0; text-transform: none; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1.2px; font-size: 28px; color: var(--ink); }
+.ad-paper::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px; background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.ad-paper:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+
+.ad-groups { max-height: 460px; overflow-y: auto; padding-right: 6px; }
+.ad-groups::-webkit-scrollbar { width: 5px; }
+.ad-groups::-webkit-scrollbar-thumb { background: rgba(169,122,20,.45); border-radius: 5px; }
+.ad-group + .ad-group { margin-top: 22px; }
+.ad-group-title { margin: 0 0 4px; padding: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-deep); border-bottom: 2px solid var(--gold); }
+.ad-group-title::before, .ad-group-title::after { display: none !important; content: none !important; }
+.ad-list { list-style: none; margin: 0; padding: 0; }
+.ad-list li { border-bottom: 1px solid rgba(139,107,46,.25); }
+.ad-list li:last-child { border-bottom: none; }
+.ad-list a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 0; color: var(--ink); font-size: 15px; font-weight: 500; text-decoration: none; transition: color .25s ease, padding .25s ease; }
+.ad-list a i { font-size: 12px; color: var(--gold); transition: transform .25s ease; }
+.ad-list a:hover { color: var(--gold-deep); padding-left: 6px; }
+.ad-list a:hover i { transform: translateX(3px); }
+
+/* More Experiences: full names, wrapped onto more lines, bold */
+.ad-list a { align-items: flex-start; font-weight: 700; line-height: 1.45; }
+.ad-list a .ad-list-name { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.ad-list a i { flex: 0 0 auto; margin-top: 5px; }
+
+/* gold Book card (torn outline filled with gold) */
+.ad-cta { color: var(--btn-ink); }
+.ad-cta::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px; background: var(--gold);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 6px 10px rgba(90,60,20,.25)); filter: url(#paperTorn) drop-shadow(0 6px 10px rgba(90,60,20,.25));
+}
+.ad-cta { padding: 36px 32px; }
+.ad-cta .ad-cta-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--btn-ink); color: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 18px; }
+.ad-cta h3 { color: var(--btn-ink); margin-bottom: 20px; }
+.ad-cta .ad-calls { display: flex; flex-direction: column; gap: 16px; margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(43,33,18,.3); }
+.ad-cta .ad-call { display: flex; align-items: center; gap: 14px; }
+.ad-cta .ad-call i { font-size: 20px; }
+.ad-cta .ad-call small { display: block; font-size: 12px; opacity: .75; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; }
+.ad-cta .ad-call a { color: var(--btn-ink); font-size: 18px; font-weight: 600; text-decoration: none; }
+.ad-cta .ad-call a:hover { color: #fff; }
+
+/* ===================== BAND 2 (tan): booking ===================== */
+.ad-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 44px 56px; }
+.ad-lists.one { grid-template-columns: minmax(0, 760px); justify-content: center; }
+.ad-checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.ad-checks li { position: relative; padding-left: 40px; font-size: 16.5px; line-height: 1.6; color: var(--text); }
+.ad-checks li::before {
+    content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: -1px;
+    width: 28px; height: 28px; border-radius: 50%; background: #f7ecd5; color: var(--gold); font-size: 12px;
+    display: flex; align-items: center; justify-content: center;
+}
+.ad-book { text-align: center; max-width: 640px; margin: 0 auto; }
+.ad-lists + .ad-book { margin-top: 64px; padding-top: 48px; border-top: 2px dashed rgba(169,122,20,.55); }
+.ad-book p { margin: 0 0 22px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1.2px; font-size: 32px; color: var(--ink); }
+
+/* flight-path art: the PLANE flies along the dotted trail (at the trail's own angle, banking as it climbs)
+   while the trail draws itself behind it. Two layers: p4-trail.png (trail + pin) and p4-plane.png (plane only).
+   Plays on scroll and replays each time it enters the screen. */
+.ad-art-wrap { width: 100%; }
+.ad-art { position: relative; width: 100%; max-width: 520px; margin: 0 auto 10px; opacity: .92; pointer-events: none; user-select: none; }
+.ad-art img { display: block; width: 100%; height: auto; -webkit-user-drag: none; }
+.ad-art .ad-art-plane { position: absolute; inset: 0; height: 100%; transform-origin: 90.7% 18.4%; opacity: 0; }  /* origin = the plane's own centre */
+.ad-art .ad-art-trail { clip-path: inset(0 100% 0 0); }
+
+.ad-art-wrap.in-view .ad-art-trail { animation: adTrail 2.2s linear .1s forwards; }
+.ad-art-wrap.in-view .ad-art-plane {
+    animation: adPlane 1.24s linear .78s forwards, adHover 3s ease-in-out 2.1s infinite alternate;
+}
+/* trail is wiped in left to right, kept in step with the plane's position along it */
+@keyframes adTrail {
+    0%      { clip-path: inset(0 100% 0 0); }
+    30.8%   { clip-path: inset(0 64.8% 0 0); }
+    43.2%   { clip-path: inset(0 50.3% 0 0); }
+    55.6%   { clip-path: inset(0 35.9% 0 0); }
+    66.3%   { clip-path: inset(0 25% 0 0); }
+    74.2%   { clip-path: inset(0 19.2% 0 0); }
+    79.8%   { clip-path: inset(0 15.2% 0 0); }
+    87.2%   { clip-path: inset(0 9.3% 0 0); }
+    100%    { clip-path: inset(0 0 0 0); }
+}
+/* plane: starts where the trail crosses itself, follows the dotted line, banks upward, lands in its final spot */
+@keyframes adPlane {
+    0%   { opacity: 0; transform: translate(-55.5%, 54.3%) rotate(56deg); }
+    4%   { opacity: 1; }
+    22%  { transform: translate(-41%, 59.5%) rotate(45deg); }
+    44%  { transform: translate(-26.5%, 52.2%) rotate(25deg); }
+    63%  { transform: translate(-15.6%, 38.8%) rotate(8deg); }
+    77%  { transform: translate(-9.8%, 23.9%) rotate(0deg); }
+    87%  { transform: translate(-5.9%, 13.3%) rotate(0deg); }
+    100% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+}
+/* after landing the plane hovers gently */
+@keyframes adHover { from { translate: 0 0; rotate: 0deg; } to { translate: 5px -7px; rotate: -1.2deg; } }
+
+@media (prefers-reduced-motion: reduce) {
+    .ad-art .ad-art-trail { clip-path: none; }
+    .ad-art .ad-art-plane { opacity: 1; }
+    .ad-art-wrap.in-view .ad-art-trail, .ad-art-wrap.in-view .ad-art-plane { animation: none; }
+}
+
+@media (max-width: 1199px) { .ad-label { font-size: 27px; } }
+@media (max-width: 991px) {
+    .ad-lists { grid-template-columns: 1fr; }
+    .ad-sidebar { position: static; }
+    .ad-main-sec { padding-top: 50px; }
+}
+@media (max-width: 575px) {
+    .ad-fact { width: 100%; border-radius: 30px; }
+    .ad-label { font-size: 24px; }
+    .ad-box { padding: 24px 20px; }
+    .ad-cta { padding: 28px 22px; }
+    .ad-book p { font-size: 24px; }
+    .ad-art { max-width: 340px; }
+    .tn-btn { padding: 12px 24px; }
+}
+
+/* ===================== FOOTER: torn-paper top edge ===================== */
+:root { --footer-gap: #e8d3b0; } /* matches the last band (tan) */
+html, body { background: var(--footer-gap) !important; }
+.footer-main {
+    --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important; mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+    -webkit-mask-position: top left, bottom left !important; mask-position: top left, bottom left !important;
+    -webkit-mask-repeat: no-repeat !important; mask-repeat: no-repeat !important;
+    -webkit-mask-composite: source-over !important; mask-composite: add !important;
+}
+.footer-main > .container { padding-top: calc(var(--torn-h) * .75 + 30px) !important; }
+@media (min-width: 992px) {
+    .footer-main {
+        --torn-h: 110px;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
     }
-
-    /* ================= SECTION (bg3.png background) ================= */
-    .ad-section {
-        /* colours come from base.html */
-        --ad-accent: var(--nav-green, #1F5B3A);
-        --ad-dark: var(--nav-ink, #12281f);
-        --ad-gold: var(--nav-gold, #e0b14a);
-
-        padding: 120px 0 130px;
-        background-color: #faf8f6;
-        background-image:
-            linear-gradient(rgba(252, 247, 246, 0.55), rgba(252, 247, 246, 0.55)),
-            url('{% static "malabar-static/bg3.png" %}');
-        background-size: cover, 100% auto;   /* image fits the full width, no cropping */
-        background-position: center, center top;
-        background-repeat: no-repeat, no-repeat;
-    }
-    .ad-section .container { max-width: 1320px; }
-
-    /* ================= MAIN COLUMN (no white cards) ================= */
-    .ad-stack { display: flex; flex-direction: column; gap: 34px; }
-
-    /* 1. Title */
-    .ad-title {
-        font-size: 46px; font-weight: 700;
-        line-height: 1.2; color: #1b1b1b; margin: 0; padding: 0; text-transform: none;
-    }
-    .ad-title::before, .ad-title::after,
-    .ad-label::before, .ad-label::after,
-    .ad-box h3::before, .ad-box h3::after { display: none !important; content: none !important; }
-
-    .ad-facts { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px; }
-    .ad-fact {
-        display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,.6);
-        border: 1px solid rgba(0,0,0,.07); border-radius: 14px; padding: 12px 20px;
-    }
-    .ad-fact i { font-size: 19px; color: var(--ad-accent); }
-    .ad-fact small { display: block; font-size: 11.5px; color: #6b625a; text-transform: uppercase; letter-spacing: .8px; }
-    .ad-fact strong { font-size: 15.5px; color: #1b1b1b; font-weight: 600; }
-
-    /* 2. Image */
-    .ad-image { width: 100%; border-radius: 16px; overflow: hidden; }
-    .ad-image img { width: 100%; height: auto; max-height: 520px; object-fit: cover; display: block; }
-
-    /* 3. Description */
-    .ad-label {
-        font-size: 28px; font-weight: 500;
-        color: #1b1b1b; margin: 0 0 16px; padding: 0; text-transform: none;
-    }
-    .ad-desc, .ad-desc p { font-size: 16.5px; line-height: 1.85; color: #5a524a; }
-    .ad-desc p { margin-bottom: 16px; }
-    .ad-desc p:last-child { margin-bottom: 0; }
-    .ad-desc ul { padding-left: 20px; }
-    .ad-desc li { margin-bottom: 8px; color: #5a524a; line-height: 1.7; }
-
-    /* 4. Booking row */
-    .ad-book { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
-    .ad-book p { margin: 0; font-size: 26px; color: #1b1b1b; }
-
-    /* Book Now button: green, gold on hover (same as the navbar) */
-    .ad-btn {
-        display: inline-flex; align-items: center; gap: 10px; white-space: nowrap;
-        background: var(--ad-accent); border: 1.5px solid var(--ad-accent);
-        color: #fff !important; font-size: 15.5px; font-weight: 600;
-        padding: 15px 32px; border-radius: 40px; text-decoration: none;
-        transition: all .3s ease;
-    }
-    .ad-btn:hover { background: var(--ad-gold); border-color: var(--ad-gold); color: var(--ad-dark) !important; }
-    .ad-btn i { font-size: 13px; transition: transform .3s ease; }
-    .ad-btn:hover i { transform: translateX(4px); }
-
-    /* light button (sits on the green CTA card) */
-    .ad-btn-light { background: #fff; border-color: #fff; color: var(--ad-accent) !important; width: 100%; justify-content: center; }
-    .ad-btn-light:hover { filter: none; background: var(--ad-gold); border-color: var(--ad-gold); color: var(--ad-dark) !important; }
-
-    /* ================= SIDEBAR ================= */
-    .ad-sidebar { position: sticky; top: 130px; display: flex; flex-direction: column; gap: 28px; }
-    .ad-box { background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 8px 28px rgba(0,0,0,.07); }
-    .ad-box h3 {
-        font-size: 26px; font-weight: 500;
-        color: #1b1b1b; margin: 0 0 18px; padding: 0; text-transform: none;
-    }
-
-    /* More Experiences: full names, wrapped onto more lines, bold */
-    .ad-list { list-style: none; margin: 0; padding: 0; }
-    .ad-list li { border-bottom: 1px solid rgba(0,0,0,.08); }
-    .ad-list li:last-child { border-bottom: none; }
-    .ad-list a {
-        display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
-        padding: 14px 0; color: #1b1b1b;
-        font-size: 15.5px; font-weight: 700; line-height: 1.45;
-        text-decoration: none;
-        transition: color .25s ease, padding .25s ease;
-    }
-    .ad-list a .ad-list-name { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
-    .ad-list a i { flex: 0 0 auto; margin-top: 5px; font-size: 12px; color: var(--ad-accent); }
-    .ad-list a:hover { color: var(--ad-accent); padding-left: 6px; }
-
-    .ad-cta { background: var(--ad-accent); color: #fff; }
-    .ad-cta .ad-cta-icon {
-        width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,.12);
-        display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 18px;
-    }
-    .ad-cta h3 { color: #fff; margin-bottom: 20px; }
-
-    /* two phone numbers, one under the other, each with its own icon */
-    .ad-cta .ad-calls { display: flex; flex-direction: column; gap: 16px; margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.2); }
-    .ad-cta .ad-call { display: flex; align-items: center; gap: 14px; }
-    .ad-cta .ad-call i { font-size: 20px; }
-    .ad-cta .ad-call small { display: block; font-size: 12.5px; opacity: .8; text-transform: uppercase; letter-spacing: 1px; }
-    .ad-cta .ad-call a { color: #fff; font-size: 18px; font-weight: 600; text-decoration: none; }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 1199px) {
-        .ad-title { font-size: 38px; }
-    }
-    @media (max-width: 991px) {
-        .ad-section { padding: 90px 0 80px; }
-        .ad-sidebar { position: static; margin-top: 10px; }
-    }
-    @media (max-width: 575px) {
-        .ad-title { font-size: 30px; }
-        .ad-label, .ad-book p { font-size: 22px; }
-        .ad-fact { width: 100%; }
-        .ad-book { flex-direction: column; align-items: flex-start; }
-        .ad-box { padding: 24px 20px; }
-    }
-
-    /* ================= HERO: same as About page ================= */
-    .page-header.page-hero {
-        min-height: calc(80vh - 16px) !important;
-        padding: 200px 0 120px !important;
-        background-image:
-            linear-gradient(rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.30)),    /* same overlay as About */
-            url('{% if activity.image %}{{ activity.image.url }}{% else %}{% static "malabar-static/mr5.webp" %}{% endif %}') !important;
-    }
-
-    @media (max-width: 991px) {
-        .page-header.page-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.page-hero .page-header-box,
-        .page-header.page-hero h1,
-        .page-header.page-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.page-hero h1 {
-            font-size: 34px !important;       /* exactly like About */
-            letter-spacing: 2px !important;
-            line-height: 1.2;
-            margin-bottom: 14px !important;
-        }
-        .page-header.page-hero .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-
-        .ad-section { padding: 50px 0 60px; }
-        .ad-stack { gap: 26px; }
-        .ad-image img { max-height: 340px; }
-    }
-
-    /* ================= MOBILE: sizes and buttons ================= */
-    @media (max-width: 575px) {
-        .page-header.page-hero h1 {
-            font-size: 28px !important;       /* exactly like About */
-            letter-spacing: 1.5px !important;
-        }
-
-        .ad-title { font-size: 26px; }
-        .ad-label, .ad-box h3 { font-size: 21px; }
-        .ad-desc, .ad-desc p { font-size: 15px; line-height: 1.75; }
-
-        .ad-facts { gap: 10px; margin-top: 16px; }
-        .ad-fact { padding: 10px 16px; }
-        .ad-fact strong { font-size: 14.5px; }
-
-        /* "Ready to experience it?" row: text on top, button below, centered */
-        .ad-book {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 14px;
-        }
-        .ad-book p { font-size: 19px; }
-
-        /* all Book Now buttons: compact, arrow beside the text */
-        .ad-btn {
-            padding: 11px 26px;
-            font-size: 14px;
-            gap: 8px;
-            line-height: 1.2;
-        }
-        .ad-btn i { font-size: 11px; }
-        .ad-book .ad-btn { min-width: 170px; justify-content: center; }
-
-        /* sidebar Book Now: full width of the card */
-        .ad-btn-light {
-            width: 100%;
-            padding: 12px 20px;
-            justify-content: center;
-        }
-
-        .ad-sidebar { gap: 20px; }
-        .ad-box { padding: 22px 18px; }
-        .ad-list a { font-size: 14.5px; padding: 12px 0; }
-        .ad-cta .ad-cta-icon { width: 52px; height: 52px; font-size: 22px; margin-bottom: 14px; }
-        .ad-cta .ad-call a { font-size: 16px; }
-    }
-
-    @media (max-width: 360px) {
-        .ad-btn { padding: 10px 20px; font-size: 13px; }
-    }
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<!-- Hero (activity image + title, same design as About page) -->
+
+<!-- Hero (package image + title, same design as the About / Packages hero) -->
+<div class="ah-wrap">
 <div class="page-header page-hero">
     <div class="container"><div class="row"><div class="col-lg-12">
         <div class="page-header-box">
-            <h1>{{ activity.title }}</h1>
-            <nav><ol class="breadcrumb">
+            <h1 class="text-anime-style-3" data-cursor="-opaque">{{ activity.title }}</h1>
+            <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'activities' %}">activities</a></li>
                 <li class="breadcrumb-item active" aria-current="page">details</li>
@@ -296,9 +328,25 @@
         </div>
     </div></div></div>
 </div>
+</div>
 
-<!-- Activity details -->
-<section class="ad-section">
+<div class="flow">
+
+<!-- Torn-paper outline filter (used by the sidebar boxes) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+        <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="11" result="big"/>
+            <feDisplacementMap in="SourceGraphic" in2="big" scale="20" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="4" result="fine"/>
+            <feDisplacementMap in="d1" in2="fine" scale="5" xChannelSelector="G" yChannelSelector="R" result="d2"/>
+            <feGaussianBlur in="d2" stdDeviation="0.45"/>
+        </filter>
+    </defs>
+</svg>
+
+<!-- ============ BAND 1 (cream): title, image, description + sidebar ============ -->
+<section class="sec sec-cream ad-main-sec">
     <div class="container">
         <div class="row g-4 g-xl-5">
 
@@ -306,10 +354,10 @@
             <div class="col-lg-8 order-lg-2">
                 <div class="ad-stack">
 
-                    <!-- 1. Title -->
-                    <div class="wow fadeInUp">
-
-                        <h1 class="ad-title">{{ activity.title }}</h1>
+                    <!-- 1. Title + facts -->
+                    <div class="rv rv-right">
+                        <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Activity</div>
+                        <h2 class="tn-title ad-title">{{ activity.title }}</h2>
 
                         {% if activity.duration or activity.price or activity.category %}
                         <div class="ad-facts">
@@ -327,7 +375,7 @@
                             {% endif %}
                             {% if activity.category %}
                             <div class="ad-fact">
-                                <i class="fa-solid fa-location-dot"></i>
+                                <i class="fa-solid fa-compass"></i>
                                 <div><small>Category</small><strong>{{ activity.category }}</strong></div>
                             </div>
                             {% endif %}
@@ -335,33 +383,25 @@
                         {% endif %}
                     </div>
 
-                    <!-- 2. Image (srcset filter from image_tags: phones get a small file, big screens the large one.
-                         The column is about 850px wide on desktop, full width on phones/tablets.) -->
-                    <div class="ad-image wow fadeInUp" data-wow-delay="0.1s">
-                        {% if activity.image %}
-                        <img src="{{ activity.image.url }}"
-                             srcset="{{ activity.image|srcset }}"
-                             sizes="(max-width: 991px) 100vw, 860px"
-                             alt="{{ activity.title }}"
-                             loading="lazy" decoding="async">
-                        {% else %}
-                        <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ activity.title }}" loading="lazy" decoding="async">
-                        {% endif %}
+                    <!-- 2. Image -->
+                    <div class="ad-image rv rv-right">
+                        <figure>
+                            {% if activity.image %}
+                            <img src="{{ activity.image.url }}"
+                                 srcset="{{ activity.image|srcset }}"
+                                 sizes="(max-width: 991px) 100vw, 860px"
+                                 alt="{{ activity.title }}" decoding="async" fetchpriority="high">
+                            {% else %}
+                            <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ activity.title }}" decoding="async">
+                            {% endif %}
+                        </figure>
                     </div>
 
-                    <!-- 3. Description -->
-                    <div class="wow fadeInUp" data-wow-delay="0.15s">
+                    <!-- 3. Description (HTML renders correctly) -->
+                    <div class="rv rv-right">
                         <h3 class="ad-label">About this experience</h3>
                         <div class="ad-desc">
                             {{ activity.description|safe }}
-                        </div>
-                    </div>
-
-                    <!-- 4. Booking: opens the booking modal from base.html, with the activity name -->
-                    <div class="wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="ad-book">
-                            <p>Ready to experience it?</p>
-                            <a href="#" class="ad-btn open-booking" data-package="{{ activity.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
                         </div>
                     </div>
 
@@ -373,26 +413,22 @@
                 <aside class="ad-sidebar">
 
                     {% if other_activities %}
-                    <div class="ad-box wow fadeInUp">
+                    <div class="ad-box ad-paper rv rv-left">
                         <h3>More Experiences</h3>
-                        <ul class="ad-list">
-                            {% for o in other_activities %}
-                            <li>
-                                <a href="{% url 'activity_detail' o.slug %}">
-                                    <span class="ad-list-name">{{ o.title }}</span>
-                                    <i class="fa-solid fa-arrow-right"></i>
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                        <div class="ad-groups">
+                            <ul class="ad-list">
+                                {% for o in other_activities %}
+                                <li><a href="{% url 'activity_detail' o.slug %}"><span class="ad-list-name">{{ o.title }}</span> <i class="fa-solid fa-arrow-right"></i></a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                     {% endif %}
 
-                    <div class="ad-box ad-cta wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="ad-box ad-cta rv rv-left" style="--d:.1s">
                         <div class="ad-cta-icon"><i class="fa-solid fa-map-location-dot"></i></div>
                         <h3>Plan your Malabar experience with us</h3>
-                        <a href="#" class="ad-btn ad-btn-light open-booking" data-package="{{ activity.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
-
+                        <a href="#" class="tn-btn tn-btn-light open-booking" data-package="{{ activity.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
                         <div class="ad-calls">
                             <div class="ad-call">
                                 <i class="fa-solid fa-phone"></i>
@@ -417,4 +453,58 @@
         </div>
     </div>
 </section>
+
+<!-- ============ BAND 2 (tan): booking ============ -->
+<section class="sec sec-tan">
+    <div class="container">
+
+        <!-- Booking: flight-path art + button (opens the booking modal from base.html, with the package name) -->
+        <div class="ad-book rv">
+            <div class="ad-art-wrap">
+                <div class="ad-art" aria-hidden="true">
+                    <img class="ad-art-trail" src="{% static 'malabar-static/p4-trail.png' %}" alt="" loading="lazy" decoding="async">
+                    <img class="ad-art-plane" src="{% static 'malabar-static/p4-plane.png' %}" alt="" loading="lazy" decoding="async">
+                </div>
+            </div>
+            <p>Ready to experience it?</p>
+            <a href="#" class="tn-btn open-booking" data-package="{{ activity.title }}">Book Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+    </div>
+</section>
+
+</div>
+<!-- ===== /flow ===== -->
+{% endblock %}
+
+{% block extra_js %}
+<!-- Flight-path art: plane flies along the trail on scroll; watches the fixed wrapper -->
+<script>
+    (function () {
+        var art = document.querySelector('.ad-art-wrap');
+        if (!art) return;
+        if (!('IntersectionObserver' in window)) { art.classList.add('in-view'); return; }
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) en.target.classList.add('in-view');
+                else en.target.classList.remove('in-view');
+            });
+        }, { threshold: 0.5, rootMargin: '0px 0px -12% 0px' }).observe(art);
+    })();
+</script>
+
+<!-- Scroll reveal -->
+<script>
+    (function () {
+        var items = document.querySelectorAll('.rv');
+        if (!items.length || !('IntersectionObserver' in window)) return;
+        document.body.classList.add('rv-ready');
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) en.target.classList.add('in'); else en.target.classList.remove('in');
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+        items.forEach(function (el) { io.observe(el); });
+    })();
+</script>
 {% endblock %}

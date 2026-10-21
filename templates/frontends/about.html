@@ -1,114 +1,72 @@
 {% extends "frontends/base.html" %}
 {% load static %}
-{% load static image_tags %}
+{% load image_tags %}
 {% load package_tags %}
 {% block title %}About Us | Malabar{% endblock %}
 
 {% comment %}
-    ABOUT PAGE (same design language as the Home page)
-    - HERO: Packages-style centred title + breadcrumb, full-bleed, torn-paper bottom edge
-    - everything after the hero sits in ONE wrapper (.flow) on the cream paper colour
-    - faded side pictures on desktop, torn picture bands above each title on mobile/tablet
-    Sections: Our Story, Services (cycling cards), Popular Packages, Terms, Testimonials, FAQ.
-    Needs `featured_packages` and `testimonials` in the about view's context.
-    Colours come from base.html: --nav-green, --nav-gold, --nav-ink.
+    ABOUT PAGE: same torn-paper design as the Home page.
+    - HERO is unchanged (centred title + breadcrumb, cross-fading backgrounds, torn bottom edge).
+    - Every section after it is a flat colour band with a torn-paper top edge and scattered-dot texture.
+      Colours ALTERNATE: cream (Our Story) -> tan (Services) -> cream (Packages)
+      -> tan (Terms) -> cream (Testimonials) -> tan (FAQ)
+    - Cards (Packages, Testimonials) and FAQ questions are the same paper as the band, outlined with a
+      hand-torn edge (SVG filter #paperTorn). Hover = sand fill + interactive effects (same as Home).
+    - Section titles use the Home style (.tn-eyebrow + .tn-title, EB Garamond small-caps).
+    - Needs `featured_packages` and `testimonials` in the about view's context.
+    - If a section is hidden by {% if %}, two bands of the same colour may touch: swap sec-cream / sec-tan on the next one.
 {% endcomment %}
 
 {% block extra_css %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@600;700;800&family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&family=Cinzel:wght@500;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root { --paper: #f3ebdc; --footer-gap: #eee5d2; }
-html, body { background: var(--footer-gap) !important; }
+/* ===================== PAPER TEXTURE (scattered dots) ===================== */
+:root {
+    --paper: #f2e2c6;
+    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+}
 
-/* =====================================================================
-   HERO: full-bleed, torn-paper bottom edge (same as Home)
-   ===================================================================== */
-.ah-wrap { position: relative; background: var(--paper); }
+/* ===================== HERO (unchanged About hero) ===================== */
+.ah-wrap { position: relative; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px; }
 
 .page-header.page-hero {
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    overflow: hidden !important;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    padding: 200px 0 150px !important;
-    background-color: #12281f !important;
-    background-image: none !important;
+    position: relative !important; width: 100% !important; max-width: 100% !important; margin: 0 !important;
+    border-radius: 0 !important; overflow: hidden !important; min-height: 80vh;
+    display: flex; align-items: center; padding: 200px 0 150px !important;
+    background-color: #12281f !important; background-image: none !important;
 }
-.page-header.page-hero::before,
-.page-header.page-hero::after { display: none !important; }
-
+.page-header.page-hero::before, .page-header.page-hero::after { display: none !important; }
 .page-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.page-hero .ah-bgs::after {
-    content: ""; position: absolute; inset: 0; z-index: 1;
-    background: rgba(0, 0, 0, 0.30); pointer-events: none;
-}
-.page-hero .ah-bg {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    opacity: 0; transform: scale(1);
-    transition: opacity 1.2s ease;
-}
+.page-hero .ah-bgs::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(0,0,0,.30); pointer-events: none; }
+.page-hero .ah-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1); transition: opacity 1.2s ease; }
 .page-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
 @keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
-
 .page-header.page-hero > .container { position: relative; z-index: 2; }
 .page-hero .page-header-box { text-align: center; }
 .page-header.page-hero h1 {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 700 !important;
-    font-size: 80px;
-    letter-spacing: 6px;
-    color: #ffffff !important;
-    text-transform: none !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-    margin-bottom: 20px;
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35); margin-bottom: 20px;
 }
 .page-hero .breadcrumb { justify-content: center; margin: 0; }
-.page-hero .breadcrumb-item,
-.page-hero .breadcrumb-item a,
-.page-hero .breadcrumb-item + .breadcrumb-item::before {
-    color: #ffffff !important; text-transform: capitalize;
-}
+.page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
 
-/* torn bottom edge: phones + tablets */
 .page-header.page-hero {
     padding-bottom: 96px !important;
-    -webkit-mask-image:
-        linear-gradient(#000, #000),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
-            mask-image:
-        linear-gradient(#000, #000),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
-    -webkit-mask-size: 100% calc(100% - 45px), 100% 70px;
-            mask-size: 100% calc(100% - 45px), 100% 70px;
-    -webkit-mask-position: top, bottom;
-            mask-position: top, bottom;
-    -webkit-mask-repeat: no-repeat;
-            mask-repeat: no-repeat;
-    -webkit-mask-composite: source-over;
-            mask-composite: add;
+    -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+            mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% calc(100% - 45px), 100% 70px; mask-size: 100% calc(100% - 45px), 100% 70px;
+    -webkit-mask-position: top, bottom; mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-composite: source-over; mask-composite: add;
 }
-/* torn bottom edge: desktop (taller, drawn on a 1920-wide SVG so it is not stretched) */
 @media (min-width: 992px) {
     .page-header.page-hero {
         padding-bottom: 150px !important;
-        -webkit-mask-image:
-            linear-gradient(#000, #000),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
-                mask-image:
-            linear-gradient(#000, #000),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
-        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px;
-                mask-size: 100% calc(100% - 70px), 100% 110px;
+        -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+                mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px; mask-size: 100% calc(100% - 70px), 100% 110px;
     }
 }
 @media (max-width: 991px) {
@@ -116,824 +74,294 @@ html, body { background: var(--footer-gap) !important; }
     .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
     .page-hero .breadcrumb { font-size: 14px; }
 }
-@media (max-width: 575px) {
-    .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
-}
+@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
 
-/* =====================================================================
-   ONE CONTINUOUS PAGE (everything after the hero): cream paper colour
-   ===================================================================== */
+/* ===================== TORN-PAPER PAGE (everything after the hero) ===================== */
 .flow {
-    position: relative;
-    isolation: isolate;
-    clip-path: inset(0);
-    overflow-x: clip;
-    width: 100%;
-    box-sizing: border-box;
-    background: var(--paper) !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-    padding-bottom: 5vw !important;
-    z-index: 4;
+    --cream: #f2e2c6; --tan: #e8d3b0;
+    --gold: #c9972b; --gold-deep: #a97a14; --btn-ink: #2b2112; --sand-hover: #e0c898;
+    --green: var(--gold-deep);
+    --ink: var(--nav-ink, #2a0c0f); --text: #5b6560;
+    --edge: rgba(139, 107, 46, .7);
+    --torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 60' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='30' width='2120' height='80' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    position: relative; width: 100%; overflow-x: clip; background: var(--cream);
 }
-.flow::before { content: none; }
+.sec { position: relative; background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 0; padding: 90px 0 100px; }
+.sec + .sec::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -54px; height: 56px; z-index: 0; pointer-events: none;
+    background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 54px;
+    -webkit-mask-image: var(--torn); mask-image: var(--torn);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.sec > .container { position: relative; z-index: 1; }
+.sec-cream { --bg: var(--cream); }
+.sec-tan { --bg: var(--tan); }
+@media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
+@media (min-width: 1400px) { .sec.sec-wide > .container { max-width: 1400px; } }
+@media (max-width: 991px) { .sec { padding: 64px 0 70px; } }
+@media (max-width: 575px) { .sec { padding: 52px 0 58px; } }
+.about-us.sec { padding-top: 70px; }
 
-/* sections: no background of their own, sit above the pictures */
-.about-story, .sv-section, .pk-section, .tc-section, .pc-section, .fq-section {
-    position: relative;
-    background: none !important;
-    background-image: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    padding-top: 40px !important;
-    padding-bottom: 20px !important;
-}
-.about-story { padding-top: 40px !important; overflow: visible; }
+/* headings */
+.tn-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.tn-eyebrow i { font-size: 13px; }
+.tn-title { margin: 0 0 16px; color: var(--ink); text-transform: none; font-variant: small-caps; font-family: 'EB Garamond', serif; font-weight: 800; letter-spacing: 1.5px; line-height: 1.12; font-size: clamp(30px, 3.6vw, 48px); }
+.tn-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
+.tn-head { text-align: center; max-width: 720px; margin: 0 auto 52px; }
+.tn-head .tn-text { margin: 0 auto; }
 
-/* headings: plain text, no panel */
-.flow .section-title {
-    background: none !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    -webkit-backdrop-filter: none !important;
-            backdrop-filter: none !important;
-    padding: 6px 0 !important;
-    margin-bottom: 0 !important;
-    text-shadow: none !important;
-}
-.flow .section-row { margin-bottom: 32px !important; }
-.flow .section-title h2 { color: #12281f; text-shadow: none !important; }
-.flow .section-title p { color: #12281f !important; font-weight: 400 !important; text-shadow: none !important; }
-
-/* faded side pictures: hidden until the desktop / mobile blocks below */
-.st-left-img, .sv-left-img, .pk-right-img, .tc-left-img, .pc-left-img, .fq-right-img { display: none; }
-
-/* =====================================================================
-   SHARED CAROUSEL PARTS (packages + testimonials)
-   ===================================================================== */
-.ms-services .ms-carousel { position: relative; }
-.ms-services .ms-viewport {
-    overflow: hidden; padding: 20px 0 30px; margin: -20px 0 -30px;
-    cursor: grab; user-select: none;
-}
-.ms-services .ms-viewport.dragging { cursor: grabbing; }
-.ms-services .ms-track { display: flex; will-change: transform; touch-action: pan-y; }
-.ms-services .ms-slide { flex: 0 0 33.3333%; padding: 0 12px; display: flex; }
-.ms-services .ms-nav {
-    display: flex; align-items: center; justify-content: center;
-    gap: 22px; margin-top: 24px;
-}
-.ms-services .ms-nav button.ms-arrow {
-    width: 54px; height: 54px; border-radius: 50%;
-    border: 1px solid var(--nav-green, #1F5B3A);
-    background: transparent; color: var(--nav-green, #1F5B3A);
-    font-size: 18px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; transition: all 0.3s ease;
-}
-.ms-services .ms-nav button.ms-arrow:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
-.ms-services .ms-dots { display: flex; align-items: center; gap: 8px; }
-.ms-services .ms-dot {
-    width: 10px; height: 10px; padding: 0; border-radius: 50%;
-    border: none; background: rgba(0, 0, 0, 0.2); cursor: pointer; transition: all 0.3s ease;
-}
-.ms-services .ms-dot.active { width: 28px; border-radius: 10px; background: var(--nav-green, #1F5B3A); }
-@media (max-width: 767px) { .ms-services .ms-dots { display: none; } }
-
-/* =====================================================================
-   OUR STORY (same collage + look as the Home "About us")
-   ===================================================================== */
-.about-story { --ab-green: var(--nav-green, #1F5B3A); --ab-tint: #e4ece3; }
-.about-story .container { max-width: 1320px; }
-@media (min-width: 1600px) { .about-story .container { max-width: 1440px; } }
-.about-story .row { align-items: center; row-gap: 30px; }
-
-.ab-collage { position: relative; width: 100%; max-width: 700px; margin: 0 auto; aspect-ratio: 1 / 1.08; }
-.ab-main { position: absolute; left: 0; top: 0; width: 80%; height: 90%; z-index: 1; filter: drop-shadow(0 16px 26px rgba(20, 40, 30, 0.22)); }
-.ab-frame {
-    width: 100%; height: 100%; background: #fff; padding: 6px;
-    border-radius: 34px; overflow: hidden;
-    clip-path: polygon(0 0, 80% 0, 100% 18%, 100% 100%, 0 100%);
-}
-.ab-frame figure {
-    margin: 0; width: 100%; height: 100%; border-radius: 28px; overflow: hidden;
-    clip-path: polygon(0 0, 77% 0, 100% 19%, 100% 100%, 0 100%);
-}
-.ab-frame img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; display: block; }
-.ab-second {
-    position: absolute; right: -1%; bottom: 0; width: 52%; height: 50%; z-index: 3;
-    background: #fff; padding: 6px; border-radius: 24px; overflow: hidden;
-    box-shadow: 0 16px 30px rgba(20, 40, 30, 0.25); transform: rotate(-3deg);
-}
-.ab-second figure { margin: 0; width: 100%; height: 100%; border-radius: 18px; overflow: hidden; }
-.ab-second img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; display: block; }
-.ab-leaf { position: absolute; color: #7fa47a; opacity: 0.55; pointer-events: none; }
-.ab-leaf-1 { left: -7%; top: -8%; width: 20%; transform: rotate(-38deg); z-index: 0; }
-.ab-leaf-2 { left: 79%; top: 24%; width: 12%; transform: rotate(16deg); z-index: 2; }
-
-.ab-tagrow { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
-.about-story .ab-tag {
-    display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 50px;
-    background: var(--ab-tint); color: var(--ab-green); font-size: 14px; font-weight: 600; text-transform: none;
-}
-.ab-tagline { flex: 1; max-width: 320px; height: 1px; background: linear-gradient(90deg, rgba(31, 91, 58, 0.4), transparent); }
-.about-story .ab-title-wrap h2 { margin-bottom: 14px; }
-.ab-title-wrap h2 i { display: inline-block; vertical-align: top; margin-left: 10px; font-size: 0.5em; color: var(--ab-green); transform: rotate(18deg); }
-.ab-bar { width: 56px; height: 3px; border-radius: 3px; background: var(--nav-gold, #e0b14a); margin: 14px 0 22px; }
-
-.about-story .st-text { font-size: 16px; line-height: 1.8; color: #12281f; margin: 0; font-weight: 400; }
-.about-story .st-text.collapsed { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
-.about-story .st-more {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0;
-    background: none; border: 0; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--ab-green);
-}
-.about-story .st-more i { font-size: 12px; transition: transform 0.3s ease; }
-.about-story .st-more.open i { transform: rotate(180deg); }
-.about-story .st-more:hover { color: #a97a14; }
-
-/* 2x2 point cards */
-.about-story .st-route { margin: 22px 0 0; width: 100%; --st-accent: var(--nav-green, #1F5B3A); }
-.about-story .st-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
-.about-story .st-item {
-    display: flex; flex-direction: column; align-items: center; padding: 18px 16px 20px; text-align: center;
-    background: rgba(255, 255, 255, 0.96); border: 1px solid rgba(38, 86, 72, 0.14); border-radius: 18px;
-    box-shadow: 0 8px 20px rgba(20, 40, 30, 0.06);
-    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
-}
-.about-story .st-item:hover { transform: translateY(-4px); border-color: var(--st-accent); box-shadow: 0 14px 28px rgba(20, 40, 30, 0.12); }
-.about-story .st-ico { font-size: 34px; color: var(--st-accent); margin: 0 0 8px; transition: transform .3s ease; }
-.about-story .st-item:hover .st-ico { transform: scale(1.08); }
-.about-story .st-item h4 { margin: 0 0 6px; font-size: 19px; font-weight: 700; line-height: 1.2; color: var(--st-accent); text-transform: none; }
-.about-story .st-item p { margin: 0 auto; max-width: 220px; font-size: 14.5px; line-height: 1.5; color: #5b6560; }
-
-.ab-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 26px; }
-.about-story .ab-btn {
-    display: inline-flex; align-items: center; gap: 10px; padding: 13px 28px; border-radius: 50px;
-    border: 1.5px solid var(--ab-green); font-size: 15px; font-weight: 600; text-transform: none; text-decoration: none;
-    transition: all 0.3s ease;
-}
-.about-story .ab-btn i { font-size: 13px; transition: transform 0.3s ease; }
-.about-story .ab-btn:hover i { transform: translateX(4px); }
-.about-story .ab-btn-fill { background: var(--ab-green); color: #fff; }
-.about-story .ab-btn-fill:hover { background: var(--nav-gold, #e0b14a); border-color: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
-.about-story .ab-btn-line { background: transparent; color: var(--ab-green); }
-.about-story .ab-btn-line:hover { background: var(--ab-green); color: #fff; }
-
-@media (max-width: 991px) { .ab-collage { margin-bottom: 20px; } .ab-leaf-1 { left: -3%; } }
-@media (max-width: 575px) {
-    .about-story .st-text { font-size: 15px; }
-    .about-story .st-text.collapsed { -webkit-line-clamp: 5; }
-    .about-story .st-grid { gap: 10px; }
-    .about-story .st-item { padding: 14px 8px 16px; border-radius: 14px; }
-    .about-story .st-ico { font-size: 28px; }
-    .about-story .st-item h4 { font-size: 15px; }
-    .about-story .st-item p { font-size: 12.5px; max-width: none; }
-    .about-story .ab-btn { padding: 10px 20px; font-size: 13.5px; gap: 8px; }
-    .ab-actions { gap: 10px; margin-top: 22px; }
-}
-
-/* =====================================================================
-   SERVICES: one separate card per service (cycles automatically)
-   ===================================================================== */
-.sv-section { --sv-w: 900px; }
-@media (min-width: 1200px) { .sv-section .container { max-width: 1440px; } }
-@media (min-width: 1600px) { .sv-section .container { max-width: 1560px; } }
-
-.sv-cards { width: 100%; position: relative; z-index: 3; }
-.sv-stage { display: grid; }
-.sv-c {
-    grid-area: 1 / 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 30px; align-items: stretch; padding: 18px; box-sizing: border-box;
-    background: #fdf8ee; border-radius: 28px; box-shadow: 0 14px 36px rgba(20, 40, 30, 0.14);
-    opacity: 0; visibility: hidden; pointer-events: none;
-    transform: translateY(46px) scale(.97);
-    transition: opacity .6s ease, transform .7s cubic-bezier(.2,.7,.2,1), visibility .6s;
-}
-.sv-c.on { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
-.sv-c.out { transform: translateY(-46px) scale(.97); }
-
-.sv-c-text { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 20px 8px 20px 26px; min-width: 0; }
-.sv-c-count { margin-bottom: 18px; font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #c9972b; }
-.sv-c-ico {
-    width: 64px; height: 64px; margin-bottom: 18px; border-radius: 50%;
-    background: var(--nav-green, #1F5B3A); color: var(--nav-gold, #e0b14a); font-size: 26px;
-    display: flex; align-items: center; justify-content: center;
-}
-.sv-c-text h3 {
-    margin: 0 0 14px; font-family: 'EB Garamond', serif; font-size: clamp(32px, 3vw, 44px);
-    font-weight: 700; line-height: 1.1; text-transform: none; color: #12281f;
-}
-.sv-c-text p { margin: 0 0 26px; font-family: 'EB Garamond', serif; font-size: 20px; line-height: 1.55; color: #5b6560; }
-.sv-c-btn {
-    display: inline-flex; align-items: center; gap: 12px; padding: 14px 28px; border-radius: 12px;
-    background: var(--nav-green, #1F5B3A); color: #fff; font-family: 'EB Garamond', serif;
-    font-size: 19px; font-weight: 600; text-decoration: none; transition: background .3s ease, color .3s ease;
-}
-.sv-c-btn i { color: var(--nav-gold, #e0b14a); transition: transform .3s ease, color .3s ease; }
-.sv-c-btn:hover { background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
-.sv-c-btn:hover i { color: var(--nav-ink, #12281f); transform: translateX(4px); }
-
-.sv-c-img { min-height: 400px; border-radius: 22px; overflow: hidden; background: #e4ece3; }
-.sv-c-img img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.08); transition: transform 5s ease-out; }
-.sv-c.on .sv-c-img img { transform: scale(1); }
-
-.sv-c-nav { display: flex; align-items: center; justify-content: center; gap: 18px; margin-top: 22px; }
-.sv-c-arrow {
-    width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--nav-green, #1F5B3A);
-    background: transparent; color: var(--nav-green, #1F5B3A); font-size: 15px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .3s ease;
-}
-.sv-c-arrow:hover { background: var(--nav-green, #1F5B3A); color: #fff; }
-.sv-c-dots { display: flex; align-items: center; gap: 8px; }
-.sv-c-dots button {
-    width: 10px; height: 10px; padding: 0; border: 0; border-radius: 10px;
-    background: rgba(18, 40, 31, .25); cursor: pointer; transition: width .3s ease, background .3s ease;
-}
-.sv-c-dots button.active { width: 30px; background: var(--nav-green, #1F5B3A); }
-
-@media (max-width: 991px) {
-    .sv-c { grid-template-columns: 1fr; gap: 16px; }
-    .sv-c-img { order: -1; min-height: 260px; }
-    .sv-c-text { padding: 6px 10px 12px; }
-}
-@media (max-width: 575px) {
-    .sv-c { padding: 12px; border-radius: 22px; }
-    .sv-c-img { min-height: 220px; }
-    .sv-c-ico { width: 52px; height: 52px; font-size: 21px; }
-    .sv-c-text h3 { font-size: 28px; }
-    .sv-c-text p { font-size: 17px; margin-bottom: 20px; }
-    .sv-c-btn { padding: 12px 22px; font-size: 16px; }
-    .sv-c-dots { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .sv-c, .sv-c-img img { transition: opacity .3s ease; transform: none !important; }
-}
-
-/* =====================================================================
-   POPULAR PACKAGES (picture cards, same as Home)
-   ===================================================================== */
-.pk-section { --pk-accent: var(--nav-green, #1F5B3A); --pk-dark: var(--nav-ink, #12281f); --pk-gold: var(--nav-gold, #e0b14a); }
-@media (min-width: 1200px) { .pk-section .container { max-width: 1440px; } }
-@media (min-width: 1600px) { .pk-section .container { max-width: 1560px; } }
-
-.pk-carousel-wrap .ms-viewport { padding: 20px 0 40px; margin: -20px 0 -40px; }
-.pk-carousel-wrap .ms-nav { margin-top: 24px; }
-.pk-carousel-wrap .ms-dots { flex-wrap: wrap; justify-content: center; max-width: 60%; }
-.pk-section .ms-slide { padding: 0 14px; }
-
-.ds-card {
-    position: relative; display: block; width: 100%; aspect-ratio: 4 / 3.4;
-    border-radius: 28px; overflow: hidden; background: #cfe0d6; text-decoration: none;
-    box-shadow: 0 14px 30px rgba(20, 40, 30, 0.16);
-}
-.ds-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s ease; }
-.ds-card:hover > img { transform: scale(1.08); }
-.ds-overlay {
-    position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: flex-end; gap: 12px;
-    padding: 90px 24px 22px;
-    background: linear-gradient(to top, rgba(18,40,31,.88) 0, rgba(18,40,31,.55) 45px, rgba(18,40,31,.2) 75px, rgba(18,40,31,0) 100%);
-}
-.ds-pin { color: #d9a441; font-size: 20px; flex: 0 0 auto; line-height: 1.25; }
-.ds-name {
-    flex: 1; min-width: 0; margin: 0; font-size: 24px; font-weight: 500; line-height: 1.25;
-    color: #f4ead8; text-transform: none; text-shadow: 0 1px 6px rgba(0,0,0,.55);
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-.ds-go {
-    flex: 0 0 42px; width: 42px; height: 42px; border-radius: 50%;
-    border: 1.5px solid #d9a441; color: #d9a441; font-size: 15px;
-    display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;
-}
-.ds-card:hover .ds-go { background: #d9a441; color: #12281f; transform: translateX(3px); }
-.pk-ds-tag {
-    position: absolute; top: 16px; left: 16px; z-index: 2; display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 16px; border-radius: 50px; background: var(--nav-green, #1F5B3A); color: #fff;
-    font-size: 14px; font-weight: 600; line-height: 1.2;
-}
-.pk-ds-tag i { color: var(--nav-gold, #e0b14a); font-size: 13px; }
-
-.pk-more { text-align: center; margin-top: 24px; }
-.pk-more a {
+/* buttons */
+.tn-btn {
     display: inline-flex; align-items: center; gap: 10px; padding: 13px 30px; border-radius: 50px;
-    border: 1.5px solid var(--nav-green, #1F5B3A); background: var(--nav-green, #1F5B3A); color: #fff;
-    font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;
+    border: 1.5px solid var(--gold); background: var(--gold); color: #fff !important;
+    font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: all .3s ease;
 }
-.pk-more a:hover { background: var(--nav-gold, #e0b14a); border-color: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f); }
+.tn-btn i { font-size: 11px; transition: transform .3s ease; }
+.tn-btn:hover { background: var(--green); border-color: var(--green); }
+.tn-btn:hover i { transform: translateX(4px); }
+.tn-btn-line { background: transparent; color: var(--gold) !important; }
+.tn-btn-line:hover { background: var(--gold); border-color: var(--gold); color: #fff !important; }
+.tn-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+.tn-center { text-align: center; margin-top: 48px; }
 
-@media (max-width: 991px) { .pk-section .ds-name { font-size: 19px; } .ds-overlay { padding: 70px 18px 16px; } }
+/* scroll reveal */
+.rv-ready .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
+.rv-ready .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
+
+/* ===================== TORN-PAPER CARDS (Packages, Testimonials, FAQ) ===================== */
+.pk-card, .tm-card, .fq-item { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; }
+.pk-card::before, .tm-card::before, .fq-item::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px; background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.pk-card:hover::before, .tm-card:hover::before, .fq-item:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.pk-card::after, .tm-card::after, .fq-item::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px;
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
+}
+.pk-card:hover::after, .tm-card:hover::after, .fq-item:hover::after { opacity: 1; }
+
+/* ===================== CAROUSEL ===================== */
+.cs { --cs-gap: 34px; --cs-pad: 26px; position: relative; }
+.cs-track {
+    display: flex; gap: var(--cs-gap); align-items: stretch; overflow-x: auto; overflow-y: hidden; scroll-snap-type: none; scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none; overscroll-behavior-x: contain;
+    margin: 0 calc(var(--cs-pad) * -1); padding: 26px var(--cs-pad) 46px;
+}
+.cs-track::-webkit-scrollbar { display: none; }
+.cs-track > * { flex: 0 0 calc((100% - (var(--cs-gap) * 2)) / 3); min-width: 0; height: auto; }
+.cs-nav { display: flex; justify-content: center; gap: 14px; margin-top: 6px; }
+.cs-nav[hidden] { display: none; }
+.cs-btn { width: 48px; height: 48px; border-radius: 50%; border: 1.5px solid var(--gold); background: var(--gold); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; transition: all .3s ease; -webkit-tap-highlight-color: transparent; }
+.cs-btn:hover { background: var(--green); border-color: var(--green); }
+.cs-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+@media (max-width: 991px) { .cs { --cs-gap: 24px; --cs-pad: 16px; } .cs-track > * { flex-basis: calc((100% - var(--cs-gap)) / 2); } }
+@media (max-width: 575px) { .cs { --cs-gap: 18px; --cs-pad: 12px; } .cs-track > * { flex-basis: 100%; } }
+@media (prefers-reduced-motion: reduce) { .cs-track { scroll-behavior: auto; } }
+
+/* ===================== OUR STORY (cream) ===================== */
+.ab-collage { position: relative; max-width: 560px; margin: 0 auto; aspect-ratio: 1 / .78; }
+.ab-photo { position: absolute; background: transparent; padding: 0; box-shadow: 0 18px 34px rgba(60,40,10,.28); }
+.ab-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ab-photo-1 { left: 0; top: 0; width: 80%; height: 76%; }
+.ab-photo-2 { right: 0; bottom: 0; width: 52%; height: 56%; z-index: 2; }
+.ab-photo-2::after, .ab-photo-1::after { content: ""; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; transform: translateX(-50%) rotate(-3deg); background: rgba(201,151,43,.55); }
+.st-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
+.st-text.collapsed { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.st-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0; background: none; border: 0; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
+.st-more i { font-size: 11px; transition: transform .3s ease; }
+.st-more.open i { transform: rotate(180deg); }
+.st-more:hover { color: var(--green); }
+.ab-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin-top: 26px; }
+.ab-item { display: flex; align-items: center; gap: 12px; }
+.ab-item i { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f7ecd5; color: var(--gold); font-size: 17px; transition: all .35s ease; }
+.ab-item:hover i { background: var(--gold); color: var(--btn-ink); transform: translateY(-3px); }
+.ab-item h4 { margin: 0 0 2px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 18px; text-transform: none; color: var(--ink); }
+.ab-item p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+@media (max-width: 991px) { .ab-collage { margin-bottom: 40px; } }
+@media (max-width: 575px) { .ab-list { grid-template-columns: 1fr; } .st-text.collapsed { -webkit-line-clamp: 5; } }
+
+/* ===================== SERVICES (tan): icon columns ===================== */
+.sv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
+.sv-item { text-align: center; padding: 0 6px; }
+.sv-ico { width: 74px; height: 74px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f7ecd5; color: var(--gold); font-size: 28px; transition: all .35s ease; }
+.sv-item:hover .sv-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-5px); }
+.sv-item h3 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 22px; text-transform: none; color: var(--ink); }
+.sv-item p { margin: 0 0 14px; font-size: 14.5px; line-height: 1.65; color: var(--text); }
+.sv-item a { font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); text-decoration: none; }
+.sv-item a i { margin-left: 6px; font-size: 10px; transition: transform .3s ease; }
+.sv-item a:hover { color: var(--green); }
+.sv-item a:hover i { transform: translateX(4px); }
+@media (max-width: 991px) { .sv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 22px; } }
+@media (max-width: 575px) { .sv-grid { gap: 32px 14px; } .sv-ico { width: 62px; height: 62px; font-size: 24px; } .sv-item h3 { font-size: 19px; } .sv-item p { font-size: 13.5px; } }
+
+/* ===================== PACKAGES (cream) ===================== */
+.pk-cs { --pk-green: var(--green); --pk-ink: #1a1a1a; }
+.pk-card { --edge-r: 30px; display: flex; flex-direction: column; padding: 20px; border-radius: 30px; font-family: 'Poppins', var(--bs-body-font-family, sans-serif); transition: transform .25s ease-out; transform-style: preserve-3d; will-change: transform; }
+.pk-card:hover { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-8px); }
+.pk-media { position: relative; aspect-ratio: 5 / 4; overflow: hidden; isolation: isolate; border-radius: 20px; background: #e3d3b4; transition: transform .35s ease-out; }
+.pk-media a { display: block; width: 100%; height: 100%; }
+.pk-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
+.pk-card:hover .pk-media img { transform: scale(1.06); }
+.pk-card:hover .pk-media { transform: translateZ(26px); }
+.pk-card:hover .pk-body { transform: translateZ(14px); }
+.pk-tag { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 50px; background: rgba(255,255,255,.94); color: var(--pk-ink); font-size: 14px; font-weight: 600; }
+.pk-tag i { color: var(--gold); }
+.pk-body { display: flex; flex-direction: column; flex: 1; padding: 24px 14px 8px; text-align: left; transition: transform .35s ease-out; }
+.pk-title { margin: 0 0 12px; font-family: inherit; font-variant: normal; font-weight: 700; letter-spacing: 0; font-size: 29px; line-height: 1.22; text-transform: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pk-title a { color: var(--pk-ink); text-decoration: none; }
+.pk-title a:hover { color: var(--pk-green); }
+.pk-loc { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--pk-green); }
+.pk-loc i { flex: 0 0 auto; color: var(--gold); font-size: 14px; }
+.pk-loc span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pk-desc { margin: 0 0 24px; font-size: 15px; line-height: 1.65; color: var(--text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pk-actions { margin-top: auto; display: flex; gap: 12px; }
+.pk-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 0 10px 0 22px; border-radius: 50px; border: 1px solid var(--gold); font-family: inherit; font-size: 14.5px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer; transition: background .3s ease, color .3s ease, border-color .3s ease; }
+.pk-btn span.pk-ic { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform .3s ease, background .3s ease, color .3s ease; }
+.pk-btn-fill { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-fill .pk-ic { background: var(--btn-ink); color: #fff; }
+.pk-btn-fill:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff !important; }
+.pk-btn-fill:hover .pk-ic { background: var(--btn-ink); color: var(--gold); }
+.pk-btn-line { background: transparent; border-color: var(--gold-deep); color: var(--btn-ink) !important; }
+.pk-btn-line .pk-ic { background: var(--gold); color: var(--btn-ink); }
+.pk-btn-line .pk-ic i { transform: rotate(-45deg); }
+.pk-btn-line:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-line:hover .pk-ic { background: var(--btn-ink); color: var(--gold); }
+.pk-cs .cs-btn { width: 52px; height: 52px; background: transparent; border: 2px solid var(--edge); color: var(--pk-ink); font-size: 16px; }
+.pk-cs .cs-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink); }
+@media (max-width: 991px) { .pk-title { font-size: 27px; } }
 @media (max-width: 575px) {
-    .pk-section .ms-slide { padding: 0 8px; }
-    .pk-section .ds-card { aspect-ratio: 4 / 4.6; border-radius: 24px; }
-    .pk-section .ds-name { font-size: 20px; }
-    .pk-ds-tag { top: 12px; left: 12px; padding: 6px 12px; font-size: 12.5px; }
-    .ds-go { flex-basis: 38px; width: 38px; height: 38px; font-size: 14px; }
-    .pk-more a { padding: 10px 22px; font-size: 13px; gap: 8px; }
-    .pk-more { margin-top: 28px; }
+    .pk-card { --edge-r: 24px; border-radius: 24px; padding: 16px; }
+    .pk-media { border-radius: 16px; aspect-ratio: 4 / 3.3; }
+    .pk-tag { left: 12px; top: 12px; padding: 8px 15px; font-size: 13px; }
+    .pk-title { font-size: 24px; margin-bottom: 10px; }
+    .pk-loc { font-size: 14px; margin-bottom: 8px; }
+    .pk-desc { font-size: 14px; margin-bottom: 20px; }
+    .pk-body { padding: 20px 12px 14px; }
+    .pk-btn { font-size: 13.5px; min-height: 50px; padding: 0 8px 0 18px; }
+    .pk-btn span.pk-ic { flex-basis: 32px; width: 32px; height: 32px; }
 }
 
-/* =====================================================================
-   TERMS & CONDITIONS (white cards, same as Home)
-   ===================================================================== */
-.tc-section { --tc-green: var(--nav-green, #1F5B3A); --tc-tint: #dfe9dc; --tc-tint: color-mix(in srgb, var(--tc-green) 14%, #ffffff); }
-.tc-title-row { display: flex; align-items: center; justify-content: center; gap: 22px; }
-.tc-title-row h2 { margin: 0; }
-.tc-line { flex: 0 1 90px; height: 1px; background: rgba(31, 91, 58, 0.45); }
+/* ===================== TERMS (tan): icon columns ===================== */
+.tc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
+.tc-item { text-align: center; }
+.tc-ico { width: 70px; height: 70px; margin: 0 auto 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f7ecd5; color: var(--gold); font-size: 26px; transition: all .35s ease; }
+.tc-item:hover .tc-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-5px); }
+.tc-item h3 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 20px; line-height: 1.25; text-transform: none; color: var(--ink); }
+.tc-item p { margin: 0; font-size: 14px; line-height: 1.65; color: var(--text); }
+@media (max-width: 991px) { .tc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 38px 22px; } }
+@media (max-width: 575px) { .tc-grid { grid-template-columns: 1fr; } }
 
-.tc-grid { --tc-dur: 3500ms; display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; row-gap: 16px; max-width: 1180px; margin: 0 auto; }
-.tc-item {
-    position: relative; display: flex; align-items: flex-start; gap: 16px; padding: 24px 24px 28px;
-    background: #ffffff; border: 1px solid rgba(31, 91, 58, 0.12); border-radius: 22px;
-    box-shadow: 0 8px 22px rgba(20, 40, 30, 0.08); cursor: pointer; outline: none;
-    transition: box-shadow 0.4s ease, border-color 0.4s ease;
-}
-.tc-item.active { border-color: rgba(31, 91, 58, 0.35); box-shadow: 0 16px 36px rgba(20, 40, 30, 0.16); }
-.tc-icon {
-    flex: 0 0 64px; width: 64px; height: 64px; border-radius: 50%;
-    background: var(--tc-tint); color: var(--tc-green); font-size: 24px;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.4s ease, color 0.4s ease, transform 0.4s ease;
-}
-.tc-item.active .tc-icon { background: var(--tc-green); color: var(--nav-gold, #e0b14a); transform: scale(1.08); animation: tcPulse 1.6s ease-out infinite; }
-@keyframes tcPulse { 0% { box-shadow: 0 0 0 0 rgba(31,91,58,.35); } 100% { box-shadow: 0 0 0 16px rgba(31,91,58,0); } }
-.tc-no {
-    flex: 0 0 30px; width: 30px; height: 30px; margin-top: 4px; border-radius: 50%;
-    background: #eef2ea; color: var(--tc-green); font-size: 12px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center; transition: all 0.4s ease;
-}
-.tc-item.active .tc-no { background: var(--tc-green); color: #fff; }
-.tc-text { flex: 1; min-width: 0; }
-.tc-text h3 { font-size: 18px; font-weight: 700; line-height: 1.3; color: var(--tc-green); margin: 0 0 6px; text-transform: none; }
-.tc-text p { font-size: 14.5px; line-height: 1.6; color: #3d4742; margin: 0; font-weight: 500; }
-.tc-item::after {
-    content: ""; position: absolute; left: 24px; right: 24px; bottom: 12px; height: 3px; border-radius: 3px;
-    background: var(--tc-green); transform: scaleX(0); transform-origin: left; opacity: 0;
-}
-.tc-item.active::after { opacity: 1; animation: tcFill var(--tc-dur) linear forwards; }
-.tc-grid.paused .tc-item.active::after { animation: none; transform: scaleX(1); }
-@keyframes tcFill { to { transform: scaleX(1); } }
-@media (prefers-reduced-motion: reduce) {
-    .tc-item.active .tc-icon { animation: none; }
-    .tc-item.active::after { animation: none; transform: scaleX(1); }
-}
-@media (max-width: 991px) { .tc-grid { grid-template-columns: 1fr; max-width: 640px; } }
-@media (max-width: 575px) {
-    .tc-line { flex-basis: 30px; }
-    .tc-item { padding: 20px 16px 24px; gap: 12px; }
-    .tc-item::after { left: 16px; right: 16px; }
-    .tc-icon { flex-basis: 52px; width: 52px; height: 52px; font-size: 20px; }
-    .tc-no { display: none; }
-    .tc-text h3 { font-size: 16px; }
-}
+/* ===================== TESTIMONIALS (cream) ===================== */
+.g-badge { display: inline-flex; align-items: center; gap: 12px; margin-top: 22px; padding: 12px 22px; background: #fff; box-shadow: 0 10px 24px rgba(60,40,10,.18); }
+.g-logo { font-size: 22px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
+.g-logo b { font-weight: inherit; }
+.g-logo b:nth-child(1), .g-logo b:nth-child(4) { color: #4285f4; }
+.g-logo b:nth-child(2), .g-logo b:nth-child(6) { color: #ea4335; }
+.g-logo b:nth-child(3) { color: #fbbc05; }
+.g-logo b:nth-child(5) { color: #34a853; }
+.g-score { font-size: 20px; font-weight: 700; color: #333; line-height: 1; }
+.g-stars { position: relative; display: inline-block; font-size: 17px; line-height: 1; white-space: nowrap; letter-spacing: 3px; }
+.g-base { color: #d9d9d9; }
+.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
 
-/* =====================================================================
-   TESTIMONIALS: Postcards from the road
-   ===================================================================== */
-.pc-section { --pc-green: #12281f; --pc-gold: #c9972b; overflow: hidden; }
-@media (min-width: 1200px) { .pc-section .container { max-width: 1440px; } }
-@media (min-width: 1600px) { .pc-section .container { max-width: 1560px; } }
+.tm-card { --edge-r: 10px; display: flex; flex-direction: column; text-align: left; padding: 26px 26px 30px; border-radius: 10px; transition: transform .4s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+.tm-card:hover { transform: translateY(-10px) rotate(-.7deg); }
+.tm-card:nth-child(even):hover { transform: translateY(-10px) rotate(.7deg); }
+.tm-media { position: relative; padding: 8px 0 0; }
+.tm-photo { position: relative; background: transparent; padding: 0; border-radius: 6px; transform: rotate(-2deg); transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease; }
+.tm-card:nth-child(3n+2) .tm-photo { transform: rotate(1.6deg); }
+.tm-card:nth-child(3n+3) .tm-photo { transform: rotate(-1deg); }
+.tm-card:hover .tm-photo { transform: rotate(0) translateY(-4px) scale(1.035); box-shadow: 0 16px 26px rgba(60,40,10,.28); }
+.tm-photo::before { content: ""; position: absolute; top: -13px; left: 50%; width: 86px; height: 24px; z-index: 2; transform: translateX(-50%) rotate(-2deg); background: rgba(201,151,43,.45); transition: transform .45s cubic-bezier(.3,1.6,.5,1), background-color .35s ease; }
+.tm-card:hover .tm-photo::before { transform: translateX(-50%) rotate(2deg) scaleX(1.15); background: rgba(201,151,43,.7); }
+.tm-photo img, .tm-ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+.tm-ph { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #dde4e1 0%, #c5d0cd 100%); }
+.tm-ph svg { width: 46%; fill: #6f9b8d; }
+.tm-wave { position: relative; height: 16px; margin: 14px 0 20px; }
+.tm-wave svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.tm-wave path { stroke-dashoffset: 0; }
+.tm-card:hover .tm-wave path { animation: tmRoute 1s linear infinite; }
+@keyframes tmRoute { to { stroke-dashoffset: -7.1; } }
+.tm-pin { position: absolute; left: 50%; top: -21px; z-index: 3; transform: translateX(-50%); font-size: 22px; line-height: 1; color: var(--gold); transition: left .9s cubic-bezier(.3,1.3,.5,1); }
+.tm-card:hover .tm-pin { left: 90%; }
+.tm-stars { margin-bottom: 12px; color: var(--gold); font-size: 15px; letter-spacing: 3px; white-space: nowrap; }
+.tm-stars i { display: inline-block; transition: transform .4s cubic-bezier(.3,1.6,.5,1); }
+.tm-card:hover .tm-stars i { transform: translateY(-4px) scale(1.25) rotate(-8deg); }
+.tm-card:hover .tm-stars i:nth-child(2) { transition-delay: .06s; }
+.tm-card:hover .tm-stars i:nth-child(3) { transition-delay: .12s; }
+.tm-card:hover .tm-stars i:nth-child(4) { transition-delay: .18s; }
+.tm-card:hover .tm-stars i:nth-child(5) { transition-delay: .24s; }
+.tm-quote { position: relative; flex: 1; margin: 0 0 18px; padding-left: 38px; font-size: 17px; line-height: 1.65; color: var(--ink); transition: transform .45s cubic-bezier(.2,.7,.2,1); }
+.tm-card:hover .tm-quote { transform: translateX(4px); }
+.tm-quote::before { content: "\201D"; position: absolute; left: 2px; top: -8px; font-family: 'EB Garamond', serif; font-style: italic; font-weight: 800; font-size: 54px; line-height: 1; color: var(--gold); transform-origin: left top; transition: transform .45s cubic-bezier(.3,1.6,.5,1); }
+.tm-card:hover .tm-quote::before { transform: scale(1.2) rotate(-6deg); }
+.tm-name { display: flex; align-items: center; gap: 12px; padding-left: 38px; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3; transition: color .35s ease; }
+.tm-name::before { content: ""; flex: 0 0 28px; height: 1px; background: rgba(42,12,15,.55); transition: flex-basis .45s cubic-bezier(.2,.7,.2,1), background-color .35s ease, height .35s ease; }
+.tm-card:hover .tm-name { color: var(--gold-deep); }
+.tm-card:hover .tm-name::before { flex-basis: 64px; height: 2px; background: var(--gold); }
+.tm-card:nth-child(1) { --i: 0; } .tm-card:nth-child(2) { --i: 1; } .tm-card:nth-child(3) { --i: 2; }
+.tm-card:nth-child(4) { --i: 3; } .tm-card:nth-child(5) { --i: 4; } .tm-card:nth-child(6) { --i: 5; }
+.rv-ready .cs.in .tm-card { animation: tmRise .9s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * .12s + .1s) backwards; }
+@keyframes tmRise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@media (max-width: 575px) { .tm-quote { font-size: 16px; } .tm-card { padding: 18px 18px 22px; } }
 
-.pc-intro { padding-right: 20px; }
-.pc-eyebrow {
-    display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 600;
-    letter-spacing: 2px; text-transform: uppercase; color: #3d4742; margin-bottom: 22px;
-}
-.pc-eyebrow::before { content: ""; width: 38px; height: 2px; background: var(--pc-gold); }
-.pc-heading { color: var(--pc-green); margin: 0 0 20px; text-transform: none; }
-.pc-sub { font-size: 20px; line-height: 1.55; color: #3d4742; margin: 0 0 18px; max-width: 340px; }
-.pc-swirl { width: 170px; height: 40px; color: var(--pc-gold); }
-
-.pc-google { margin-top: 26px; display: inline-block; padding: 14px 24px; background: #fff; border-radius: 20px; box-shadow: 0 10px 28px rgba(0,0,0,.22); }
-.pc-g-logo { display: block; font-size: 26px; font-weight: 600; line-height: 1; letter-spacing: -0.5px; margin-bottom: 6px; }
-.pc-g-logo b { font-weight: inherit; }
-.pc-g-logo b:nth-child(1) { color: #4285f4; } .pc-g-logo b:nth-child(2) { color: #ea4335; }
-.pc-g-logo b:nth-child(3) { color: #fbbc05; } .pc-g-logo b:nth-child(4) { color: #4285f4; }
-.pc-g-logo b:nth-child(5) { color: #34a853; } .pc-g-logo b:nth-child(6) { color: #ea4335; }
-.pc-g-row { display: flex; align-items: center; gap: 10px; }
-.pc-g-score { font-size: 22px; font-weight: 600; color: #3d4742; line-height: 1; }
-.pc-g-stars { position: relative; display: inline-block; font-size: 20px; line-height: 1; white-space: nowrap; letter-spacing: 3px; }
-.pc-g-base { color: #d9d9d9; }
-.pc-g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
-
-.pc-wrap .ms-viewport { padding: 40px 0 30px; margin: -40px 0 -30px; }
-.pc-wrap .ms-slide { padding: 0 16px; }
-.pc-wrap .ms-nav { margin-top: 24px; }
-.pc-wrap .ms-dots { flex-wrap: wrap; justify-content: center; max-width: 60%; }
-
-.pc-card { position: relative; flex: 1; display: flex; flex-direction: column; padding: 6px 6px 0; }
-.pc-photo {
-    position: relative; background: #fff; padding: 12px; border-radius: 8px;
-    box-shadow: 0 18px 36px rgba(20, 40, 30, 0.22); margin: 0 6px 36px; transition: transform 0.4s ease;
-}
-.pc-t1 .pc-photo { transform: rotate(-2.5deg); }
-.pc-t2 .pc-photo { transform: rotate(2deg); }
-.pc-t3 .pc-photo { transform: rotate(-1.5deg); }
-.pc-card:hover .pc-photo { transform: rotate(0deg) translateY(-6px); }
-.pc-photo::before {
-    content: ""; position: absolute; top: -15px; left: 50%; width: 86px; height: 28px;
-    transform: translateX(-50%) rotate(-3deg); background: rgba(214, 190, 140, 0.65);
-    box-shadow: 0 1px 3px rgba(0,0,0,.12); z-index: 2;
-}
-.pc-photo-img { aspect-ratio: 4 / 3; overflow: hidden; background: linear-gradient(135deg, #2f6a56, #12281f); display: flex; align-items: center; justify-content: center; }
-.pc-photo-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.pc-photo-img.no-photo { background: linear-gradient(180deg, #dde4e1 0%, #c8d1ce 100%); }
-.pc-avatar { width: 52%; height: auto; fill: #6f9a8e; display: block; }
-.pc-pin { display: flex; justify-content: center; color: var(--pc-gold); font-size: 28px; line-height: 1; height: 28px; margin: -58px 0 34px; position: relative; z-index: 3; }
-.pc-pin i { position: relative; z-index: 2; }
-.pc-path { position: absolute; left: 0; width: 100%; top: 0; height: 44px; z-index: 1; overflow: visible; pointer-events: none; }
-.pc-path path { fill: none; stroke: var(--pc-gold); stroke-width: 2.2; stroke-dasharray: 1 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.pc-body { text-align: left; padding: 0 14px; }
-.pc-stars { color: var(--pc-gold); font-size: 18px; letter-spacing: 3px; margin-bottom: 12px; }
-.pc-quote { position: relative; font-size: 22px; line-height: 1.5; color: var(--pc-green); margin: 0 0 18px; padding-left: 40px; min-height: calc(1.5em * 4); font-weight: 500; }
-.pc-quote::before { content: "\201C"; position: absolute; left: 0; top: -8px; font-size: 60px; line-height: 1; color: var(--pc-gold); }
-.pc-author { display: flex; align-items: center; gap: 12px; padding-left: 40px; font-size: 18px; font-weight: 600; color: #2b3a35; }
-.pc-author::before { content: ""; width: 28px; height: 1px; background: #8a948f; }
-
-@media (max-width: 991px) {
-    .pc-intro { text-align: center; padding: 0 0 20px; }
-    .pc-eyebrow { justify-content: center; }
-    .pc-sub { margin-left: auto; margin-right: auto; }
-    .pc-swirl { margin: 0 auto; display: block; }
-}
-@media (max-width: 575px) {
-    .pc-sub { font-size: 17px; }
-    .pc-quote { font-size: 19px; padding-left: 34px; }
-    .pc-author { font-size: 16px; padding-left: 34px; }
-    .ms-services .ms-nav { gap: 14px; margin-top: 20px; }
-    .ms-services .ms-nav button.ms-arrow { width: 42px; height: 42px; font-size: 14px; }
-}
-
-/* =====================================================================
-   FAQ
-   ===================================================================== */
-.fq-section { --fq-green: var(--nav-green, #1F5B3A); --fq-tint: #dfe9dc; --fq-tint: color-mix(in srgb, var(--fq-green) 14%, #ffffff); }
-@media (min-width: 1200px) { .fq-section .container { max-width: 1440px; } }
-@media (min-width: 1600px) { .fq-section .container { max-width: 1560px; } }
-.fq-section .row { align-items: stretch; }
-
-.fq-left { position: sticky; top: 130px; padding-left: 24px; }
-.fq-left .section-title { margin-bottom: 14px !important; }
-.fq-left .section-title h2 { text-align: left; }
-.fq-text { font-size: 17px; line-height: 1.7; color: #12281f; font-weight: 400; margin: 0 0 28px; max-width: none; }
-.fq-ask {
-    display: inline-flex; align-items: center; gap: 14px; padding: 8px 8px 8px 26px; border-radius: 50px;
-    background: var(--fq-green); color: #fff; font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s ease;
-}
-.fq-ask .fq-ask-ico {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--nav-gold, #e0b14a); color: var(--nav-ink, #12281f);
-    font-size: 13px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s ease;
-}
-.fq-ask:hover { filter: brightness(0.9); color: #fff; }
-.fq-ask:hover .fq-ask-ico { transform: translate(2px, -2px); }
-.fq-google { display: block; width: fit-content; margin-top: 34px; padding: 18px 24px; border-radius: 18px; background: rgba(255,255,255,.7); }
-.fq-google .fq-g-title { font-size: 17px; font-weight: 600; color: #222; margin-bottom: 8px; display: flex; align-items: baseline; gap: 6px; }
-.fq-google .pc-g-logo { display: inline; font-size: 18px; margin: 0; }
-.fq-google .pc-g-score { font-size: 17px; }
-.fq-google .pc-g-stars { font-size: 18px; }
-
-.fq-list { display: flex; flex-direction: column; gap: 16px; }
-.fq-item {
-    border-radius: 22px; background: rgba(255,255,255,.86); border: 1px solid rgba(20,40,30,.05);
-    box-shadow: 0 8px 22px rgba(20,40,30,.07); transition: background 0.4s ease, box-shadow 0.4s ease;
-}
-.fq-item.open { background: var(--fq-tint); box-shadow: 0 14px 30px rgba(20,40,30,.12); }
-.fq-q {
-    width: 100%; display: flex; align-items: center; gap: 16px; padding: 26px 28px;
-    background: transparent; border: 0; text-align: left; cursor: pointer;
-    color: #1d2b24; font-size: 18px; font-weight: 600; line-height: 1.4;
-}
-.fq-no { flex: 0 0 auto; color: var(--fq-green); font-weight: 700; }
+/* ===================== FAQ (tan) ===================== */
+.fq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 56px; align-items: start; }
+.fq-left { position: sticky; top: 120px; }
+.fq-list { display: flex; flex-direction: column; gap: 22px; }
+.fq-item { --edge-r: 10px; border-radius: 10px; transition: background-color .35s ease; }
+.fq-item.open::before { box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.fq-q { position: relative; width: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; background: transparent; border: 0; text-align: left; cursor: pointer; font-family: 'EB Garamond', serif; font-size: 21px; font-weight: 700; line-height: 1.3; color: var(--ink); }
+.fq-q::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 2px; background: var(--gold); transform: scaleY(0); transition: transform .35s ease; }
+.fq-item:hover .fq-q::before, .fq-item.open .fq-q::before { transform: scaleY(1); }
+.fq-no { display: inline-block; color: var(--gold); transition: transform .35s ease; }
+.fq-item:hover .fq-no { transform: translateX(4px); }
 .fq-qt { flex: 1; min-width: 0; }
-.fq-ico { position: relative; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: var(--fq-tint); transition: background 0.3s ease; }
-.fq-item.open .fq-ico { background: #fff; }
-.fq-ico::before, .fq-ico::after {
-    content: ""; position: absolute; left: 50%; top: 50%; width: 14px; height: 2px;
-    background: var(--fq-green); border-radius: 2px; transform: translate(-50%, -50%); transition: transform 0.3s ease;
-}
+.fq-ico { position: relative; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #f7ecd5; transition: transform .4s ease, background-color .35s ease; }
+.fq-item:hover .fq-ico { transform: rotate(90deg); }
+.fq-item.open .fq-ico { background: var(--gold); }
+.fq-ico::before, .fq-ico::after { content: ""; position: absolute; left: 50%; top: 50%; width: 13px; height: 2px; background: var(--gold); transform: translate(-50%, -50%); transition: transform .3s ease, background-color .3s ease; }
 .fq-ico::after { transform: translate(-50%, -50%) rotate(90deg); }
-.fq-item.open .fq-ico::after { transform: translate(-50%, -50%) rotate(0deg); }
-.fq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s ease; }
+.fq-item.open .fq-ico::before, .fq-item.open .fq-ico::after { background: var(--btn-ink); }
+.fq-item.open .fq-ico::after { transform: translate(-50%, -50%) rotate(0); }
+.fq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
 .fq-item.open .fq-a { grid-template-rows: 1fr; }
 .fq-a > div { overflow: hidden; }
-.fq-a p { margin: 0; padding: 0 28px 28px 62px; font-size: 16px; line-height: 1.7; color: #4a5565; }
+.fq-a p { margin: 0; padding: 0 24px 24px 58px; font-size: 15.5px; line-height: 1.75; color: var(--text); }
+@media (max-width: 991px) { .fq-wrap { grid-template-columns: 1fr; gap: 34px; } .fq-left { position: static; } }
+@media (max-width: 575px) { .fq-q { padding: 18px 16px; font-size: 18px; } .fq-a p { padding: 0 16px 20px; } }
 
-/* cream fade into the torn footer edge */
-.flow .fq-section { padding-bottom: 24px !important; }
-.flow .fq-section::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -5vw; height: 14vw; z-index: -1; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(239,230,211,0) 0, rgba(239,230,211,.55) 45%, rgba(239,230,211,.92) 80%, #efe6d3 100%);
+@media (prefers-reduced-motion: reduce) {
+    .pk-card:hover, .tm-card:hover { transform: none; }
+    .pk-card:hover .pk-media, .pk-card:hover .pk-body, .tm-card:hover .tm-stars i { transform: none; }
+    .tm-card:hover .tm-wave path { animation: none; }
+    .tm-card:hover .tm-pin { left: 50%; }
+    .rv-ready .cs.in .tm-card { animation: none; }
 }
 
-@media (max-width: 991px) {
-    .fq-left { position: static; padding: 0 12px 24px; }
-    .fq-ask { padding: 5px 5px 5px 18px; gap: 10px; font-size: 14px; }
-    .fq-ask .fq-ask-ico { width: 30px; height: 30px; font-size: 11px; }
-    .fq-list { padding: 0 12px; }
-}
-@media (max-width: 575px) {
-    .fq-left .section-title h2 { font-size: 26px !important; }
-    .fq-text { font-size: 14px; line-height: 1.6; margin-bottom: 18px; }
-    .fq-google { margin-top: 22px; padding: 12px 16px; }
-    .fq-list { gap: 10px; }
-    .fq-item { border-radius: 16px; }
-    .fq-q { padding: 14px; font-size: 14px; gap: 10px; }
-    .fq-ico { flex-basis: 28px; width: 28px; height: 28px; }
-    .fq-ico::before, .fq-ico::after { width: 11px; }
-    .fq-a p { padding: 0 14px 16px; font-size: 13.5px; line-height: 1.6; }
-}
-
-/* =====================================================================
-   DESKTOP: faded side pictures (same style as Home)
-   ===================================================================== */
-@media (min-width: 992px) {
-
-    /* containers sit above the dotted road */
-    .flow :is(.about-story, .sv-section, .pk-section, .tc-section, .pc-section, .fq-section) > .container {
-        position: relative; z-index: 2;
-    }
-
-    /* ---- Our Story: waterfall on the left, text left, collage right ---- */
-    .about-story .row { flex-direction: row-reverse; }
-    .about-story .container .row {
-        transform: translateX(max(0px, min(12vw, calc((100vw - 100%) / 2 - 24px))));
-    }
-    .st-left-img {
-        display: block; position: absolute; left: 0; top: 3vw;
-        width: 52vw; height: calc(100% + 6vw);
-        object-fit: cover; object-position: 30% 55%;
-        pointer-events: none; z-index: -1;
-        -webkit-mask-image:
-            linear-gradient(to right, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, transparent 8%, rgba(0,0,0,.2) 20%, rgba(0,0,0,.5) 34%, rgba(0,0,0,.85) 50%, #000 62%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to right, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, transparent 8%, rgba(0,0,0,.2) 20%, rgba(0,0,0,.5) 34%, rgba(0,0,0,.85) 50%, #000 62%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
-                mask-composite: intersect;
-    }
-    .about-story .st-text { font-weight: 500; }
-
-    /* ---- Services: Varkala on the left, card on the right ---- */
-    .flow .sv-section { overflow: visible !important; }
-    .flow .sv-section .container {
-        width: 100% !important; max-width: none !important; margin: 0 !important;
-        padding-left: 24px !important; padding-right: 90px !important;
-    }
-    .flow .sv-section .section-title,
-    .flow .sv-section .sv-cards {
-        width: min(var(--sv-w), 100%) !important; max-width: none !important;
-        margin-left: auto !important; margin-right: 0 !important; box-sizing: border-box;
-    }
-    .sv-left-img {
-        display: block; position: absolute; left: -2vw; top: 1.5vw;
-        width: 54vw; height: calc(100% + 4vw);
-        object-fit: cover; object-position: 30% 50%;
-        pointer-events: none; z-index: -1;
-        -webkit-mask-image:
-            linear-gradient(to right, #000 0, #000 72%, rgba(0,0,0,.5) 88%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 84%, rgba(0,0,0,.5) 94%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to right, #000 0, #000 72%, rgba(0,0,0,.5) 88%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.5) 6%, #000 16%, #000 84%, rgba(0,0,0,.5) 94%, transparent 100%);
-                mask-composite: intersect;
-    }
-
-    /* ---- Packages: cards on the left, wildlife picture on the right ---- */
-    .flow .pk-section { overflow: visible !important; }
-    .flow .pk-section .container {
-        width: 60% !important; max-width: none !important;
-        margin-left: 0 !important; margin-right: auto !important;
-        padding-left: 40px !important; padding-right: 20px !important;
-    }
-    .pk-right-img {
-        display: block; position: absolute; right: -2vw; top: -4vw;
-        width: 72vw; height: calc(100% + 12vw);
-        object-fit: cover; object-position: 70% 50%;
-        pointer-events: none; z-index: -1;
-        -webkit-mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.55) 65%, rgba(0,0,0,.2) 85%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.6) 6%, #000 16%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.55) 65%, rgba(0,0,0,.2) 85%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.6) 6%, #000 16%, #000 78%, rgba(0,0,0,.5) 90%, transparent 100%);
-                mask-composite: intersect;
-    }
-
-    /* ---- Terms: Bekal Fort on the left ---- */
-    .flow .tc-section { overflow: visible; }
-    .tc-left-img {
-        display: block; position: absolute; left: -3vw; top: 2vw;
-        width: 52vw; height: calc(100% + 4vw);
-        object-fit: cover; object-position: 30% 50%;
-        pointer-events: none; z-index: -1; opacity: 0.9;
-        -webkit-mask-image:
-            linear-gradient(to right, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to right, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
-                mask-composite: intersect;
-    }
-
-    /* ---- Testimonials: darkened Kovalam behind the intro, white intro text ---- */
-    .pc-left-img {
-        display: block; position: absolute; left: -2vw; top: 0;
-        width: 42vw; height: 100%;
-        object-fit: cover; object-position: 40% 55%;
-        pointer-events: none; z-index: -1; filter: brightness(0.55) saturate(1.05);
-        -webkit-mask-image:
-            linear-gradient(to right, #000 0, #000 62%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to right, #000 0, #000 62%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-                mask-composite: intersect;
-    }
-    .flow .pc-intro .pc-eyebrow,
-    .flow .pc-intro .pc-heading,
-    .flow .pc-intro .pc-sub { color: #ffffff !important; }
-    .flow .pc-intro .pc-heading { font-weight: 400; }
-
-    /* ---- FAQ: backwaters on the right ---- */
-    .fq-right-img {
-        display: block; position: absolute; right: -3vw; top: 4vw;
-        width: 44vw; height: calc(100% - 4vw);
-        object-fit: cover; object-position: 50% 60%;
-        pointer-events: none; z-index: -1; opacity: 0.85;
-        -webkit-mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 75%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.25) 15%, rgba(0,0,0,.7) 32%, #000 50%, #000 82%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 75%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, rgba(0,0,0,.25) 15%, rgba(0,0,0,.7) 32%, #000 50%, #000 82%, transparent 100%);
-                mask-composite: intersect;
-    }
-}
-@media (min-width: 992px) and (max-width: 1399px) {
-    .about-story .st-grid { gap: 10px; }
-}
-
-/* =====================================================================
-   ROUTE MAP: dotted road connecting the pictures (desktop only)
-   ===================================================================== */
-.rt-layer { position: absolute; inset: 0; z-index: auto; pointer-events: none; }
-.rt-svg { position: absolute; left: 0; top: 0; overflow: visible; z-index: 0; }
-.rt-ghost, .rt-dots { fill: none; stroke: #c9972b; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1 12; }
-.rt-ghost { opacity: .28; }
-.rt-dots { filter: drop-shadow(0 0 2px rgba(255,255,255,.95)); }
-.rt-pin {
-    position: absolute; z-index: 50; transform: translate(-50%, -100%) scale(.6);
-    opacity: .35; transition: opacity .5s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
-}
-.rt-pin.on { opacity: 1; transform: translate(-50%, -100%) scale(1); }
-.rt-pin i { display: block; font-size: 36px; line-height: 1; color: var(--nav-green, #1F5B3A); filter: drop-shadow(0 3px 4px rgba(0,0,0,.35)); }
-.rt-pin::after {
-    content: ""; position: absolute; left: 50%; bottom: -5px; width: 18px; height: 7px;
-    margin-left: -9px; border-radius: 50%; background: rgba(31, 91, 58, .35);
-}
-.rt-pin.on::after { animation: rtPulse 2s ease-out infinite; }
-@keyframes rtPulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.6); opacity: 0; } }
-.rt-pin b {
-    position: absolute; top: 4px; white-space: nowrap; padding: 5px 12px; border-radius: 30px;
-    background: #fff; color: var(--nav-green, #1F5B3A); font-size: 13px; font-weight: 600; line-height: 1;
-    box-shadow: 0 4px 12px rgba(0,0,0,.18);
-}
-.rt-pin.to-right b { left: calc(100% + 8px); }
-.rt-pin.to-left b { right: calc(100% + 8px); }
-.rt-puck {
-    position: absolute; z-index: 50; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%;
-    background: var(--nav-green, #1F5B3A); border: 3px solid #fff;
-    box-shadow: 0 0 0 0 rgba(31,91,58,.5), 0 3px 8px rgba(0,0,0,.35); animation: rtPuck 1.8s ease-out infinite;
-}
-@keyframes rtPuck { to { box-shadow: 0 0 0 14px rgba(31,91,58,0), 0 3px 8px rgba(0,0,0,.35); } }
-@media (max-width: 991px) { .rt-layer { display: none !important; } }
-@media (prefers-reduced-motion: reduce) { .rt-pin, .rt-pin.on { transition: none; } .rt-pin.on::after, .rt-puck { animation: none; } }
-
-/* =====================================================================
-   MOBILE / TABLET: torn picture band above each title (same as Home)
-   ===================================================================== */
-@media (max-width: 991px) {
-    .flow { --bandp: 46vw; --bandgap: 5vw; }
-
-    .flow :is(.sv-section, .pk-section, .tc-section, .pc-section, .fq-section) {
-        overflow: visible !important;
-        margin-top: var(--bandgap) !important;
-        padding-top: calc(var(--bandp) + 1vw) !important;
-        padding-bottom: 9vw !important;
-    }
-    .flow .about-story { padding-top: 24px !important; padding-bottom: 9vw !important; }
-    .flow .fq-section { padding-bottom: 24px !important; }
-
-    /* the picture becomes a band above the title, torn at top and bottom */
-    .sv-left-img, .pk-right-img, .tc-left-img, .pc-left-img, .fq-right-img {
-        display: block !important;
-        position: absolute !important;
-        left: 0 !important; right: 0 !important; top: 0 !important; bottom: auto !important;
-        width: 100% !important; max-width: none !important;
-        height: var(--bandp) !important;
-        object-fit: cover; opacity: 1; z-index: -1 !important; pointer-events: none;
-        filter: none !important;
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045 0.06' numOctaves='3' seed='7' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='44' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.8'/%3E%3C/filter%3E%3Crect x='-60' y='36' width='520' height='168' fill='white' filter='url(%23t)'/%3E%3C/svg%3E") !important;
-                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 240' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045 0.06' numOctaves='3' seed='7' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='44' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.8'/%3E%3C/filter%3E%3Crect x='-60' y='36' width='520' height='168' fill='white' filter='url(%23t)'/%3E%3C/svg%3E") !important;
-        -webkit-mask-size: 100% 100% !important;
-                mask-size: 100% 100% !important;
-        -webkit-mask-repeat: no-repeat !important;
-                mask-repeat: no-repeat !important;
-        -webkit-mask-position: center !important;
-                mask-position: center !important;
-    }
-    .sv-left-img { object-position: 30% 50%; }
-    .pk-right-img { object-position: 70% 50%; }
-    .tc-left-img { object-position: 30% 50%; }
-    .pc-left-img { object-position: 40% 55%; }
-    .fq-right-img { object-position: 50% 60%; }
-    .st-left-img { display: none !important; }
-
-    /* titles + descriptions: dark text, same gap from the screen edge */
-    .flow .section-title { padding: 4px 18px !important; }
-    .flow .section-title h2 { font-weight: 400 !important; }
-    .flow .sv-section .section-title,
-    .flow .pk-section .section-title,
-    .flow .tc-section .section-title { text-align: center; }
-    .flow .pc-eyebrow, .flow .pc-heading, .flow .pc-sub, .flow .fq-text { color: #12281f !important; }
-    .flow .pc-intro { padding: 0 18px 20px; }
-    .flow .about-story .section-title,
-    .flow .about-story .ab-tagrow { text-align: left; }
-    .flow .about-story .ab-title-wrap { padding: 4px 0 !important; }
-    .about-story .row { flex-direction: row; }
-}
-@media (max-width: 575px) {
-    .flow { --bandp: 56vw; --bandgap: 6vw; }
-    .flow .section-row { margin-bottom: 22px !important; }
-    .pk-section .section-title h2 { font-size: 28px !important; }
-    .pk-section .section-title p { font-size: 14px; }
-}
-
-/* =====================================================================
-   MOBILE / TABLET: sparse travel icon pattern behind the page
-   ===================================================================== */
-@media (max-width: 991px) {
-    .flow::before {
-        content: "";
-        display: block;
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        opacity: .16;
-        background-repeat: repeat;
-        background-size: 560px 560px;
-        background-position: 0 0;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Cdefs%3E%3Cg id='pin'%3E%3Cpath d='M24 44C24 44 10 30 10 20a14 14 0 0 1 28 0C38 30 24 44 24 44Z'/%3E%3Ccircle cx='24' cy='20' r='5'/%3E%3C/g%3E%3Cg id='cmp'%3E%3Ccircle cx='24' cy='24' r='19'/%3E%3Cpath d='M32 16L27 27 16 32 21 21Z'/%3E%3Cpath d='M24 5V8M24 40V43M5 24H8M40 24H43'/%3E%3C/g%3E%3Cg id='pln'%3E%3Cpath d='M45 5L4 22l15 5 5 15Z'/%3E%3Cpath d='M45 5L19 27'/%3E%3C/g%3E%3Cg id='plm'%3E%3Cpath d='M22 44C22 34 24 26 28 18'/%3E%3Cpath d='M28 18C20 9 11 11 7 18M28 18C28 8 36 4 42 8M28 18C36 14 44 20 45 27M28 18C22 20 18 26 18 31'/%3E%3Cpath d='M14 44H34'/%3E%3C/g%3E%3Cg id='bt'%3E%3Cpath d='M24 5V32M24 8L40 30H24M24 14L11 30H24'/%3E%3Cpath d='M6 36H42L38 43H10Z'/%3E%3C/g%3E%3Cg id='mt'%3E%3Cpath d='M2 41L18 14 28 30 34 22 46 41Z'/%3E%3Ccircle cx='37' cy='11' r='4'/%3E%3C/g%3E%3C/defs%3E%3Cg fill='none' stroke='%23c9972b' stroke-width='1.8' stroke-linecap='round' stroke-dasharray='1 7'%3E%3Cpath d='M100 100C150 160 190 200 220 262'/%3E%3Cpath d='M420 130C470 190 440 250 490 310'/%3E%3Cpath d='M130 450C200 500 260 480 300 490'/%3E%3C/g%3E%3Cg fill='%23c9972b'%3E%3Ccircle cx='330' cy='380' r='2.5'/%3E%3Ccircle cx='560' cy='500' r='2.5'/%3E%3Ccircle cx='40' cy='250' r='2.5'/%3E%3C/g%3E%3Cg fill='none' stroke='%231F5B3A' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cuse href='%23pin' transform='translate(60 50) rotate(-8 24 24)'/%3E%3Cuse href='%23pln' transform='translate(380 90) rotate(6 24 24)'/%3E%3Cuse href='%23cmp' transform='translate(210 250) rotate(10 24 24)'/%3E%3Cuse href='%23plm' transform='translate(470 300) rotate(-4 24 24)'/%3E%3Cuse href='%23bt' transform='translate(70 420) rotate(4 24 24)'/%3E%3Cuse href='%23mt' transform='translate(300 470) rotate(-5 24 24)'/%3E%3C/g%3E%3C/svg%3E");
-    }
-    .flow { padding-bottom: 13vw !important; }
-    .flow .fq-section::after { bottom: -13vw; height: 28vw; }
-    .flow > * { position: relative; }
-}
-@media (max-width: 575px) { .flow::before { background-size: 460px 460px; opacity: .18; } }
-
-/* =====================================================================
-   FOOTER: torn-paper top edge (same as Home)
-   ===================================================================== */
+/* ===================== FOOTER: torn-paper top edge ===================== */
+:root { --footer-gap: #e8d3b0; } /* matches the last band (FAQ = tan). If you change the last band, change this too */
+html, body { background: var(--footer-gap) !important; }
 .footer-main {
-    --torn-h: 70px;
-    position: relative;
-    border-radius: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    overflow: visible !important;
-    z-index: 2;
-    -webkit-mask-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(#000, #000) !important;
-            mask-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-        linear-gradient(#000, #000) !important;
-    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-            mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-    -webkit-mask-position: top left, bottom left !important;
-            mask-position: top left, bottom left !important;
-    -webkit-mask-repeat: no-repeat !important;
-            mask-repeat: no-repeat !important;
-    -webkit-mask-composite: source-over !important;
-            mask-composite: add !important;
+    --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important; mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+    -webkit-mask-position: top left, bottom left !important; mask-position: top left, bottom left !important;
+    -webkit-mask-repeat: no-repeat !important; mask-repeat: no-repeat !important;
+    -webkit-mask-composite: source-over !important; mask-composite: add !important;
 }
-.footer-main > .container { padding-top: calc(var(--torn-h) * 0.75 + 30px) !important; }
+.footer-main > .container { padding-top: calc(var(--torn-h) * .75 + 30px) !important; }
 @media (min-width: 992px) {
     .footer-main {
         --torn-h: 110px;
-        -webkit-mask-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-            linear-gradient(#000, #000) !important;
-                mask-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-            linear-gradient(#000, #000) !important;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
     }
 }
 </style>
@@ -941,10 +369,9 @@ html, body { background: var(--footer-gap) !important; }
 
 {% block content %}
 
-<!-- Hero: Packages-style title + breadcrumb, full-bleed, torn-paper bottom edge -->
+<!-- Hero (unchanged) -->
 <div class="ah-wrap">
 <div class="page-header page-hero">
-
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -952,7 +379,6 @@ html, body { background: var(--footer-gap) !important; }
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
     </div>
-
     <div class="container"><div class="row"><div class="col-lg-12">
         <div class="page-header-box">
             <h1 class="text-anime-style-3" data-cursor="-opaque">About Us</h1>
@@ -965,566 +391,356 @@ html, body { background: var(--footer-gap) !important; }
 </div>
 </div>
 
-<!-- ===== ONE CONTINUOUS PAGE: everything below the hero ===== -->
 <div class="flow">
 
-<!-- Our Story -->
-<div class="about-story">
-    <img class="st-left-img" src="{% static 'malabar-static/wf.png' %}" alt="" draggable="false">
-    <div class="container">
-        <div class="row">
+<!-- Torn-paper outline filter (used by cards + FAQ). Rougher edge: raise scale="20" / "5". -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+        <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="11" result="big"/>
+            <feDisplacementMap in="SourceGraphic" in2="big" scale="20" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="4" result="fine"/>
+            <feDisplacementMap in="d1" in2="fine" scale="5" xChannelSelector="G" yChannelSelector="R" result="d2"/>
+            <feGaussianBlur in="d2" stdDeviation="0.45"/>
+        </filter>
+    </defs>
+</svg>
 
-            <div class="col-lg-6">
-                <div class="ab-collage">
-                    <svg class="ab-leaf ab-leaf-1" viewBox="0 0 60 120" fill="currentColor" aria-hidden="true">
-                        <path d="M30 118 C28 80 30 40 34 4" stroke="currentColor" stroke-width="2" fill="none"/>
-                        <path d="M30 104 C12 98 6 84 4 72 C18 74 28 88 30 104Z"/>
-                        <path d="M30 88 C48 82 54 68 56 56 C42 58 32 72 30 88Z"/>
-                        <path d="M31 70 C14 64 8 50 6 38 C20 40 30 54 31 70Z"/>
-                        <path d="M32 52 C48 46 53 34 54 24 C42 26 34 38 32 52Z"/>
-                        <path d="M33 34 C20 30 15 20 14 10 C24 12 31 22 33 34Z"/>
-                    </svg>
-                    <svg class="ab-leaf ab-leaf-2" viewBox="0 0 60 120" fill="currentColor" aria-hidden="true">
-                        <path d="M30 118 C28 80 30 40 34 4" stroke="currentColor" stroke-width="2" fill="none"/>
-                        <path d="M30 104 C12 98 6 84 4 72 C18 74 28 88 30 104Z"/>
-                        <path d="M30 88 C48 82 54 68 56 56 C42 58 32 72 30 88Z"/>
-                        <path d="M31 70 C14 64 8 50 6 38 C20 40 30 54 31 70Z"/>
-                        <path d="M32 52 C48 46 53 34 54 24 C42 26 34 38 32 52Z"/>
-                        <path d="M33 34 C20 30 15 20 14 10 C24 12 31 22 33 34Z"/>
-                    </svg>
-
-                    <div class="ab-main">
-                        <div class="ab-frame">
-                            <figure class="image-anime reveal"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabaroutes"></figure>
-                        </div>
-                    </div>
-                    <div class="ab-second">
-                        <figure class="image-anime reveal"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar travel"></figure>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="about-us-content">
-                    <div class="ab-tagrow wow fadeInUp">
-                        <span class="ab-tag"><i class="fa-solid fa-leaf"></i>About Us</span>
-                        <span class="ab-tagline"></span>
-                    </div>
-
-                    <div class="section-title ab-title-wrap">
-                        <h2 class="text-anime-style-3" data-cursor="-opaque">Our Story <i class="fa-solid fa-leaf"></i></h2>
-
-                        <p class="st-text collapsed wow fadeInUp" id="stText" data-wow-delay="0.2s">We cater to the domestic travel enthusiasts in Kerala, mainly focusing on north Kerala who wishes to travel to places abroad or to unexplored destinations in Malabar region. Our main packages include All Kerala tour packages, North Kerala packages, South Kerala packages, hills, beaches and backwater packages, and family and group holiday packages. We are committed to offering travel services of the highest quality, combining our energy and enthusiasm, with our years of experience. Our greatest satisfaction comes in serving large numbers of satisfied clients who have experienced the joys and inspiration of travel. Knowledge of our field paired with excellence in customer service is our mantra. Our goal is to exceed your expectations every time with outstanding service. We are led by an experienced management team. We will be there for you if anything unexpected occurs on your trip. We have the education and the experience to ensure you enjoy exceptional travel experiences throughout your lifetime. “when traveling with us &amp; explore the other sides of gods own country”.</p>
-
-                        <button type="button" class="st-more" id="stMore" aria-expanded="false" aria-controls="stText">
-                            <span>Read more</span> <i class="fa-solid fa-chevron-down"></i>
-                        </button>
-                    </div>
-                    <div class="ab-bar"></div>
-
-                    <div class="st-route wow fadeInUp" data-wow-delay="0.4s">
-                        <div class="st-grid">
-                            <div class="st-item">
-                                <i class="fa-solid fa-award st-ico"></i>
-                                <h4>Top quality</h4>
-                                <p>Travel services of the highest quality</p>
-                            </div>
-                            <div class="st-item">
-                                <i class="fa-solid fa-headset st-ico"></i>
-                                <h4>Great service</h4>
-                                <p>Excellence in customer service is our mantra</p>
-                            </div>
-                            <div class="st-item">
-                                <i class="fa-solid fa-user-tie st-ico"></i>
-                                <h4>Expert team</h4>
-                                <p>Led by an experienced management team</p>
-                            </div>
-                            <div class="st-item">
-                                <i class="fa-solid fa-shield-heart st-ico"></i>
-                                <h4>Always with you</h4>
-                                <p>We are there if anything unexpected occurs on your trip</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ab-actions wow fadeInUp" data-wow-delay="0.6s">
-                        <a href="{% url 'contact' %}" class="ab-btn ab-btn-fill">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
-                        <a href="#" class="ab-btn ab-btn-line open-booking">Book Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-<!-- Our Story End -->
-
-<!-- Malabaroutes Services (one separate card per service) -->
-<div class="sv-section">
-    <img class="sv-left-img" src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="" draggable="false">
-    <div class="container">
-        <div class="row section-row align-items-center">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <h2 class="text-anime-style-3" data-cursor="-opaque">Malabaroutes Services</h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">We offer products at a reasonable price, at best quality, always reliable support.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="sv-cards" id="svCards">
-            <div class="sv-stage">
-
-                <article class="sv-c on">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 01 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-file-circle-check"></i></span>
-                        <h3>Visa</h3>
-                        <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/back.jpg' %}" alt="Visa" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 02 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-passport"></i></span>
-                        <h3>Passport</h3>
-                        <p>Fast processing of passport applications, renewals and replacement.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/bacck.png' %}" alt="Passport" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 03 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-ticket"></i></span>
-                        <h3>Tickets</h3>
-                        <p>We take care of your tickets at the lowest cost available.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/kovalam.png' %}" alt="Tickets" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 04 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-ship"></i></span>
-                        <h3>House Boat</h3>
-                        <p>Explore Kerala backwaters on a perfect houseboat cruise with tasty food and awesome sightseeing.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/mr33.png' %}" alt="House Boat" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 05 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-suitcase-rolling"></i></span>
-                        <h3>Packages</h3>
-                        <p>International and national holiday packages at the best prices.</p>
-                        <a href="{% url 'packages' %}" class="sv-c-btn">View Packages <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/wls.png' %}" alt="Packages" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 06 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-map-location-dot"></i></span>
-                        <h3>Travel Guides</h3>
-                        <p>Local experts help you discover Malabar's culture and hidden places.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/hill.png' %}" alt="Travel Guides" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 07 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-car"></i></span>
-                        <h3>Car Rentals</h3>
-                        <p>Never spend your memorable moments looking for a rental car, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/Golden-hour_Kochi_fishing_nets.png' %}" alt="Car Rentals" draggable="false"></div>
-                </article>
-
-                <article class="sv-c">
-                    <div class="sv-c-text">
-                        <span class="sv-c-count">Service 08 / 08</span>
-                        <span class="sv-c-ico"><i class="fa-solid fa-taxi"></i></span>
-                        <h3>Taxi Services</h3>
-                        <p>Never spend your memorable moments looking for a taxi, we'll take care of that.</p>
-                        <a href="{% url 'contact' %}" class="sv-c-btn">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                    <div class="sv-c-img"><img src="{% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' %}" alt="Taxi Services" draggable="false"></div>
-                </article>
-
-            </div>
-
-            <div class="sv-c-nav">
-                <button type="button" class="sv-c-arrow sv-c-prev" aria-label="Previous service"><i class="fa-solid fa-arrow-left"></i></button>
-                <div class="sv-c-dots"></div>
-                <button type="button" class="sv-c-arrow sv-c-next" aria-label="Next service"><i class="fa-solid fa-arrow-right"></i></button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Malabaroutes Services End -->
-
-{% if featured_packages %}
-<!-- Popular Packages -->
-<div class="pk-section">
-    <img class="pk-right-img" src="{% static 'malabar-static/wls.png' %}" alt="" draggable="false">
-    <div class="container">
-
-        <div class="row section-row align-items-center">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <h2 class="text-anime-style-3" data-cursor="-opaque">Popular Packages</h2>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">Handpicked tour packages across Malabar and Kerala, planned with care and priced fairly.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="ms-services pk-carousel-wrap">
-            <div class="ms-carousel" id="pkCarousel">
-                <div class="ms-viewport">
-                    <div class="ms-track">
-{% for p in featured_packages %}
-<div class="ms-slide" data-filter="{{ p.category|slugify }}">
-    <a href="{% url 'package_detail' p.slug %}" class="ds-card pk-ds-card" draggable="false">
-        {% if p.main_image %}
-        <img src="{{ p.main_image.url }}"
-             srcset="{{ p.main_image|srcset }}"
-             sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
-             alt="{{ p.name }}" loading="lazy" decoding="async" draggable="false">
-        {% endif %}
-
-        {% if p.duration %}
-        <span class="pk-ds-tag"><i class="fa-regular fa-calendar-days"></i>{{ p.duration }}</span>
-        {% endif %}
-
-        <div class="ds-overlay">
-            <span class="ds-pin"><i class="fa-solid fa-suitcase-rolling"></i></span>
-            <h3 class="ds-name">{{ p.name }}</h3>
-            <span class="ds-go"><i class="fa-solid fa-arrow-right"></i></span>
-        </div>
-    </a>
-</div>
-{% endfor %}
-                    </div>
-                </div>
-
-                <div class="ms-nav">
-                    <button type="button" class="ms-arrow ms-prev" aria-label="Previous"><i class="fa-solid fa-arrow-left"></i></button>
-                    <div class="ms-dots"></div>
-                    <button type="button" class="ms-arrow ms-next" aria-label="Next"><i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="pk-more"><a href="{% url 'packages' %}">View All Packages <i class="fa-solid fa-arrow-right"></i></a></div>
-
-    </div>
-</div>
-<!-- Popular Packages End -->
-{% endif %}
-
-<!-- Terms & Conditions -->
-<div class="tc-section">
-    <img class="tc-left-img" src="{% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' %}" alt="" draggable="false">
-    <div class="container">
-
-        <div class="row section-row align-items-center">
-            <div class="col-lg-12">
-                <div class="section-title section-title-center">
-                    <div class="tc-title-row">
-                        <span class="tc-line"></span>
-                        <h2 class="text-anime-style-3" data-cursor="-opaque">Terms &amp; Conditions</h2>
-                        <span class="tc-line"></span>
-                    </div>
-                    <p class="wow fadeInUp" data-wow-delay="0.2s">Please read the terms and conditions carefully before booking your trip with us.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="tc-grid">
-            <div class="tc-item wow fadeInUp">
-                <span class="tc-icon"><i class="fa-solid fa-calendar-check"></i></span>
-                <span class="tc-no">01</span>
-                <div class="tc-text">
-                    <h3>Booking Confirmation</h3>
-                    <p>Your booking is confirmed when we send a written confirmation after receiving the agreed payment.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp">
-                <span class="tc-icon"><i class="fa-solid fa-coins"></i></span>
-                <span class="tc-no">02</span>
-                <div class="tc-text">
-                    <h3>Prices &amp; Payments</h3>
-                    <p>Your itinerary or invoice lists the trip price, included services, exclusions and payment due dates.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
-                <span class="tc-icon"><i class="fa-solid fa-circle-xmark"></i></span>
-                <span class="tc-no">03</span>
-                <div class="tc-text">
-                    <h3>Cancellations &amp; Refunds</h3>
-                    <p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send change or cancellation requests in writing.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.1s">
-                <span class="tc-icon"><i class="fa-solid fa-route"></i></span>
-                <span class="tc-no">04</span>
-                <div class="tc-text">
-                    <h3>Itinerary Changes</h3>
-                    <p>Weather, road conditions, safety issues or local restrictions may affect the route or activity. We will share updates and available alternatives.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
-                <span class="tc-icon"><i class="fa-solid fa-passport"></i></span>
-                <span class="tc-no">05</span>
-                <div class="tc-text">
-                    <h3>Traveller Documents &amp; Responsibilities</h3>
-                    <p>Travellers are responsible for valid travel documents, personal health needs and following local guidelines.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.2s">
-                <span class="tc-icon"><i class="fa-solid fa-shield-halved"></i></span>
-                <span class="tc-no">06</span>
-                <div class="tc-text">
-                    <h3>Travel Insurance &amp; Personal Belongings</h3>
-                    <p>We recommend suitable travel insurance. Please keep your belongings secure throughout the journey.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
-                <span class="tc-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
-                <span class="tc-no">07</span>
-                <div class="tc-text">
-                    <h3>Unforeseen Events</h3>
-                    <p>Events outside reasonable control may affect travel plans. We will provide updates and discuss practical options.</p>
-                </div>
-            </div>
-            <div class="tc-item wow fadeInUp" data-wow-delay="0.3s">
-                <span class="tc-icon"><i class="fa-solid fa-comments"></i></span>
-                <span class="tc-no">08</span>
-                <div class="tc-text">
-                    <h3>Questions &amp; Complaints</h3>
-                    <p>Contact our team promptly if you have a concern so we can help.</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-<!-- Terms & Conditions End -->
-
-{% if testimonials %}
-<!-- Testimonials: Postcards from the road -->
-<div class="pc-section">
-    <img class="pc-left-img" src="{% static 'malabar-static/kovalam.png' %}" alt="" draggable="false">
+<!-- ============ OUR STORY (cream) ============ -->
+<section class="about-us sec sec-cream">
     <div class="container">
         <div class="row align-items-center">
 
-            <div class="col-lg-4">
-                <div class="pc-intro">
-                    <div class="pc-eyebrow wow fadeInUp">Testimonials</div>
-                    <div class="section-title"><h2 class="pc-heading text-anime-style-3" data-cursor="-opaque">Malabar, remembered</h2></div>
-                    <p class="pc-sub wow fadeInUp" data-wow-delay="0.2s">Small moments our guests carried home.</p>
-                    <svg class="pc-swirl" viewBox="0 0 170 40" fill="none" aria-hidden="true">
-                        <path d="M2 30 C30 36 55 6 85 16 C115 26 135 10 168 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                    </svg>
-
-                    <!-- Google rating badge: change the number and --pct (rating / 5 x 100) to update -->
-                    <div class="pc-google wow fadeInUp" data-wow-delay="0.3s" aria-label="Rated 4.4 out of 5 on Google">
-                        <span class="pc-g-logo" aria-hidden="true"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
-                        <div class="pc-g-row">
-                            <span class="pc-g-score">4.4</span>
-                            <span class="pc-g-stars" style="--pct: 88%;" aria-hidden="true">
-                                <span class="pc-g-base"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-                                <span class="pc-g-fill"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-                            </span>
-                        </div>
-                    </div>
+            <div class="col-lg-6">
+                <div class="ab-collage rv">
+                    <div class="ab-photo ab-photo-1"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabaroutes"></div>
+                    <div class="ab-photo ab-photo-2"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar travel"></div>
                 </div>
             </div>
 
-            <div class="col-lg-8">
-                <div class="ms-services pc-wrap">
-                    <div class="ms-carousel" id="pcCarousel">
-                        <div class="ms-viewport">
-                            <div class="ms-track">
+            <div class="col-lg-6">
+                <div class="rv" style="--d:.1s">
+                    <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>About Us</div>
+                    <h2 class="tn-title">Our Story</h2>
 
-                                {% for t in testimonials %}
-                                <div class="ms-slide">
-                                    <article class="pc-card {% cycle 'pc-t1' 'pc-t2' 'pc-t3' %}">
-                                        <div class="pc-photo">
-                                            <div class="pc-photo-img{% if not t.image %} no-photo{% endif %}">
-                                                {% if t.image %}
-                                                <img src="{{ t.image.url }}"
-                                                     srcset="{{ t.image|srcset }}"
-                                                     sizes="(max-width: 767px) 100vw, 30vw"
-                                                     alt="{{ t.name }}" draggable="false" loading="lazy" decoding="async">
-                                                {% else %}
-                                                <svg class="pc-avatar" viewBox="0 0 100 100" aria-hidden="true">
-                                                    <circle cx="50" cy="36" r="15"/>
-                                                    <path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/>
-                                                </svg>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="pc-pin">
-                                            <svg class="pc-path" viewBox="0 0 100 44" preserveAspectRatio="none" aria-hidden="true">
-                                                <path d="M0 40 C 28 40, 22 26, 50 26 S 72 40, 100 40" />
-                                            </svg>
-                                            <i class="fa-solid fa-location-dot"></i>
-                                        </div>
-                                        <div class="pc-body">
-                                            <div class="pc-stars" aria-label="5 out of 5 stars">
-                                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
-                                            </div>
-                                            <p class="pc-quote">{{ t.review|striptags|truncatewords:26 }}</p>
-                                            <div class="pc-author">{{ t.name }}</div>
-                                        </div>
-                                    </article>
-                                </div>
-                                {% endfor %}
+                    <p class="st-text collapsed" id="stText">We cater to the domestic travel enthusiasts in Kerala, mainly focusing on north Kerala who wishes to travel to places abroad or to unexplored destinations in Malabar region. Our main packages include All Kerala tour packages, North Kerala packages, South Kerala packages, hills, beaches and backwater packages, and family and group holiday packages. We are committed to offering travel services of the highest quality, combining our energy and enthusiasm, with our years of experience. Our greatest satisfaction comes in serving large numbers of satisfied clients who have experienced the joys and inspiration of travel. Knowledge of our field paired with excellence in customer service is our mantra. Our goal is to exceed your expectations every time with outstanding service. We are led by an experienced management team. We will be there for you if anything unexpected occurs on your trip. We have the education and the experience to ensure you enjoy exceptional travel experiences throughout your lifetime. “when traveling with us &amp; explore the other sides of gods own country”.</p>
+                    <button type="button" class="st-more" id="stMore" aria-expanded="false" aria-controls="stText">
+                        <span>Read more</span> <i class="fa-solid fa-chevron-down"></i>
+                    </button>
 
-                            </div>
-                        </div>
+                    <div class="ab-list">
+                        <div class="ab-item"><i class="fa-solid fa-award"></i><div><h4>Top quality</h4><p>Travel services of the highest quality</p></div></div>
+                        <div class="ab-item"><i class="fa-solid fa-headset"></i><div><h4>Great service</h4><p>Excellence in customer service is our mantra</p></div></div>
+                        <div class="ab-item"><i class="fa-solid fa-user-tie"></i><div><h4>Expert team</h4><p>Led by an experienced management team</p></div></div>
+                        <div class="ab-item"><i class="fa-solid fa-shield-heart"></i><div><h4>Always with you</h4><p>We are there if anything unexpected occurs on your trip</p></div></div>
+                    </div>
 
-                        <div class="ms-nav">
-                            <button type="button" class="ms-arrow ms-prev" aria-label="Previous"><i class="fa-solid fa-arrow-left"></i></button>
-                            <div class="ms-dots"></div>
-                            <button type="button" class="ms-arrow ms-next" aria-label="Next"><i class="fa-solid fa-arrow-right"></i></button>
-                        </div>
+                    <div class="tn-btns">
+                        <a href="{% url 'contact' %}" class="tn-btn">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="#" class="tn-btn tn-btn-line open-booking">Book Now <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
-</div>
-<!-- Testimonials End -->
+</section>
+
+<!-- ============ SERVICES (tan) ============ -->
+<section class="sec sec-tan">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Services</div>
+            <h2 class="tn-title">Malabaroutes Services</h2>
+            <p class="tn-text">We offer products at a reasonable price, at best quality, always reliable support.</p>
+        </div>
+
+        <div class="sv-grid">
+            <div class="sv-item rv">
+                <div class="sv-ico"><i class="fa-solid fa-file-circle-check"></i></div>
+                <h3>Visa</h3>
+                <p>We enable travelers to process visas easily, without the research or the frustration of dealing with different Governments.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.08s">
+                <div class="sv-ico"><i class="fa-solid fa-passport"></i></div>
+                <h3>Passport</h3>
+                <p>Fast processing of passport applications, renewals and replacement.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.16s">
+                <div class="sv-ico"><i class="fa-solid fa-ticket"></i></div>
+                <h3>Tickets</h3>
+                <p>We take care of your tickets at the lowest cost available.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.24s">
+                <div class="sv-ico"><i class="fa-solid fa-ship"></i></div>
+                <h3>House Boat</h3>
+                <p>Explore Kerala backwaters on a perfect houseboat cruise with tasty food and awesome sightseeing.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv">
+                <div class="sv-ico"><i class="fa-solid fa-suitcase-rolling"></i></div>
+                <h3>Packages</h3>
+                <p>International and national holiday packages at the best prices.</p>
+                <a href="{% url 'packages' %}">View Packages <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.08s">
+                <div class="sv-ico"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h3>Travel Guides</h3>
+                <p>Local experts help you discover Malabar's culture and hidden places.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.16s">
+                <div class="sv-ico"><i class="fa-solid fa-car"></i></div>
+                <h3>Car Rentals</h3>
+                <p>Never spend your memorable moments looking for a rental car, we'll take care of that.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="sv-item rv" style="--d:.24s">
+                <div class="sv-ico"><i class="fa-solid fa-taxi"></i></div>
+                <h3>Taxi Services</h3>
+                <p>Never spend your memorable moments looking for a taxi, we'll take care of that.</p>
+                <a href="{% url 'contact' %}">Enquire Now <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if featured_packages %}
+<!-- ============ POPULAR PACKAGES (cream, wide) ============ -->
+<section class="sec sec-cream sec-wide">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Packages</div>
+            <h2 class="tn-title">Popular Packages</h2>
+            <p class="tn-text">Handpicked tour packages across Malabar and Kerala, planned with care and priced fairly.</p>
+        </div>
+
+        <div class="cs pk-cs rv" data-carousel>
+            <div class="cs-track pk-grid">
+                {% for p in featured_packages|slice:":6" %}
+                <article class="pk-card">
+                    <div class="pk-media">
+                        <a href="{% url 'package_detail' p.slug %}" draggable="false">
+                            {% if p.main_image %}
+                            <img src="{{ p.main_image.url }}"
+                                 srcset="{{ p.main_image|srcset }}"
+                                 sizes="(max-width: 767px) 100vw, (max-width: 991px) 50vw, 33vw"
+                                 alt="{{ p.name }}" loading="lazy" decoding="async" draggable="false">
+                            {% endif %}
+                        </a>
+                        {% if p.duration %}<span class="pk-tag"><i class="fa-regular fa-calendar-days"></i>{{ p.duration }}</span>{% endif %}
+                    </div>
+                    <div class="pk-body">
+                        <h3 class="pk-title"><a href="{% url 'package_detail' p.slug %}">{{ p.name }}</a></h3>
+                        {% with n=p.name|extract_location d=p.description|extract_location %}
+                        {% with loc=n|default:d %}
+                        {% if loc %}
+                        <p class="pk-loc"><i class="fa-solid fa-location-dot"></i><span>{{ loc|truncatechars:45 }}</span></p>
+                        {% endif %}
+                        {% endwith %}
+                        {% endwith %}
+                        {% if p.description %}
+                        <p class="pk-desc">{{ p.description|striptags|truncatewords:18 }}</p>
+                        {% endif %}
+                        <div class="pk-actions">
+                            <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ p.name }}">Book Now <span class="pk-ic"><i class="fa-solid fa-ticket"></i></span></a>
+                            <a href="{% url 'package_detail' p.slug %}" class="pk-btn pk-btn-line">View More <span class="pk-ic"><i class="fa-solid fa-arrow-right"></i></span></a>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="cs-nav">
+                <button type="button" class="cs-btn cs-prev" aria-label="Previous packages"><i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" class="cs-btn cs-next" aria-label="Next packages"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <div class="tn-center"><a href="{% url 'packages' %}" class="tn-btn">View All Packages <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+</section>
 {% endif %}
 
-<!-- FAQ: left side sticks while the questions scroll -->
-<div class="fq-section">
-    <img class="fq-right-img" src="{% static 'malabar-static/bacck.png' %}" alt="" draggable="false">
+<!-- ============ TERMS & CONDITIONS (tan) ============ -->
+<section class="sec sec-tan">
     <div class="container">
-        <div class="row">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Terms</div>
+            <h2 class="tn-title">Terms &amp; Conditions</h2>
+            <p class="tn-text">Please read the terms and conditions carefully before booking your trip with us.</p>
+        </div>
 
-            <div class="col-lg-4 order-lg-2">
-                <div class="fq-left">
-                    <div class="pc-eyebrow">Question &amp; Answer</div>
-                    <div class="section-title">
-                        <h2 class="text-anime-style-3" data-cursor="-opaque">Frequently Asked Questions</h2>
-                    </div>
-                    <p class="fq-text">Answers to the things guests most often ask before booking a trip with Malabaroutes.</p>
-                    <a href="{% url 'contact' %}" class="fq-ask">Ask a Question <span class="fq-ask-ico"><i class="fa-solid fa-arrow-up-right-from-square"></i></span></a>
+        <div class="tc-grid">
+            <div class="tc-item rv">
+                <div class="tc-ico"><i class="fa-solid fa-calendar-check"></i></div>
+                <h3>Booking Confirmation</h3>
+                <p>Your booking is confirmed when we send a written confirmation after receiving the agreed payment.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.08s">
+                <div class="tc-ico"><i class="fa-solid fa-coins"></i></div>
+                <h3>Prices &amp; Payments</h3>
+                <p>Your itinerary or invoice lists the trip price, included services, exclusions and payment due dates.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.16s">
+                <div class="tc-ico"><i class="fa-solid fa-circle-xmark"></i></div>
+                <h3>Cancellations &amp; Refunds</h3>
+                <p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send change or cancellation requests in writing.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.24s">
+                <div class="tc-ico"><i class="fa-solid fa-route"></i></div>
+                <h3>Itinerary Changes</h3>
+                <p>Weather, road conditions, safety issues or local restrictions may affect the route or activity. We will share updates and available alternatives.</p>
+            </div>
+            <div class="tc-item rv">
+                <div class="tc-ico"><i class="fa-solid fa-passport"></i></div>
+                <h3>Traveller Documents &amp; Responsibilities</h3>
+                <p>Travellers are responsible for valid travel documents, personal health needs and following local guidelines.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.08s">
+                <div class="tc-ico"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Travel Insurance &amp; Belongings</h3>
+                <p>We recommend suitable travel insurance. Please keep your belongings secure throughout the journey.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.16s">
+                <div class="tc-ico"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <h3>Unforeseen Events</h3>
+                <p>Events outside reasonable control may affect travel plans. We will provide updates and discuss practical options.</p>
+            </div>
+            <div class="tc-item rv" style="--d:.24s">
+                <div class="tc-ico"><i class="fa-solid fa-comments"></i></div>
+                <h3>Questions &amp; Complaints</h3>
+                <p>Contact our team promptly if you have a concern so we can help.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-                    <div class="fq-google">
-                        <div class="fq-g-title"><span class="pc-g-logo" aria-hidden="true"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> Reviews</div>
-                        <div class="pc-g-row">
-                            <span class="pc-g-score">4.4</span>
-                            <span class="pc-g-stars" style="--pct: 88%;" aria-hidden="true">
-                                <span class="pc-g-base"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-                                <span class="pc-g-fill"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-                            </span>
+{% if testimonials %}
+<!-- ============ TESTIMONIALS (cream) ============ -->
+<section class="sec sec-cream">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Testimonials</div>
+            <h2 class="tn-title">Malabar, remembered</h2>
+            <p class="tn-text">Words from travellers who explored Kerala with us.</p>
+
+            <!-- Google rating badge: change the number and --pct (rating / 5 x 100) to update -->
+            <div class="g-badge" aria-label="Rated 4.4 out of 5 on Google">
+                <span class="g-logo" aria-hidden="true"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
+                <span class="g-score">4.4</span>
+                <span class="g-stars" style="--pct: 88%;" aria-hidden="true">
+                    <span class="g-base"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                    <span class="g-fill"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="cs rv" data-carousel>
+            <div class="cs-track tm-grid">
+                {% for t in testimonials|slice:":6" %}
+                <article class="tm-card">
+                    <div class="tm-media">
+                        <div class="tm-photo">
+                            {% if t.image %}
+                            <img src="{{ t.image.url }}"
+                                 srcset="{{ t.image|srcset }}"
+                                 sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 33vw"
+                                 alt="{{ t.name }}" loading="lazy" decoding="async" draggable="false">
+                            {% else %}
+                            <div class="tm-ph"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="36" r="15"/><path d="M20 82 C20 62 34 54 50 54 C66 54 80 62 80 82 Z"/></svg></div>
+                            {% endif %}
                         </div>
                     </div>
+
+                    <div class="tm-wave" aria-hidden="true">
+                        <i class="fa-solid fa-location-dot tm-pin"></i>
+                        <svg viewBox="0 0 100 12" preserveAspectRatio="none"><path d="M0 9 Q50 1 100 9" fill="none" stroke="#c9972b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0.1 7" vector-effect="non-scaling-stroke"/></svg>
+                    </div>
+
+                    <div class="tm-stars" aria-label="5 out of 5 stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p class="tm-quote">{{ t.review|striptags|truncatewords:26 }}</p>
+                    <div class="tm-name">{{ t.name }}</div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="cs-nav">
+                <button type="button" class="cs-btn cs-prev" aria-label="Previous testimonials"><i class="fa-solid fa-arrow-left"></i></button>
+                <button type="button" class="cs-btn cs-next" aria-label="Next testimonials"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ============ FAQ (tan) ============ -->
+<section class="sec sec-tan">
+    <div class="container">
+        <div class="fq-wrap">
+
+            <div class="fq-left rv">
+                <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Question &amp; Answer</div>
+                <h2 class="tn-title">Frequently Asked Questions</h2>
+                <p class="tn-text">Answers to the things guests most often ask before booking a trip with Malabaroutes.</p>
+                <div class="tn-btns"><a href="{% url 'contact' %}" class="tn-btn">Ask a Question <i class="fa-solid fa-arrow-right"></i></a></div>
+
+                <div class="g-badge" aria-label="Rated 4.4 out of 5 on Google">
+                    <span class="g-logo" aria-hidden="true"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
+                    <span class="g-score">4.4</span>
+                    <span class="g-stars" style="--pct: 88%;" aria-hidden="true">
+                        <span class="g-base"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                        <span class="g-fill"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                    </span>
                 </div>
             </div>
 
-            <div class="col-lg-8 order-lg-1">
-                <div class="fq-list" id="fqList">
-                    <div class="fq-item open">
-                        <button type="button" class="fq-q" aria-expanded="true">
-                            <span class="fq-no">1.</span>
-                            <span class="fq-qt">What does Malabaroutes offer?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Malabaroutes is a tour operator specialising in northern Kerala (Malabar). We arrange holiday packages, Ayurveda and wellness trips, honeymoon and student packages, and also help with visas, passports, tickets, taxis, car rentals, houseboats and travel guides.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">2.</span>
-                            <span class="fq-qt">How do I book a package?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Click any Book Now button, share your name, phone number, travel dates and number of guests, and our team will get back to you. Your booking is confirmed once we send a written confirmation after receiving the agreed payment.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">3.</span>
-                            <span class="fq-qt">Can a package be customised for me?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Yes. Honeymoon, family, student, Ayurveda or wellness trips can all be planned around you, with hotels, transport and guides taken care of.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">4.</span>
-                            <span class="fq-qt">What is included in the price?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Your itinerary or invoice lists the trip price, the included services, the exclusions and the payment due dates, so you know exactly what you are paying for.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">5.</span>
-                            <span class="fq-qt">What is your cancellation and refund policy?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send any change or cancellation request in writing.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">6.</span>
-                            <span class="fq-qt">Can the itinerary change during the trip?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Weather, road conditions, safety issues or local restrictions can sometimes affect a route or activity. If that happens, we will share updates and the available alternatives.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">7.</span>
-                            <span class="fq-qt">Do you help with visas, passports and tickets?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Yes. We help with visa processing, passport applications, renewals and replacements, and we take care of tickets at the lowest cost available.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">8.</span>
-                            <span class="fq-qt">Can you arrange taxis, car rentals and houseboats?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Yes. We can arrange taxis, rental cars and Kerala backwater houseboat cruises, so you do not have to search for them yourself.</p></div></div>
-                    </div>
-                    <div class="fq-item">
-                        <button type="button" class="fq-q" aria-expanded="false">
-                            <span class="fq-no">9.</span>
-                            <span class="fq-qt">What should I carry for the trip?</span>
-                            <span class="fq-ico" aria-hidden="true"></span>
-                        </button>
-                        <div class="fq-a"><div><p>Carry valid travel documents and any personal health essentials, and follow local guidelines. We also recommend suitable travel insurance and keeping your belongings secure throughout the journey.</p></div></div>
-                    </div>
+            <div class="fq-list" id="fqList">
+                <div class="fq-item open">
+                    <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What does Malabaroutes offer?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabaroutes is a tour operator specialising in northern Kerala (Malabar). We arrange holiday packages, Ayurveda and wellness trips, honeymoon and student packages, and also help with visas, passports, tickets, taxis, car rentals, houseboats and travel guides.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">How do I book a package?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Click any Book Now button, share your name, phone number, travel dates and number of guests, and our team will get back to you. Your booking is confirmed once we send a written confirmation after receiving the agreed payment.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">Can a package be customised for me?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. Honeymoon, family, student, Ayurveda or wellness trips can all be planned around you, with hotels, transport and guides taken care of.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">What is included in the price?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Your itinerary or invoice lists the trip price, the included services, the exclusions and the payment due dates, so you know exactly what you are paying for.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">What is your cancellation and refund policy?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send any change or cancellation request in writing.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">Can the itinerary change during the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Weather, road conditions, safety issues or local restrictions can sometimes affect a route or activity. If that happens, we will share updates and the available alternatives.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">Do you help with visas, passports and tickets?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. We help with visa processing, passport applications, renewals and replacements, and we take care of tickets at the lowest cost available.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">Can you arrange taxis, car rentals and houseboats?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. We can arrange taxis, rental cars and Kerala backwater houseboat cruises, so you do not have to search for them yourself.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">9.</span><span class="fq-qt">What should I carry for the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Carry valid travel documents and any personal health essentials, and follow local guidelines. We also recommend suitable travel insurance and keeping your belongings secure throughout the journey.</p></div></div>
                 </div>
             </div>
 
         </div>
     </div>
-</div>
-<!-- FAQ End -->
+</section>
 
 </div>
 <!-- ===== /flow ===== -->
-
 {% endblock %}
 
 {% block extra_js %}
@@ -1564,105 +780,109 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Services: one card per service, switches automatically -->
-<script>
-(function () {
-    var box = document.getElementById('svCards');
-    if (!box) return;
-    var cards = Array.prototype.slice.call(box.querySelectorAll('.sv-c'));
-    var dotsBox = box.querySelector('.sv-c-dots');
-    var DUR = 2500, cur = 0, timer = null;
-
-    var dots = cards.map(function (c, k) {
-        var d = document.createElement('button');
-        d.type = 'button';
-        d.setAttribute('aria-label', 'Show service ' + (k + 1));
-        d.addEventListener('click', function () { show(k); start(); });
-        dotsBox.appendChild(d);
-        return d;
-    });
-
-    function show(i) {
-        var next = (i + cards.length) % cards.length;
-        if (next === cur && cards[cur].classList.contains('on')) return;
-        cards.forEach(function (c, k) {
-            c.classList.toggle('on', k === next);
-            c.classList.toggle('out', k !== next && k < next);
-        });
-        dots.forEach(function (d, k) { d.classList.toggle('active', k === next); });
-        cur = next;
-    }
-    function start() { stop(); timer = setInterval(function () { show(cur + 1); }, DUR); }
-    function stop() { if (timer) clearInterval(timer); timer = null; }
-
-    box.querySelector('.sv-c-next').addEventListener('click', function () { show(cur + 1); start(); });
-    box.querySelector('.sv-c-prev').addEventListener('click', function () { show(cur - 1); start(); });
-    box.addEventListener('mouseenter', stop);
-    box.addEventListener('mouseleave', start);
-
-    dots[0].classList.add('active');
-    if ('IntersectionObserver' in window) {
-        new IntersectionObserver(function (en) {
-            if (en[0].isIntersecting) start(); else stop();
-        }, { threshold: 0.2 }).observe(box);
-    } else { start(); }
-})();
-</script>
-
-<!-- Terms & Conditions: items become active one by one, in a loop -->
+<!-- Scroll reveal -->
 <script>
     (function () {
-        var sec = document.querySelector('.tc-section');
-        if (!sec) return;
-        var grid = sec.querySelector('.tc-grid');
-        var items = Array.prototype.slice.call(sec.querySelectorAll('.tc-item'));
-        if (!items.length) return;
+        var items = document.querySelectorAll('.rv');
+        if (!items.length || !('IntersectionObserver' in window)) return;
+        document.body.classList.add('rv-ready');
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        items.forEach(function (el) { io.observe(el); });
+    })();
+</script>
 
-        var DUR = 3500, cur = -1, timer = null, visible = false, hovering = false;
+<!-- Carousels: Packages, Testimonials (index-based sliding, always lands on a card) -->
+<script>
+    (function () {
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        grid.style.setProperty('--tc-dur', DUR + 'ms');
 
-        function activate(i) {
-            items.forEach(function (it) { it.classList.remove('active'); });
-            void grid.offsetWidth;
-            items[i].classList.add('active');
-            cur = i;
-        }
-        function next() { activate((cur + 1) % items.length); }
-        function stop() { if (timer) clearInterval(timer); timer = null; }
-        function start() {
-            stop();
-            if (reduce || hovering || !visible) return;
-            timer = setInterval(next, DUR);
-        }
+        document.querySelectorAll('[data-carousel]').forEach(function (root) {
+            var track = root.querySelector('.cs-track');
+            var nav = root.querySelector('.cs-nav');
+            var prev = root.querySelector('.cs-prev');
+            var next = root.querySelector('.cs-next');
+            if (!track || !track.children.length) return;
+            var timer = null, paused = false, resizeT = null, resumeT = null, settleT = null, touching = false;
 
-        items.forEach(function (it, i) {
-            it.setAttribute('tabindex', '0');
-            function pick() { hovering = true; stop(); grid.classList.add('paused'); activate(i); }
-            it.addEventListener('mouseenter', pick);
-            it.addEventListener('focus', pick);
-            it.addEventListener('click', pick);
-        });
-        function release() {
-            hovering = false;
-            grid.classList.remove('paused');
-            if (cur >= 0) activate(cur);
+            function padLeft() { return parseFloat(getComputedStyle(track).paddingLeft) || 0; }
+            function maxScroll() { return track.scrollWidth - track.clientWidth; }
+            function overflowing() { return maxScroll() > 4; }
+            function atEnd() { return track.scrollLeft >= maxScroll() - 4; }
+            function atStart() { return track.scrollLeft <= 4; }
+
+            function offsetOf(i) {
+                var c = track.children[i];
+                return track.scrollLeft + c.getBoundingClientRect().left - track.getBoundingClientRect().left - padLeft();
+            }
+            function currentIndex() {
+                var best = 0, bestD = Infinity;
+                for (var i = 0; i < track.children.length; i++) {
+                    var d = Math.abs(offsetOf(i) - track.scrollLeft);
+                    if (d < bestD) { bestD = d; best = i; }
+                }
+                return best;
+            }
+            function goTo(i) {
+                var n = track.children.length;
+                i = Math.max(0, Math.min(n - 1, i));
+                var left = Math.max(0, Math.min(offsetOf(i), maxScroll()));
+                track.scrollTo({ left: left, behavior: reduce ? 'auto' : 'smooth' });
+            }
+            function go(dir) {
+                if (dir > 0 && atEnd()) goTo(0);
+                else if (dir < 0 && atStart()) track.scrollTo({ left: maxScroll(), behavior: reduce ? 'auto' : 'smooth' });
+                else goTo(currentIndex() + dir);
+            }
+            function refresh() {
+                var show = overflowing();
+                if (nav) nav.hidden = !show;
+                if (!show) stop();
+            }
+            function start() {
+                if (reduce || timer || !overflowing()) return;
+                timer = setInterval(function () { if (!paused) go(1); }, 4500);
+            }
+            function stop() { clearInterval(timer); timer = null; }
+
+            if (prev) prev.addEventListener('click', function () { go(-1); });
+            if (next) next.addEventListener('click', function () { go(1); });
+
+            ['mouseenter', 'focusin'].forEach(function (ev) { root.addEventListener(ev, function () { paused = true; }, { passive: true }); });
+            ['mouseleave', 'focusout'].forEach(function (ev) { root.addEventListener(ev, function () { paused = false; }, { passive: true }); });
+            root.addEventListener('touchstart', function () {
+                touching = true; paused = true; clearTimeout(resumeT); clearTimeout(settleT);
+            }, { passive: true });
+            function endTouch() {
+                touching = false;
+                clearTimeout(resumeT);
+                resumeT = setTimeout(function () { paused = false; }, 4000);
+                clearTimeout(settleT); settleT = setTimeout(settle, 220);
+            }
+            root.addEventListener('touchend', endTouch, { passive: true });
+            root.addEventListener('touchcancel', endTouch, { passive: true });
+
+            function settle() {
+                if (!overflowing()) return;
+                if (touching) { settleT = setTimeout(settle, 120); return; }
+                var i = currentIndex();
+                var target = Math.max(0, Math.min(offsetOf(i), maxScroll()));
+                if (Math.abs(target - track.scrollLeft) > 2) goTo(i);
+            }
+            track.addEventListener('scroll', function () { clearTimeout(settleT); settleT = setTimeout(settle, 200); }, { passive: true });
+            if ('onscrollend' in window) track.addEventListener('scrollend', function () { if (!touching) settle(); });
+
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeT);
+                resizeT = setTimeout(function () { refresh(); if (overflowing()) goTo(currentIndex()); start(); }, 150);
+            });
+            window.addEventListener('load', function () { refresh(); start(); });
+            refresh();
             start();
-        }
-        grid.addEventListener('mouseleave', release);
-        grid.addEventListener('focusout', function (e) {
-            if (!grid.contains(e.relatedTarget)) release();
         });
-
-        if ('IntersectionObserver' in window) {
-            new IntersectionObserver(function (entries) {
-                visible = entries[0].isIntersecting;
-                if (visible) { if (cur < 0) activate(0); start(); }
-                else stop();
-            }, { threshold: 0.25 }).observe(sec);
-        } else {
-            visible = true; activate(0); start();
-        }
     })();
 </script>
 
@@ -1688,188 +908,44 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Carousels (packages + testimonials) -->
+<!-- Interactive cards: tells the CSS where the mouse / finger is inside each card -->
 <script>
-    function initMsCarousel(rootId, opts) {
-        opts = opts || {};
-        var root = document.getElementById(rootId);
-        if (!root) return null;
+    (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.fq-item', 0]];
 
-        var viewport = root.querySelector('.ms-viewport');
-        var track = root.querySelector('.ms-track');
-        var dotsBox = root.querySelector('.ms-dots');
-        var allSlides = Array.prototype.slice.call(track.children);
-        var originals = allSlides.slice();
-        var total = originals.length;
+        groups.forEach(function (g) {
+            var max = g[1];
+            document.querySelectorAll(g[0]).forEach(function (el) {
+                var raf = 0, last = null;
+                el.addEventListener('click', function () {});   /* iOS Safari: makes :hover work on tap */
 
-        var AUTOPLAY_MS = 3000;
-        var SPEED_MS = 600;
-
-        var perView = 3, index = 0, busy = false, timer = null;
-        var dots = [];
-        var isStatic = false;
-        var nav = root.querySelector('.ms-nav');
-
-        function getPerView() {
-            if (typeof opts.perView === 'function') return opts.perView();
-            if (opts.perView) return opts.perView;
-            var w = window.innerWidth;
-            if (w < 768) return 1;
-            if (w < 992) return 2;
-            return 3;
-        }
-
-        function makeDots() {
-            dotsBox.innerHTML = '';
-            dots = [];
-            originals.forEach(function (_, i) {
-                var d = document.createElement('button');
-                d.type = 'button';
-                d.className = 'ms-dot';
-                d.setAttribute('aria-label', 'Go to card ' + (i + 1));
-                d.addEventListener('click', function () { goTo(i); start(); });
-                dotsBox.appendChild(d);
-                dots.push(d);
+                function onPoint(ev) {
+                    last = ev;
+                    if (raf) return;
+                    raf = requestAnimationFrame(function () {
+                        raf = 0;
+                        var r = el.getBoundingClientRect();
+                        if (!r.width || !r.height) return;
+                        var x = Math.min(1, Math.max(0, (last.clientX - r.left) / r.width));
+                        var y = Math.min(1, Math.max(0, (last.clientY - r.top) / r.height));
+                        el.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+                        el.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+                        if (max) {
+                            el.style.setProperty('--rx', ((0.5 - y) * 2 * max).toFixed(2) + 'deg');
+                            el.style.setProperty('--ry', ((x - 0.5) * 2 * max).toFixed(2) + 'deg');
+                        }
+                    });
+                }
+                el.addEventListener('pointerdown', onPoint);
+                el.addEventListener('pointermove', onPoint);
+                el.addEventListener('pointerleave', function (ev) {
+                    if (ev.pointerType !== 'mouse') return;
+                    if (raf) { cancelAnimationFrame(raf); raf = 0; }
+                    ['--rx', '--ry'].forEach(function (v) { el.style.removeProperty(v); });
+                });
             });
-        }
-
-        function realIndex() { return ((index - perView) % total + total) % total; }
-        function updateDots() {
-            var r = realIndex();
-            dots.forEach(function (d, i) { d.classList.toggle('active', i === r); });
-        }
-
-        function build() {
-            track.querySelectorAll('.ms-clone').forEach(function (c) { c.remove(); });
-            allSlides.forEach(function (s) {
-                s.style.display = originals.indexOf(s) > -1 ? '' : 'none';
-            });
-
-            perView = getPerView();
-            var basis = '0 0 ' + (100 / perView) + '%';
-            originals.forEach(function (s) { s.style.flex = basis; });
-
-            isStatic = total <= perView;
-            nav.style.display = isStatic ? 'none' : '';
-            track.style.justifyContent = isStatic ? 'center' : '';
-            if (isStatic) {
-                stop();
-                index = 0;
-                track.style.transition = 'none';
-                track.style.transform = 'none';
-                return;
-            }
-
-            for (var i = 0; i < perView; i++) {
-                var before = originals[((total - 1 - i) % total + total) % total].cloneNode(true);
-                before.classList.add('ms-clone');
-                before.setAttribute('aria-hidden', 'true');
-                before.style.display = '';
-                before.style.flex = basis;
-                track.insertBefore(before, track.firstChild);
-
-                var after = originals[i % total].cloneNode(true);
-                after.classList.add('ms-clone');
-                after.setAttribute('aria-hidden', 'true');
-                after.style.display = '';
-                after.style.flex = basis;
-                track.appendChild(after);
-            }
-
-            index = perView;
-            setPos(false);
-            updateDots();
-        }
-
-        function setPos(animate) {
-            track.style.transition = animate ? 'transform ' + SPEED_MS + 'ms ease' : 'none';
-            track.style.transform = 'translateX(' + (-index * 100 / perView) + '%)';
-        }
-        function settle() {
-            if (index >= total + perView) index -= total;
-            else if (index < perView) index += total;
-            setPos(false);
-            void track.offsetWidth;
-            busy = false;
-        }
-        function go(dir) {
-            if (busy || isStatic) return;
-            busy = true;
-            index += dir;
-            setPos(true);
-            updateDots();
-            setTimeout(settle, SPEED_MS + 50);
-        }
-        function goTo(i) {
-            if (busy || isStatic) return;
-            var diff = i - realIndex();
-            if (diff === 0) return;
-            busy = true;
-            index += diff;
-            setPos(true);
-            updateDots();
-            setTimeout(settle, SPEED_MS + 50);
-        }
-        function start() {
-            stop();
-            if (isStatic) return;
-            timer = setInterval(function () { go(1); }, AUTOPLAY_MS);
-        }
-        function stop() { if (timer) clearInterval(timer); timer = null; }
-
-        root.querySelector('.ms-next').addEventListener('click', function () { go(1); start(); });
-        root.querySelector('.ms-prev').addEventListener('click', function () { go(-1); start(); });
-
-        root.addEventListener('mouseenter', stop);
-        root.addEventListener('mouseleave', start);
-        document.addEventListener('visibilitychange', function () {
-            if (document.hidden) stop(); else start();
         });
-
-        var startX = null;
-        viewport.addEventListener('pointerdown', function (e) {
-            startX = e.clientX;
-            viewport.classList.add('dragging');
-            stop();
-        });
-        var dragged = false;
-        viewport.addEventListener('click', function (e) {
-            if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; }
-        }, true);
-        function endDrag(e) {
-            if (startX === null) return;
-            var diff = e.clientX - startX;
-            dragged = Math.abs(diff) > 50;
-            if (dragged) go(diff < 0 ? 1 : -1);
-            startX = null;
-            viewport.classList.remove('dragging');
-            start();
-        }
-        viewport.addEventListener('pointerup', endDrag);
-        viewport.addEventListener('pointercancel', function () {
-            startX = null;
-            viewport.classList.remove('dragging');
-        });
-        viewport.addEventListener('dragstart', function (e) { e.preventDefault(); });
-
-        var resizeTimer;
-        function rebuildSoon(ms) {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function () { busy = false; build(); }, ms);
-        }
-        window.addEventListener('resize', function () { rebuildSoon(200); });
-        window.addEventListener('load', function () { rebuildSoon(50); });
-
-        makeDots();
-        build();
-        start();
-    }
-
-    /* Popular Packages: 2 cards on desktop and tablet, 1 on mobile */
-    initMsCarousel('pkCarousel', { perView: function () { return window.innerWidth < 768 ? 1 : 2; } });
-    /* Testimonials: 2 cards on desktop and tablet, 1 on mobile */
-    initMsCarousel('pcCarousel', { perView: function () { return window.innerWidth < 768 ? 1 : 2; } });
+    })();
 </script>
-
-
 {% endblock %}

@@ -6,7 +6,7 @@
 
 {% comment %}
     HOME PAGE: torn-paper design with a scattered-dot paper texture
-    - Hero is unchanged.
+    - Hero is unchanged (now 6 slides + 6 tabs: the 6th is Divine Traditions / Theyyam).
     - Every section after it is a flat colour band with a torn-paper top edge.
       Colours ALTERNATE (no two same-colour bands touch):
       cream (About) -> tan (Services) -> cream (Packages) -> tan (Why us)
@@ -896,7 +896,7 @@ html, body { background: var(--footer-gap) !important; }
     </div>
 </div>
 
-<!-- Hero (unchanged) -->
+<!-- Hero (6 slides, 6 backgrounds, 6 tabs) -->
 <div class="hero">
     <div class="hero-section hero-bg-image bg-section dark-section">
 
@@ -906,6 +906,7 @@ html, body { background: var(--footer-gap) !important; }
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
+            <div class="hero-bg" style="background-image: url('{% static 'malabar-static/t1.png' %}');"></div>
         </div>
 
         <div class="container">
@@ -958,6 +959,15 @@ html, body { background: var(--footer-gap) !important; }
                                 </h2>
                                 <p class="hero-subtitle">Glide past palm-lined lagoons and quiet canals.</p>
                             </div>
+
+                            <div class="hero-slide is-right">
+                                <span class="hero-eyebrow">Kannur, Kasaragod, Malabar</span>
+                                <h2 class="hero-title">
+                                    <span class="hero-title-top">Divine</span>
+                                    <span class="hero-title-bottom">Traditions</span>
+                                </h2>
+                                <p class="hero-subtitle">Witness the ancient spirit of Theyyam, where sacred rituals, fiery colours, and timeless folklore bring North Kerala’s cultural heritage to life.</p>
+                            </div>
                         </div>
 
                         <div class="hero-actions">
@@ -971,6 +981,7 @@ html, body { background: var(--footer-gap) !important; }
                             <button type="button" class="hero-dot" aria-label="Golden Beaches"><i class="fa-solid fa-umbrella-beach"></i>Beaches</button>
                             <button type="button" class="hero-dot" aria-label="Wildlife Sanctuaries"><i class="fa-solid fa-paw"></i>Wildlife</button>
                             <button type="button" class="hero-dot" aria-label="Serene Backwaters"><i class="fa-solid fa-water"></i>Backwaters</button>
+                            <button type="button" class="hero-dot" aria-label="Divine Traditions"><i class="fa-solid fa-masks-theater"></i>Theyyam</button>
                         </div>
 
                     </div>
@@ -1457,7 +1468,7 @@ html, body { background: var(--footer-gap) !important; }
 {% endblock %}
 
 {% block extra_js %}
-<!-- Hero slider (unchanged) -->
+<!-- Hero slider (safe if the number of tabs differs from the number of slides) -->
 <script>
     (function () {
         var slides = document.querySelectorAll('.hero-slide');
@@ -1475,11 +1486,11 @@ html, body { background: var(--footer-gap) !important; }
         }
         function show(i) {
             slides[current].classList.remove('active');
-            dots[current].classList.remove('active');
+            if (dots[current]) dots[current].classList.remove('active');
             if (bgs[current]) bgs[current].classList.remove('active');
             current = (i + slides.length) % slides.length;
             slides[current].classList.add('active');
-            dots[current].classList.add('active');
+            if (dots[current]) dots[current].classList.add('active');
             if (bgs[current]) bgs[current].classList.add('active');
             applySide();
         }

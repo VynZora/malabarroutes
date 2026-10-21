@@ -1,440 +1,275 @@
 {% extends "frontends/base.html" %}
-{% load static image_tags %}
-
+{% load static %}
+{% load image_tags %}
 {% block title %}Activities | Malabar{% endblock %}
 
 {% comment %}
-    Fonts are NOT set on this page: they come from base.html (except the Cinzel hero heading).
-    Colours come from base.html (--nav-green, --nav-gold, --nav-ink).
-    Hero = same design and rotating background images as the Packages / About hero.
-    BODY = same look as the About / Packages pages:
-      - the section owns the fixed landscape background (bg3.png)
-      - heading sits straight on the background (white glow, no panel)
-      - desktop: cards take about two thirds, a faded picture fills the other side
-        (plus one faded picture behind the heading)
-      - tablet / phone: one faded picture behind the heading, cards full width
-    Book Now opens the booking modal from base.html (.open-booking + data-package).
-    Card images use the `srcset` filter from templatetags/image_tags.py, so phones
-    download a small version and large screens get the big one.
+    ACTIVITIES PAGE: same torn-paper design and animations as the Packages page.
+    - HERO: full-bleed, rotating backgrounds, torn bottom edge (title + breadcrumb centered on mobile).
+    - Band 1 (cream): heading, with the houseboat sketch sailing in from the right on scroll.
+    - Band 2 (tan): activity cards, torn-paper style (3D tilt + sand hover + scroll reveal).
+    - Book Now opens the booking modal from base.html (.open-booking + data-package).
+    - Card images use the `srcset` filter from templatetags/image_tags.py.
+
+    IMAGE: static/malabar-static/houseboat-art.png  (same file the Packages page uses)
 {% endcomment %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&family=Cinzel:wght@500;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-    /* ================= HERO (same design as Packages / About page) ================= */
-    .page-header.page-hero {
-        position: relative !important;
-        width: calc(100% - 32px) !important;
-        max-width: calc(100% - 32px) !important;
-        margin: 16px 16px 0 !important;
-        border-radius: 40px !important;
-        overflow: hidden !important;
-        min-height: calc(80vh - 16px);
-        display: flex;
-        align-items: center;
-        padding: 200px 0 120px !important;
-        background-color: #12281f !important;
-        background-image: none !important;   /* images come from .ah-bgs below */
-    }
-    .page-header.page-hero::before,
-    .page-header.page-hero::after { display: none !important; }
+/* ===================== PAPER TEXTURE ===================== */
+:root {
+    --paper: #f2e2c6;
+    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+}
 
-    /* ---- background images: cross-fade + zoom out ---- */
-    .page-hero .ah-bgs {
-        position: absolute;
-        inset: 0;
-        z-index: 0;
-        overflow: hidden;
-        border-radius: inherit;
-    }
-    .page-hero .ah-bgs::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: rgba(0, 0, 0, 0.30);   /* keeps the white text readable */
-        pointer-events: none;
-    }
-    .page-hero .ah-bg {
-        position: absolute;
-        inset: 0;
-        background-size: cover;
-        background-position: center;
-        opacity: 0;
-        transform: scale(1);
-        transition: opacity 1.2s ease;
-    }
-    .page-hero .ah-bg.active {
-        opacity: 1;
-        animation: ahZoomOut 5.2s ease-out forwards;
-    }
-    @keyframes ahZoomOut {
-        from { transform: scale(1.2); }
-        to   { transform: scale(1); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-        .page-hero .ah-bg.active { animation: none; }
-    }
-    .page-header.page-hero > .container { position: relative; z-index: 2; }
-
-    .page-hero .page-header-box { text-align: center; }
-
-    .page-header.page-hero h1 {
-        font-family: 'Cinzel', serif !important;
-        font-weight: 700 !important;
-        font-size: 80px;
-        letter-spacing: 6px;
-        color: #ffffff !important;
-        text-transform: none !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-        margin-bottom: 20px;
-    }
-
-    .page-hero .breadcrumb { justify-content: center; margin: 0; }
-    .page-hero .breadcrumb-item,
-    .page-hero .breadcrumb-item a,
-    .page-hero .breadcrumb-item + .breadcrumb-item::before {
-        color: #ffffff !important;
-        text-transform: capitalize;
-    }
-
-    /* ================= SECTION (same landscape background as About / Packages) ================= */
-    .act-section {
-        --act-accent: var(--nav-green, #1F5B3A);   /* from base.html navbar */
-        --act-dark: var(--nav-ink, #12281f);
-        --act-gold: var(--nav-gold, #e0b14a);
-        position: relative;
-        isolation: isolate;
-        clip-path: inset(0);
-        overflow-x: clip;
-        padding: 100px 0 130px;
-        background-color: #e9efe6;
-    }
-    .act-section::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events: none;
-        background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
-    }
-    .act-section .container { max-width: 1400px; position: relative; }
-
-    /* ================= FADED PICTURES (hidden until the blocks below) ================= */
-    .act-side, .act-top { display: none; }
-
-    /* ================= HEADING (text straight on the background) ================= */
-    .act-head { text-align: center; margin-bottom: 60px; }
-    .act-head h2 { font-weight: 700; font-size: 56px; color: #12281f; margin-bottom: 10px; }
-    .act-head p { color: #2b3a35; font-weight: 600; margin: 0; }
-    .act-head h2,
-    .act-head p,
-    .act-empty {
-        text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
-    }
-
-    /* ================= BODY: cards + side picture ================= */
-    .act-body { position: relative; isolation: isolate; }
-
-    /* ================= CARD (base = 3+ cards) ================= */
-    .act-card {
-        background: #fff; border-radius: 14px; overflow: hidden;
-        box-shadow: 0 8px 28px rgba(0,0,0,.07);
-        height: 100%; display: flex; flex-direction: column;
-        transition: transform .3s ease, box-shadow .3s ease;
-    }
-    .act-card:hover { transform: translateY(-8px); box-shadow: 0 22px 46px rgba(0,0,0,.14); }
-
-    .act-card-img { position: relative; width: 100%; aspect-ratio: 1.75 / 1; overflow: hidden; background: #e9e4de; }
-    .act-card-img figure { margin: 0; width: 100%; height: 100%; }
-    .act-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .act-badge {
-        position: absolute; top: 18px; left: 18px; z-index: 3;
-        background: var(--act-gold); color: var(--act-dark);
-        font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-        padding: 8px 18px; border-radius: 30px;
-    }
-
-    .act-card-body { padding: 26px 30px 28px; display: flex; flex-direction: column; flex: 1; }
-
-    .act-card-body h3 {
-        font-size: 28px; font-weight: 500;
-        line-height: 1.25; color: #1b1b1b; margin: 0 0 10px;
-        text-transform: none; letter-spacing: 0; padding: 0;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .act-card-body h3::before, .act-card-body h3::after,
-    .act-card-body p::before,  .act-card-body p::after { display: none !important; content: none !important; }
-
-    .act-card-body p {
-        font-size: 15.5px; line-height: 1.65; color: #6b625a;
-        margin: 0 0 22px; max-width: 100%; padding: 0;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-        text-shadow: none;
-    }
-
-    /* footer: duration + price on top, buttons below */
-    .act-card-foot {
-        margin-top: auto; display: flex; flex-direction: column; gap: 18px;
-    }
-    .act-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; font-size: 14.5px; color: #2b2b2b; font-weight: 500; }
-    .act-meta span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
-    .act-meta i { font-size: 15px; color: var(--act-accent); }
-    .act-meta .act-divider { width: 1px; height: 22px; background: rgba(0,0,0,.2); }
-
-    .act-actions { display: flex; gap: 12px; }
-    .act-btn {
-        flex: 1;
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        white-space: nowrap; border-radius: 40px;
-        font-size: 14.5px; font-weight: 600; line-height: 1.2;
-        padding: 13px 18px; text-decoration: none;
-        transition: all .3s ease;
-    }
-    .act-btn i { font-size: 12px; transition: transform .3s ease; }
-    .act-btn:hover i { transform: translateX(4px); }
-
-    /* Book Now: filled with the base.html accent colour */
-    .act-btn-fill {
-        background: var(--act-accent);
-        border: 1.5px solid var(--act-accent);
-        color: #fff !important;
-    }
-    .act-btn-fill:hover { background: var(--act-gold); border-color: var(--act-gold); color: var(--act-dark) !important; }
-
-    /* View Details: outlined, fills with the accent colour on hover */
-    .act-btn-line {
-        background: transparent;
-        border: 1.5px solid var(--act-accent);
-        color: var(--act-accent) !important;
-    }
-    .act-btn-line:hover { background: var(--act-accent); color: #fff !important; }
-
-    .act-empty { text-align: center; color: #2b3a35; font-weight: 600; padding: 40px 0; }
-
-    /* ================= 2 CARDS: slightly larger ================= */
-    .act-n2 .act-card-img { aspect-ratio: 1.9 / 1; }
-    .act-n2 .act-card-body { padding: 28px 32px 30px; }
-    .act-n2 .act-card-body h3 { font-size: 31px; margin-bottom: 12px; }
-    .act-n2 .act-card-body p { font-size: 16px; margin-bottom: 26px; }
-    .act-n2 .act-meta { font-size: 15px; gap: 16px; }
-    .act-n2 .act-meta i { font-size: 16px; }
-    .act-n2 .act-badge { top: 20px; left: 20px; font-size: 12px; padding: 9px 18px; }
-    .act-n2 .act-btn { font-size: 15px; padding: 14px 20px; }
-
-    /* ================= 1 CARD: larger ================= */
-    .act-n1 .act-card-img { aspect-ratio: 2.1 / 1; }
-    .act-n1 .act-card-body { padding: 30px 34px 32px; }
-    .act-n1 .act-card-body h3 { font-size: 34px; margin-bottom: 12px; }
-    .act-n1 .act-card-body p { font-size: 16.5px; margin-bottom: 28px; -webkit-line-clamp: 3; }
-    .act-n1 .act-meta { font-size: 15.5px; gap: 18px; }
-    .act-n1 .act-meta i { font-size: 17px; }
-    .act-n1 .act-badge { top: 22px; left: 22px; font-size: 12.5px; padding: 10px 20px; }
-    .act-n1 .act-btn { font-size: 15.5px; padding: 15px 22px; }
-
-    /* ================= DESKTOP: cards on one side, picture on the other ================= */
-    @media (min-width: 1200px) {
-
-        /* picture behind the heading (right edge of the screen) */
-        .act-top {
-            display: block; position: absolute; right: 0; top: 0;
-            width: 40vw; height: 560px;
-            object-fit: cover; object-position: 60% 50%;
-            pointer-events: none; z-index: -1; opacity: 0.9;
-            -webkit-mask-image:
-                linear-gradient(to left, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
-                linear-gradient(to bottom, transparent 0, #000 22%, #000 66%, transparent 100%);
-            -webkit-mask-composite: source-in;
-                    mask-image:
-                linear-gradient(to left, #000 0, #000 35%, rgba(0,0,0,.5) 70%, transparent 100%),
-                linear-gradient(to bottom, transparent 0, #000 22%, #000 66%, transparent 100%);
-                    mask-composite: intersect;
-        }
-
-        /* cards take about two thirds on the right, the left third shows the picture */
-        .act-grid { width: 66%; margin-left: auto; margin-right: 0; --bs-gutter-x: 24px; --bs-gutter-y: 24px; }
-
-        .act-side {
-            display: block; position: absolute; top: -2vw;
-            left: calc(50% - 50vw);
-            width: 46vw; height: calc(100% + 4vw);
-            object-fit: cover; object-position: 50% 55%;
-            pointer-events: none; z-index: -1; opacity: 0.95;
-            -webkit-mask-image:
-                linear-gradient(to right, #000 0, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
-                linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
-            -webkit-mask-composite: source-in;
-                    mask-image:
-                linear-gradient(to right, #000 0, #000 55%, rgba(0,0,0,.5) 80%, transparent 100%),
-                linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
-                    mask-composite: intersect;
-        }
-    }
-
-    /* ================= TABLET / MOBILE: one faded picture behind the heading ================= */
-    @media (max-width: 1199px) {
-        .act-top {
-            display: block; position: absolute; left: 0; right: 0; top: 0;
-            width: 100%; height: 480px;
-            object-fit: cover; object-position: 60% 50%;
-            pointer-events: none; z-index: -1; opacity: 0.95;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 70%, transparent 100%);
-                    mask-image: linear-gradient(to bottom, transparent 0, #000 14%, #000 70%, transparent 100%);
-        }
-        .act-head h2, .act-head p {
-            color: #12281f !important;
-            text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 16px rgba(255,255,255,.95), 0 0 28px rgba(255,255,255,.8) !important;
-        }
-    }
-
-    /* ================= RESPONSIVE ================= */
-    @media (max-width: 1399px) {
-        .act-card-body h3 { font-size: 25px; }
-        .act-card-body { padding: 22px 24px 24px; }
-        .act-meta { font-size: 13.5px; gap: 10px; }
-        .act-btn { padding: 12px 16px; font-size: 14px; }
-    }
-    @media (max-width: 1199px) {
-        .act-card-body h3 { font-size: 23px; }
-        .act-card-body p { font-size: 14.5px; }
-        .act-btn { padding: 11px 14px; font-size: 13px; }
-        .act-n2 .act-card-body h3 { font-size: 28px; }
-        .act-n1 .act-card-body h3 { font-size: 30px; }
-    }
-
-    @media (max-width: 991px) {
-        /* hero: same as Packages / About on mobile */
-        .page-header.page-hero {
-            width: calc(100% - 20px) !important;
-            max-width: calc(100% - 20px) !important;
-            margin: 10px 10px 0 !important;
-            border-radius: 24px !important;
-            min-height: 46vh !important;
-            padding: 130px 0 65px !important;
-        }
-        .page-header.page-hero .page-header-box,
-        .page-header.page-hero h1,
-        .page-header.page-hero nav {
-            text-align: center !important;
-            width: 100%;
-        }
-        .page-header.page-hero h1 {
-            font-size: 34px !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 14px !important;
-        }
-        .page-header.page-hero .breadcrumb {
-            justify-content: center !important;
-            font-size: 14px;
-        }
-
-        /* section heading */
-        .act-section { padding: 50px 0 60px; }
-        .act-head { margin-bottom: 36px; }
-        .act-head h2 { font-size: 32px; }
-        .act-head p { font-size: 15px; }
-
-        /* cards */
-        .act-card-body { padding: 24px 26px 26px; }
-        .act-card-body h3 { font-size: 26px; }
-        .act-card-body p { font-size: 15px; }
-        .act-meta { font-size: 14px; gap: 14px; }
-        .act-btn { padding: 12px 18px; font-size: 14px; }
-        .act-n2 .act-card-body, .act-n1 .act-card-body { padding: 24px 26px 26px; }
-        .act-n2 .act-card-body h3, .act-n1 .act-card-body h3 { font-size: 27px; }
-        .act-n2 .act-card-body p, .act-n1 .act-card-body p { font-size: 15.5px; }
-        .act-n2 .act-btn, .act-n1 .act-btn { font-size: 14px; padding: 12px 18px; }
-        .act-n2 .act-meta, .act-n1 .act-meta { font-size: 14px; gap: 14px; }
-    }
-
-    @media (max-width: 575px) {
-        .page-header.page-hero h1 {
-            font-size: 28px !important;
-            letter-spacing: 1.5px !important;
-        }
-
-        .act-head h2 { font-size: 28px; }
-        .act-top { height: 400px; }
-
-        /* cards */
-        .act-card-img, .act-n2 .act-card-img, .act-n1 .act-card-img { aspect-ratio: 1.6 / 1; }
-        .act-card-body,
-        .act-n2 .act-card-body,
-        .act-n1 .act-card-body { padding: 18px 18px 20px; }
-        .act-card-body h3,
-        .act-n2 .act-card-body h3,
-        .act-n1 .act-card-body h3 { font-size: 21px; margin-bottom: 8px; }
-        .act-card-body p,
-        .act-n2 .act-card-body p,
-        .act-n1 .act-card-body p { font-size: 14px; line-height: 1.6; margin-bottom: 16px; }
-        .act-badge { top: 12px; left: 12px; font-size: 11px; padding: 6px 14px; }
-
-        /* duration + price */
-        .act-card-foot { gap: 14px; }
-        .act-meta,
-        .act-n2 .act-meta,
-        .act-n1 .act-meta { font-size: 13px; gap: 10px; }
-        .act-meta i,
-        .act-n2 .act-meta i,
-        .act-n1 .act-meta i { font-size: 14px; }
-        .act-meta .act-divider { height: 18px; }
-
-        /* buttons: Book Now + View Details side by side, compact */
-        .act-actions { gap: 8px; }
-        .act-btn,
-        .act-n2 .act-btn,
-        .act-n1 .act-btn {
-            padding: 10px 8px;
-            font-size: 13px;
-            gap: 6px;
-            border-width: 1.2px;
-        }
-        .act-btn i { font-size: 10px; }
-    }
-
-    @media (max-width: 360px) {
-        .act-btn,
-        .act-n2 .act-btn,
-        .act-n1 .act-btn { padding: 9px 6px; font-size: 12px; }
-        .act-card-body h3,
-        .act-n2 .act-card-body h3,
-        .act-n1 .act-card-body h3 { font-size: 19px; }
-    }
-    /* ===== ACTIVITIES HERO: full-bleed, no rounded corners, no inset ===== */
+/* ===================== HERO (same as the About hero) ===================== */
+.ah-wrap { position: relative; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px; }
 .page-header.page-hero {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-    min-height: 80vh !important;
-    padding: 200px 0 120px !important;
+    position: relative !important; width: 100% !important; max-width: 100% !important; margin: 0 !important;
+    border-radius: 0 !important; overflow: hidden !important; min-height: 80vh;
+    display: flex; align-items: center; padding: 200px 0 150px !important;
+    background-color: #12281f !important; background-image: none !important;
 }
-
-.page-hero .ah-bgs,
-.page-hero .ah-bg {
-    border-radius: 0 !important;
+.page-header.page-hero::before, .page-header.page-hero::after { display: none !important; }
+.page-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.page-hero .ah-bgs::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(0,0,0,.30); pointer-events: none; }
+.page-hero .ah-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1); transition: opacity 1.2s ease; }
+.page-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
+@keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
+.page-header.page-hero > .container { position: relative; z-index: 2; width: 100%; }
+.page-hero .page-header-box { text-align: center; }
+.page-header.page-hero h1 {
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35); margin-bottom: 20px;
 }
+.page-hero .breadcrumb { justify-content: center; margin: 0; }
+.page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
 
-@media (max-width: 991px) {
+.page-header.page-hero {
+    padding-bottom: 96px !important;
+    -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+            mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% calc(100% - 45px), 100% 70px; mask-size: 100% calc(100% - 45px), 100% 70px;
+    -webkit-mask-position: top, bottom; mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-composite: source-over; mask-composite: add;
+}
+@media (min-width: 992px) {
     .page-header.page-hero {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        border-radius: 0 !important;
-        min-height: 50vh !important;
-        padding: 140px 0 65px !important;
+        padding-bottom: 150px !important;
+        -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+                mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px; mask-size: 100% calc(100% - 70px), 100% 110px;
+    }
+}
+@media (max-width: 991px) {
+    .page-header.page-hero { min-height: 56vh; padding-top: 150px !important; }
+    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-hero .breadcrumb { font-size: 14px; }
+}
+@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
+
+/* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
+@media (max-width: 991px) {
+    .page-header.page-hero { justify-content: center; text-align: center !important; }
+    .page-hero > .container,
+    .page-hero .row,
+    .page-hero [class*="col-"],
+    .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
+    .page-header.page-hero h1,
+    .page-header.page-hero h1 * { text-align: center !important; }
+    .page-header.page-hero h1 {
+        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
+        padding-left: 12px; padding-right: 12px;
+    }
+    .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
+}
+
+/* ===================== TORN-PAPER PAGE ===================== */
+.flow {
+    --cream: #f2e2c6; --tan: #e8d3b0;
+    --gold: #c9972b; --gold-deep: #a97a14; --btn-ink: #2b2112; --sand-hover: #e0c898;
+    --green: var(--gold-deep);
+    --ink: var(--nav-ink, #2a0c0f); --text: #5b6560;
+    --edge: rgba(139, 107, 46, .7);
+    --torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 60' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='30' width='2120' height='80' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    position: relative; width: 100%; overflow-x: clip; background: var(--cream);
+}
+.sec { position: relative; background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 0; padding: 90px 0 100px; }
+.sec + .sec::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -54px; height: 56px; z-index: 0; pointer-events: none;
+    background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 54px;
+    -webkit-mask-image: var(--torn); mask-image: var(--torn);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.sec > .container { position: relative; z-index: 1; }
+.sec-cream { --bg: var(--cream); }
+.sec-tan { --bg: var(--tan); }
+@media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
+@media (min-width: 1400px) { .sec.sec-wide > .container { max-width: 1400px; } }
+@media (max-width: 991px) { .sec { padding: 64px 0 70px; } }
+@media (max-width: 575px) { .sec { padding: 52px 0 58px; } }
+/* the first band holds the filter dropdowns: lift its content above the bands that follow */
+.pk-top > .container { z-index: 6; }
+.pk-top { padding-bottom: 60px; }
+.pk-group { scroll-margin-top: 90px; }
+
+/* headings */
+.tn-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.tn-eyebrow i { font-size: 13px; }
+.tn-title { margin: 0 0 16px; color: var(--ink); text-transform: none; font-variant: small-caps; font-family: 'EB Garamond', serif; font-weight: 800; letter-spacing: 1.5px; line-height: 1.12; font-size: clamp(30px, 3.6vw, 48px); }
+.tn-title::before, .tn-title::after { display: none !important; content: none !important; }
+.tn-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
+.tn-head { text-align: center; max-width: 720px; margin: 0 auto 46px; }
+.tn-head .tn-text { margin: 0 auto; }
+
+/* ---- houseboat sketch: RIGHT side of the heading band ---- */
+.pk-art {
+    display: block; height: auto; opacity: .92; mix-blend-mode: multiply;
+    pointer-events: none; user-select: none; -webkit-user-drag: none;
+}
+/* tablet / mobile: centered above the heading */
+.pk-art-box { width: min(300px, 70%); margin: -10px auto 18px; }
+.pk-art-box .pk-art { width: 100%; }
+/* desktop: pinned to the right edge, beside the centered heading */
+@media (min-width: 1200px) {
+    .pk-art-box { position: absolute; z-index: 0; top: -34px; right: -12px; width: clamp(280px, 25vw, 400px); margin: 0; }
+}
+@media (min-width: 1400px) { .pk-art-box { right: -40px; } }
+@media (min-width: 1700px) { .pk-art-box { right: -110px; width: 430px; } }
+/* SAIL-IN on scroll (replays): the art starts far off the RIGHT edge of the screen and glides LEFT into place,
+   then keeps drifting gently left / right like a boat on water */
+.pk-art {
+    opacity: 0; transform: translateX(80vw) rotate(3deg);
+    transition: transform 3s cubic-bezier(.1,.7,.2,1), opacity 1.4s ease;
+}
+.pk-art-box.in-view .pk-art { opacity: .92; transform: none; }
+.pk-art-box.in-view .pk-art { animation: pkSail 6s ease-in-out 3s infinite alternate; }
+@keyframes pkSail { from { translate: 0 0; rotate: 0deg; } to { translate: -16px -5px; rotate: -.8deg; } }
+@media (prefers-reduced-motion: reduce) {
+    .pk-art, .pk-art-box.in-view .pk-art { opacity: .92; transform: none; transition: none; animation: none; }
+}
+
+/* category heading + gold line */
+.pk-group-head { display: flex; align-items: center; gap: 24px; margin: 0 0 14px; }
+.pk-group-head .tn-title { margin: 0; white-space: nowrap; }
+.pk-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--gold), rgba(201,151,43,0)); }
+
+/* scroll reveal (replays) */
+.pk-col, .pk-head { opacity: 0; transform: translateY(60px); transition: opacity .7s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+.pk-col.in-view, .pk-head.in-view { opacity: 1; transform: none; }
+.pk-hide { display: none !important; }
+@media (prefers-reduced-motion: reduce) { .pk-col, .pk-head { transition: none; opacity: 1; transform: none; } }
+
+/* ===================== TORN-PAPER CARDS ===================== */
+.pk-card { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; }
+.pk-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px; background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.pk-card:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.pk-card::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px;
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
+}
+.pk-card:hover::after { opacity: 1; }
+
+.pk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 34px; padding: 26px 0 10px; }
+.pk-col { display: flex; min-width: 0; }
+@media (max-width: 1199px) { .pk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; } }
+@media (max-width: 767px) { .pk-grid { grid-template-columns: 1fr; } }
+
+.pk-card { --edge-r: 30px; display: flex; flex-direction: column; flex: 1; width: 100%; padding: 20px; border-radius: 30px; font-family: 'Poppins', var(--bs-body-font-family, sans-serif); transition: transform .25s ease-out; transform-style: preserve-3d; will-change: transform; }
+.pk-card:hover { transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-8px); }
+.pk-media { position: relative; aspect-ratio: 5 / 4; overflow: hidden; isolation: isolate; border-radius: 20px; background: #e3d3b4; transition: transform .35s ease-out; }
+.pk-media > a { display: block; width: 100%; height: 100%; }
+.pk-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s ease; }
+.pk-card:hover .pk-media img { transform: scale(1.06); }
+.pk-card:hover .pk-media { transform: translateZ(26px); }
+.pk-card:hover .pk-body { transform: translateZ(14px); }
+.pk-tag { position: absolute; left: 14px; top: 14px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 50px; background: rgba(255,255,255,.94); color: #1a1a1a; font-size: 14px; font-weight: 600; }
+.pk-tag i { color: var(--gold); }
+.pk-body { display: flex; flex-direction: column; flex: 1; padding: 24px 14px 8px; text-align: left; transition: transform .35s ease-out; }
+.pk-title { margin: 0 0 12px; font-family: inherit; font-variant: normal; font-weight: 700; letter-spacing: 0; font-size: 26px; line-height: 1.22; text-transform: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pk-title::before, .pk-title::after { display: none !important; content: none !important; }
+.pk-title a { color: #1a1a1a !important; text-decoration: none; }
+.pk-title a:hover { color: var(--gold-deep) !important; }
+.pk-loc { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--gold-deep); }
+.pk-loc i { flex: 0 0 auto; color: var(--gold); font-size: 14px; }
+.pk-price { margin: 0 0 10px; font-size: 15px; color: var(--text); }
+.pk-price b { font-size: 20px; color: var(--gold-deep); }
+.pk-desc { margin: 0 0 24px; font-size: 15px; line-height: 1.65; color: var(--text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(1.65em * 3); }
+.pk-actions { margin-top: auto; display: flex; gap: 12px; }
+.pk-btn { flex: 1 1 0; min-width: 0; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 54px; padding: 0 10px 0 22px; border-radius: 50px; border: 1px solid var(--gold); font-family: inherit; font-size: 14.5px; font-weight: 600; line-height: 1; white-space: nowrap; text-decoration: none; cursor: pointer; transition: background .3s ease, color .3s ease, border-color .3s ease; }
+.pk-btn .pk-btn-ico { flex: 0 0 36px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: transform .3s ease, background .3s ease, color .3s ease; }
+.pk-btn-fill { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-fill .pk-btn-ico { background: var(--btn-ink); color: #fff; }
+.pk-btn-fill:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff !important; }
+.pk-btn-fill:hover .pk-btn-ico { color: var(--gold); }
+.pk-btn-line { background: transparent; border-color: var(--gold-deep); color: var(--btn-ink) !important; }
+.pk-btn-line .pk-btn-ico { background: var(--gold); color: var(--btn-ink); }
+.pk-btn-line .pk-btn-ico i { transform: rotate(-45deg); }
+.pk-btn-line:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink) !important; }
+.pk-btn-line:hover .pk-btn-ico { background: var(--btn-ink); color: var(--gold); }
+@media (max-width: 575px) {
+    .pk-card { --edge-r: 24px; border-radius: 24px; padding: 16px; }
+    .pk-media { border-radius: 16px; aspect-ratio: 4 / 3.3; }
+    .pk-tag { left: 12px; top: 12px; padding: 8px 15px; font-size: 13px; }
+    .pk-title { font-size: 22px; margin-bottom: 10px; }
+    .pk-loc { font-size: 14px; }
+    .pk-desc { font-size: 14px; margin-bottom: 20px; }
+    .pk-body { padding: 20px 12px 14px; }
+    .pk-btn { font-size: 13.5px; min-height: 50px; padding: 0 8px 0 18px; }
+    .pk-btn .pk-btn-ico { flex-basis: 32px; width: 32px; height: 32px; }
+    .pk-group-head .tn-title { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { .pk-card:hover { transform: none; } .pk-card:hover .pk-media, .pk-card:hover .pk-body { transform: none; } }
+
+.pk-empty { text-align: center; font-size: 18px; color: var(--ink); font-weight: 600; padding: 40px 0; }
+.pk-nomatch { display: none; text-align: center; font-size: 18px; font-weight: 600; color: var(--ink); padding: 40px 0 0; }
+.pk-nomatch.show { display: block; }
+
+/* ===================== ACTIVITIES: 1 or 2 cards stay centred and a good size ===================== */
+.pk-grid.act-n1 { grid-template-columns: minmax(0, 520px); justify-content: center; }
+.pk-grid.act-n2 { grid-template-columns: repeat(2, minmax(0, 520px)); justify-content: center; }
+@media (max-width: 991px) { .pk-grid.act-n2 { grid-template-columns: minmax(0, 520px); } }
+.act-band { padding-top: 70px; }
+
+/* ===================== FOOTER: torn-paper top edge ===================== */
+:root { --footer-gap: #e8d3b0; } /* matches the last band (tan) */
+html, body { background: var(--footer-gap) !important; }
+.footer-main {
+    --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important; mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+    -webkit-mask-position: top left, bottom left !important; mask-position: top left, bottom left !important;
+    -webkit-mask-repeat: no-repeat !important; mask-repeat: no-repeat !important;
+    -webkit-mask-composite: source-over !important; mask-composite: add !important;
+}
+.footer-main > .container { padding-top: calc(var(--torn-h) * .75 + 30px) !important; }
+@media (min-width: 992px) {
+    .footer-main {
+        --torn-h: 110px;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
     }
 }
 </style>
 {% endblock %}
 
+
 {% block content %}
-<!-- Hero (same design and rotating images as the Packages / About page) -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
 
+<!-- Hero (same as the Packages hero) -->
+<div class="ah-wrap">
 <div class="page-header page-hero">
-
-    <!-- Background images: same five as the Packages hero, same order -->
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -442,7 +277,6 @@
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
     </div>
-
     <div class="container"><div class="row"><div class="col-lg-12">
         <div class="page-header-box">
             <h1 class="text-anime-style-3" data-cursor="-opaque">Activities</h1>
@@ -453,87 +287,104 @@
         </div>
     </div></div></div>
 </div>
+</div>
 
-<!-- Activities -->
-<section class="act-section">
-    <!-- faded picture behind the heading (same photos as the About page) -->
-    <img class="act-top" src="{% static 'malabar-static/kovalam.png' %}" alt="" draggable="false">
+<div class="flow">
 
+<!-- Torn-paper outline filter (used by the cards) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+        <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="11" result="big"/>
+            <feDisplacementMap in="SourceGraphic" in2="big" scale="20" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="4" result="fine"/>
+            <feDisplacementMap in="d1" in2="fine" scale="5" xChannelSelector="G" yChannelSelector="R" result="d2"/>
+            <feGaussianBlur in="d2" stdDeviation="0.45"/>
+        </filter>
+    </defs>
+</svg>
+
+<!-- ============ HEADING (cream) ============ -->
+<section class="sec sec-cream pk-top">
     <div class="container">
-        <div class="act-head">
-            <h2 class="text-anime-style-3" data-cursor="-opaque">Experiences in Malabar</h2>
-            <p class="wow fadeInUp" data-wow-delay="0.2s">Handpicked activities for every kind of traveller</p>
+
+        <!-- houseboat sketch: sails in from the right on scroll (centered above the heading on tablet / mobile) -->
+        <div class="pk-art-box">
+            <img class="pk-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
         </div>
 
+        <div class="tn-head pk-head">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Activities</div>
+            <h2 class="tn-title">Experiences in Malabar</h2>
+            <p class="tn-text">Handpicked activities for every kind of traveller, planned with care so you can enjoy every moment.</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============ ACTIVITY CARDS (tan) ============ -->
+<section class="sec sec-tan sec-wide pk-group act-band">
+    <div class="container">
         {% with total=activities|length %}
-        <div class="act-body">
+        <div class="pk-grid{% if total == 1 %} act-n1{% elif total == 2 %} act-n2{% endif %}">
+            {% for a in activities %}
+            <div class="pk-col">
+                <article class="pk-card">
 
-            <!-- faded picture beside the cards (desktop only) -->
-            {% if total %}
-            <img class="act-side" src="{% static 'malabar-static/wls.png' %}" alt="" draggable="false">
-            {% endif %}
+                    <div class="pk-media">
+                        <a href="{% url 'activity_detail' a.slug %}" draggable="false">
+                            {% if a.image %}
+                            <img src="{{ a.image.url }}"
+                                 srcset="{{ a.image|srcset }}"
+                                 sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                                 alt="{{ a.title }}" draggable="false" loading="lazy" decoding="async">
+                            {% else %}
+                            <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ a.title }}" draggable="false" loading="lazy" decoding="async">
+                            {% endif %}
+                        </a>
+                        {% if a.category %}<span class="pk-tag"><i class="fa-solid fa-compass"></i>{{ a.category }}</span>{% endif %}
+                    </div>
 
-            <div class="row g-4 act-grid {% if total == 1 %}act-n1{% elif total == 2 %}act-n2{% endif %}">
-                {% for a in activities %}
-                <div class="{% if total == 1 %}col-xl-8 col-lg-7 col-12{% elif total == 2 %}col-lg-6 col-12{% else %}col-xl-6 col-lg-4 col-md-6 col-12{% endif %}">
-                    <div class="act-card wow fadeInUp" data-wow-delay="{% cycle '0.1s' '0.3s' '0.5s' %}">
-                        <div class="act-card-img">
-                            {% if a.category %}<span class="act-badge">{{ a.category }}</span>{% endif %}
-                            <figure class="image-anime reveal">
-                                {% if a.image %}
-                                <!-- srcset filter (image_tags): small file on phones, big file on large screens.
-                                     "sizes" = how wide the card is at each screen width, so the browser picks the right file. -->
-                                <img src="{{ a.image.url }}"
-                                     srcset="{{ a.image|srcset }}"
-                                     sizes="{% if total == 1 or total == 2 %}(max-width: 991px) 100vw, 600px{% else %}(max-width: 767px) 100vw, (max-width: 991px) 50vw, (max-width: 1199px) 33vw, 470px{% endif %}"
-                                     alt="{{ a.title }}"
-                                     loading="lazy" decoding="async">
-                                {% else %}
-                                <img src="{% static 'malabar-static/mr5.webp' %}" alt="{{ a.title }}" loading="lazy" decoding="async">
-                                {% endif %}
-                            </figure>
-                        </div>
-                        <div class="act-card-body">
-                            <h3>{{ a.title }}</h3>
-                            <p>{{ a.description|striptags|truncatewords:16 }}</p>
-                            <div class="act-card-foot">
-                                {% if a.duration or a.price %}
-                                <div class="act-meta">
-                                    {% if a.duration %}
-                                    <span><i class="fa-regular fa-clock"></i> {{ a.duration }}</span>
-                                    {% endif %}
-                                    {% if a.duration and a.price %}<span class="act-divider"></span>{% endif %}
-                                    {% if a.price %}
-                                    <span><i class="fa-solid fa-indian-rupee-sign"></i> From ₹{{ a.price }}</span>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
+                    <div class="pk-body">
+                        <h3 class="pk-title"><a href="{% url 'activity_detail' a.slug %}">{{ a.title }}</a></h3>
 
-                                <div class="act-actions">
-                                    <!-- opens the booking modal from base.html, with the activity name -->
-                                    <a href="#" class="act-btn act-btn-fill open-booking" data-package="{{ a.title }}">
-                                        Book Now <i class="fa-solid fa-angles-right"></i>
-                                    </a>
-                                    <a href="{% url 'activity_detail' a.slug %}" class="act-btn act-btn-line">
-                                        View Details <i class="fa-solid fa-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </div>
+                        {% if a.duration %}
+                        <p class="pk-loc"><i class="fa-regular fa-clock"></i>{{ a.duration }}</p>
+                        {% endif %}
+
+                        {% if a.price %}
+                        <p class="pk-price">From <b>₹ {{ a.price }}</b></p>
+                        {% endif %}
+
+                        <p class="pk-desc">{{ a.description|striptags|truncatewords:20 }}</p>
+
+                        <div class="pk-actions">
+                            <!-- opens the booking modal from base.html, with the activity name -->
+                            <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="{{ a.title }}">
+                                Book Now <span class="pk-btn-ico"><i class="fa-solid fa-ticket"></i></span>
+                            </a>
+                            <a href="{% url 'activity_detail' a.slug %}" class="pk-btn pk-btn-line">
+                                View Details <span class="pk-btn-ico"><i class="fa-solid fa-arrow-right"></i></span>
+                            </a>
                         </div>
                     </div>
-                </div>
-                {% empty %}
-                <div class="col-12"><p class="act-empty">No activities available right now.</p></div>
-                {% endfor %}
+
+                </article>
             </div>
+            {% empty %}
+            <p class="pk-empty">No activities available right now.</p>
+            {% endfor %}
         </div>
         {% endwith %}
     </div>
 </section>
+
+</div>
+<!-- ===== /flow ===== -->
 {% endblock %}
 
 {% block extra_js %}
-<!-- Hero: background images change one by one (same effect as Packages / About) -->
+<!-- Hero: background images change one by one -->
 <script>
     (function () {
         var bgs = document.querySelectorAll('.page-hero .ah-bg');
@@ -542,8 +393,75 @@
         setInterval(function () {
             bgs[current].classList.remove('active');
             current = (current + 1) % bgs.length;
-            bgs[current].classList.add('active');   /* re-adding restarts the zoom-out */
+            bgs[current].classList.add('active');
         }, 5000);
+    })();
+</script>
+
+<!-- Scroll animation (replays every time the heading or a card enters the screen) -->
+<script>
+    (function () {
+        /* houseboat art: its own observer on the fixed box (the image itself moves), starts when well inside the screen */
+        var art = document.querySelector('.pk-art-box');
+        if (art) {
+            if (!('IntersectionObserver' in window)) { art.classList.add('in-view'); }
+            else {
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) {
+                        if (en.isIntersecting) en.target.classList.add('in-view');
+                        else en.target.classList.remove('in-view');
+                    });
+                }, { threshold: 0.5, rootMargin: '0px 0px -12% 0px' }).observe(art);
+            }
+        }
+
+        var items = document.querySelectorAll('.pk-col, .pk-head');
+        if (!items.length) return;
+        if (!('IntersectionObserver' in window)) {
+            items.forEach(function (c) { c.classList.add('in-view'); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) entry.target.classList.add('in-view');
+                else entry.target.classList.remove('in-view');
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+        items.forEach(function (c) { io.observe(c); });
+    })();
+</script>
+
+<!-- Interactive cards: 3D tilt + glare follow the mouse / finger -->
+<script>
+    (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var max = 9;
+        document.querySelectorAll('.pk-card').forEach(function (el) {
+            var raf = 0, last = null;
+            el.addEventListener('click', function () {});   /* iOS Safari: makes :hover work on tap */
+            function onPoint(ev) {
+                last = ev;
+                if (raf) return;
+                raf = requestAnimationFrame(function () {
+                    raf = 0;
+                    var r = el.getBoundingClientRect();
+                    if (!r.width || !r.height) return;
+                    var x = Math.min(1, Math.max(0, (last.clientX - r.left) / r.width));
+                    var y = Math.min(1, Math.max(0, (last.clientY - r.top) / r.height));
+                    el.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+                    el.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+                    el.style.setProperty('--rx', ((0.5 - y) * 2 * max).toFixed(2) + 'deg');
+                    el.style.setProperty('--ry', ((x - 0.5) * 2 * max).toFixed(2) + 'deg');
+                });
+            }
+            el.addEventListener('pointerdown', onPoint);
+            el.addEventListener('pointermove', onPoint);
+            el.addEventListener('pointerleave', function (ev) {
+                if (ev.pointerType !== 'mouse') return;
+                if (raf) { cancelAnimationFrame(raf); raf = 0; }
+                el.style.removeProperty('--rx'); el.style.removeProperty('--ry');
+            });
+        });
     })();
 </script>
 {% endblock %}

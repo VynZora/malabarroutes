@@ -5,487 +5,381 @@
 {% block meta_description %}Explore our travel destinations.{% endblock %}
 
 {% comment %}
-    DESTINATIONS PAGE (redesigned to match the About page)
-    - HERO = same as About / Packages (rotating zoom-out background images).
-    - everything after the hero sits in ONE wrapper (.flow) that owns the fixed landscape background (bg3.png).
-    - each location group is a full-width band with its own faded side picture
-      (left / right alternating, same pictures as the About + home page).
-    - UX: sticky filter bar (location chips with counts + search box), live result count,
-      friendly empty state, ?location=<slug> support (navbar dropdown still works),
-      tap-to-open cards on touch, hover-open on desktop, keyboard accessible.
+    DESTINATIONS PAGE: same torn-paper design as the Packages page.
+    - HERO: full-bleed, rotating backgrounds, torn bottom edge (same as Packages / About).
+    - First band (cream): heading + filter bar (location chips with counts + search) + result count.
+      A houseboat sketch sits on the RIGHT on desktop, centered above the heading on tablet / mobile.
+    - Then ONE BAND PER LOCATION. Colours alternate (tan, cream, tan ...) and are re-assigned by the
+      script whenever the filter hides / shows a location, so two same-colour bands never touch.
+      The footer gap colour follows the last visible band.
+    - CARDS: same destination card layout (image, bottom panel, hover / tap opens details).
+      The card is a torn sheet of cream paper (torn mask on all four edges); the photo and the name panel
+      sit inside it with a paper rim, so the border blends into the background like the Packages cards.
+    - ?location=<slug> still works (navbar dropdown), ids stay loc-<slug>.
     - Book Now opens the booking modal from base.html (.open-booking + data-package).
     Context needed: `groups` -> each has .value (slug), .label, .destinations (unchanged).
-    Colours come from base.html: --nav-green, --nav-gold, --nav-ink.
+
+    IMAGE: static/malabar-static/p1.png (houseboat art, same as the Packages page)
 {% endcomment %}
 
 {% block extra_css %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@600;700&family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,600;0,700;0,800;1,500&family=Cinzel:wght@500;700;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* =====================================================================
-   HERO (same design as About page)
-   ===================================================================== */
-.page-header.dest-hero {
-    position: relative !important;
-    width: calc(100% - 32px) !important;
-    max-width: calc(100% - 32px) !important;
-    margin: 16px 16px 0 !important;
-    border-radius: 40px !important;
-    overflow: hidden !important;
-    min-height: 58vh;
-    display: flex;
-    align-items: center;
-    padding: 160px 0 70px !important;
-    background-color: #12281f !important;
-    background-image: none !important;
+/* ===================== PAPER TEXTURE ===================== */
+:root {
+    --paper: #f2e2c6;
+    --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 }
-.page-header.dest-hero::before,
-.page-header.dest-hero::after { display: none !important; }
 
-.dest-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; }
-.dest-hero .ah-bgs::after {
-    content: ""; position: absolute; inset: 0; z-index: 1;
-    background: rgba(0, 0, 0, 0.30); pointer-events: none;
+/* ===================== HERO (same as the Packages / About hero) ===================== */
+.ah-wrap { position: relative; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px; }
+.page-header.page-hero {
+    position: relative !important; width: 100% !important; max-width: 100% !important; margin: 0 !important;
+    border-radius: 0 !important; overflow: hidden !important; min-height: 80vh;
+    display: flex; align-items: center; padding: 200px 0 150px !important;
+    background-color: #12281f !important; background-image: none !important;
 }
-.dest-hero .ah-bg {
-    position: absolute; inset: 0;
-    background-size: cover; background-position: center;
-    opacity: 0; transform: scale(1); transition: opacity 1.2s ease;
-}
-.dest-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
+.page-header.page-hero::before, .page-header.page-hero::after { display: none !important; }
+.page-hero .ah-bgs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.page-hero .ah-bgs::after { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(0,0,0,.30); pointer-events: none; }
+.page-hero .ah-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; transform: scale(1); transition: opacity 1.2s ease; }
+.page-hero .ah-bg.active { opacity: 1; animation: ahZoomOut 5.2s ease-out forwards; }
 @keyframes ahZoomOut { from { transform: scale(1.2); } to { transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) { .dest-hero .ah-bg.active { animation: none; } }
-.page-header.dest-hero > .container { position: relative; z-index: 2; }
-.page-header.dest-hero .page-header-box { text-align: center; }
-
-.page-header.dest-hero h1 {
-    font-family: 'Cinzel', serif !important;
-    font-weight: 700 !important;
-    font-size: 80px;
-    letter-spacing: 6px;
-    color: #ffffff !important;
-    text-transform: none !important;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-    margin-bottom: 20px;
+@media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
+.page-header.page-hero > .container { position: relative; z-index: 2; width: 100%; }
+.page-hero .page-header-box { text-align: center; }
+.page-header.page-hero h1 {
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35); margin-bottom: 20px;
 }
-.dest-hero .breadcrumb { justify-content: center; margin: 0; }
-.dest-hero .breadcrumb-item,
-.dest-hero .breadcrumb-item a,
-.dest-hero .breadcrumb-item + .breadcrumb-item::before {
-    color: #ffffff !important;
-    text-transform: capitalize;
+.page-hero .breadcrumb { justify-content: center; margin: 0; }
+.page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
+
+.page-header.page-hero {
+    padding-bottom: 96px !important;
+    -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+            mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% calc(100% - 45px), 100% 70px; mask-size: 100% calc(100% - 45px), 100% 70px;
+    -webkit-mask-position: top, bottom; mask-position: top, bottom;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-composite: source-over; mask-composite: add;
+}
+@media (min-width: 992px) {
+    .page-header.page-hero {
+        padding-bottom: 150px !important;
+        -webkit-mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+                mask-image: linear-gradient(#000, #000), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+        -webkit-mask-size: 100% calc(100% - 70px), 100% 110px; mask-size: 100% calc(100% - 70px), 100% 110px;
+    }
+}
+@media (max-width: 991px) {
+    .page-header.page-hero { min-height: 56vh; padding-top: 150px !important; }
+    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-hero .breadcrumb { font-size: 14px; }
+}
+@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
+
+/* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
+@media (max-width: 991px) {
+    .page-header.page-hero { justify-content: center; text-align: center !important; }
+    .page-hero > .container,
+    .page-hero .row,
+    .page-hero [class*="col-"],
+    .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
+    .page-header.page-hero h1,
+    .page-header.page-hero h1 * { text-align: center !important; }
+    .page-header.page-hero h1 {
+        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
+        padding-left: 12px; padding-right: 12px;
+    }
+    .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
 }
 
-/* =====================================================================
-   ONE CONTINUOUS PAGE (everything after the hero)
-   ===================================================================== */
+/* ===================== TORN-PAPER PAGE ===================== */
 .flow {
-    --dest-accent: var(--nav-green, #1F5B3A);
-    --dest-dark: var(--nav-ink, #12281f);
-    --dest-gold: var(--nav-gold, #e0b14a);
+    --cream: #f2e2c6; --tan: #e8d3b0;
+    --gold: #c9972b; --gold-deep: #a97a14; --btn-ink: #2b2112; --sand-hover: #e0c898;
+    --ink: var(--nav-ink, #2a0c0f); --text: #5b6560;
+    --edge: rgba(139, 107, 46, .7);
+    --torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 60' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-100' y='30' width='2120' height='80' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    position: relative; width: 100%; overflow-x: clip; background: var(--cream);
+}
+.sec { position: relative; background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 0; padding: 90px 0 100px; }
+.sec + .sec::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -54px; height: 56px; z-index: 0; pointer-events: none;
+    background-color: var(--bg); background-image: var(--pat-brown); background-size: 220px 220px; background-position: 0 54px;
+    -webkit-mask-image: var(--torn); mask-image: var(--torn);
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.sec > .container { position: relative; z-index: 1; }
+.sec-cream { --bg: var(--cream); }
+.sec-tan { --bg: var(--tan); }
+@media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
+@media (min-width: 1400px) { .sec.sec-wide > .container { max-width: 1400px; } }
+@media (max-width: 991px) { .sec { padding: 64px 0 70px; } }
+@media (max-width: 575px) { .sec { padding: 52px 0 58px; } }
+.dg[hidden] { display: none !important; }
+.dest-item[hidden] { display: none !important; }
+.dest-top-band > .container { z-index: 6; }
+.dest-top-band { padding-bottom: 60px; }
+.dg { scroll-margin-top: 90px; }
 
-    position: relative;
-    isolation: isolate;
-    clip-path: inset(0);
-    overflow-x: clip;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: #e9efe6;
-}
-.flow::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: url('{% static "malabar-static/bg3.png" %}') center center / cover no-repeat;
-}
+/* headings */
+.tn-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.tn-eyebrow i { font-size: 13px; }
+.tn-title { margin: 0 0 16px; color: var(--ink); text-transform: none; font-variant: small-caps; font-family: 'EB Garamond', serif; font-weight: 800; letter-spacing: 1.5px; line-height: 1.12; font-size: clamp(30px, 3.6vw, 48px); }
+.tn-title::before, .tn-title::after { display: none !important; content: none !important; }
+.tn-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
+.tn-head { text-align: center; max-width: 720px; margin: 0 auto 46px; }
+.tn-head .tn-text { margin: 0 auto; }
 
-/* white glow so plain text stays readable straight on the picture */
-.flow .dest-head h2,
-.flow .dest-head p,
-.flow .dg-head h3,
-.flow .dg-count,
-.flow .dest-result {
-    text-shadow: 0 0 3px #fff, 0 0 10px rgba(255,255,255,.95), 0 0 22px rgba(255,255,255,.85);
+/* ---- houseboat sketch: RIGHT side of the heading band ---- */
+.pk-art {
+    display: block; height: auto; opacity: .92; mix-blend-mode: multiply;
+    pointer-events: none; user-select: none; -webkit-user-drag: none;
 }
+.pk-art { width: min(300px, 70%); margin: -10px auto 18px; }
+@media (min-width: 1200px) {
+    .pk-art { position: absolute; z-index: 0; top: -34px; right: -12px; width: clamp(280px, 25vw, 400px); margin: 0; }
+}
+@media (min-width: 1400px) { .pk-art { right: -40px; } }
+@media (min-width: 1700px) { .pk-art { right: -110px; width: 430px; } }
+.pk-art {
+    opacity: 0; transform: translateX(150px) scale(.9); filter: blur(10px);
+    transition: opacity 1.8s ease, transform 2s cubic-bezier(.16,.8,.24,1), filter 1.8s ease;
+    transition-delay: .1s;
+}
+.pk-art.in-view { opacity: .92; transform: none; filter: blur(0); }
+@media (max-width: 1199px) { .pk-art { transform: translateY(60px) scale(.92); } .pk-art.in-view { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .pk-art, .pk-art.in-view { opacity: .92; transform: none; filter: none; transition: none; } }
 
-/* =====================================================================
-   INTRO + STICKY FILTER BAR
-   ===================================================================== */
-.dest-intro { padding: 34px 0 0; position: relative; }
-.dest-head { text-align: center; }
-.dest-head h2 {
-    font-family: 'Cormorant SC', serif !important;
-    font-weight: 700 !important;
-    font-size: 50px;
-    line-height: 1.1;
-    color: #111 !important;
-    text-transform: none !important;
-    margin: 0 0 6px;
-}
-.dest-head p {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600; font-size: 16px; color: #2b3a35; margin: 0;
-}
+/* location heading + gold line */
+.dg-head { display: flex; align-items: center; gap: 24px; margin: 0 0 14px; }
+.dg-head .tn-title { margin: 0; white-space: nowrap; }
+.dg-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--gold), rgba(201,151,43,0)); }
+.dg-count { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; color: var(--gold-deep); white-space: nowrap; }
 
-.dest-bar-wrap {
-    position: sticky;
-    top: 88px;                 /* sits just under the navbar: adjust if your navbar is taller */
-    z-index: 30;
-    padding: 8px 0 0;
-    pointer-events: none;      /* only the bar itself catches clicks */
-}
+/* scroll reveal (replays) - only when JS is running */
+.dest-js .dest-item, .dest-js .dg-head { opacity: 0; transform: translateY(60px); transition: opacity .7s ease var(--d, 0s), transform .8s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
+.dest-js .dest-item.in-view, .dest-js .dg-head.in-view { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .dest-js .dest-item, .dest-js .dg-head { transition: none; opacity: 1; transform: none; } }
+
+/* ===================== FILTER BAR (paper style) ===================== */
 .dest-bar {
-    pointer-events: auto;
-    display: flex; align-items: center; gap: 14px;
-    padding: 10px 12px 10px 14px;
-    border-radius: 60px;
-    background: rgba(255, 255, 255, 0.92);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    border: 1px solid rgba(31, 91, 58, 0.14);
-    box-shadow: 0 12px 30px rgba(20, 40, 30, 0.14);
+    position: relative; z-index: 30; display: flex; align-items: center; gap: 14px; max-width: 1100px; margin: 0 auto 14px; padding: 10px 12px 10px 14px;
+    border-radius: 80px; background: rgba(255,252,244,.55); border: 1.5px solid var(--edge); box-shadow: 0 10px 26px rgba(90,60,20,.12);
 }
-.dest-chips {
-    flex: 1; min-width: 0;
-    display: flex; gap: 8px;
-    overflow-x: auto; scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-    padding: 2px;
-}
+.dest-chips { flex: 1; min-width: 0; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 2px; }
 .dest-chips::-webkit-scrollbar { display: none; }
 .dest-chip {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 9px 16px; border-radius: 40px;
-    border: 1.5px solid rgba(31, 91, 58, 0.25);
-    background: transparent; color: var(--dest-accent);
-    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px; line-height: 1;
-    cursor: pointer; white-space: nowrap;
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 40px;
+    border: 1.5px solid var(--gold-deep); background: transparent; color: var(--btn-ink);
+    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; line-height: 1; cursor: pointer; white-space: nowrap;
     transition: background .3s ease, color .3s ease, border-color .3s ease;
 }
-.dest-chip em {
-    font-style: normal; font-size: 12px;
-    min-width: 22px; padding: 3px 6px; border-radius: 20px; text-align: center;
-    background: rgba(31, 91, 58, 0.1); transition: background .3s ease;
-}
-@media (hover: hover) { .dest-chip:hover { border-color: var(--dest-gold); background: rgba(224, 177, 74, .18); } }
-.dest-chip.active:hover { background: var(--dest-accent); border-color: var(--dest-accent); }
-.dest-chip.active { background: var(--dest-accent); border-color: var(--dest-accent); color: #fff; }
-.dest-chip.active em { background: var(--dest-gold); color: var(--dest-dark); }
-.dest-chip:focus-visible, .dest-search input:focus-visible { outline: 2px solid var(--dest-gold); outline-offset: 2px; }
+.dest-chip em { font-style: normal; font-size: 12px; min-width: 22px; padding: 3px 6px; border-radius: 20px; text-align: center; background: rgba(169,122,20,.2); transition: background .3s ease; }
+@media (hover: hover) { .dest-chip:hover { background: var(--gold); border-color: var(--gold); } }
+.dest-chip.active, .dest-chip.active:hover { background: var(--gold); border-color: var(--gold); color: var(--btn-ink); }
+.dest-chip.active em { background: var(--btn-ink); color: #fff; }
+.dest-chip:focus-visible, .dest-search input:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
 
-.dest-search { position: relative; flex: 0 0 240px; }
-.dest-search i {
-    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-    font-size: 14px; color: var(--dest-accent); pointer-events: none;
-}
+.dest-search { position: relative; flex: 0 0 250px; margin: 0; }
+.dest-search i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--gold-deep); pointer-events: none; }
 .dest-search input {
-    width: 100%; box-sizing: border-box;
-    padding: 11px 38px 11px 40px; border-radius: 40px;
-    border: 1.5px solid rgba(31, 91, 58, 0.25); background: #fff;
-    font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 14px; color: #1d2b24;
+    width: 100%; box-sizing: border-box; padding: 11px 38px 11px 40px; border-radius: 40px;
+    border: 1.5px solid var(--edge); background: #fbf3e2;
+    font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 14px; color: var(--ink);
 }
-.dest-search input::placeholder { color: #7b867f; }
+.dest-search input::placeholder { color: #8a7a55; }
 .dest-clear {
-    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-    width: 26px; height: 26px; border: 0; border-radius: 50%;
-    background: rgba(31, 91, 58, .12); color: var(--dest-accent); font-size: 12px;
-    display: none; align-items: center; justify-content: center; cursor: pointer;
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border: 0; border-radius: 50%;
+    background: rgba(169,122,20,.2); color: var(--gold-deep); font-size: 12px; display: none; align-items: center; justify-content: center; cursor: pointer;
 }
+.dest-clear:hover { background: var(--gold); color: var(--btn-ink); }
 .dest-search.has-text .dest-clear { display: flex; }
 
-.dest-result {
-    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
-    color: #2b3a35; text-align: center; margin: 4px 0 0;
-}
+.dest-result { text-align: center; margin: 22px 0 0; font-size: 15px; font-weight: 600; color: var(--ink); }
+.dest-result b { color: var(--gold-deep); }
 .dest-result:empty { display: none; }
 
-/* =====================================================================
-   LOCATION BANDS (each has a faded side picture, like the About page)
-   ===================================================================== */
-.dg {
-    position: relative;
-    isolation: isolate;
-    padding: 10px 0 14px;
-    scroll-margin-top: 150px;
-}
-.dg[hidden], .dest-item[hidden] { display: none !important; }
-.dg-img { display: none; }
-
-.dg-head { display: flex; align-items: center; gap: 18px; margin: 0 0 14px; }
-.dg-head h3 {
-    margin: 0; white-space: nowrap; text-transform: none;
-    font-family: 'Cormorant SC', serif; font-weight: 700; font-size: 38px; line-height: 1.1; color: #111;
-}
-.dg-head h3::before, .dg-head h3::after { display: none !important; content: none !important; }
-.dg-line { flex: 1; height: 2px; background: linear-gradient(to right, var(--dest-gold), rgba(224, 177, 74, 0)); }
-.dg-count {
-    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
-    color: #2b3a35; white-space: nowrap;
-}
-
-.dest-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.dest-item { display: block; }
-
-/* =====================================================================
-   CARD
-   ===================================================================== */
-.dest-card {
-    position: relative; display: block; width: 100%;
-    border-radius: 28px; overflow: hidden; isolation: isolate;
-    aspect-ratio: 3 / 3.7; background: #dfe6e9;
-    box-shadow: 0 10px 30px rgba(20, 40, 30, .14);
-    cursor: pointer; outline: none; z-index: 1;
-    -webkit-tap-highlight-color: transparent;
-    transition: transform .4s ease, box-shadow .4s ease;
-}
-.dest-card:focus-visible { outline: 3px solid var(--dest-gold); outline-offset: 3px; }
-.dest-media { position: absolute; inset: 0; transition: transform .6s ease; }
-.dest-card figure.reveal { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
-.dest-card figure.reveal img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; display: block; }
-.dest-card .image-anime::after { display: none; }
-.dest-card::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,.40), rgba(0,0,0,0) 55%);
-    opacity: 0; transition: opacity .4s ease; pointer-events: none;
-}
-
-/* little location tag, top-left */
-.dest-tag {
-    position: absolute; top: 16px; left: 16px; z-index: 3;
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 7px 14px; border-radius: 30px;
-    background: rgba(255, 255, 255, .92); color: var(--dest-accent);
-    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px; line-height: 1;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
-}
-.dest-tag i { font-size: 12px; color: var(--dest-gold); }
-
-/* bottom panel: white by default -> green when opened */
-.dest-panel {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-    padding: 22px; text-align: center;
-    background: #fff; color: #111; border-radius: 40px;
-    transition: background .35s ease, color .35s ease, border-radius .35s ease, padding .35s ease;
-}
-.dest-name { margin: 0; font-family: inherit; font-size: 24px; font-weight: 600; color: inherit; text-transform: none; }
-
-.dest-hint {
-    display: none; margin-top: 6px; font-size: 12.5px; font-weight: 500; color: #6b756f;
-}
-@media (hover: none) { .dest-hint { display: block; } }
-
-.dest-more {
-    display: grid; grid-template-rows: 0fr; opacity: 0;
-    transition: grid-template-rows .5s ease, opacity .4s ease .05s;
-}
-.dest-more-inner { min-height: 0; overflow: hidden; }
-.dest-more p { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: inherit; text-shadow: none; }
-
-.dest-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
-.dest-btn {
-    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 11px 14px; border-radius: 50px;
-    font-weight: 600; font-size: 15px; line-height: 1.2;
-    text-decoration: none; white-space: nowrap; transition: all .3s ease;
-}
-.dest-btn i { font-size: 12px; transition: transform .3s ease; }
-.dest-btn:hover i { transform: translateX(3px); }
-.dest-btn-fill { background: #fff; border: 1.5px solid #fff; color: var(--dest-accent) !important; }
-.dest-btn-fill:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark) !important; }
-.dest-btn-line { background: transparent; border: 1.5px solid rgba(255, 255, 255, .9); color: #fff !important; }
-.dest-btn-line:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark) !important; }
-
-/* open state (touch / focus) */
-.dest-card.is-open, .dest-card:focus-within {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .22); z-index: 5;
-}
-.dest-card.is-open .dest-media, .dest-card:focus-within .dest-media { transform: scale(1.06); }
-.dest-card.is-open::after, .dest-card:focus-within::after { opacity: 1; }
-.dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel {
-    background: var(--dest-accent); color: #fff; border-radius: 28px; padding: 24px 22px 26px;
-}
-.dest-card.is-open .dest-hint, .dest-card:focus-within .dest-hint { display: none; }
-.dest-card.is-open .dest-more, .dest-card:focus-within .dest-more { grid-template-rows: 1fr; opacity: 1; }
-
-/* open state (mouse hover, desktop only) */
-@media (hover: hover) {
-    .dest-card:hover { transform: translateY(-6px) scale(1.03); box-shadow: 0 18px 40px rgba(0, 0, 0, .22); z-index: 5; }
-    .dest-card:hover .dest-media { transform: scale(1.06); }
-    .dest-card:hover::after { opacity: 1; }
-    .dest-card:hover .dest-panel { background: var(--dest-accent); color: #fff; border-radius: 28px; padding: 24px 22px 26px; }
-    .dest-card:hover .dest-more { grid-template-rows: 1fr; opacity: 1; }
-}
-
-/* scroll-in (only when JS is running) */
-.dest-js .dest-item { opacity: 0; transform: translateY(34px); }
-.dest-js .dest-item.in {
-    opacity: 1; transform: none;
-    transition: opacity .7s ease var(--d, 0s), transform .8s cubic-bezier(.2, .7, .2, 1) var(--d, 0s);
-}
-@media (prefers-reduced-motion: reduce) {
-    .dest-js .dest-item { opacity: 1; transform: none; }
-    .dest-card, .dest-media, .dest-more, .dest-panel { transition: none; }
-}
-
-/* empty states */
-.dest-empty {
-    display: none; max-width: 520px; margin: 20px auto; padding: 26px 24px; text-align: center;
-    border-radius: 24px; background: rgba(255, 255, 255, .92);
-    box-shadow: 0 14px 34px rgba(20, 40, 30, .12);
-}
-.dest-empty.show, .dest-empty.always { display: block; }
-.dest-empty i { font-size: 34px; color: var(--dest-gold); margin-bottom: 12px; display: block; }
-.dest-empty h4 { margin: 0 0 8px; font-size: 22px; color: var(--dest-accent); text-transform: none; }
-.dest-empty p { margin: 0 0 18px; color: #4a5565; font-size: 15px; text-shadow: none; }
-.dest-empty button {
-    padding: 11px 24px; border-radius: 50px; border: 1.5px solid var(--dest-accent);
-    background: var(--dest-accent); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
-    transition: all .3s ease;
-}
-.dest-empty button:hover { background: var(--dest-gold); border-color: var(--dest-gold); color: var(--dest-dark); }
-
-/* back to top */
-.dest-top {
-    position: fixed; right: 22px; bottom: 22px; z-index: 40;
-    width: 48px; height: 48px; border-radius: 50%; border: 0;
-    background: var(--dest-accent); color: #fff; font-size: 16px;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
-    opacity: 0; visibility: hidden; transform: translateY(10px);
-    transition: all .3s ease;
-}
-.dest-top.show { opacity: 1; visibility: visible; transform: none; }
-.dest-top:hover { background: var(--dest-gold); color: var(--dest-dark); }
-
-.dest-bottom-space { height: 14px; }
-
-/* =====================================================================
-   DESKTOP: faded side pictures (same style as the About page)
-   ===================================================================== */
-@media (min-width: 992px) {
-    .dg-img {
-        display: block; position: absolute; top: 0;
-        width: 46vw; height: 100%;
-        object-fit: cover;
-        pointer-events: none; z-index: -1; opacity: .9;
-    }
-    .dg-left .dg-img {
-        left: -3vw; object-position: 30% 50%;
-        -webkit-mask-image:
-            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to right, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-                mask-composite: intersect;
-    }
-    .dg-right .dg-img {
-        right: -3vw; object-position: 70% 50%;
-        -webkit-mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-        -webkit-mask-composite: source-in;
-                mask-image:
-            linear-gradient(to left, #000 0, #000 40%, rgba(0,0,0,.5) 72%, transparent 100%),
-            linear-gradient(to bottom, transparent 0, #000 22%, #000 78%, transparent 100%);
-                mask-composite: intersect;
-    }
-}
-@media (min-width: 1200px) { .flow .container { max-width: 1400px; } }
-@media (min-width: 1600px) { .flow .container { max-width: 1520px; } }
-
-/* =====================================================================
-   MOBILE / TABLET
-   ===================================================================== */
 @media (max-width: 991px) {
-    .page-header.dest-hero {
-        width: calc(100% - 20px) !important;
-        max-width: calc(100% - 20px) !important;
-        margin: 10px 10px 0 !important;
-        border-radius: 24px !important;
-        min-height: 34vh !important;
-        padding: 115px 0 45px !important;
-    }
-    .page-header.dest-hero .page-header-box,
-    .page-header.dest-hero h1,
-    .page-header.dest-hero nav { text-align: center !important; width: 100%; }
-    .page-header.dest-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
-    .page-header.dest-hero .breadcrumb { justify-content: center !important; font-size: 14px; }
-
-    .dest-intro { padding: 24px 0 0; }
-    .dest-head h2 { font-size: 34px; }
-    .dest-bar-wrap { top: 72px; padding: 6px 0 0; }
-    .dest-bar { flex-direction: column; align-items: stretch; gap: 8px; border-radius: 22px; padding: 8px; }
+    .dest-bar { flex-direction: column; align-items: stretch; border-radius: 28px; padding: 12px; gap: 8px; }
     .dest-search { flex: 0 0 auto; }
     .dest-chips {
-        margin: 0 -8px; padding: 2px 8px; gap: 6px;
-        scroll-snap-type: x proximity;
+        margin: 0 -4px; padding: 2px 4px; gap: 6px; scroll-snap-type: x proximity;
         -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 34px), transparent 100%);
                 mask-image: linear-gradient(to right, transparent 0, #000 10px, #000 calc(100% - 34px), transparent 100%);
     }
     .dest-chips::after { content: ""; flex: 0 0 26px; }
     .dest-chip { scroll-snap-align: start; padding: 8px 12px; font-size: 13px; gap: 6px; }
     .dest-chip em { min-width: 20px; padding: 3px 5px; font-size: 11px; }
-    .dest-search input { padding: 9px 36px 9px 38px; }
-    .dest-search i { left: 14px; }
-
-    .dg { overflow: hidden; padding: 8px 0 10px; scroll-margin-top: 200px; }
-    .dg-img {
-        display: block !important; position: absolute !important;
-        left: 0 !important; right: 0 !important; top: 0 !important;
-        width: 100% !important; height: 100% !important;
-        object-fit: cover; opacity: .55; z-index: -1 !important; pointer-events: none;
-        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
-                mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%) !important;
-    }
-    .dg-head h3 { font-size: 30px; }
-    .dest-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+@media (max-width: 575px) {
+    .dest-search input { font-size: 16px; padding: 9px 36px 9px 38px; } /* stops iOS zoom on focus */
 }
 
+/* ===================== DESTINATION CARDS (torn sheet of paper) ===================== */
+.dest-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; padding: 26px 0 10px; }
+
+/* the shadow lives on the item, so it follows the torn shape of the paper */
+.dest-item { display: block; min-width: 0; position: relative; filter: drop-shadow(0 6px 8px rgba(90,60,20,.22)); }
+.dest-item:hover { z-index: 5; }
+.dest-item:has(.dest-card:focus-visible) { filter: drop-shadow(0 0 3px var(--gold)) drop-shadow(0 6px 8px rgba(90,60,20,.22)); }
+
+/* the card itself = a sheet of cream paper with a torn outline on all four edges.
+   Photo + name panel are set INSIDE it (paper rim all around), so the tear is paper, never the picture. */
+.dest-card {
+    position: relative; display: block; width: 100%; border-radius: 0; overflow: hidden; isolation: isolate;
+    aspect-ratio: 3 / 3.7; background-color: #fbf3e2; box-shadow: none;
+    cursor: pointer; outline: none; z-index: 1; font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
+    -webkit-tap-highlight-color: transparent; transition: transform .4s ease, background-color .35s ease;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 440 540' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.03' numOctaves='3' seed='11' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='16' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.16' numOctaves='2' seed='4' result='f'/%3E%3CfeDisplacementMap in='d' in2='f' scale='4' xChannelSelector='G' yChannelSelector='R'/%3E%3C/filter%3E%3Crect x='12' y='12' width='416' height='516' rx='8' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 440 540' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-10%25' y='-10%25' width='120%25' height='120%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.03' numOctaves='3' seed='11' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='16' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.16' numOctaves='2' seed='4' result='f'/%3E%3CfeDisplacementMap in='d' in2='f' scale='4' xChannelSelector='G' yChannelSelector='R'/%3E%3C/filter%3E%3Crect x='12' y='12' width='416' height='516' rx='8' fill='white' filter='url(%23t)'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.dest-card:focus-visible { outline: none; }
+
+/* photo: inset from the torn edge, rounded, clipped (the zoom happens inside) */
+.dest-media { position: absolute; top: 22px; left: 22px; right: 22px; bottom: 22px; border-radius: 18px; overflow: hidden; }
+.dest-card figure.reveal { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
+.dest-card figure.reveal img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; display: block; transition: transform .6s ease; }
+.dest-card .image-anime::after { display: none; }
+.dest-card::after {
+    content: ""; position: absolute; top: 22px; left: 22px; right: 22px; bottom: 22px; border-radius: 18px;
+    background: linear-gradient(to top, rgba(0,0,0,.40), rgba(0,0,0,0) 55%);
+    opacity: 0; transition: opacity .4s ease; pointer-events: none;
+}
+
+/* location tag, top-left (inside the photo) */
+.dest-tag {
+    position: absolute; top: 36px; left: 36px; z-index: 3; display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 30px; background: rgba(255,255,255,.94); color: #1a1a1a;
+    font-weight: 600; font-size: 13px; line-height: 1; box-shadow: 0 4px 12px rgba(0,0,0,.12);
+}
+.dest-tag i { font-size: 12px; color: var(--gold); }
+
+/* bottom panel: same cream as the paper by default (looks like the name sits on the paper) -> gold when opened */
+.dest-panel {
+    position: absolute; left: 22px; right: 22px; bottom: 22px; z-index: 2; padding: 20px 20px 22px; text-align: center;
+    background: #fbf3e2; color: #1a1a1a; border-radius: 30px 30px 18px 18px;
+    transition: background .35s ease, color .35s ease, border-radius .35s ease, padding .35s ease;
+}
+.dest-name { margin: 0; font-family: inherit; font-size: 24px; font-weight: 600; color: inherit; text-transform: none; font-variant: normal; letter-spacing: 0; }
+.dest-name::before, .dest-name::after { display: none !important; content: none !important; }
+.dest-hint { display: none; margin-top: 6px; font-size: 12.5px; font-weight: 500; color: #8a7a55; }
+@media (hover: none) { .dest-hint { display: block; } }
+
+.dest-more { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .5s ease, opacity .4s ease .05s; }
+.dest-more-inner { min-height: 0; overflow: hidden; }
+.dest-more p { margin: 14px 0 0; font-size: 15px; line-height: 1.6; color: inherit; text-shadow: none; }
+
+.dest-actions { display: flex; justify-content: center; gap: 10px; margin-top: 16px; }
+.dest-btn {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 14px; border-radius: 50px;
+    font-weight: 600; font-size: 15px; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: all .3s ease;
+}
+.dest-btn i { font-size: 12px; transition: transform .3s ease; }
+.dest-btn:hover i { transform: translateX(3px); }
+.dest-btn-fill { background: #fff; border: 1.5px solid #fff; color: var(--gold-deep) !important; }
+.dest-btn-fill:hover { background: var(--btn-ink); border-color: var(--btn-ink); color: var(--gold) !important; }
+.dest-btn-line { background: transparent; border: 1.5px solid rgba(255,255,255,.9); color: #fff !important; }
+.dest-btn-line:hover { background: var(--btn-ink); border-color: var(--btn-ink); color: var(--gold) !important; }
+
+/* open state (touch / focus) */
+.dest-card.is-open, .dest-card:focus-within { transform: translateY(-6px) scale(1.03); z-index: 5; background-color: var(--sand-hover); }
+.dest-card.is-open figure.reveal img, .dest-card:focus-within figure.reveal img { transform: scale(1.06); }
+.dest-card.is-open::after, .dest-card:focus-within::after { opacity: 1; }
+.dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel { background: var(--gold-deep); color: #fff; border-radius: 26px; padding: 24px 22px 26px; }
+.dest-card.is-open .dest-hint, .dest-card:focus-within .dest-hint { display: none; }
+.dest-card.is-open .dest-more, .dest-card:focus-within .dest-more { grid-template-rows: 1fr; opacity: 1; }
+
+/* open state (mouse hover, desktop only) */
+@media (hover: hover) {
+    .dest-card:hover { transform: translateY(-6px) scale(1.03); z-index: 5; background-color: var(--sand-hover); }
+    .dest-card:hover figure.reveal img { transform: scale(1.06); }
+    .dest-card:hover::after { opacity: 1; }
+    .dest-card:hover .dest-panel { background: var(--gold-deep); color: #fff; border-radius: 26px; padding: 24px 22px 26px; }
+    .dest-card:hover .dest-more { grid-template-rows: 1fr; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { .dest-card, .dest-card figure.reveal img, .dest-more, .dest-panel { transition: none; } }
+
+@media (max-width: 1199px) { .dest-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; } }
 @media (max-width: 575px) {
-    .page-header.dest-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; }
-
-    .dest-head h2 { font-size: 28px; }
-    .dest-head p { font-size: 14px; }
-    .dest-chip { padding: 8px 13px; font-size: 13px; }
-    .dest-search input { font-size: 16px; } /* stops iOS zoom on focus */
-
-    .dg-head { gap: 12px; margin-bottom: 10px; }
-    .dg-head h3 { font-size: 26px; white-space: normal; }
+    .dg-head { gap: 12px; margin-bottom: 10px; justify-content: space-between; }
+    .dg-head .tn-title { white-space: normal; }
     .dg-line { display: none; }
-    .dg-head { justify-content: space-between; }
-
-    .dest-grid { grid-template-columns: 1fr; gap: 12px; }
-    .dest-card { border-radius: 24px; aspect-ratio: 4 / 3.8; }
-    .dest-tag { top: 12px; left: 12px; padding: 6px 12px; font-size: 12px; }
-    .dest-panel { padding: 14px; border-radius: 30px; }
+    .dest-grid { grid-template-columns: 1fr; gap: 14px; }
+    .dest-card { border-radius: 0; aspect-ratio: 4 / 4.2; }
+    .dest-media, .dest-card::after { top: 18px; left: 18px; right: 18px; bottom: 18px; border-radius: 14px; }
+    .dest-tag { top: 30px; left: 30px; padding: 6px 12px; font-size: 12px; }
+    .dest-panel { left: 18px; right: 18px; bottom: 18px; padding: 14px 14px 16px; border-radius: 26px 26px 14px 14px; }
     .dest-name { font-size: 19px; }
-    .dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel { padding: 18px 16px 20px; border-radius: 24px; }
+    .dest-card.is-open .dest-panel, .dest-card:focus-within .dest-panel { padding: 18px 16px 20px; border-radius: 22px; }
     .dest-more p { font-size: 13.5px; line-height: 1.55; margin-top: 10px; }
     .dest-actions { gap: 8px; margin-top: 14px; }
     .dest-btn { padding: 9px 8px; font-size: 13px; gap: 6px; border-width: 1.2px; }
     .dest-btn i { font-size: 10px; }
-    .dest-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
 }
-@media (max-width: 360px) {
-    .dest-btn { padding: 8px 6px; font-size: 12px; }
-    .dest-name { font-size: 18px; }
+@media (max-width: 360px) { .dest-btn { padding: 8px 6px; font-size: 12px; } .dest-name { font-size: 18px; } }
+
+/* ===================== EMPTY STATES ===================== */
+.dest-empty {
+    display: none; max-width: 520px; margin: 26px auto 0; padding: 26px 24px; text-align: center;
+    border-radius: 20px; background: #fbf3e2; border: 2px dashed var(--gold-deep); box-shadow: 0 14px 34px rgba(90,60,20,.14);
+}
+.dest-empty.show, .dest-empty.always { display: block; }
+.dest-empty > i { font-size: 34px; color: var(--gold); margin-bottom: 12px; display: block; }
+.dest-empty h4 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; letter-spacing: 1px; font-size: 28px; font-weight: 800; color: var(--ink); text-transform: none; }
+.dest-empty h4::before, .dest-empty h4::after { display: none !important; content: none !important; }
+.dest-empty p { margin: 0 0 18px; color: var(--text); font-size: 15px; }
+.dest-empty button {
+    padding: 12px 26px; border-radius: 50px; border: 1.5px solid var(--gold); background: var(--gold); color: var(--btn-ink);
+    font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; cursor: pointer; transition: all .3s ease;
+}
+.dest-empty button:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; }
+
+/* back to top */
+.dest-top {
+    position: fixed; right: 22px; bottom: 22px; z-index: 40; width: 48px; height: 48px; border-radius: 50%; border: 0;
+    background: var(--gold, #c9972b); color: #2b2112; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 10px 24px rgba(0,0,0,.25); opacity: 0; visibility: hidden; transform: translateY(10px); transition: all .3s ease;
+}
+.dest-top.show { opacity: 1; visibility: visible; transform: none; }
+.dest-top:hover { background: #a97a14; color: #fff; }
+@media (max-width: 575px) { .dest-top { right: 14px; bottom: 14px; width: 42px; height: 42px; } }
+
+/* ===================== FOOTER: torn-paper top edge ===================== */
+/* --footer-gap follows the last visible band (the script updates it when the filter changes) */
+:root { --footer-gap: #f2e2c6; }
+html, body { background: var(--footer-gap) !important; }
+.footer-main {
+    --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+    -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important; mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
+    -webkit-mask-position: top left, bottom left !important; mask-position: top left, bottom left !important;
+    -webkit-mask-repeat: no-repeat !important; mask-repeat: no-repeat !important;
+    -webkit-mask-composite: source-over !important; mask-composite: add !important;
+}
+.footer-main > .container { padding-top: calc(var(--torn-h) * .75 + 30px) !important; }
+@media (min-width: 992px) {
+    .footer-main {
+        --torn-h: 110px;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
+    }
 }
 </style>
 {% endblock %}
 
+
 {% block content %}
 
-<!-- Hero (same design and rotating images as the About page) -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&display=swap" rel="stylesheet">
-
-<div class="page-header dest-hero">
+<!-- Hero (same as the Packages / About hero) -->
+<div class="ah-wrap">
+<div class="page-header page-hero">
     <div class="ah-bgs" aria-hidden="true">
         <div class="ah-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
@@ -493,151 +387,136 @@
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
         <div class="ah-bg" style="background-image: url('{% static 'malabar-static/bacck.png' %}');"></div>
     </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="page-header-box">
-                    <h1 class="wow fadeInUp">Destinations</h1>
-                    <nav class="wow fadeInUp" data-wow-delay="0.2s">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">destinations</li>
-                        </ol>
-                    </nav>
-                </div>
-            </div>
+    <div class="container"><div class="row"><div class="col-lg-12">
+        <div class="page-header-box">
+            <h1 class="text-anime-style-3" data-cursor="-opaque">Destinations</h1>
+            <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">destinations</li>
+            </ol></nav>
         </div>
-    </div>
+    </div></div></div>
+</div>
 </div>
 
-<!-- ===== ONE CONTINUOUS PAGE: everything below the hero shares the landscape background ===== -->
 <div class="flow">
 
-    <!-- Heading + sticky filter bar -->
-    <section class="dest-intro">
-        <div class="container">
-            <div class="dest-head">
-                <h2 class="text-anime-style-3" data-cursor="-opaque">Our Destinations</h2>
-                <p class="wow fadeInUp" data-wow-delay="0.2s">Pick a place and let us plan the journey.</p>
-            </div>
+<!-- ============ HEADING + FILTER (cream) ============ -->
+<section class="sec sec-cream dest-top-band">
+    <div class="container">
+
+        <!-- houseboat sketch: right side on desktop, centered above the heading on tablet / mobile -->
+        <img class="pk-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+
+        <div class="tn-head">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Destinations</div>
+            <h2 class="tn-title">Our Destinations</h2>
+            <p class="tn-text">Pick a place and let us plan the journey.</p>
         </div>
 
         {% if groups %}
-        <div class="dest-bar-wrap">
-            <div class="container">
-                <div class="dest-bar" role="search">
-                    <div class="dest-chips" id="destChips" role="tablist" aria-label="Filter by location">
-                        <button type="button" class="dest-chip active" data-filter="all" role="tab" aria-selected="true">
-                            All <em class="dest-chip-count" data-total="1">0</em>
-                        </button>
-                        {% for group in groups %}
-                        <button type="button" class="dest-chip" data-filter="{{ group.value }}" role="tab" aria-selected="false">
-                            {{ group.label }} <em>{{ group.destinations|length }}</em>
-                        </button>
-                        {% endfor %}
-                    </div>
-
-                    <label class="dest-search" id="destSearchBox">
-                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                        <span class="visually-hidden" style="position:absolute;left:-9999px;">Search destinations</span>
-                        <input type="search" id="destSearch" placeholder="Search a destination" autocomplete="off">
-                        <button type="button" class="dest-clear" id="destClear" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
-                    </label>
-                </div>
-                <p class="dest-result" id="destResult" role="status" aria-live="polite"></p>
+        <div class="dest-bar" role="search">
+            <div class="dest-chips" id="destChips" role="tablist" aria-label="Filter by location">
+                <button type="button" class="dest-chip active" data-filter="all" role="tab" aria-selected="true">
+                    All <em class="dest-chip-count" data-total="1">0</em>
+                </button>
+                {% for group in groups %}
+                <button type="button" class="dest-chip" data-filter="{{ group.value }}" role="tab" aria-selected="false">
+                    {{ group.label }} <em>{{ group.destinations|length }}</em>
+                </button>
+                {% endfor %}
             </div>
+
+            <label class="dest-search" id="destSearchBox">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <span class="visually-hidden" style="position:absolute;left:-9999px;">Search destinations</span>
+                <input type="search" id="destSearch" placeholder="Search a destination" autocomplete="off">
+                <button type="button" class="dest-clear" id="destClear" aria-label="Clear search"><i class="fa-solid fa-xmark"></i></button>
+            </label>
+        </div>
+
+        <p class="dest-result" id="destResult" role="status" aria-live="polite"></p>
+
+        <!-- shown when search / filter finds nothing -->
+        <div class="dest-empty" id="destNone">
+            <i class="fa-solid fa-magnifying-glass-location"></i>
+            <h4>No Destinations Found</h4>
+            <p>Try a different name, or show all locations.</p>
+            <button type="button" id="destReset">Show all destinations</button>
         </div>
         {% endif %}
-    </section>
 
-    {% static 'malabar-static/wf.png' as pic1 %}
-    {% static 'malabar-static/Varkala_Cliffs_Above_the_Arabian_Sea.png' as pic2 %}
-    {% static 'malabar-static/wls.png' as pic3 %}
-    {% static 'malabar-static/Natural_daylight_at_Bekal_Fort.png' as pic4 %}
-    {% static 'malabar-static/kovalam.png' as pic5 %}
-    {% static 'malabar-static/bacck.png' as pic6 %}
+    </div>
+</section>
 
-    <!-- Destinations, grouped by location -->
-    <div id="destGroups">
-        {% for group in groups %}
-        {% cycle pic1 pic2 pic3 pic4 pic5 pic6 as sidepic silent %}
-        <section class="dg {% if forloop.counter0|divisibleby:2 %}dg-left{% else %}dg-right{% endif %}" id="loc-{{ group.value }}" data-loc="{{ group.value }}">
-            <img class="dg-img" src="{{ sidepic }}" alt="" draggable="false" loading="lazy" decoding="async">
+<!-- ============ ONE BAND PER LOCATION (colours alternate; the script re-assigns them after filtering) ============ -->
+{% for group in groups %}
+<section class="sec sec-wide dg {% if forloop.counter0|divisibleby:2 %}sec-tan{% else %}sec-cream{% endif %}" id="loc-{{ group.value }}" data-loc="{{ group.value }}">
+    <div class="container">
 
-            <div class="container">
-                <div class="dg-head">
-                    <h3>{{ group.label }}</h3>
-                    <span class="dg-line"></span>
-                    <span class="dg-count"><span class="dg-n">{{ group.destinations|length }}</span> places</span>
-                </div>
+        <div class="dg-head">
+            <h3 class="tn-title">{{ group.label }}</h3>
+            <span class="dg-line"></span>
+            <span class="dg-count"><span class="dg-n">{{ group.destinations|length }}</span> places</span>
+        </div>
 
-                <div class="dest-grid">
-                    {% for d in group.destinations %}
-                    <div class="dest-item" data-name="{{ d.name|lower }}">
-                        <div class="dest-card" tabindex="0" role="group" aria-label="{{ d.name }}">
-                            {% if d.image %}
-                            <div class="dest-media">
-                                <figure class="image-anime reveal">
-                                    <img src="{{ d.image.url }}"
-                                         srcset="{{ d.image|srcset }}"
-                                         sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
-                                         alt="{{ d.name }}"
-                                         loading="lazy" decoding="async">
-                                </figure>
-                            </div>
-                            {% endif %}
+        <div class="dest-grid">
+            {% for d in group.destinations %}
+            <div class="dest-item" data-name="{{ d.name|lower }}">
+                <div class="dest-card" tabindex="0" role="group" aria-label="{{ d.name }}">
+                    {% if d.image %}
+                    <div class="dest-media">
+                        <figure class="image-anime reveal">
+                            <img src="{{ d.image.url }}"
+                                 srcset="{{ d.image|srcset }}"
+                                 sizes="(max-width: 575px) 100vw, (max-width: 991px) 50vw, 410px"
+                                 alt="{{ d.name }}"
+                                 loading="lazy" decoding="async">
+                        </figure>
+                    </div>
+                    {% endif %}
 
-                            <span class="dest-tag"><i class="fa-solid fa-location-dot"></i>{{ group.label }}</span>
+                    <span class="dest-tag"><i class="fa-solid fa-location-dot"></i>{{ group.label }}</span>
 
-                            <div class="dest-panel">
-                                <h3 class="dest-name">{{ d.name }}</h3>
-                                <div class="dest-hint">Tap to see details</div>
-                                <div class="dest-more">
-                                    <div class="dest-more-inner">
-                                        {% if d.description %}
-                                        <p>{{ d.description|striptags|truncatewords:20 }}</p>
-                                        {% endif %}
-                                        <div class="dest-actions">
-                                            <a href="#" class="dest-btn dest-btn-line open-booking" data-package="{{ d.name }}">
-                                                Book Now <i class="fa-solid fa-angles-right"></i>
-                                            </a>
-                                            <a href="{% url 'destination_detail' d.slug %}" class="dest-btn dest-btn-fill">
-                                                View more <i class="fa-solid fa-arrow-right"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                    <div class="dest-panel">
+                        <h3 class="dest-name">{{ d.name }}</h3>
+                        <div class="dest-hint">Tap to see details</div>
+                        <div class="dest-more">
+                            <div class="dest-more-inner">
+                                {% if d.description %}
+                                <p>{{ d.description|striptags|truncatewords:20 }}</p>
+                                {% endif %}
+                                <div class="dest-actions">
+                                    <a href="#" class="dest-btn dest-btn-line open-booking" data-package="{{ d.name }}">
+                                        Book Now <i class="fa-solid fa-angles-right"></i>
+                                    </a>
+                                    <a href="{% url 'destination_detail' d.slug %}" class="dest-btn dest-btn-fill">
+                                        View more <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
-        </section>
-        {% empty %}
-        <div class="container">
-            <div class="dest-empty always">
-                <i class="fa-solid fa-compass"></i>
-                <h4>No destinations yet</h4>
-                <p>We are adding new places. Check back soon, or contact us and we will plan a trip for you.</p>
-                <a href="{% url 'contact' %}"><button type="button">Contact us</button></a>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <!-- Shown when search / filter finds nothing -->
+    </div>
+</section>
+{% empty %}
+<section class="sec sec-tan">
     <div class="container">
-        <div class="dest-empty" id="destNone">
-            <i class="fa-solid fa-magnifying-glass-location"></i>
-            <h4>No destinations found</h4>
-            <p>Try a different name, or show all locations.</p>
-            <button type="button" id="destReset">Show all destinations</button>
+        <div class="dest-empty always">
+            <i class="fa-solid fa-compass"></i>
+            <h4>No Destinations Yet</h4>
+            <p>We are adding new places. Check back soon, or contact us and we will plan a trip for you.</p>
+            <a href="{% url 'contact' %}"><button type="button">Contact us</button></a>
         </div>
     </div>
+</section>
+{% endfor %}
 
-    <div class="dest-bottom-space"></div>
 </div>
 <!-- ===== /flow ===== -->
 
@@ -649,7 +528,7 @@
 <!-- Hero: background images change one by one -->
 <script>
     (function () {
-        var bgs = document.querySelectorAll('.dest-hero .ah-bg');
+        var bgs = document.querySelectorAll('.page-hero .ah-bg');
         if (bgs.length < 2) return;
         var current = 0;
         setInterval(function () {
@@ -660,7 +539,7 @@
     })();
 </script>
 
-<!-- Cards: tap to open on touch, scroll-in animation -->
+<!-- Cards: tap to open on touch -->
 <script>
     (function () {
         var cards = document.querySelectorAll('.dest-card');
@@ -678,7 +557,6 @@
                 closeAll(card);
                 card.classList.toggle('is-open', !wasOpen);
             });
-            // Enter / Space opens the card for keyboard users on touch-style devices
             card.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') card.blur();
             });
@@ -686,31 +564,51 @@
         document.addEventListener('click', function (e) {
             if (!e.target.closest('.dest-card')) closeAll(null);
         });
-
-        // scroll-in reveal (staggered by column)
-        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var items = Array.prototype.slice.call(document.querySelectorAll('.dest-item'));
-        if (reduce || !('IntersectionObserver' in window)) return;
-
-        var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 992 ? 2 : 3);
-        items.forEach(function (it, i) { it.style.setProperty('--d', ((i % cols) * 0.1) + 's'); });
-        document.querySelector('.flow').classList.add('dest-js');
-
-        var io = new IntersectionObserver(function (entries) {
-            entries.forEach(function (en) {
-                if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-            });
-        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-        items.forEach(function (it) { io.observe(it); });
-
-        // items revealed again after filtering must not stay invisible
-        window.destRevealAll = function () {
-            items.forEach(function (it) { it.classList.add('in'); });
-        };
     })();
 </script>
 
-<!-- Filter chips + search + ?location=<slug> + back to top -->
+<!-- Scroll animation (replays every time the heading, a card or the houseboat enters the screen) -->
+<script>
+    (function () {
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* houseboat art: its own observer, starts only when well inside the screen so the fade is seen */
+        var art = document.querySelector('.pk-art');
+        if (art) {
+            if (!('IntersectionObserver' in window)) { art.classList.add('in-view'); }
+            else {
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) {
+                        if (en.isIntersecting) en.target.classList.add('in-view');
+                        else en.target.classList.remove('in-view');
+                    });
+                }, { threshold: 0.45, rootMargin: '0px 0px -12% 0px' }).observe(art);
+            }
+        }
+
+        var items = document.querySelectorAll('.dest-item, .dg-head');
+        if (!items.length || reduce || !('IntersectionObserver' in window)) return;
+
+        /* stagger by column */
+        var cols = window.innerWidth < 576 ? 1 : (window.innerWidth < 1200 ? 2 : 3);
+        document.querySelectorAll('.dest-grid').forEach(function (grid) {
+            [].slice.call(grid.querySelectorAll('.dest-item')).forEach(function (it, i) {
+                it.style.setProperty('--d', ((i % cols) * 0.1) + 's');
+            });
+        });
+        document.querySelector('.flow').classList.add('dest-js');
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) entry.target.classList.add('in-view');
+                else entry.target.classList.remove('in-view');
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+        items.forEach(function (it) { io.observe(it); });
+    })();
+</script>
+
+<!-- Filter chips + search + ?location=<slug> + band colours + back to top -->
 <script>
     (function () {
         var chipsBox = document.getElementById('destChips');
@@ -728,9 +626,21 @@
 
         var state = { loc: 'all', q: '' };
 
-        // total count on the "All" chip
+        /* total count on the "All" chip */
         var totalEl = chipsBox.querySelector('[data-total]');
         if (totalEl) totalEl.textContent = document.querySelectorAll('.dest-item').length;
+
+        /* alternate the band colours of the visible locations (first = tan, after the cream heading band)
+           and give the footer gap the colour of the last visible band */
+        function recolor() {
+            var vis = groups.filter(function (g) { return !g.hidden; });
+            vis.forEach(function (g, i) {
+                g.classList.toggle('sec-tan', i % 2 === 0);
+                g.classList.toggle('sec-cream', i % 2 === 1);
+            });
+            var lastTan = vis.length && (vis.length % 2 === 1);
+            document.documentElement.style.setProperty('--footer-gap', lastTan ? '#e8d3b0' : '#f2e2c6');
+        }
 
         function apply(scrollToGroup) {
             var q = state.q.trim().toLowerCase();
@@ -750,21 +660,20 @@
                 shown += n;
             });
 
-            if (window.destRevealAll) window.destRevealAll();
+            recolor();
 
             none.classList.toggle('show', shown === 0);
             searchBox.classList.toggle('has-text', q.length > 0);
 
-            if (shown === 0) result.textContent = '';
-            else if (q || state.loc !== 'all') result.textContent = 'Showing ' + shown + (shown === 1 ? ' destination' : ' destinations');
-            else result.textContent = '';
+            if (shown === 0) result.innerHTML = '';
+            else if (q || state.loc !== 'all') result.innerHTML = 'Showing <b>' + shown + '</b> ' + (shown === 1 ? 'destination' : 'destinations');
+            else result.innerHTML = '';
 
             if (scrollToGroup) {
                 var first = groups.filter(function (g) { return !g.hidden; })[0];
-                var top = document.querySelector('.dest-intro');
-                var target = first || top;
+                var target = first || document.querySelector('.dest-top-band');
                 if (target) {
-                    var y = target.getBoundingClientRect().top + window.pageYOffset - 150;
+                    var y = target.getBoundingClientRect().top + window.pageYOffset - 20;
                     window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
                 }
             }
@@ -777,10 +686,7 @@
                 var on = c.getAttribute('data-filter') === state.loc;
                 c.classList.toggle('active', on);
                 c.setAttribute('aria-selected', on ? 'true' : 'false');
-                if (on && c.scrollIntoView) {
-                    // keep the active chip visible inside the scrolling chip row
-                    chipsBox.scrollTo({ left: c.offsetLeft - 20, behavior: 'smooth' });
-                }
+                if (on) chipsBox.scrollTo({ left: c.offsetLeft - 20, behavior: 'smooth' });
             });
         }
 
@@ -814,16 +720,15 @@
             setChip('all'); updateUrl(); apply(true);
         });
 
-        // navbar dropdown links: /destinations/?location=<slug>
+        /* navbar dropdown links: /destinations/?location=<slug> */
         var param = new URLSearchParams(window.location.search).get('location');
         if (param) {
             setChip(param);
             apply(false);
-            // wait for layout, then bring the chosen location into view
             window.addEventListener('load', function () {
                 var g = document.getElementById('loc-' + state.loc);
                 if (g && !g.hidden) {
-                    var y = g.getBoundingClientRect().top + window.pageYOffset - 150;
+                    var y = g.getBoundingClientRect().top + window.pageYOffset - 20;
                     window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
                 }
             });
@@ -831,7 +736,7 @@
             apply(false);
         }
 
-        // back to top
+        /* back to top */
         window.addEventListener('scroll', function () {
             topBtn.classList.toggle('show', window.pageYOffset > 900);
         }, { passive: true });

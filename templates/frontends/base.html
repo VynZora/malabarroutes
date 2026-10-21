@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="{% static 'malabar-static/css/twentytwenty.css' %}">
     <link href="{% static 'malabar-static/css/custom.css' %}" rel="stylesheet" media="screen">
 
-    <!-- Logo sizing + floating pill navbar + booking modal (shared by every page) -->
+<!-- Logo sizing + floating pill navbar + booking modal (shared by every page) -->
 <style>
     :root {
         --primary-color: #111111;
@@ -49,7 +49,7 @@
            A sand overlay would wash out the white hero text, so the overlay uses a deep
            brown from the same family. To use pure sand instead, set --overlay-color: #E8D3AC;
            --overlay-opacity: higher = stronger tint, lower = brighter photo (0 = no overlay). */
-        --overlay-color: #3b2d17;
+        --overlay-color: #8a6410;   /* GOLD (was brown #3b2d17) */
         --overlay-opacity: 0.35;
     }
 
@@ -769,7 +769,7 @@
             background: rgba(169, 122, 20, 0.12) !important;
             color: var(--nav-gold) !important;
         }
-    }
+    }   /* <-- this closing brace was missing in your version */
 
     /* ================= MOBILE / TABLET: sticky Call + WhatsApp + Email bar ================= */
     .mb-contact-bar { display: none; }
@@ -793,17 +793,38 @@
             -webkit-tap-highlight-color: transparent;
             transition: background-color .25s ease, color .25s ease;
         }
-        .mb-contact-bar a i { font-size: 20px; }
+
+        /* gold icons */
+        .mb-contact-bar a i {
+            font-size: 20px;
+            color: var(--nav-gold, #a97a14);
+            transition: color .25s ease;
+        }
         .mb-contact-bar a + a { border-left: 1px solid rgba(43, 33, 18, 0.18); }
 
-        /* WhatsApp: brand green so it stands out */
-        .mb-contact-bar a.mb-wa { background: #25D366; color: #ffffff !important; }
-
-        .mb-contact-bar a:not(.mb-wa):active { background: var(--nav-gold, #a97a14); color: #ffffff !important; }
-        .mb-contact-bar a.mb-wa:active { background: #1ebe5a; }
+        /* touch: gold background, white icon + text */
+        .mb-contact-bar a:active {
+            background: var(--nav-gold, #a97a14) !important;
+            color: #ffffff !important;
+            outline: none;
+        }
+        .mb-contact-bar a:active i,
+        .mb-contact-bar a:active span {
+            color: #ffffff !important;
+        }
 
         /* keep the footer copyright from hiding behind the bar */
         body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+    }
+
+    /* mouse hover only (so it doesn't stick after a tap on phones) */
+    @media (hover: hover) and (max-width: 991px) {
+        .mb-contact-bar a:hover {
+            background: var(--nav-gold, #a97a14) !important;
+            color: #ffffff !important;
+        }
+        .mb-contact-bar a:hover i,
+        .mb-contact-bar a:hover span { color: #ffffff !important; }
     }
 
     /* ================= PRELOADER: same sand as the navbar ================= */

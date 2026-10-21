@@ -875,7 +875,15 @@ html, body { background: var(--footer-gap) !important; }
 .cs-track > .ac-card,
 .cs-track > .pk-card,
 .cs-track > .tm-card { height: auto; }
+/* hide the hero tab list on every screen size */
+.hero .hero-dots { display: none !important; }
 
+/* the tabs no longer take the right-hand column, so the caption gets the full width */
+.hero .hero-content,
+.hero .hero-content.is-right {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "slides" "actions";
+}
 </style>
 {% endblock %}
 {% block content %}

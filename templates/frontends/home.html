@@ -293,13 +293,14 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
    behind it. Only a hand-torn outline separates it, so it looks cut out
    of the same sheet. The outline is a pseudo-element run through the
    #paperTorn SVG filter (defined once under <div class="flow">).
-   On HOVER the torn shape fills with sand (--sand-hover).
+   On HOVER (or TAP on phones) the torn shape fills with sand (--sand-hover).
    ===================================================================== */
 .pk-card, .ac-card, .ds-card, .tm-card, .fq-item {
     position: relative; isolation: isolate;
     background: transparent !important;
     box-shadow: none !important;
     border: 0 !important;
+    -webkit-tap-highlight-color: transparent;
 }
 .pk-card::before, .ac-card::before, .ds-card::before, .tm-card::before, .fq-item::before {
     /* NO fill at rest, NO real shadow. Only a very faint, lighter, fibrous torn rim
@@ -315,7 +316,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
             filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
     transition: box-shadow .35s ease, background-color .35s ease;
 }
-/* HOVER: the torn card fills with sand and gets a little extra rim so it feels lifted */
+/* HOVER / TAP: the torn card fills with sand and gets a little extra rim so it feels lifted */
 .pk-card:hover::before, .ac-card:hover::before, .ds-card:hover::before, .tm-card:hover::before, .fq-item:hover::before {
     background-color: var(--sand-hover);
     box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3);
@@ -464,7 +465,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 }
 
 /* ================= WHY CHOOSE US (tan band) =================
-   HOVER DESIGN: a sand wash wipes in from the left, a gold bar grows down the
+   HOVER / TAP DESIGN: a sand wash wipes in from the left, a gold bar grows down the
    left edge, the icon spins a full turn and flips to dark, the text slides right.
    (The card itself does not move: the .rv reveal class owns its transform.) */
 .wc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
@@ -473,6 +474,7 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
     position: relative; display: flex; gap: 18px; padding: 24px 24px 24px 30px;
     overflow: hidden; isolation: isolate; cursor: default;
     border: 1px solid rgba(169, 122, 20, .45); background: rgba(255, 252, 244, .35);
+    -webkit-tap-highlight-color: transparent;
 }
 /* sand wash that wipes in from the left */
 .wc-item::before {
@@ -503,13 +505,6 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .wc-item:hover > div { transform: translateX(8px); }
 .wc-item:hover h3 { color: var(--gold-deep); }
 @media (max-width: 991px) { .wc-wrap { grid-template-columns: 1fr; gap: 36px; } }
-@media (hover: none) {
-    .wc-item:hover::before { transform: scaleX(0); }
-    .wc-item:hover::after { transform: scaleY(0); }
-    .wc-item:hover i { transform: none; background: var(--gold); color: var(--ink); }
-    .wc-item:hover > div { transform: none; }
-    .wc-item:hover h3 { color: var(--ink); }
-}
 @media (prefers-reduced-motion: reduce) {
     .wc-item::before, .wc-item::after, .wc-item i, .wc-item > div { transition: none; }
 }
@@ -614,12 +609,6 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 @media (max-width: 575px) {
     .tm-quote { font-size: 16px; }
     .tm-card { padding: 18px 18px 22px; }
-}
-@media (hover: none) {
-    .tm-card:hover { transform: none; }
-    .tm-card:hover .tm-photo { transform: rotate(-2deg); }
-    .tm-card:nth-child(3n+2):hover .tm-photo { transform: rotate(1.6deg); }
-    .tm-card:nth-child(3n+3):hover .tm-photo { transform: rotate(-1deg); }
 }
 
 /* ================= ACTIVITIES (tan): torn-paper cards ================= */
@@ -757,11 +746,12 @@ html, body { background: var(--footer-gap) !important; }
 }
 
 /* =====================================================================
-   INTERACTIVE CARD HOVERS  (mouse only; the script sets --mx --my --dx --dy --rx --ry)
-   --mx / --my : cursor position inside the card (%)     --dx / --dy : -1 .. 1 from the centre
+   INTERACTIVE CARD HOVERS  (mouse hover AND finger tap; the script sets --mx --my --dx --dy --rx --ry)
+   --mx / --my : cursor / finger position inside the card (%)     --dx / --dy : -1 .. 1 from the centre
    --rx / --ry : tilt angles (Packages + Testimonials)
    Common to all: sand fill (from the torn ::before above) + a soft light "glare"
    (::after) that follows the cursor. Everything below is per section.
+   On phones the effect starts on tap and stays until another card is tapped.
    ===================================================================== */
 .pk-card::after, .ac-card::after, .ds-card::after, .tm-card::after, .fq-item::after {
     content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px;
@@ -870,28 +860,7 @@ html, body { background: var(--footer-gap) !important; }
 .fq-ico { transition: transform .4s ease, background-color .35s ease; }
 .fq-item:hover .fq-ico { transform: rotate(90deg); }
 
-/* touch screens + reduced motion: no mouse effects */
-@media (hover: none) {
-    .pk-card:hover, .tm-card:hover, .ac-card:hover, .ds-card:hover { transform: none; }
-    .pk-card:hover .pk-media, .pk-card:hover .pk-body { transform: none; }
-    .ds-card:hover img { transform: none; filter: none; }
-    .ds-card:hover .ds-pic::before { opacity: 0; }
-    .ds-card:hover .ds-overlay::before { transform: translateY(105%); }
-    .ds-card:hover .ds-overlay::after { opacity: 1; }
-    .ds-card:hover .ds-name { color: #f4ead8; }
-    .ds-card:hover .ds-go::before { max-width: 0; margin-right: 0; opacity: 0; }
-    .ds-card:hover .ds-go i { transform: none; }
-    .ac-card:hover .ac-pill, .tm-card:hover .tm-stars i, .tm-card:hover .tm-quote::before, .ds-card:hover .ds-name { transform: none; }
-    .fq-item:hover .fq-ico, .fq-item:hover .fq-no { transform: none; }
-    .tm-card:hover .tm-photo { box-shadow: none; }
-    .tm-card:hover .tm-photo::before { transform: translateX(-50%) rotate(-2deg); background: rgba(201, 151, 43, .45); }
-    .tm-card:hover .tm-pin { left: 50%; }
-    .tm-card:hover .tm-quote { transform: none; }
-    .tm-card:hover .tm-wave path { animation: none; }
-    .tm-card:hover .tm-name { color: var(--ink); }
-    .tm-card:hover .tm-name::before { flex-basis: 28px; height: 1px; background: rgba(42, 12, 15, .55); }
-    .pk-card:hover::after, .ac-card:hover::after, .ds-card:hover::after, .tm-card:hover::after, .fq-item:hover::after { opacity: 0; }
-}
+/* reduced motion only: no movement effects (phones now get the same hover effects on tap) */
 @media (prefers-reduced-motion: reduce) {
     .pk-card:hover, .tm-card:hover, .ac-card:hover { transform: none; }
     .pk-card:hover .pk-media, .pk-card:hover .pk-body, .ds-card:hover img, .tm-card:hover .tm-stars i { transform: none; }
@@ -906,17 +875,6 @@ html, body { background: var(--footer-gap) !important; }
 .cs-track > .ac-card,
 .cs-track > .pk-card,
 .cs-track > .tm-card { height: auto; }
-
-@media (hover: none) {
-    .pk-card:hover, .ac-card:hover, .ds-card:hover { transform: none; }
-    .pk-cs .cs-btn:hover { background: transparent; border-color: var(--edge); color: var(--pk-ink); }
-    .pk-card:hover .pk-media img,
-    .ac-card:hover .ac-media img { transform: none; }
-    .ds-card:hover .ds-go { background: transparent; color: var(--gold); }
-    .cs-btn:hover { background: var(--gold); border-color: var(--gold); }
-    /* touch screens: no sticky sand fill after a tap */
-    .pk-card:hover::before, .ac-card:hover::before, .ds-card:hover::before, .tm-card:hover::before { background-color: transparent; }
-}
 
 </style>
 {% endblock %}
@@ -1678,10 +1636,9 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Interactive cards: tells the CSS where the mouse is inside each card -->
+<!-- Interactive cards: tells the CSS where the mouse / finger is inside each card -->
 <script>
     (function () {
-        if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         /* [selector, max tilt in degrees] */
@@ -1692,8 +1649,10 @@ html, body { background: var(--footer-gap) !important; }
             document.querySelectorAll(g[0]).forEach(function (el) {
                 var raf = 0, last = null;
 
-                el.addEventListener('pointermove', function (ev) {
-                    if (ev.pointerType !== 'mouse') return;
+                /* iPhone Safari only applies :hover on tap to elements it sees as tappable */
+                el.addEventListener('click', function () {});
+
+                function onPoint(ev) {
                     last = ev;
                     if (raf) return;
                     raf = requestAnimationFrame(function () {
@@ -1711,9 +1670,13 @@ html, body { background: var(--footer-gap) !important; }
                             el.style.setProperty('--ry', ((x - 0.5) * 2 * max).toFixed(2) + 'deg');
                         }
                     });
-                });
+                }
 
-                el.addEventListener('pointerleave', function () {
+                el.addEventListener('pointerdown', onPoint);   /* finger / pen / mouse press */
+                el.addEventListener('pointermove', onPoint);   /* mouse move */
+
+                el.addEventListener('pointerleave', function (ev) {
+                    if (ev.pointerType !== 'mouse') return;     /* on touch, keep the effect until another tap */
                     if (raf) { cancelAnimationFrame(raf); raf = 0; }
                     ['--rx', '--ry', '--dx', '--dy'].forEach(function (v) { el.style.removeProperty(v); });
                 });

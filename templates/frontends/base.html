@@ -1031,7 +1031,20 @@
     footer.footer-main::after { height: 160px; }
     footer.footer-main > .container { padding-bottom: 120px !important; }
 }
-
+/* mobile / tablet: smaller picture at the bottom of the card */
+@media (max-width: 991px) {
+    footer.footer-main {
+        background-color: var(--footer-bg) !important;
+        background-image:
+            linear-gradient(rgba(232, 211, 172, .28), rgba(232, 211, 172, .28)),                      /* light wash so the text stays readable over the palms */
+            linear-gradient(to bottom, var(--footer-bg) 0, rgba(232, 211, 172, 0) 25%),               /* fades the picture's top edge into the sand */
+            url("{% static 'malabar-static/foo.png' %}") !important;
+        background-repeat: no-repeat, no-repeat, no-repeat !important;
+        background-size: 100% 100%, 100% 65%, auto 65% !important;                                   /* 65% = picture size: smaller number = smaller picture */
+        background-position: 0 0, 0 bottom, left bottom !important;                                  /* left = palms; try "right bottom" for the mountains */
+    }
+    footer.footer-main::after { content: none !important; display: none !important; }
+}
 </style>
 
     {% block extra_css %}{% endblock %}

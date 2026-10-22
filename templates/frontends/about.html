@@ -5,16 +5,33 @@
 {% block title %}About Us | Malabar{% endblock %}
 
 {% comment %}
-    ABOUT PAGE: same torn-paper design as the Home page.
+    ABOUT PAGE: same torn-paper design as the Home, Packages and Package-detail pages.
     - HERO is unchanged (centred title + breadcrumb, cross-fading backgrounds, torn bottom edge).
     - Every section after it is a flat colour band with a torn-paper top edge and scattered-dot texture.
       Colours ALTERNATE: cream (Our Story) -> tan (Services) -> cream (Packages)
       -> tan (Terms) -> cream (Testimonials) -> tan (FAQ)
-    - Cards (Packages, Testimonials) and FAQ questions are the same paper as the band, outlined with a
-      hand-torn edge (SVG filter #paperTorn). Hover = sand fill + interactive effects (same as Home).
-    - Section titles use the Home style (.tn-eyebrow + .tn-title, EB Garamond small-caps).
     - Needs `featured_packages` and `testimonials` in the about view's context.
     - If a section is hidden by {% if %}, two bands of the same colour may touch: swap sec-cream / sec-tan on the next one.
+
+    SAME UPDATE AS THE HOME PAGE
+    - SOFT TORN EDGE: the shared #paperTorn filter now uses slow, wide waves + a little blur (curvy, not spiky).
+      Rounder / squarer cards: change the border-radius of .pk-card / .tm-card / .fq-item.
+      Rougher / smoother edge: change scale="22" or stdDeviation="1.3" in the #paperTorn filter.
+    - ABOUT PHOTOS: torn outline with a paper rim in the band colour (#photoTorn filter), no 3D shadow, so they melt into the background.
+    - GOOGLE BADGE: no box. Dotted gold route line on each side, Google brand colours kept.
+      (Testimonials = centred, line on both sides. FAQ = left aligned, line on the right only.)
+
+    ART ON THIS PAGE (the compass is gone)
+    - BOAT  : the houseboat / palm sketch (p1.png), styled exactly like on the Packages page:
+              Services  -> right side of the heading band (desktop), centered above the heading on tablet / mobile
+              FAQ       -> centered at the end of the band
+    - PLANE : the flying plane + dotted trail from the Package-detail page (p4-trail.png + p4-plane.png):
+              Our Story -> under the photo collage
+              Terms     -> left side of the heading band (desktop), centered above the heading on tablet / mobile
+              The trail draws itself and the plane flies along it every time it scrolls into view.
+    - EVERY SECTION fades + slides in when you scroll to it and fades out when you leave (replays every time).
+
+    FILES in static/malabar-static/ :  p1.png (houseboat)   p4-trail.png   p4-plane.png
 {% endcomment %}
 
 {% block extra_css %}
@@ -96,10 +113,11 @@
 .sec > .container { position: relative; z-index: 1; }
 .sec-cream { --bg: var(--cream); }
 .sec-tan { --bg: var(--tan); }
+.sec-end { padding-bottom: 60px; }
 @media (min-width: 1200px) { .sec > .container { max-width: 1240px; } }
 @media (min-width: 1400px) { .sec.sec-wide > .container { max-width: 1400px; } }
-@media (max-width: 991px) { .sec { padding: 64px 0 70px; } }
-@media (max-width: 575px) { .sec { padding: 52px 0 58px; } }
+@media (max-width: 991px) { .sec { padding: 64px 0 70px; } .sec-end { padding-bottom: 50px; } }
+@media (max-width: 575px) { .sec { padding: 52px 0 58px; } .sec-end { padding-bottom: 44px; } }
 .about-us.sec { padding-top: 70px; }
 
 /* headings */
@@ -124,22 +142,118 @@
 .tn-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
 .tn-center { text-align: center; margin-top: 48px; }
 
-/* scroll reveal */
-.rv-ready .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
-.rv-ready .rv.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
+/* ===================== FADE-IN ON EVERY SCROLL =====================
+   JS adds .rv-ready to <body> (only if the browser supports IntersectionObserver), and toggles .in on each element
+   when it enters / leaves the screen, so the animation replays every time you scroll past.                      */
+.rv-ready .rv { opacity: 0; transform: translateY(46px); transition: opacity .3s ease, transform .3s ease; }
+.rv-ready .rv.rv-l { transform: translateX(-64px); }
+.rv-ready .rv.rv-r { transform: translateX(64px); }
+.rv-ready .rv.in { opacity: 1; transform: none; transition: opacity .8s ease var(--d, 0s), transform .95s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
 
-/* ===================== TORN-PAPER CARDS (Packages, Testimonials, FAQ) ===================== */
+/* stagger: children of .rv-st appear one after another */
+.rv-ready .rv-st > * { opacity: 0; transform: translateY(34px); transition: opacity .3s ease, transform .3s ease; }
+.rv-ready .rv-st.in > * { opacity: 1; transform: none; transition: opacity .7s ease calc(var(--i, 0) * .08s), transform .85s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * .08s); }
+.rv-st > :nth-child(1) { --i: 0; } .rv-st > :nth-child(2) { --i: 1; } .rv-st > :nth-child(3) { --i: 2; }
+.rv-st > :nth-child(4) { --i: 3; } .rv-st > :nth-child(5) { --i: 4; } .rv-st > :nth-child(6) { --i: 5; }
+.rv-st > :nth-child(7) { --i: 6; } .rv-st > :nth-child(8) { --i: 7; } .rv-st > :nth-child(9) { --i: 8; }
+.rv-st > :nth-child(10) { --i: 9; }
+
+/* WHOLE-SECTION FADE: the content of every band fades + slides up when the band enters the screen and
+   fades out when it leaves (replays on every scroll, up or down). The band colour itself stays put,
+   so the torn edges never open gaps. JS toggles .sec-in on each .sec. */
+.rv-ready .sec > .container { opacity: 0; transform: translateY(70px); transition: opacity .35s ease, transform .35s ease; }
+.rv-ready .sec.sec-in > .container { opacity: 1; transform: none; transition: opacity 1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); }
+
+/* ===================== BOAT ART (same as the Packages page: p1.png) =====================
+   Sits inside the .container, as the FIRST child of the section (before the heading).
+   Tablet / mobile: centered above the heading.  Desktop: pinned to the right, beside the centered heading. */
+.bt-art {
+    display: block; height: auto; opacity: .92; mix-blend-mode: multiply;
+    pointer-events: none; user-select: none; -webkit-user-drag: none;
+    width: min(300px, 70%); margin: -10px auto 18px;
+}
+@media (min-width: 1200px) {
+    .bt-art { position: absolute; z-index: 0; top: -34px; right: -12px; width: clamp(280px, 25vw, 400px); margin: 0; }
+}
+@media (min-width: 1400px) { .bt-art { right: -40px; } }
+@media (min-width: 1700px) { .bt-art { right: -110px; width: 430px; } }
+/* fade-in on scroll (replays each time it enters the screen): slides in from the right on desktop, up on mobile */
+.bt-art {
+    opacity: 0; transform: translateX(150px) scale(.9); filter: blur(10px);
+    transition: opacity 1.8s ease, transform 2s cubic-bezier(.16,.8,.24,1), filter 1.8s ease;
+    transition-delay: .1s;
+}
+.bt-art.in-view { opacity: .92; transform: none; filter: blur(0); }
+@media (max-width: 1199px) { .bt-art { transform: translateY(60px) scale(.92); } .bt-art.in-view { transform: none; } }
+
+/* boat at the END of the FAQ band: centered, below the questions */
+.bt-art.bt-art-end { position: static; width: min(420px, 82%); margin: 46px auto 0; transform: translateY(60px) scale(.94); }
+.bt-art.bt-art-end.in-view { transform: none; }
+@media (min-width: 1200px) { .bt-art.bt-art-end { width: clamp(340px, 30vw, 500px); } }
+
+/* ===================== PLANE ART (same as the Package-detail page: p4-trail.png + p4-plane.png) =====================
+   Two layers: the trail draws itself, the plane flies along it (banking as it climbs) and then hovers.
+   Plays every time the art scrolls into view. */
+.ad-art-wrap { width: 100%; }
+.ad-art { position: relative; width: 100%; max-width: 520px; margin: 0 auto 10px; opacity: .92; pointer-events: none; user-select: none; }
+.ad-art img { display: block; width: 100%; height: auto; -webkit-user-drag: none; }
+.ad-art .ad-art-plane { position: absolute; inset: 0; height: 100%; transform-origin: 90.7% 18.4%; opacity: 0; }  /* origin = the plane's own centre */
+.ad-art .ad-art-trail { clip-path: inset(0 100% 0 0); }
+
+.ad-art-wrap.in-view .ad-art-trail { animation: adTrail 2.2s linear .1s forwards; }
+.ad-art-wrap.in-view .ad-art-plane {
+    animation: adPlane 1.24s linear .78s forwards, adHover 3s ease-in-out 2.1s infinite alternate;
+}
+@keyframes adTrail {
+    0%      { clip-path: inset(0 100% 0 0); }
+    30.8%   { clip-path: inset(0 64.8% 0 0); }
+    43.2%   { clip-path: inset(0 50.3% 0 0); }
+    55.6%   { clip-path: inset(0 35.9% 0 0); }
+    66.3%   { clip-path: inset(0 25% 0 0); }
+    74.2%   { clip-path: inset(0 19.2% 0 0); }
+    79.8%   { clip-path: inset(0 15.2% 0 0); }
+    87.2%   { clip-path: inset(0 9.3% 0 0); }
+    100%    { clip-path: inset(0 0 0 0); }
+}
+@keyframes adPlane {
+    0%   { opacity: 0; transform: translate(-55.5%, 54.3%) rotate(56deg); }
+    4%   { opacity: 1; }
+    22%  { transform: translate(-41%, 59.5%) rotate(45deg); }
+    44%  { transform: translate(-26.5%, 52.2%) rotate(25deg); }
+    63%  { transform: translate(-15.6%, 38.8%) rotate(8deg); }
+    77%  { transform: translate(-9.8%, 23.9%) rotate(0deg); }
+    87%  { transform: translate(-5.9%, 13.3%) rotate(0deg); }
+    100% { opacity: 1; transform: translate(0, 0) rotate(0deg); }
+}
+@keyframes adHover { from { translate: 0 0; rotate: 0deg; } to { translate: 5px -7px; rotate: -1.2deg; } }
+
+/* plane under the Our Story collage */
+.as-art { margin-top: 34px; }
+.as-art .ad-art { max-width: 400px; }
+@media (max-width: 991px) { .as-art { margin-top: 10px; margin-bottom: 30px; } .as-art .ad-art { max-width: 300px; } }
+
+/* plane in the Terms band: centered above the heading on tablet / mobile, left side on desktop */
+.tc-art .ad-art { max-width: 300px; margin: -10px auto 18px; }
+@media (min-width: 1200px) {
+    .tc-art { position: absolute; z-index: 0; top: -22px; left: -12px; width: clamp(250px, 21vw, 360px); }
+    .tc-art .ad-art { max-width: none; margin: 0; }
+}
+@media (min-width: 1400px) { .tc-art { left: -40px; } }
+@media (min-width: 1700px) { .tc-art { left: -110px; width: 380px; } }
+
+/* ===================== TORN-PAPER CARDS (Packages, Testimonials, FAQ) =====================
+   SOFT TORN EDGE: the outline follows each card's own rounded corners (border-radius: inherit)
+   and is run through the soft #paperTorn filter (curvy, not spiky). */
 .pk-card, .tm-card, .fq-item { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; }
 .pk-card::before, .tm-card::before, .fq-item::before {
-    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px; background: transparent;
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: transparent;
     box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
     -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
     transition: box-shadow .35s ease, background-color .35s ease;
 }
 .pk-card:hover::before, .tm-card:hover::before, .fq-item:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
 .pk-card::after, .tm-card::after, .fq-item::after {
-    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: 3px;
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
     background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
     -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
 }
@@ -163,13 +277,29 @@
 @media (max-width: 575px) { .cs { --cs-gap: 18px; --cs-pad: 12px; } .cs-track > * { flex-basis: 100%; } }
 @media (prefers-reduced-motion: reduce) { .cs-track { scroll-behavior: auto; } }
 
-/* ===================== OUR STORY (cream) ===================== */
+/* ===================== OUR STORY (cream) =====================
+   PHOTOS: torn outline (#photoTorn filter) with a paper rim in the band colour, flat (no 3D shadow),
+   so they melt into the background. Rim thickness = padding on .ab-photo img. */
 .ab-collage { position: relative; max-width: 560px; margin: 0 auto; aspect-ratio: 1 / .78; }
-.ab-photo { position: absolute; background: transparent; padding: 0; box-shadow: 0 18px 34px rgba(60,40,10,.28); }
-.ab-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ab-photo {
+    position: absolute; background: transparent; padding: 0; box-shadow: none;
+    filter: drop-shadow(0 1px 1.5px rgba(139, 107, 46, .55));   /* hairline edge only (change .55 to make it fainter / stronger) */
+    transition: transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.ab-photo img {
+    width: 100%; height: 100%; display: block; object-fit: cover;
+    box-sizing: border-box; padding: 16px;          /* paper rim around the photo */
+    border-radius: 22px;                            /* rounded outer corners */
+    background: var(--cream);                       /* SAME colour as the band, so the rim melts into the background */
+    -webkit-filter: url(#photoTorn); filter: url(#photoTorn);
+}
 .ab-photo-1 { left: 0; top: 0; width: 80%; height: 76%; }
 .ab-photo-2 { right: 0; bottom: 0; width: 52%; height: 56%; z-index: 2; }
 .ab-photo-2::after, .ab-photo-1::after { content: ""; position: absolute; top: -12px; left: 50%; width: 84px; height: 24px; transform: translateX(-50%) rotate(-3deg); background: rgba(201,151,43,.55); }
+@media (hover: hover) {
+    .ab-collage:hover .ab-photo-1 { transform: rotate(-1.8deg) translate(-6px, -6px); }
+    .ab-collage:hover .ab-photo-2 { transform: rotate(2.2deg) translate(6px, 6px); }
+}
 .st-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
 .st-text.collapsed { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
 .st-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0; background: none; border: 0; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
@@ -257,29 +387,38 @@
 @media (max-width: 575px) { .tc-grid { grid-template-columns: 1fr; } }
 
 /* ===================== TESTIMONIALS (cream) ===================== */
-.g-badge { display: inline-flex; align-items: center; gap: 12px; margin-top: 22px; padding: 12px 22px; background: #fff; box-shadow: 0 10px 24px rgba(60,40,10,.18); }
+/* GOOGLE BADGE: no box, no fill, no shadow. Dotted gold route line on each side; Google brand colours kept. */
+.g-badge {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    width: min(100%, 440px); margin: 22px auto 0; padding: 0;
+    background: none; box-shadow: none; border-radius: 0;
+}
+.g-badge::before, .g-badge::after {
+    content: ""; flex: 1 1 0; min-width: 18px;
+    border-top: 2px dotted rgba(201, 151, 43, .9);       /* line colour: lower .9 for fainter */
+}
 .g-logo { font-size: 22px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
 .g-logo b { font-weight: inherit; }
 .g-logo b:nth-child(1), .g-logo b:nth-child(4) { color: #4285f4; }
 .g-logo b:nth-child(2), .g-logo b:nth-child(6) { color: #ea4335; }
 .g-logo b:nth-child(3) { color: #fbbc05; }
 .g-logo b:nth-child(5) { color: #34a853; }
-.g-score { font-size: 20px; font-weight: 700; color: #333; line-height: 1; }
+.g-score { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1; }
 .g-stars { position: relative; display: inline-block; font-size: 17px; line-height: 1; white-space: nowrap; letter-spacing: 3px; }
-.g-base { color: #d9d9d9; }
-.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
+.g-base { color: rgba(139, 107, 46, .3); }
+.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }   /* template gold: var(--gold) */
 
-.tm-card { --edge-r: 10px; display: flex; flex-direction: column; text-align: left; padding: 26px 26px 30px; border-radius: 10px; transition: transform .4s cubic-bezier(.2,.7,.2,1); will-change: transform; }
+.tm-card { --edge-r: 10px; display: flex; flex-direction: column; text-align: left; padding: 26px 26px 30px; border-radius: 16px; transition: transform .4s cubic-bezier(.2,.7,.2,1); will-change: transform; }
 .tm-card:hover { transform: translateY(-10px) rotate(-.7deg); }
 .tm-card:nth-child(even):hover { transform: translateY(-10px) rotate(.7deg); }
 .tm-media { position: relative; padding: 8px 0 0; }
-.tm-photo { position: relative; background: transparent; padding: 0; border-radius: 6px; transform: rotate(-2deg); transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease; }
+.tm-photo { position: relative; background: transparent; padding: 0; border-radius: 10px; transform: rotate(-2deg); transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease; }
 .tm-card:nth-child(3n+2) .tm-photo { transform: rotate(1.6deg); }
 .tm-card:nth-child(3n+3) .tm-photo { transform: rotate(-1deg); }
 .tm-card:hover .tm-photo { transform: rotate(0) translateY(-4px) scale(1.035); box-shadow: 0 16px 26px rgba(60,40,10,.28); }
 .tm-photo::before { content: ""; position: absolute; top: -13px; left: 50%; width: 86px; height: 24px; z-index: 2; transform: translateX(-50%) rotate(-2deg); background: rgba(201,151,43,.45); transition: transform .45s cubic-bezier(.3,1.6,.5,1), background-color .35s ease; }
 .tm-card:hover .tm-photo::before { transform: translateX(-50%) rotate(2deg) scaleX(1.15); background: rgba(201,151,43,.7); }
-.tm-photo img, .tm-ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+.tm-photo img, .tm-ph { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 10px; }
 .tm-ph { display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, #dde4e1 0%, #c5d0cd 100%); }
 .tm-ph svg { width: 46%; fill: #6f9b8d; }
 .tm-wave { position: relative; height: 16px; margin: 14px 0 20px; }
@@ -313,8 +452,11 @@
 /* ===================== FAQ (tan) ===================== */
 .fq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 56px; align-items: start; }
 .fq-left { position: sticky; top: 120px; }
+/* FAQ column is left-aligned: Google badge has its dotted line on the right side only */
+.fq-left .g-badge { margin: 22px 0 0; width: min(100%, 400px); justify-content: flex-start; }
+.fq-left .g-badge::before { display: none; }
 .fq-list { display: flex; flex-direction: column; gap: 22px; }
-.fq-item { --edge-r: 10px; border-radius: 10px; transition: background-color .35s ease; }
+.fq-item { --edge-r: 10px; border-radius: 14px; transition: background-color .35s ease; }
 .fq-item.open::before { box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
 .fq-q { position: relative; width: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; background: transparent; border: 0; text-align: left; cursor: pointer; font-family: 'EB Garamond', serif; font-size: 21px; font-weight: 700; line-height: 1.3; color: var(--ink); }
 .fq-q::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 2px; background: var(--gold); transform: scaleY(0); transition: transform .35s ease; }
@@ -336,12 +478,19 @@
 @media (max-width: 991px) { .fq-wrap { grid-template-columns: 1fr; gap: 34px; } .fq-left { position: static; } }
 @media (max-width: 575px) { .fq-q { padding: 18px 16px; font-size: 18px; } .fq-a p { padding: 0 16px 20px; } }
 
+/* ===================== REDUCED MOTION: everything just shows, nothing moves ===================== */
 @media (prefers-reduced-motion: reduce) {
     .pk-card:hover, .tm-card:hover { transform: none; }
     .pk-card:hover .pk-media, .pk-card:hover .pk-body, .tm-card:hover .tm-stars i { transform: none; }
     .tm-card:hover .tm-wave path { animation: none; }
     .tm-card:hover .tm-pin { left: 50%; }
     .rv-ready .cs.in .tm-card { animation: none; }
+    .rv-ready .rv, .rv-ready .rv-st > *, .rv-ready .sec > .container { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .bt-art, .bt-art.in-view { opacity: .92; transform: none; filter: none; transition: none; }
+    .ad-art .ad-art-trail { clip-path: none; }
+    .ad-art .ad-art-plane { opacity: 1; }
+    .ad-art-wrap.in-view .ad-art-trail, .ad-art-wrap.in-view .ad-art-plane { animation: none; }
+    .ab-collage:hover .ab-photo { transform: none; }
 }
 
 /* ===================== FOOTER: torn-paper top edge ===================== */
@@ -393,15 +542,27 @@ html, body { background: var(--footer-gap) !important; }
 
 <div class="flow">
 
-<!-- Torn-paper outline filter (used by cards + FAQ). Rougher edge: raise scale="20" / "5". -->
+<!-- Torn-paper filters.
+     #paperTorn : soft curvy outline for cards + FAQ. Rougher: raise scale (22). Smoother line: raise stdDeviation (1.3).
+     #photoTorn : torn outline for the About photos (only the outline is roughened, the picture is not distorted). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
         <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.03" numOctaves="3" seed="11" result="big"/>
-            <feDisplacementMap in="SourceGraphic" in2="big" scale="20" xChannelSelector="R" yChannelSelector="G" result="d1"/>
-            <feTurbulence type="fractalNoise" baseFrequency="0.16" numOctaves="2" seed="4" result="fine"/>
-            <feDisplacementMap in="d1" in2="fine" scale="5" xChannelSelector="G" yChannelSelector="R" result="d2"/>
-            <feGaussianBlur in="d2" stdDeviation="0.45"/>
+            <!-- slow, wide waves only (numOctaves=1 = no small teeth) -->
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="1" seed="11" result="big"/>
+            <feDisplacementMap in="SourceGraphic" in2="big" scale="22" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <!-- softens the line so it curves instead of cutting sharp -->
+            <feGaussianBlur in="d1" stdDeviation="1.3"/>
+        </filter>
+
+        <filter id="photoTorn" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.01 0.016" numOctaves="1" seed="7" result="big"/>
+            <feDisplacementMap in="SourceAlpha" in2="big" scale="22" xChannelSelector="R" yChannelSelector="G" result="d1"/>
+            <feGaussianBlur in="d1" stdDeviation="5" result="soft"/>
+            <feComponentTransfer in="soft" result="d2">
+                <feFuncA type="linear" slope="12" intercept="-5.5"/>
+            </feComponentTransfer>
+            <feComposite in="SourceGraphic" in2="d2" operator="in"/>
         </filter>
     </defs>
 </svg>
@@ -412,14 +573,22 @@ html, body { background: var(--footer-gap) !important; }
         <div class="row align-items-center">
 
             <div class="col-lg-6">
-                <div class="ab-collage rv">
+                <div class="ab-collage rv rv-l">
                     <div class="ab-photo ab-photo-1"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabaroutes"></div>
                     <div class="ab-photo ab-photo-2"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar travel"></div>
+                </div>
+
+                <!-- plane flies along its dotted trail under the photos (same art as the package detail page) -->
+                <div class="ad-art-wrap as-art">
+                    <div class="ad-art" aria-hidden="true">
+                        <img class="ad-art-trail" src="{% static 'malabar-static/p4-trail.png' %}" alt="" loading="lazy" decoding="async">
+                        <img class="ad-art-plane" src="{% static 'malabar-static/p4-plane.png' %}" alt="" loading="lazy" decoding="async">
+                    </div>
                 </div>
             </div>
 
             <div class="col-lg-6">
-                <div class="rv" style="--d:.1s">
+                <div class="rv rv-r" style="--d:.1s">
                     <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>About Us</div>
                     <h2 class="tn-title">Our Story</h2>
 
@@ -428,7 +597,7 @@ html, body { background: var(--footer-gap) !important; }
                         <span>Read more</span> <i class="fa-solid fa-chevron-down"></i>
                     </button>
 
-                    <div class="ab-list">
+                    <div class="ab-list rv-st">
                         <div class="ab-item"><i class="fa-solid fa-award"></i><div><h4>Top quality</h4><p>Travel services of the highest quality</p></div></div>
                         <div class="ab-item"><i class="fa-solid fa-headset"></i><div><h4>Great service</h4><p>Excellence in customer service is our mantra</p></div></div>
                         <div class="ab-item"><i class="fa-solid fa-user-tie"></i><div><h4>Expert team</h4><p>Led by an experienced management team</p></div></div>
@@ -449,6 +618,10 @@ html, body { background: var(--footer-gap) !important; }
 <!-- ============ SERVICES (tan) ============ -->
 <section class="sec sec-tan">
     <div class="container">
+
+        <!-- houseboat sketch (same as the Packages page): right side on desktop, centered above the heading on tablet / mobile -->
+        <img class="bt-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Services</div>
             <h2 class="tn-title">Malabaroutes Services</h2>
@@ -559,7 +732,7 @@ html, body { background: var(--footer-gap) !important; }
             </div>
         </div>
 
-        <div class="tn-center"><a href="{% url 'packages' %}" class="tn-btn">View All Packages <i class="fa-solid fa-arrow-right"></i></a></div>
+        <div class="tn-center rv"><a href="{% url 'packages' %}" class="tn-btn">View All Packages <i class="fa-solid fa-arrow-right"></i></a></div>
     </div>
 </section>
 {% endif %}
@@ -567,6 +740,15 @@ html, body { background: var(--footer-gap) !important; }
 <!-- ============ TERMS & CONDITIONS (tan) ============ -->
 <section class="sec sec-tan">
     <div class="container">
+
+        <!-- plane flies along its dotted trail (same art as the package detail page): left side on desktop, centered above the heading on tablet / mobile -->
+        <div class="ad-art-wrap tc-art">
+            <div class="ad-art" aria-hidden="true">
+                <img class="ad-art-trail" src="{% static 'malabar-static/p4-trail.png' %}" alt="" loading="lazy" decoding="async">
+                <img class="ad-art-plane" src="{% static 'malabar-static/p4-plane.png' %}" alt="" loading="lazy" decoding="async">
+            </div>
+        </div>
+
         <div class="tn-head rv">
             <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Terms</div>
             <h2 class="tn-title">Terms &amp; Conditions</h2>
@@ -676,11 +858,11 @@ html, body { background: var(--footer-gap) !important; }
 {% endif %}
 
 <!-- ============ FAQ (tan) ============ -->
-<section class="sec sec-tan">
+<section class="sec sec-tan sec-end">
     <div class="container">
         <div class="fq-wrap">
 
-            <div class="fq-left rv">
+            <div class="fq-left rv rv-l">
                 <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Question &amp; Answer</div>
                 <h2 class="tn-title">Frequently Asked Questions</h2>
                 <p class="tn-text">Answers to the things guests most often ask before booking a trip with Malabaroutes.</p>
@@ -696,7 +878,7 @@ html, body { background: var(--footer-gap) !important; }
                 </div>
             </div>
 
-            <div class="fq-list" id="fqList">
+            <div class="fq-list rv-st" id="fqList">
                 <div class="fq-item open">
                     <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What does Malabaroutes offer?</span><span class="fq-ico" aria-hidden="true"></span></button>
                     <div class="fq-a"><div><p>Malabaroutes is a tour operator specialising in northern Kerala (Malabar). We arrange holiday packages, Ayurveda and wellness trips, honeymoon and student packages, and also help with visas, passports, tickets, taxis, car rentals, houseboats and travel guides.</p></div></div>
@@ -736,6 +918,9 @@ html, body { background: var(--footer-gap) !important; }
             </div>
 
         </div>
+
+        <!-- houseboat sketch (same as the Packages page) at the end of the page -->
+        <img class="bt-art bt-art-end" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
     </div>
 </section>
 
@@ -780,18 +965,57 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Scroll reveal -->
+<!-- Fade-in on EVERY scroll: .in is added when an element enters the screen and removed when it leaves,
+     so headings, cards and lists animate again each time you scroll past them (down or up).
+     Also toggles .sec-in on every section band so the WHOLE section fades in / out. -->
 <script>
     (function () {
-        var items = document.querySelectorAll('.rv');
-        if (!items.length || !('IntersectionObserver' in window)) return;
+        var items = document.querySelectorAll('.rv, .rv-st');
+        var secs  = document.querySelectorAll('.sec');
+        if (!('IntersectionObserver' in window) || (!items.length && !secs.length)) return;
         document.body.classList.add('rv-ready');
+
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (en) {
-                if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+                if (en.isIntersecting) en.target.classList.add('in');
+                else en.target.classList.remove('in');
             });
         }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
         items.forEach(function (el) { io.observe(el); });
+
+        var ios = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) en.target.classList.add('sec-in');
+                else en.target.classList.remove('sec-in');
+            });
+        }, { threshold: 0.08 });
+        secs.forEach(function (s) { ios.observe(s); });
+    })();
+</script>
+
+<!-- Art: houseboat (fades in from the right) + plane (flies along its trail). Replays every time it scrolls into view. -->
+<script>
+    (function () {
+        var boats  = document.querySelectorAll('.bt-art');
+        var planes = document.querySelectorAll('.ad-art-wrap');
+        if (!boats.length && !planes.length) return;
+
+        if (!('IntersectionObserver' in window)) {
+            boats.forEach(function (el) { el.classList.add('in-view'); });
+            planes.forEach(function (el) { el.classList.add('in-view'); });
+            return;
+        }
+        function watch(list, opts) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (en) {
+                    if (en.isIntersecting) en.target.classList.add('in-view');
+                    else en.target.classList.remove('in-view');
+                });
+            }, opts);
+            list.forEach(function (el) { io.observe(el); });
+        }
+        watch(boats,  { threshold: 0.45, rootMargin: '0px 0px -12% 0px' });
+        watch(planes, { threshold: 0.5,  rootMargin: '0px 0px -12% 0px' });
     })();
 </script>
 

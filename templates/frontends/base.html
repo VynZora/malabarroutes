@@ -438,18 +438,16 @@
        (so the mobile Call / Email bar, navbar and modals never show through it) */
     .preloader { z-index: 99999 !important; }
 
-    /* ---------- Footer background image (foot.png) ----------
-       ORIGINAL COLOUR: the sand tint, the sand background colour and the dark text
-       override were removed. The footer now shows foot.png as it is, with the theme's
-       own footer colour and text colour (from custom.css). */
-    .footer-main {
-        background-image: url("{% static 'malabar-static/foot.png' %}") !important;
-        background-repeat: no-repeat !important;
-        background-size: cover !important;
-        background-position: center !important;
-    }
-
-    /* remove the theme's old footer decorations (flowers / leaves / overlays) so only foot.png shows */
+    /* ---------- Footer background: foo.png ---------- */
+:root { --footer-bg: #E8D3AC; --footer-line: rgba(43, 33, 18, 0.18); }
+.footer-main {
+    background-color: var(--footer-bg) !important;                       /* shows only while the image loads */
+    background-image: url("{% static 'malabar-static/foo.png' %}") !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: center bottom !important;                       /* keeps the river at the bottom */
+}
+    /* remove the theme's old footer decorations (flowers / leaves / overlays) so the footer stays clean */
     .footer-main::before,
     .footer-main::after,
     .footer-main .container::before,
@@ -769,7 +767,7 @@
             background: rgba(169, 122, 20, 0.12) !important;
             color: var(--nav-gold) !important;
         }
-    }   /* <-- this closing brace was missing in your version */
+    }
 
     /* ================= MOBILE / TABLET: sticky Call + WhatsApp + Email bar ================= */
     .mb-contact-bar { display: none; }
@@ -813,8 +811,8 @@
             color: #ffffff !important;
         }
 
-        /* keep the footer copyright from hiding behind the bar */
-        body { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)); }
+        /* keep the footer copyright from hiding behind the bar: the space is now INSIDE the footer, so the image runs to the bottom */
+        .footer-main > .container { padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important; }
     }
 
     /* mouse hover only (so it doesn't stick after a tap on phones) */
@@ -874,47 +872,42 @@
         font-family: 'EB Garamond', Georgia, serif !important;
     }
 
-    /* ================= FOOTER: torn-paper top edge (single block) ================= */
+    /* ================= FOOTER: floating rounded card (all four corners curved) ================= */
 
-    /* colour shown through the torn gaps: set this to the exact colour of the section above the footer */
+    /* page background colour around the card */
     :root { --footer-gap: #eee5d2; }
 
     html,
     body { background: var(--footer-gap) !important; }
 
     .footer-main {
-        --torn-h: 70px;       /* height of the torn strip */
+        --foot-r: 56px;                       /* corner curve: bigger = rounder */
+        --foot-side: 40px;                    /* gap between the card and the screen edges */
 
         position: relative;
-        border-radius: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;             /* no pull-up: the whole tear stays visible below the section above */
-        overflow: visible !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 60px var(--foot-side) 40px !important;   /* top gap | sides | bottom gap */
+        padding: 0 0 20px !important;
+        box-sizing: border-box;
+        border: 2px solid rgba(169, 122, 20, 0.55) !important;   /* gold outline so all 4 curved sides show */
+        border-radius: var(--foot-r) var(--foot-r) var(--foot-r) var(--foot-r) !important;   /* top-left | top-right | bottom-right | bottom-left */
+        overflow: hidden !important;                      /* clips content to the curved corners */
+        box-shadow: 0 22px 55px rgba(43, 33, 18, 0.28);
         z-index: 2;
-
-        -webkit-mask-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-            linear-gradient(#000, #000) !important;
-                mask-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 70' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-20%25' y='-60%25' width='140%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,70) scale(1,-1)'%3E%3Crect x='-60' y='-60' width='520' height='100' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"),
-            linear-gradient(#000, #000) !important;
-        -webkit-mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-                mask-size: 100% var(--torn-h), 100% calc(100% - var(--torn-h) + 2px) !important;
-        -webkit-mask-position: top left, bottom left !important;
-                mask-position: top left, bottom left !important;
-        -webkit-mask-repeat: no-repeat !important;
-                mask-repeat: no-repeat !important;
-        -webkit-mask-composite: source-over !important;
-                mask-composite: add !important;
+        -webkit-mask: none !important;
+                mask: none !important;
     }
+    .footer-main > .container { padding-top: 20px !important; }
 
-    /* footer content starts below the lowest point of the tear */
-    .footer-main > .container { padding-top: calc(var(--torn-h) * 0.75 + 30px) !important; }
-
-    /* taller torn edge on desktop */
-    @media (min-width: 992px) {
-        .footer-main { --torn-h: 110px; }
+    /* tablet / mobile: smaller curve and gaps; card sits above the sticky Call bar */
+    @media (max-width: 991px) {
+        .footer-main {
+            --foot-r: 28px;
+            --foot-side: 14px;
+            margin: 40px var(--foot-side) calc(58px + 16px + env(safe-area-inset-bottom, 0px)) !important;
+        }
+        .footer-main > .container { padding-bottom: 12px !important; }
     }
 
     /* ================= BUTTONS: gold (all .btn-default buttons outside the navbar) =================
@@ -943,6 +936,102 @@
         border-color: var(--btn-gold-dark) !important;
         color: #ffffff !important;
     }
+    /* ===== FOOTER SOCIAL ICONS: gold instead of green ===== */
+    .footer-main .footer-social-links ul li a {
+        background: #ffffff !important;
+        border: 0 !important;
+        transition: background-color .3s ease, transform .3s ease;
+    }
+    .footer-main .footer-social-links ul li a i {
+        color: var(--btn-gold, #c9972b) !important;   /* icon colour */
+        transition: color .3s ease;
+    }
+    .footer-main .footer-social-links ul li a:hover {
+        background: var(--btn-gold, #c9972b) !important;   /* hover: gold square, white icon */
+        transform: translateY(-3px);
+    }
+    .footer-main .footer-social-links ul li a:hover i { color: #ffffff !important; }
+
+    /* ================= FOOTER DESIGN (reference style): lines + divider columns =================
+       Colours follow the site: sand background, dark ink text, gold hover.
+       Content arrangement inside the footer is the original one. */
+
+    /* text colours */
+    .footer-main,
+    .footer-main p,
+    .footer-main li,
+    .footer-main span { color: var(--theme-ink) !important; }
+    .footer-main h3 { color: var(--theme-ink) !important; }
+    .footer-main a { color: rgba(43, 33, 18, 0.78) !important; transition: color .25s ease; }
+    .footer-main a:hover { color: var(--theme-gold) !important; }
+
+    /* logo + phone icon readable on the light background */
+    .footer-main .footer-logo img { filter: brightness(0.6) saturate(1.5) contrast(1.2); }
+    .footer-main .icon-box { background: var(--btn-gold, #c9972b) !important; }
+    .footer-main .icon-box img { filter: brightness(0); }
+
+    /* the row: no gutters, no straight top line */
+    .footer-main .container > .row {
+        --bs-gutter-x: 0;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* columns with vertical divider lines (desktop) */
+    .footer-main .row > [class*="col-"]:not(.col-lg-12) {
+        padding: 50px 32px !important;
+    }
+    .footer-main .row > [class*="col-"]:not(.col-lg-12):first-child { padding-left: 0 !important; }
+    .footer-main .row > [class*="col-"]:not(.col-lg-12):nth-last-child(2) { padding-right: 0 !important; }
+    .footer-main .row > [class*="col-"]:not(.col-lg-12):not(:first-child) {
+        border-left: 1px solid var(--footer-line);
+    }
+
+    /* copyright row: no line above it */
+    .footer-main .row > .col-lg-12 { padding: 0 !important; }
+    .footer-main .footer-copyright {
+        border-top: 0 !important;
+        margin-top: 0 !important;
+        padding-top: 24px !important;
+    }
+
+    /* social icons: soft shadow so the white squares sit nicely on sand */
+    .footer-main .footer-social-links ul li a { box-shadow: 0 4px 12px rgba(43, 33, 18, 0.10); }
+
+    /* tablet / mobile: columns stack, horizontal lines between them */
+    @media (max-width: 991px) {
+        .footer-main .row > [class*="col-"]:not(.col-lg-12),
+        .footer-main .row > [class*="col-"]:not(.col-lg-12):first-child,
+        .footer-main .row > [class*="col-"]:not(.col-lg-12):nth-last-child(2) {
+            padding: 28px 0 !important;
+        }
+        .footer-main .row > [class*="col-"]:not(.col-lg-12):not(:first-child) {
+            border-left: 0;
+            border-top: 1px solid var(--footer-line);
+        }
+    }
+    /* mobile / tablet: picture becomes a strip at the bottom of the card, text sits above it */
+@media (max-width: 991px) {
+    footer.footer-main { background-image: none !important; }
+
+    footer.footer-main::after {
+        content: "" !important; display: block !important;
+        position: absolute; left: 0; right: 0; bottom: 0;
+        height: 190px;                                   /* picture height: bigger = bigger scene */
+        z-index: 0; pointer-events: none;
+        background: url("{% static 'malabar-static/foo.png' %}") left bottom / auto 100% no-repeat !important;   /* left = palms; use "right bottom" for the mountains */
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 55%);   /* fades the picture's torn top edge into the sand */
+                mask-image: linear-gradient(to bottom, transparent 0, #000 55%);
+    }
+
+    /* text stays above the picture and keeps clear of it */
+    footer.footer-main > .container { position: relative; z-index: 1; padding-bottom: 150px !important; }
+}
+@media (max-width: 575px) {
+    footer.footer-main::after { height: 160px; }
+    footer.footer-main > .container { padding-bottom: 120px !important; }
+}
+
 </style>
 
     {% block extra_css %}{% endblock %}

@@ -9,6 +9,9 @@
     - ONE cream band holds: heading + floating category pill (sticks under the navbar) + the photo mosaic.
       A sketch (p1.png) sits on the RIGHT of the heading on desktop, centered above it on tablet / mobile.
     - Photos: mosaic (big / small / wide tiles set by JS for the visible photos), paper-style frame, gold accents.
+    - NEW: STACK ANIMATION. When the gallery scrolls into view (and every time a category is picked) the photos
+      start as one stacked deck in the middle of the grid, then get "dealt" out into their mosaic spots with a
+      springy stagger. Photos further down the page fade up as you scroll to them.
     - Lightbox shows the full photo (no cropping). Footer has the torn-paper top edge (gap colour = cream).
     - Filtering, counts, lightbox and back-to-top work exactly as before.
 {% endcomment %}
@@ -196,11 +199,21 @@
 .gallery-item.g-big  { grid-column: span 2; grid-row: span 2; }
 .gallery-item.g-wide { grid-column: span 2; }
 .gallery-item.is-hidden { display: none; }
-.gallery-item.pop-in { animation: galPop .5s ease both; }
+
+/* ---- STACK ANIMATION ----
+   .gl-pre  = waiting (hidden) until the gallery scrolls into view
+   .gl-late = photos below the first batch, hidden until you scroll to them (then they fade up with .pop-in)
+   During the "deal", JS puts the photos in one stacked deck with inline transforms and then removes them,
+   so the cards spring out into their mosaic spots. Inline styles are cleared at the end so hover works again. */
+.gallery-item.gl-pre,
+.gallery-item.gl-late { opacity: 0; }
+.gallery-item.pop-in { animation: galPop .6s cubic-bezier(.2,.8,.2,1) backwards; }
 @keyframes galPop {
-    from { opacity: 0; transform: translateY(24px) scale(.96); }
+    from { opacity: 0; transform: translateY(28px) scale(.96); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+.gallery-item.is-dealing { will-change: transform, opacity; pointer-events: none; }
+
 .gallery-item img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; display: block; transition: transform .7s ease;
@@ -294,7 +307,7 @@
         -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%);
                 mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 30px), transparent 100%);
     }
-    .gl-chips::after { content: ""; flex: 0 0: 24px; flex: 0 0 24px; }
+    .gl-chips::after { content: ""; flex: 0 0 24px; }
     .gallery-filter-btn { padding: 9px 14px; font-size: 13px; gap: 6px; }
     .gallery-filter-btn em { min-width: 20px; padding: 3px 5px; font-size: 11px; }
 
@@ -310,6 +323,7 @@
     .gallery-popup .mfp-img { max-width: 94vw !important; max-height: 74vh !important; border-radius: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
+    .gallery-item.gl-pre, .gallery-item.gl-late { opacity: 1; }
     .gallery-item.pop-in { animation: none; }
     .gallery-item, .gallery-item img, .gi-zoom { transition: none; }
 }
@@ -479,7 +493,7 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Filter, mosaic layout, lightbox, navbar offset, back to top -->
+<!-- Filter, mosaic layout, STACK animation, lightbox, navbar offset, back to top -->
 <script>
     (function () {
         var buttons = Array.prototype.slice.call(document.querySelectorAll('.gallery-filter-btn'));
@@ -542,6 +556,114 @@ html, body { background: var(--footer-gap) !important; }
             });
         }
 
+        /* ================= STACK ANIMATION =================
+           1. every photo that is showing is moved (inline transform) to one deck in the middle of the grid
+           2. the transform is removed with a springy transition, one photo after another (the first photo
+              leaves the deck first and lands on top)
+           3. photos beyond the first DEAL_MAX fade up later, when you scroll to them                    */
+        var DEAL_MAX = 12;                 // photos dealt out of the deck at once
+        var DEAL_STEP = 55;                // ms between photos
+        var DEAL_TIME = 850;               // ms for each photo to fly out
+        var SPRING = 'cubic-bezier(.34,1.3,.5,1)';
+        var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var canIO = 'IntersectionObserver' in window;
+        var dealId = 0, dealTimer = null, started = false;
+
+        var lateIO = canIO ? new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (!en.isIntersecting) return;
+                var el = en.target;
+                lateIO.unobserve(el);
+                el.classList.remove('gl-late');
+                el.classList.add('pop-in');
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }) : null;
+
+        function visibleItems() {
+            return items.filter(function (it) { return !it.classList.contains('is-hidden'); });
+        }
+
+        function clearInline(it) {
+            it.style.transition = ''; it.style.transitionDelay = '';
+            it.style.transform = ''; it.style.opacity = ''; it.style.zIndex = '';
+            it.classList.remove('is-dealing');
+        }
+
+        /* put everything back to a clean state (stops an animation that is still running) */
+        function resetAnimState() {
+            dealId++;
+            clearTimeout(dealTimer);
+            items.forEach(function (it) {
+                clearInline(it);
+                it.classList.remove('gl-pre', 'gl-late', 'pop-in');
+                if (lateIO) lateIO.unobserve(it);
+            });
+        }
+
+        function dealStack() {
+            resetAnimState();
+            var vis = visibleItems();
+            if (!vis.length || reduce) return;
+
+            var batch = vis.slice(0, DEAL_MAX);
+            var rest = vis.slice(DEAL_MAX);
+            var myId = dealId;
+
+            // photos further down: hidden, fade up when scrolled to
+            rest.forEach(function (it) {
+                if (lateIO) { it.classList.add('gl-late'); lateIO.observe(it); }
+            });
+
+            // READ first (natural positions), then WRITE (deck transforms) so the browser lays out only once
+            var g = grid.getBoundingClientRect();
+            var cx = g.left + g.width / 2;
+            var cy = g.top + Math.min(g.height / 2, 300);
+            var rects = batch.map(function (it) { return it.getBoundingClientRect(); });
+            var n = batch.length;
+
+            batch.forEach(function (it, i) {
+                var r = rects[i];
+                var dx = cx - (r.left + r.width / 2);
+                var dy = cy - (r.top + r.height / 2);
+                var rot = (i - (n - 1) / 2) * 2.6 + ((i % 2) ? 1.5 : -1.5);
+                it.classList.add('is-dealing');
+                it.style.transition = 'none';
+                it.style.opacity = '0';
+                it.style.zIndex = String(n - i);                 // first photo on top of the deck
+                it.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg) scale(.55)';
+            });
+
+            void grid.offsetWidth;   // commit the deck position
+
+            batch.forEach(function (it, i) {
+                var delay = i * DEAL_STEP;
+                it.style.transition = 'transform ' + DEAL_TIME + 'ms ' + SPRING + ' ' + delay + 'ms, ' +
+                                      'opacity 420ms ease ' + delay + 'ms';
+                it.style.opacity = '1';
+                it.style.transform = 'translate(0,0) rotate(0deg) scale(1)';
+            });
+
+            // when the last photo has landed, hand control back to the normal hover styles
+            dealTimer = setTimeout(function () {
+                if (myId !== dealId) return;
+                batch.forEach(clearInline);
+            }, (n - 1) * DEAL_STEP + DEAL_TIME + 120);
+        }
+
+        /* before the gallery is seen: keep the photos hidden, then deal them the first time the grid is on screen */
+        if (!reduce && canIO && items.length) {
+            items.forEach(function (it) { it.classList.add('gl-pre'); });
+            var startIO = new IntersectionObserver(function (entries) {
+                if (!entries[0].isIntersecting || started) return;
+                started = true;
+                startIO.disconnect();
+                dealStack();
+            }, { threshold: 0.12 });
+            startIO.observe(grid);
+        } else {
+            started = true;
+        }
+
         function setFilter(filter, fromClick) {
             buttons.forEach(function (b) {
                 var on = b.getAttribute('data-filter') === filter;
@@ -553,25 +675,24 @@ html, body { background: var(--footer-gap) !important; }
             var visible = 0;
             items.forEach(function (item) {
                 var show = filter === 'all' || item.getAttribute('data-category') === filter;
-                item.classList.remove('pop-in');
                 item.classList.toggle('is-hidden', !show);
-                if (show) {
-                    void item.offsetWidth;
-                    item.style.animationDelay = (visible % 4) * 0.07 + 's';
-                    item.classList.add('pop-in');
-                    visible++;
-                }
+                if (show) visible++;
             });
             layout();
 
             empty.classList.toggle('show', visible === 0);
             result.textContent = visible ? visible + (visible === 1 ? ' photo' : ' photos') : '';
 
-            // if the user had scrolled down, bring the top of the grid back into view
+            // if the user had scrolled down, bring the top of the grid back into view first
             if (fromClick) {
                 var y = grid.getBoundingClientRect().top + window.pageYOffset - (navBottom() + 80);
                 if (window.pageYOffset > y) window.scrollTo({ top: Math.max(y, 0), behavior: 'smooth' });
             }
+
+            // every category change: shuffle back into the deck and deal again
+            started = true;
+            if (typeof startIO !== 'undefined') startIO.disconnect();
+            dealStack();
         }
 
         buttons.forEach(function (btn) {
@@ -579,7 +700,7 @@ html, body { background: var(--footer-gap) !important; }
         });
         if (reset) reset.addEventListener('click', function () { setFilter('all', true); });
 
-        // first paint: no animation, just the mosaic
+        // first paint: mosaic layout only (the deal starts when the grid scrolls into view)
         layout();
         result.textContent = items.length ? items.length + (items.length === 1 ? ' photo' : ' photos') : '';
 

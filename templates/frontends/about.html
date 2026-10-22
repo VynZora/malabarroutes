@@ -513,6 +513,58 @@ html, body { background: var(--footer-gap) !important; }
                 mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
     }
 }
+/* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
+@media (max-width: 991px) {
+    .page-header.page-hero { justify-content: center; text-align: center !important; }
+    .page-hero > .container,
+    .page-hero .row,
+    .page-hero [class*="col-"],
+    .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
+    .page-header.page-hero h1,
+    .page-header.page-hero h1 * { text-align: center !important; }
+    .page-header.page-hero h1 {
+        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
+        padding-left: 12px; padding-right: 12px;
+    }
+    .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
+}
+/* ===================== FAQ END: boat + heading (2 lines) + button, ALL IN ONE LINE ===================== */
+.fq-end {
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    align-items: center; justify-content: center;
+    gap: 20px; margin-top: 56px;
+}
+.fq-end .bt-art.bt-art-end {
+    position: static; flex: 0 0 auto;
+    width: clamp(200px, 20vw, 300px); max-width: none; margin: 0;
+}
+.fq-end-text {
+    display: flex; flex-direction: row; flex-wrap: nowrap;
+    align-items: center; gap: 16px;
+}
+.fq-end-text .tn-title {
+    margin: 0;
+    white-space: normal;                 /* was nowrap: allows two lines */
+    font-size: clamp(28px, 3vw, 46px);   /* a little bigger, since it has two lines */
+    line-height: 1.1;
+    text-align: left;
+}
+.fq-end-text .tn-btns { margin: 0; flex: 0 0 auto; }
+.fq-end-text .tn-btn {
+    padding: 16px 34px; font-size: 15px; letter-spacing: 2px; gap: 12px; white-space: nowrap;
+}
+.fq-end-text .tn-btn i { font-size: 14px; }
+
+/* tablet / mobile only: stack everything */
+@media (max-width: 1199px) {
+    .fq-end, .fq-end-text { flex-wrap: wrap; justify-content: center; text-align: center; }
+    .fq-end .bt-art.bt-art-end { width: min(300px, 80%); }
+    .fq-end-text .tn-title { font-size: 32px; text-align: center; }
+}
+@media (max-width: 575px) {
+    .fq-end-text .tn-title { font-size: 26px; }
+    .fq-end-text .tn-btn { padding: 14px 28px; font-size: 14px; }
+}
 </style>
 {% endblock %}
 
@@ -920,7 +972,18 @@ html, body { background: var(--footer-gap) !important; }
         </div>
 
         <!-- houseboat sketch (same as the Packages page) at the end of the page -->
-        <img class="bt-art bt-art-end" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+<div class="fq-end">
+    <img class="bt-art bt-art-end" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+
+    <div class="fq-end-text rv rv-r">
+        
+        <h3 class="tn-title">Ready to explore<br>Kerala with us?</h3>
+       
+        <div class="tn-btns">
+            <a href="{% url 'contact' %}" class="tn-btn">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>
     </div>
 </section>
 

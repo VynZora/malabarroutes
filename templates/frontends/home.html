@@ -11,19 +11,20 @@
       Colours ALTERNATE (no two same-colour bands touch):
       cream (About) -> tan (Services) -> cream (Packages) -> tan (Why us)
       -> cream (Destinations) -> tan (Testimonials) -> cream (Activities)
-      -> tan (Terms) -> cream (FAQ)
+      -> tan (Terms) -> cream (FAQ) -> tan (Blogs)
     - ONE texture on every band: soft scattered dots (see --pat-brown / --pat-light).
-    - CARDS (Packages, Destinations, Activities, Testimonials) and FAQ questions
+    - CARDS (Packages, Destinations, Activities, Testimonials, Blogs) and FAQ questions
       have NO solid fill: they are the same paper as the band behind them,
       outlined with a hand-torn paper edge (SVG filter #paperTorn, defined just
       under <div class="flow">). To make the edge rougher / smoother, change
-      scale="5" inside that filter. To change the line colour, change --edge.
+      scale="22" inside that filter. To change the line colour, change --edge.
     - HOVER: every card turns SAND on hover (colour = --sand-hover in .flow) and is
       INTERACTIVE (follows the mouse). Each section has its own effect:
         Packages     = 3D tilt + depth + moving glare
         Destinations = "cream panel": a cream paper panel rises over the caption, soft cream glow follows the mouse, arrow grows into an Explore pill
         Testimonials = "travel postcard": lift + tilt, photo straightens, tape tightens, route moves and pin travels
         Activities   = card drifts toward the cursor + glare + title underline
+        Blogs        = lift + sand fill + glare, photo zooms inside the torn frame
         FAQ          = glare + gold bar + number slides
       (script: "Interactive cards" near the bottom; effects are skipped on touch screens)
     - BUTTONS: the Packages "Book Now" / "View More" buttons are gold
@@ -647,7 +648,9 @@ body.page-loaded .top-bar { opacity: 1; visibility: visible; }
 .g-score { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1; }
 .g-stars { position: relative; display: inline-block; font-size: 17px; line-height: 1; white-space: nowrap; letter-spacing: 3px; }
 .g-base { color: rgba(139, 107, 46, .3); }
-.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }/* ---- review cards: torn-paper outline, photo + pin, text below ---- */
+.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
+
+/* ---- review cards: torn-paper outline, photo + pin, text below ---- */
 .tm-card {
     --edge-r: 10px;
     display: flex; flex-direction: column; text-align: left;
@@ -1003,22 +1006,29 @@ html, body { background: var(--footer-gap) !important; }
 .ds-overlay { border-radius: 0 0 8px 8px; }
 .ac-media { border-radius: 10px; }
 .tm-photo, .tm-photo img, .tm-ph { border-radius: 10px; }
-/* ================= HOME: LATEST BLOGS (tan): image cards ================= */
+
+/* ================= HOME: LATEST BLOGS (tan): torn-paper cards ================= */
 .hb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px; }
 .hb-col { min-width: 0; display: block; }
 
+/* outer card = torn-paper frame (outline, sand hover and glare come from the rules further down) */
 .bg-card {
-    position: relative; display: block; width: 100%; aspect-ratio: 16 / 11; border-radius: 22px; overflow: hidden; isolation: isolate;
-    text-decoration: none; background: #3a3022; font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
-    box-shadow: 0 14px 30px rgba(60,40,10,.28);
-    transition: transform .35s ease, box-shadow .35s ease; -webkit-tap-highlight-color: transparent;
+    --edge-r: 14px;
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 11;
+    padding: 16px; box-sizing: border-box; border-radius: 14px;
+    text-decoration: none; font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
+    transition: transform .4s ease; -webkit-tap-highlight-color: transparent;
 }
-.bg-card:hover { transform: translateY(-8px); box-shadow: 0 24px 42px rgba(60,40,10,.38); }
+.bg-card:hover { transform: translateY(-8px); }
+
+/* inner picture */
+.bg-pic { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 8px; isolation: isolate; background: #3a3022; }
 .bg-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s ease; z-index: -2; }
 .bg-card:hover .bg-card-img { transform: scale(1.07); }
-.bg-card::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to top, rgba(18,12,6,.88) 0%, rgba(18,12,6,.5) 38%, rgba(18,12,6,0) 70%); }
-.bg-pill { position: absolute; top: 18px; right: 18px; padding: 10px 22px; border-radius: 50px; background: rgba(255,255,255,.28); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
-.bg-card-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 28px 24px; color: #fff; }
+.bg-pic::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to top, rgba(18,12,6,.88) 0%, rgba(18,12,6,.5) 38%, rgba(18,12,6,0) 70%); }
+
+.bg-pill { position: absolute; top: 16px; right: 16px; padding: 10px 22px; border-radius: 50px; background: rgba(255,255,255,.28); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+.bg-card-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 26px 22px; color: #fff; }
 .bg-card-tag { display: block; margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(255,255,255,.85); }
 .bg-card-title { margin: 0; font-family: inherit; font-variant: normal; font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 28px; line-height: 1.25; color: #fff; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .bg-card-title::before, .bg-card-title::after { display: none !important; content: none !important; }
@@ -1030,12 +1040,33 @@ html, body { background: var(--footer-gap) !important; }
 .bg-card:hover .bg-card-go { background: #fff; }
 .bg-card:hover .bg-card-go i { transform: rotate(0); }
 
+/* ---- same torn outline / sand hover / glare as the other cards ---- */
+.bg-card { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; }
+.bg-card::before, .bg-card::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; }
+.bg-card::before {
+    background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .3), inset 0 0 12px 3px rgba(255, 252, 244, .18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+            filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.bg-card:hover::before {
+    background-color: var(--sand-hover);
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3);
+}
+.bg-card::after {
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255, 252, 244, .8), rgba(255, 252, 244, 0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn);
+    opacity: 0; transition: opacity .35s ease;
+}
+.bg-card:hover::after { opacity: 1; }
+
 @media (max-width: 767px) {
     .hb-grid { grid-template-columns: 1fr; gap: 26px; }
-    .bg-card { aspect-ratio: 4 / 3.3; border-radius: 18px; }
-    .bg-card-body { padding: 20px 18px 18px; }
+    .bg-card { aspect-ratio: 4 / 3.5; padding: 12px; }
+    .bg-card-body { padding: 20px 16px 16px; }
     .bg-card-title { font-size: 21px; }
-    .bg-pill { top: 14px; right: 14px; padding: 8px 16px; }
+    .bg-pill { top: 12px; right: 12px; padding: 8px 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .bg-card, .bg-card-img { transition: none; } .bg-card:hover { transform: none; } .bg-card:hover .bg-card-img { transform: none; } }
 </style>
@@ -1148,7 +1179,7 @@ html, body { background: var(--footer-gap) !important; }
 <div class="flow">
 
 <!-- Torn-paper outline filter, used by every card + FAQ box (see .pk-card::before etc.).
-     Rougher torn edge: raise scale (11). Smoother: lower it. Finer tears: raise baseFrequency. -->
+     Rougher torn edge: raise scale (22). Smoother: lower it. Finer tears: raise baseFrequency. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
 <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
@@ -1648,23 +1679,25 @@ html, body { background: var(--footer-gap) !important; }
             {% for b in blogs %}
             <div class="hb-col rv" style="--d:{% if forloop.first %}0s{% else %}.12s{% endif %}">
                 <a href="{% url 'blog_detail' b.slug %}" class="bg-card" draggable="false">
-                    {% if b.image %}
-                    <img class="bg-card-img" src="{{ b.image.url }}"
-                         srcset="{{ b.image|srcset }}"
-                         sizes="(max-width: 767px) 100vw, 50vw"
-                         alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
-                    {% else %}
-                    <img class="bg-card-img" src="{% static 'malabar-static/mr5.webp' %}" alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
-                    {% endif %}
+                    <div class="bg-pic">
+                        {% if b.image %}
+                        <img class="bg-card-img" src="{{ b.image.url }}"
+                             srcset="{{ b.image|srcset }}"
+                             sizes="(max-width: 767px) 100vw, 50vw"
+                             alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
+                        {% else %}
+                        <img class="bg-card-img" src="{% static 'malabar-static/mr5.webp' %}" alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
+                        {% endif %}
 
-                    {% if forloop.first %}<span class="bg-pill">Latest</span>{% endif %}
+                        {% if forloop.first %}<span class="bg-pill">Latest</span>{% endif %}
 
-                    <div class="bg-card-body">
-                        <span class="bg-card-tag">Travel Blog</span>
-                        <h3 class="bg-card-title">{{ b.title }}</h3>
-                        <div class="bg-card-foot">
-                            <span class="bg-card-date"><i class="fa-regular fa-calendar"></i>{{ b.created_at|date:"d M Y" }}</span>
-                            <span class="bg-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+                        <div class="bg-card-body">
+                            <span class="bg-card-tag">Travel Blog</span>
+                            <h3 class="bg-card-title">{{ b.title }}</h3>
+                            <div class="bg-card-foot">
+                                <span class="bg-card-date"><i class="fa-regular fa-calendar"></i>{{ b.created_at|date:"d M Y" }}</span>
+                                <span class="bg-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -1894,7 +1927,7 @@ html, body { background: var(--footer-gap) !important; }
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
         /* [selector, max tilt in degrees] */
-        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.ac-card', 0], ['.ds-card', 0], ['.fq-item', 0]];
+        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.ac-card', 0], ['.ds-card', 0], ['.fq-item', 0], ['.bg-card', 0]];
 
         groups.forEach(function (g) {
             var max = g[1];

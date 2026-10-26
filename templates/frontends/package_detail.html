@@ -1,8 +1,9 @@
 {% extends "frontends/base.html" %}
 {% load static %}
 {% load image_tags %}
-{% block title %}{{ package.name }} | Malabar{% endblock %}
+{% block title %}{{ package.name }} Tour Package | Malabar Routes{% endblock %}
 
+{% block meta_description %}Book the {{ package.name }} tour package with Malabar Routes. Explore north Kerala with expert local guides, comfortable stays and fully planned itineraries. Enquire now for the best price.{% endblock %}
 {% comment %}
     PACKAGE DETAIL PAGE: same torn-paper design as Home / About / Packages.
     - HERO: same as the About / Packages hero (full-bleed, torn bottom edge) but with the package's own image.

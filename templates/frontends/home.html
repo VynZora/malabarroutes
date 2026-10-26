@@ -1003,6 +1003,41 @@ html, body { background: var(--footer-gap) !important; }
 .ds-overlay { border-radius: 0 0 8px 8px; }
 .ac-media { border-radius: 10px; }
 .tm-photo, .tm-photo img, .tm-ph { border-radius: 10px; }
+/* ================= HOME: LATEST BLOGS (tan): image cards ================= */
+.hb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px; }
+.hb-col { min-width: 0; display: block; }
+
+.bg-card {
+    position: relative; display: block; width: 100%; aspect-ratio: 16 / 11; border-radius: 22px; overflow: hidden; isolation: isolate;
+    text-decoration: none; background: #3a3022; font-family: 'Poppins', var(--bs-body-font-family, sans-serif);
+    box-shadow: 0 14px 30px rgba(60,40,10,.28);
+    transition: transform .35s ease, box-shadow .35s ease; -webkit-tap-highlight-color: transparent;
+}
+.bg-card:hover { transform: translateY(-8px); box-shadow: 0 24px 42px rgba(60,40,10,.38); }
+.bg-card-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s ease; z-index: -2; }
+.bg-card:hover .bg-card-img { transform: scale(1.07); }
+.bg-card::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(to top, rgba(18,12,6,.88) 0%, rgba(18,12,6,.5) 38%, rgba(18,12,6,0) 70%); }
+.bg-pill { position: absolute; top: 18px; right: 18px; padding: 10px 22px; border-radius: 50px; background: rgba(255,255,255,.28); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; }
+.bg-card-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 28px 24px; color: #fff; }
+.bg-card-tag { display: block; margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: rgba(255,255,255,.85); }
+.bg-card-title { margin: 0; font-family: inherit; font-variant: normal; font-weight: 600; letter-spacing: 0; text-transform: none; font-size: 28px; line-height: 1.25; color: #fff; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.bg-card-title::before, .bg-card-title::after { display: none !important; content: none !important; }
+.bg-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+.bg-card-date { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: rgba(255,255,255,.9); }
+.bg-card-date i { color: var(--gold); }
+.bg-card-go { flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--btn-ink); font-size: 13px; transition: transform .3s ease, background .3s ease; }
+.bg-card-go i { transform: rotate(-45deg); transition: transform .3s ease; }
+.bg-card:hover .bg-card-go { background: #fff; }
+.bg-card:hover .bg-card-go i { transform: rotate(0); }
+
+@media (max-width: 767px) {
+    .hb-grid { grid-template-columns: 1fr; gap: 26px; }
+    .bg-card { aspect-ratio: 4 / 3.3; border-radius: 18px; }
+    .bg-card-body { padding: 20px 18px 18px; }
+    .bg-card-title { font-size: 21px; }
+    .bg-pill { top: 14px; right: 14px; padding: 8px 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .bg-card, .bg-card-img { transition: none; } .bg-card:hover { transform: none; } .bg-card:hover .bg-card-img { transform: none; } }
 </style>
 {% endblock %}
 {% block content %}
@@ -1596,6 +1631,51 @@ html, body { background: var(--footer-gap) !important; }
         </div>
     </div>
 </section>
+
+{% if blogs %}
+<!-- ============ LATEST BLOGS (tan) ============ -->
+{# last band is now tan, so the footer gap colour must match it #}
+<style>:root { --footer-gap: #e8d3b0; }</style>
+<section class="sec sec-tan">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Blog</div>
+            <h2 class="tn-title">Latest from our Blog</h2>
+            <p class="tn-text">Travel tips, hidden places and stories from across Malabar and Kerala.</p>
+        </div>
+
+        <div class="hb-grid">
+            {% for b in blogs %}
+            <div class="hb-col rv" style="--d:{% if forloop.first %}0s{% else %}.12s{% endif %}">
+                <a href="{% url 'blog_detail' b.slug %}" class="bg-card" draggable="false">
+                    {% if b.image %}
+                    <img class="bg-card-img" src="{{ b.image.url }}"
+                         srcset="{{ b.image|srcset }}"
+                         sizes="(max-width: 767px) 100vw, 50vw"
+                         alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
+                    {% else %}
+                    <img class="bg-card-img" src="{% static 'malabar-static/mr5.webp' %}" alt="{{ b.title }}" loading="lazy" decoding="async" draggable="false">
+                    {% endif %}
+
+                    {% if forloop.first %}<span class="bg-pill">Latest</span>{% endif %}
+
+                    <div class="bg-card-body">
+                        <span class="bg-card-tag">Travel Blog</span>
+                        <h3 class="bg-card-title">{{ b.title }}</h3>
+                        <div class="bg-card-foot">
+                            <span class="bg-card-date"><i class="fa-regular fa-calendar"></i>{{ b.created_at|date:"d M Y" }}</span>
+                            <span class="bg-card-go"><i class="fa-solid fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="tn-center"><a href="{% url 'blogs' %}" class="tn-btn">View All Articles <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+</section>
+{% endif %}
 
 </div>
 <!-- ===== /flow ===== -->

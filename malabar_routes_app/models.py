@@ -304,6 +304,11 @@ class Blog(OptimizedImageModel):
     def __str__(self):
         return self.title
 
+    @property
+    def excerpt(self):
+        text = re.sub(r"<br\s*/?>|</p>|</li>", " ", self.description or "")
+        return html.unescape(strip_tags(text)).strip()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)
@@ -314,7 +319,6 @@ class Blog(OptimizedImageModel):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
-
 
 class Testimonial(OptimizedImageModel):
     image_fields = ["image"]

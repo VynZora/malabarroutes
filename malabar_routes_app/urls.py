@@ -277,4 +277,6 @@ urlpatterns = [
   path("gallery/", views.gallery, name="gallery"),
   path("contact/", views.contact, name="contact"),
   path("terms-and-conditions/", views.terms, name="terms"),
+  path("blogs/", views.blogs, name="blogs"),
+path("blogs/<slug:slug>/", views.blog_detail, name="blog_detail"),
 ]

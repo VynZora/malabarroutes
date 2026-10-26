@@ -1263,6 +1263,7 @@ def home(request):
         "recent_activities": Activity.objects.order_by("-created_at")[:3],
         "featured_packages": TourPackage.objects.order_by("-created_at"),
         "testimonials": Testimonial.objects.order_by("-created_at"),
+        "blogs"       : Blog.objects.order_by("-created_at")[:2],
     })
 def about(request):
     return render(request, 'frontends/about.html', {
@@ -1904,3 +1905,30 @@ def terms(request):
 
 def custom_404(request, exception=None):
     return render(request, "frontends/404.html", status=404)
+
+def blogs(request):
+    qs = Blog.objects.order_by("-created_at")
+
+    query = request.GET.get("q", "").strip()
+    if query:
+        qs = qs.filter(Q(title__icontains=query) | Q(description__icontains=query))
+
+    return render(request, "frontends/blogs.html", {
+        "blogs": qs,
+        "query": query,
+    })
+
+
+def blog_detail(request, slug):
+    blog = get_object_or_404(Blog, slug=slug)
+
+    recent_blogs = Blog.objects.exclude(pk=blog.pk).order_by("-created_at")[:4]
+    older_blog = Blog.objects.filter(created_at__lt=blog.created_at).order_by("-created_at").first()
+    newer_blog = Blog.objects.filter(created_at__gt=blog.created_at).order_by("created_at").first()
+
+    return render(request, "frontends/blog_detail.html", {
+        "blog": blog,
+        "recent_blogs": recent_blogs,
+        "older_blog": older_blog,
+        "newer_blog": newer_blog,
+    })

@@ -2,24 +2,31 @@
 {% load static %}
 {% load image_tags %}
 {% load package_tags %}
-{% block title %}Packages | Malabar{% endblock %}
+{% block title %}Kerala Holiday Packages & Tour Costs | Malabar Routes{% endblock %}
+
+{% block meta_description %}Explore Kerala holiday packages with Malabar Routes. Compare trip options, understand tour costs and find travel arrangements for your budget.{% endblock %}
+
+{% block meta_keywords %}Kerala holiday packages, Kerala tour packages, best tourist packages in Kerala, Kerala trip package price, Kerala tour package cost, Malabar Routes{% endblock %}
 
 {% comment %}
     PACKAGES PAGE: same torn-paper design as the Home and About pages.
+    - SEO: meta title (block title), meta description (block meta_description), H1 (first band; the hero keeps "Our Packages"),
+      H2 + intro copy + CTAs (first band), FAQ accordion + FAQPage JSON-LD (last band).
     - HERO: same as the About hero (full-bleed, rotating backgrounds, torn bottom edge).
       On mobile/tablet the hero title + breadcrumb are always centered.
-    - First band (cream): heading + filter bar + applied-filter chips.
+    - First band (cream): heading + intro + CTAs + filter bar + applied-filter chips.
       A houseboat / coconut-palm sketch sits on the RIGHT side of this band (desktop),
       and shows centered above the heading on tablet / mobile.
     - Then ONE BAND PER CATEGORY. Colours alternate (tan, cream, tan ...) and are re-assigned by the
       script every time the filter hides / shows a category, so two same-colour bands never touch.
-      The footer gap colour follows the last visible band.
+      The FAQ band is the last band and follows the same alternation.
+      The footer gap colour follows the last band (the FAQ).
     - Cards are torn-paper cards (3D tilt + sand hover), same as the Home "Popular Packages".
     - The navbar "Packages" dropdown still links to /packages/?category=<slug>; ids stay cat-<value>.
     - FILTER BAR (budget, destination, days) is applied ONLY when "Show Packages" is clicked.
     - NO-RESULT MODAL opens when "Show Packages" finds no match.
 
-    IMAGE: save the houseboat art as  static/malabar-static/houseboat-art.png
+    IMAGE: save the houseboat art as  static/malabar-static/p1.png
 {% endcomment %}
 
 {% block extra_css %}
@@ -49,9 +56,10 @@
 @media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
 .page-header.page-hero > .container { position: relative; z-index: 2; width: 100%; }
 .page-hero .page-header-box { text-align: center; }
-.page-header.page-hero h1 {
-    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px;
-    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35); margin-bottom: 20px;
+.page-header.page-hero .page-title {
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px; line-height: 1.1;
+    margin: 0 0 20px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35);
 }
 .page-hero .breadcrumb { justify-content: center; margin: 0; }
 .page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
@@ -75,10 +83,10 @@
 }
 @media (max-width: 991px) {
     .page-header.page-hero { min-height: 56vh; padding-top: 150px !important; }
-    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-header.page-hero .page-title { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
     .page-hero .breadcrumb { font-size: 14px; }
 }
-@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
+@media (max-width: 575px) { .page-header.page-hero .page-title { font-size: 28px !important; letter-spacing: 1.5px !important; } }
 
 /* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
 @media (max-width: 991px) {
@@ -87,12 +95,7 @@
     .page-hero .row,
     .page-hero [class*="col-"],
     .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
-    .page-header.page-hero h1,
-    .page-header.page-hero h1 * { text-align: center !important; }
-    .page-header.page-hero h1 {
-        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
-        padding-left: 12px; padding-right: 12px;
-    }
+    .page-header.page-hero .page-title { display: block; width: 100%; text-align: center !important; margin-left: auto !important; margin-right: auto !important; padding-left: 12px; padding-right: 12px; }
     .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
 }
 
@@ -133,20 +136,58 @@
 .tn-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
 .tn-head { text-align: center; max-width: 720px; margin: 0 auto 46px; }
 .tn-head .tn-text { margin: 0 auto; }
+.pk-top .tn-head { margin-bottom: 26px; }
 
-/* ---- houseboat sketch: RIGHT side of the heading band ---- */
+/* ---- intro: H1 + lead on the left, houseboat on the right, then 3 torn-paper cards ---- */
+.pk-lead { text-align: left; }
+.pk-h1 { margin: 0 0 20px; font-size: clamp(30px, 3.4vw, 46px); }
+.pk-lead-text { margin: 0; color: var(--text); font-size: 16.5px; line-height: 1.85; }
+.pk-lead-text strong, .ip-card p strong { color: inherit; font-weight: inherit; }
+.pk-cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 30px; }
+.pk-cta .pk-btn { flex: 0 1 auto; min-width: 250px; font-family: 'Poppins', var(--bs-body-font-family, sans-serif); }
+
+.ip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin: 56px 0 58px; }
+.ip-grid > div { display: flex; min-width: 0; }
+.ip-card { position: relative; isolation: isolate; flex: 1; display: flex; flex-direction: column; padding: 34px 28px 30px; border-radius: 16px; background: transparent !important; box-shadow: none !important; border: 0 !important; transition: transform .4s cubic-bezier(.2,.7,.2,1); -webkit-tap-highlight-color: transparent; }
+.ip-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.ip-card:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.ip-card::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
+}
+.ip-card:hover::after { opacity: 1; }
+.ip-card:hover { transform: translateY(-8px); }
+.ip-ico { width: 54px; height: 54px; margin-bottom: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--gold); color: var(--btn-ink); font-size: 20px; transition: transform .6s cubic-bezier(.2,.7,.2,1), background-color .35s ease, color .35s ease; }
+.ip-card:hover .ip-ico { transform: rotate(360deg) scale(1.08); background: var(--btn-ink); color: var(--gold); }
+.ip-card h3 { margin: 0 0 10px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 23px; line-height: 1.2; text-transform: none; color: var(--ink); transition: color .35s ease; }
+.ip-card h3::before, .ip-card h3::after { display: none !important; content: none !important; }
+.ip-card:hover h3 { color: var(--gold-deep); }
+.ip-card p { margin: 0; font-size: 15px; line-height: 1.75; color: var(--text); }
+@media (max-width: 991px) {
+    .pk-lead { text-align: center; }
+    .pk-lead-text { text-align: left; }
+    .pk-cta { justify-content: center; }
+    .ip-grid { grid-template-columns: 1fr; gap: 22px; margin: 40px 0 44px; }
+}
+@media (max-width: 575px) {
+    .pk-lead-text { font-size: 15px; line-height: 1.75; }
+    .pk-cta .pk-btn { flex: 1 1 100%; min-width: 0; }
+    .ip-card { padding: 28px 22px 26px; }
+}
+
+/* ---- houseboat sketch: right column (centered above the heading on tablet / mobile) ---- */
 .pk-art {
     display: block; height: auto; opacity: .92; mix-blend-mode: multiply;
     pointer-events: none; user-select: none; -webkit-user-drag: none;
+    width: min(460px, 100%); margin: 0 auto;
 }
-/* tablet / mobile: centered above the heading */
-.pk-art { width: min(300px, 70%); margin: -10px auto 18px; }
-/* desktop: pinned to the right edge, beside the centered heading */
-@media (min-width: 1200px) {
-    .pk-art { position: absolute; z-index: 0; top: -34px; right: -12px; width: clamp(280px, 25vw, 400px); margin: 0; }
-}
-@media (min-width: 1400px) { .pk-art { right: -40px; } }
-@media (min-width: 1700px) { .pk-art { right: -110px; width: 430px; } }
+@media (max-width: 991px) { .pk-art { width: min(300px, 70%); } }
 /* fade-in on scroll (replays each time it enters the screen): slides in from the right on desktop, up on mobile */
 .pk-art {
     opacity: 0; transform: translateX(150px) scale(.9); filter: blur(10px);
@@ -239,9 +280,53 @@
 .pk-nomatch { display: none; text-align: center; font-size: 18px; font-weight: 600; color: var(--ink); padding: 40px 0 0; }
 .pk-nomatch.show { display: block; }
 
+/* ===================== FAQ (same design as the About page) ===================== */
+.sec-end { padding-bottom: 60px; }
+@media (max-width: 991px) { .sec-end { padding-bottom: 50px; } }
+@media (max-width: 575px) { .sec-end { padding-bottom: 44px; } }
+.fq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 56px; align-items: start; }
+.fq-left { position: sticky; top: 120px; }
+.fq-list { display: flex; flex-direction: column; gap: 22px; }
+.fq-item { --edge-r: 10px; position: relative; isolation: isolate; border-radius: 14px; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; transition: background-color .35s ease; }
+.fq-item::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
+    transition: box-shadow .35s ease, background-color .35s ease;
+}
+.fq-item:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.fq-item::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+    background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
+    -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
+}
+.fq-item:hover::after { opacity: 1; }
+.fq-item.open::before { box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.fq-h { margin: 0; padding: 0; font: inherit; text-transform: none; letter-spacing: 0; font-variant: normal; }
+.fq-h::before, .fq-h::after { display: none !important; content: none !important; }
+.fq-q { position: relative; width: 100%; display: flex; align-items: center; gap: 14px; padding: 22px 24px; background: transparent; border: 0; text-align: left; cursor: pointer; font-family: 'EB Garamond', serif; font-size: 21px; font-weight: 700; line-height: 1.3; color: var(--ink); }
+.fq-q::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 2px; background: var(--gold); transform: scaleY(0); transition: transform .35s ease; }
+.fq-item:hover .fq-q::before, .fq-item.open .fq-q::before { transform: scaleY(1); }
+.fq-no { display: inline-block; color: var(--gold); transition: transform .35s ease; }
+.fq-item:hover .fq-no { transform: translateX(4px); }
+.fq-qt { flex: 1; min-width: 0; }
+.fq-ico { position: relative; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%; background: #f7ecd5; transition: transform .4s ease, background-color .35s ease; }
+.fq-item:hover .fq-ico { transform: rotate(90deg); }
+.fq-item.open .fq-ico { background: var(--gold); }
+.fq-ico::before, .fq-ico::after { content: ""; position: absolute; left: 50%; top: 50%; width: 13px; height: 2px; background: var(--gold); transform: translate(-50%, -50%); transition: transform .3s ease, background-color .3s ease; }
+.fq-ico::after { transform: translate(-50%, -50%) rotate(90deg); }
+.fq-item.open .fq-ico::before, .fq-item.open .fq-ico::after { background: var(--btn-ink); }
+.fq-item.open .fq-ico::after { transform: translate(-50%, -50%) rotate(0); }
+.fq-a { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s ease; }
+.fq-item.open .fq-a { grid-template-rows: 1fr; }
+.fq-a > div { overflow: hidden; }
+.fq-a p { margin: 0; padding: 0 24px 24px 58px; font-size: 15.5px; line-height: 1.75; color: var(--text); }
+@media (max-width: 991px) { .fq-wrap { grid-template-columns: 1fr; gap: 34px; } .fq-left { position: static; } }
+@media (max-width: 575px) { .fq-q { padding: 18px 16px; font-size: 18px; } .fq-a p { padding: 0 16px 20px; } }
+
 /* ===================== FILTER BAR (paper style) ===================== */
 .pf-bar {
-    position: relative; z-index: 30; display: flex; align-items: center; gap: 6px; max-width: 1100px; margin: 0 auto 18px; padding: 10px 12px 10px 10px;
+    position: relative; z-index: 30; display: flex; align-items: center; gap: 6px; max-width: 1100px; margin: 0 auto 18px; padding: 10px 12px 10px 10px; scroll-margin-top: 120px;
     border-radius: 80px; background: rgba(255,252,244,.55); border: 1.5px solid var(--edge); box-shadow: 0 10px 26px rgba(90,60,20,.12);
 }
 .pf-seg { position: relative; flex: 1; min-width: 0; }
@@ -340,8 +425,9 @@
 }
 
 /* ===================== FOOTER: torn-paper top edge ===================== */
-/* --footer-gap follows the last visible band (the script updates it when filters change) */
-:root { --footer-gap: #f2e2c6; }
+/* --footer-gap follows the last band, which is the FAQ (the script updates it when filters change).
+   Default = tan, because the FAQ is tan when no category band is shown. */
+:root { --footer-gap: #e8d3b0; }
 html, body { background: var(--footer-gap) !important; }
 .footer-main {
     --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
@@ -366,7 +452,7 @@ html, body { background: var(--footer-gap) !important; }
 
 {% block content %}
 
-<!-- Hero (same as the About hero) -->
+<!-- Hero (same as the About hero). The H1 is the SEO heading. -->
 <div class="ah-wrap">
 <div class="page-header page-hero">
     <div class="ah-bgs" aria-hidden="true">
@@ -378,7 +464,7 @@ html, body { background: var(--footer-gap) !important; }
     </div>
     <div class="container"><div class="row"><div class="col-lg-12">
         <div class="page-header-box">
-            <h1 class="text-anime-style-3" data-cursor="-opaque">Our Packages</h1>
+            <p class="page-title text-anime-style-3" data-cursor="-opaque">Our Packages</p>
             <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">packages</li>
@@ -403,17 +489,57 @@ html, body { background: var(--footer-gap) !important; }
     </defs>
 </svg>
 
-<!-- ============ HEADING + FILTER (cream) ============ -->
+<!-- ============ HEADING + INTRO + FILTER (cream) ============ -->
 <section class="sec sec-cream pk-top">
     <div class="container">
 
-        <!-- houseboat sketch: right side on desktop, centered above the heading on tablet / mobile -->
-        <img class="pk-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+        <!-- intro: H1 + lead + CTAs on the left, houseboat on the right (centered above the heading on tablet / mobile) -->
+        <div class="row align-items-center g-4 g-lg-5">
+            <div class="col-lg-7 order-2 order-lg-1">
+                <div class="pk-lead pk-head">
+                    <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Tour Packages</div>
+                    <h1 class="tn-title pk-h1">Find Kerala Holiday Packages That Fit Your Budget</h1>
+                    <p class="pk-lead-text">Planning a trip to Kerala starts with choosing the right itinerary, deciding how long to stay and setting a comfortable budget. Malabar Routes helps travellers explore holiday options based on their travel dates, preferences and requirements. Whether you are comparing the <strong>best tourist packages in Kerala</strong> or researching <strong>Kerala India tour packages</strong>, reviewing the itinerary and included services helps you make a more informed choice.</p>
 
-        <div class="tn-head pk-head">
-            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Tour Packages</div>
-            <h2 class="tn-title">Explore Our Tour Packages</h2>
-            <p class="tn-text">Handpicked journeys across Kerala and beyond, planned with care so you can enjoy every moment.</p>
+                    <!-- CTAs: primary scrolls to the filter, secondary opens the booking modal from base.html -->
+                    <div class="pk-cta">
+                        <a href="#pkFilter" class="pk-btn pk-btn-fill" id="pkCtaExplore">
+                            Explore Our Kerala Packages <span class="pk-btn-ico"><i class="fa-solid fa-arrow-down"></i></span>
+                        </a>
+                        <a href="#" class="pk-btn pk-btn-line open-booking" data-package="Package Pricing Enquiry">
+                            Enquire About Package Pricing <span class="pk-btn-ico"><i class="fa-solid fa-arrow-right"></i></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5 order-1 order-lg-2">
+                <img class="pk-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+            </div>
+        </div>
+
+        <!-- three torn-paper cards (the rest of the SEO copy) -->
+        <div class="ip-grid">
+            <div class="pk-head">
+                <article class="ip-card">
+                    <span class="ip-ico"><i class="fa-solid fa-list-check"></i></span>
+                    <h3>Compare Before Booking</h3>
+                    <p>Travellers looking for <strong>Kerala holiday packages from India</strong> can compare trip durations, accommodation options, transportation arrangements and other inclusions before booking. Our aim is to help you understand the available options so you can choose from the <strong>best travel packages for Kerala</strong> according to your plans.</p>
+                </article>
+            </div>
+            <div class="pk-head">
+                <article class="ip-card">
+                    <span class="ip-ico"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+                    <h3>Look Beyond the Price</h3>
+                    <p>When comparing the <strong>best tourism packages for Kerala</strong>, look beyond the advertised price. The <strong>Kerala trip package price</strong> and overall <strong>Kerala tour package cost</strong> can vary depending on the number of travellers, travel season, accommodation category, transport requirements and selected services.</p>
+                </article>
+            </div>
+            <div class="pk-head">
+                <article class="ip-card">
+                    <span class="ip-ico"><i class="fa-solid fa-clipboard-check"></i></span>
+                    <h3>Review Every Detail</h3>
+                    <p>Malabar Routes helps you review these details before making a decision. Explore <strong>Kerala tour packages with price</strong> information where available, check what each option includes and compare the arrangements to find the <strong>best Kerala holiday packages</strong> for your trip.</p>
+                </article>
+            </div>
         </div>
 
         {% if groups %}
@@ -594,6 +720,80 @@ html, body { background: var(--footer-gap) !important; }
 {% endfor %}
 {% endif %}
 
+<!-- ============ FAQ (last band; colour is set by the script so it keeps alternating) ============ -->
+<section class="sec sec-wide sec-tan sec-end pk-faq" id="pkFaq">
+    <div class="container">
+        <div class="fq-wrap">
+
+            <div class="fq-left pk-head">
+                <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Question &amp; Answer</div>
+                <h2 class="tn-title">Frequently Asked Questions About Kerala Tour Packages</h2>
+                <p class="tn-text">Answers to the things travellers most often ask before planning a Kerala trip with Malabar Routes.</p>
+                <div class="pk-cta">
+                    <a href="#" class="pk-btn pk-btn-fill open-booking" data-package="Package Enquiry">
+                        Ask a Question <span class="pk-btn-ico"><i class="fa-solid fa-arrow-right"></i></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="fq-list pk-head" id="fqList">
+                <div class="fq-item open">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What Kerala holiday packages does Malabar Routes offer?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>Malabar Routes offers Kerala holiday packages covering Munnar, Thekkady, Alleppey, Vagamon, Vattavada, Wayanad, Kovalam and Kasaragod. Options include short sightseeing trips, honeymoon holidays, family travel, houseboat stays and customized itineraries. Package duration, accommodation and inclusions depend on the selected plan.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">How can I choose the best tourist packages in Kerala?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>The best tourist packages in Kerala depend on your available time, budget and travel interests. You can compare Munnar hill-station holidays, Munnar–Thekkady–Alleppey circuits, Munnar–Vagamon trips, Wayanad stays and Kovalam beach holidays. Review the itinerary, transport, accommodation and included services before choosing from the best travel packages for Kerala.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">What is the Kerala trip package price, and how much does a Kerala tour package cost?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>The Kerala trip package price and overall Kerala tour package cost depend on the number of travellers, travel dates, hotel category, vehicle type, meal plan and sightseeing requirements. Contact Malabar Routes with your itinerary and budget to request a quotation based on your selected arrangements.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">Where can I find Kerala tour packages with price details?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>You can enquire with Malabar Routes about Kerala tour packages with price details for your preferred destination and travel dates. Ask for a breakdown of accommodation, transportation, meals, sightseeing and additional charges. Comparing the complete inclusions helps you assess the actual cost rather than relying on the advertised price alone.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">Does Malabar Routes offer Kerala India tour packages and Kerala holiday packages from India?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>Yes, travellers planning trips within India can enquire about Kerala India tour packages and Kerala holiday packages from India. Share your departure city, travel dates, group size and preferred destinations. Malabar Routes can discuss suitable options covering destinations such as Munnar, Wayanad, Alleppey and Kasaragod, subject to availability and your requirements.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">Can I customize Kerala family, honeymoon and luxury holiday packages?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>Yes, you can enquire about customized arrangements for family holidays, couples, honeymoon travel and premium stays. When requesting one of the best Kerala holiday packages for your needs, specify the hotel category, number of rooms, private vehicle preference, meal plan, pickup and drop requirements, and approximate budget. The final arrangements will depend on availability and the agreed quotation.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">What is included in Malabar Routes tour packages?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>Package inclusions vary according to the selected itinerary and quotation. Available arrangements may include private transportation with a driver, pickup and drop, hotel or resort accommodation, breakfast, other meals, sightseeing and houseboat cruises. For Alleppey houseboat packages, confirm the cruise duration and meals included. Every package should clearly list its inclusions and exclusions before booking.</p></div></div>
+                </div>
+                <div class="fq-item">
+                    <h3 class="fq-h"><button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">What can I experience on the Kasaragod Heritage &amp; Nature Escape package?</span><span class="fq-ico" aria-hidden="true"></span></button></h3>
+                    <div class="fq-a"><div><p>The Kasaragod Heritage &amp; Nature Escape is a 3-night/4-day itinerary featuring a Nileshwaram backwater cruise, Bekal Fort, Bekal Beach and Ranipuram Hill Station. A Theyyam visit may be arranged during the festival season, subject to the actual temple schedule and local permissions. The package can include three nights of hotel or resort accommodation, daily breakfast, agreed transportation and the selected houseboat cruise. Confirm the quotation for meal arrangements, entry fees and other exclusions. An overnight houseboat stay is an alternative subject to availability and confirmation.</p></div></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FAQ structured data (same questions and answers as above) -->
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {"@type": "Question", "name": "What Kerala holiday packages does Malabar Routes offer?", "acceptedAnswer": {"@type": "Answer", "text": "Malabar Routes offers Kerala holiday packages covering Munnar, Thekkady, Alleppey, Vagamon, Vattavada, Wayanad, Kovalam and Kasaragod. Options include short sightseeing trips, honeymoon holidays, family travel, houseboat stays and customized itineraries. Package duration, accommodation and inclusions depend on the selected plan."}},
+            {"@type": "Question", "name": "How can I choose the best tourist packages in Kerala?", "acceptedAnswer": {"@type": "Answer", "text": "The best tourist packages in Kerala depend on your available time, budget and travel interests. You can compare Munnar hill-station holidays, Munnar–Thekkady–Alleppey circuits, Munnar–Vagamon trips, Wayanad stays and Kovalam beach holidays. Review the itinerary, transport, accommodation and included services before choosing from the best travel packages for Kerala."}},
+            {"@type": "Question", "name": "What is the Kerala trip package price, and how much does a Kerala tour package cost?", "acceptedAnswer": {"@type": "Answer", "text": "The Kerala trip package price and overall Kerala tour package cost depend on the number of travellers, travel dates, hotel category, vehicle type, meal plan and sightseeing requirements. Contact Malabar Routes with your itinerary and budget to request a quotation based on your selected arrangements."}},
+            {"@type": "Question", "name": "Where can I find Kerala tour packages with price details?", "acceptedAnswer": {"@type": "Answer", "text": "You can enquire with Malabar Routes about Kerala tour packages with price details for your preferred destination and travel dates. Ask for a breakdown of accommodation, transportation, meals, sightseeing and additional charges. Comparing the complete inclusions helps you assess the actual cost rather than relying on the advertised price alone."}},
+            {"@type": "Question", "name": "Does Malabar Routes offer Kerala India tour packages and Kerala holiday packages from India?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, travellers planning trips within India can enquire about Kerala India tour packages and Kerala holiday packages from India. Share your departure city, travel dates, group size and preferred destinations. Malabar Routes can discuss suitable options covering destinations such as Munnar, Wayanad, Alleppey and Kasaragod, subject to availability and your requirements."}},
+            {"@type": "Question", "name": "Can I customize Kerala family, honeymoon and luxury holiday packages?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, you can enquire about customized arrangements for family holidays, couples, honeymoon travel and premium stays. When requesting one of the best Kerala holiday packages for your needs, specify the hotel category, number of rooms, private vehicle preference, meal plan, pickup and drop requirements, and approximate budget. The final arrangements will depend on availability and the agreed quotation."}},
+            {"@type": "Question", "name": "What is included in Malabar Routes tour packages?", "acceptedAnswer": {"@type": "Answer", "text": "Package inclusions vary according to the selected itinerary and quotation. Available arrangements may include private transportation with a driver, pickup and drop, hotel or resort accommodation, breakfast, other meals, sightseeing and houseboat cruises. For Alleppey houseboat packages, confirm the cruise duration and meals included. Every package should clearly list its inclusions and exclusions before booking."}},
+            {"@type": "Question", "name": "What can I experience on the Kasaragod Heritage & Nature Escape package?", "acceptedAnswer": {"@type": "Answer", "text": "The Kasaragod Heritage & Nature Escape is a 3-night/4-day itinerary featuring a Nileshwaram backwater cruise, Bekal Fort, Bekal Beach and Ranipuram Hill Station. A Theyyam visit may be arranged during the festival season, subject to the actual temple schedule and local permissions. The package can include three nights of hotel or resort accommodation, daily breakfast, agreed transportation and the selected houseboat cruise. Confirm the quotation for meal arrangements, entry fees and other exclusions. An overnight houseboat stay is an alternative subject to availability and confirmation."}}
+          ]
+        }
+        </script>
+
+    </div>
+</section>
+
 </div>
 <!-- ===== /flow ===== -->
 {% endblock %}
@@ -651,7 +851,8 @@ html, body { background: var(--footer-gap) !important; }
     (function () {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         var max = 9;
-        document.querySelectorAll('.pk-card').forEach(function (el) {
+        document.querySelectorAll('.pk-card, .ip-card, .fq-item').forEach(function (el) {
+            var tilt = el.classList.contains('pk-card') ? 1 : 0;   /* only the package cards tilt */
             var raf = 0, last = null;
             el.addEventListener('click', function () {});   /* iOS Safari: makes :hover work on tap */
             function onPoint(ev) {
@@ -665,8 +866,8 @@ html, body { background: var(--footer-gap) !important; }
                     var y = Math.min(1, Math.max(0, (last.clientY - r.top) / r.height));
                     el.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
                     el.style.setProperty('--my', (y * 100).toFixed(1) + '%');
-                    el.style.setProperty('--rx', ((0.5 - y) * 2 * max).toFixed(2) + 'deg');
-                    el.style.setProperty('--ry', ((x - 0.5) * 2 * max).toFixed(2) + 'deg');
+                    el.style.setProperty('--rx', ((0.5 - y) * 2 * max * tilt).toFixed(2) + 'deg');
+                    el.style.setProperty('--ry', ((x - 0.5) * 2 * max * tilt).toFixed(2) + 'deg');
                 });
             }
             el.addEventListener('pointerdown', onPoint);
@@ -676,6 +877,20 @@ html, body { background: var(--footer-gap) !important; }
                 if (raf) { cancelAnimationFrame(raf); raf = 0; }
                 el.style.removeProperty('--rx'); el.style.removeProperty('--ry');
             });
+        });
+    })();
+</script>
+
+<!-- Primary CTA: smooth-scroll to the filter bar -->
+<script>
+    (function () {
+        var cta = document.getElementById('pkCtaExplore');
+        var bar = document.getElementById('pkFilter');
+        if (!cta) return;
+        cta.addEventListener('click', function (e) {
+            e.preventDefault();
+            var target = bar || document.querySelector('.pk-group');
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     })();
 </script>
@@ -697,6 +912,7 @@ html, body { background: var(--footer-gap) !important; }
         var chips  = document.getElementById('pfChips');
         var cols   = [].slice.call(document.querySelectorAll('.pk-col'));
         var groups = [].slice.call(document.querySelectorAll('.pk-group'));
+        var faq    = document.getElementById('pkFaq');
         var none   = document.getElementById('pkNoMatch');
         var count  = document.getElementById('pkCount');
         var segs   = [].slice.call(bar.querySelectorAll('.pf-seg'));
@@ -767,15 +983,21 @@ html, body { background: var(--footer-gap) !important; }
             checked('day').forEach(function (i) { addChip(i.getAttribute('data-label'), function () { i.checked = false; apply(); }); });
         }
 
-        /* alternate the band colours of the visible categories (first = tan, after the cream heading band)
-           and give the footer gap the colour of the last visible band */
+        /* alternate the band colours of the visible categories (first = tan, after the cream heading band),
+           then the FAQ band continues the alternation, and the footer gap gets the colour of the last band */
         function recolor() {
             var vis = groups.filter(function (g) { return !g.classList.contains('pk-hide'); });
             vis.forEach(function (g, i) {
                 g.classList.toggle('sec-tan', i % 2 === 0);
                 g.classList.toggle('sec-cream', i % 2 === 1);
             });
-            var lastTan = vis.length && (vis.length % 2 === 1);
+            var n = vis.length;
+            if (faq) {
+                faq.classList.toggle('sec-tan', n % 2 === 0);
+                faq.classList.toggle('sec-cream', n % 2 === 1);
+            }
+            var total = n + (faq ? 1 : 0);
+            var lastTan = total % 2 === 1;
             document.documentElement.style.setProperty('--footer-gap', lastTan ? '#e8d3b0' : '#f2e2c6');
         }
 
@@ -883,6 +1105,27 @@ html, body { background: var(--footer-gap) !important; }
 
         maxLbl.textContent = 'Max: ₹ ' + fmt(range.max);
         apply();   /* initial state: all packages visible */
+    })();
+</script>
+<!-- FAQ accordion: one open at a time -->
+<script>
+    (function () {
+        var list = document.getElementById('fqList');
+        if (!list) return;
+        var items = Array.prototype.slice.call(list.querySelectorAll('.fq-item'));
+        items.forEach(function (item) {
+            item.querySelector('.fq-q').addEventListener('click', function () {
+                var willOpen = !item.classList.contains('open');
+                items.forEach(function (it) {
+                    it.classList.remove('open');
+                    it.querySelector('.fq-q').setAttribute('aria-expanded', 'false');
+                });
+                if (willOpen) {
+                    item.classList.add('open');
+                    this.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
     })();
 </script>
 {% endblock %}

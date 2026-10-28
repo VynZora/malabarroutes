@@ -2,7 +2,11 @@
 {% load static %}
 {% load image_tags %}
 {% load package_tags %}
-{% block title %}Home | Malabar{% endblock %}
+{% block title %}Kerala Tour Operator & Travel Agency | Malabar Routes{% endblock %}
+
+{% block meta_description %}Plan your Kerala holiday with Malabar Routes, a Kerala tour operator offering travel planning, transportation and booking assistance.{% endblock %}
+
+{% block meta_keywords %}Kerala tour operator, Kerala travel agency, Kerala tour packages, Malabar tour packages, houseboat Kerala, Munnar, Wayanad, Kerala holiday packages{% endblock %}
 
 {% comment %}
     HOME PAGE: torn-paper design with a scattered-dot paper texture
@@ -1069,6 +1073,128 @@ html, body { background: var(--footer-gap) !important; }
     .bg-pill { top: 12px; right: 12px; padding: 8px 16px; }
 }
 @media (prefers-reduced-motion: reduce) { .bg-card, .bg-card-img { transition: none; } .bg-card:hover { transform: none; } .bg-card:hover .bg-card-img { transform: none; } }
+.hero .hero-slide .hero-actions { grid-area: auto; margin-top: 30px; }
+.hero .hero-content.has-own-actions > .hero-actions { display: none; }
+.hero .hero-slide h1 .hero-title-top,
+.hero .hero-slide h1 .hero-title-bottom { font-size: clamp(40px, 5.2vw, 78px) !important; }
+@media (max-width: 575px) {
+    .hero .hero-slide h1 .hero-title-top,
+    .hero .hero-slide h1 .hero-title-bottom { font-size: 34px !important; }
+}
+.ab-sub {
+    margin: 0 0 18px; color: var(--gold-deep);
+    font-family: 'EB Garamond', serif; font-weight: 700;
+    font-size: clamp(20px, 2vw, 26px); line-height: 1.3; text-transform: none;
+}
+.ab-p { margin-top: 14px; }
+.ab-sub {
+    margin: 0 0 18px; color: var(--gold-deep);
+    font-family: 'EB Garamond', serif; font-weight: 700;
+    font-size: clamp(20px, 2vw, 26px); line-height: 1.3; text-transform: none;
+}
+/* ================= EXPERIENCE (tan): numbered torn-paper cards ================= */
+.xp-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 30px; }
+.xp-card { grid-column: span 2; }
+.xp-card.xp-wide { grid-column: span 3; }
+.xp-card {
+    position: relative; isolation: isolate; padding: 34px 30px 30px; border-radius: 16px;
+    transition: transform .4s cubic-bezier(.2, .7, .2, 1);
+}
+/* same hand-torn outline as the other cards, sand fill on hover */
+.xp-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+    background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .3), inset 0 0 12px 3px rgba(255, 252, 244, .18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+            filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+    transition: background-color .35s ease, box-shadow .35s ease;
+}
+.xp-card:hover { transform: translateY(-8px); }
+.xp-card:hover::before {
+    background-color: var(--sand-hover);
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3);
+}
+/* big outlined number */
+.xp-no {
+    position: absolute; top: 14px; right: 22px;
+    font-family: 'EB Garamond', serif; font-weight: 800; font-size: 64px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(169, 122, 20, .55);
+    transition: -webkit-text-stroke-color .35s ease, transform .5s cubic-bezier(.3, 1.6, .5, 1);
+}
+.xp-card:hover .xp-no { -webkit-text-stroke-color: var(--gold-deep); transform: scale(1.08) rotate(-4deg); }
+.xp-ico {
+    width: 58px; height: 58px; margin-bottom: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #f7ecd5; color: var(--gold); font-size: 22px; transition: all .35s ease;
+}
+.xp-card:hover .xp-ico { background: var(--gold); color: var(--btn-ink); }
+.xp-card h3 {
+    margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800;
+    letter-spacing: 1px; font-size: 23px; text-transform: none; color: var(--ink);
+}
+.xp-card p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--text); }
+.xp-aim {
+    max-width: 760px; margin: 44px auto 0; text-align: center;
+    font-family: 'EB Garamond', serif; font-style: italic; font-size: 24px; line-height: 1.5; color: var(--gold-deep);
+}
+@media (max-width: 991px) {
+    .xp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+    .xp-card, .xp-card.xp-wide { grid-column: span 1; }
+    .xp-card:last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 575px) {
+    .xp-grid { grid-template-columns: 1fr; }
+    .xp-card:last-child { grid-column: auto; }
+    .xp-card { padding: 28px 22px 24px; }
+    .xp-no { font-size: 52px; }
+    .xp-aim { font-size: 20px; margin-top: 34px; }
+}
+
+/* ================= PLAN YOUR KERALA HOLIDAY (cream): torn-paper cards ================= */
+.kh-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px; }
+.kh-card {
+    position: relative; isolation: isolate; display: flex; gap: 22px; align-items: flex-start;
+    padding: 34px 32px; border-radius: 16px;
+    transition: transform .4s cubic-bezier(.2, .7, .2, 1);
+}
+/* same hand-torn outline as the other cards, sand fill on hover */
+.kh-card::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+    background: transparent;
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .3), inset 0 0 12px 3px rgba(255, 252, 244, .18);
+    -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+            filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90, 60, 20, .08));
+    transition: background-color .35s ease, box-shadow .35s ease;
+}
+.kh-card:hover { transform: translateY(-8px); }
+.kh-card:hover::before {
+    background-color: var(--sand-hover);
+    box-shadow: inset 0 0 0 3px rgba(255, 252, 244, .5), inset 0 0 12px 3px rgba(255, 252, 244, .3);
+}
+.kh-ico {
+    flex: 0 0 62px; width: 62px; height: 62px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #f7ecd5; color: var(--gold); font-size: 24px; transition: all .35s ease;
+}
+.kh-card:hover .kh-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-4px); }
+.kh-card p { margin: 0; font-size: 16px; line-height: 1.8; color: var(--text); }
+/* keywords: plain bold, no highlight */
+/* keywords: same look as the rest of the text */
+.kh-card strong { font-weight: inherit; color: inherit; }
+
+@media (max-width: 991px) { .kh-grid { gap: 24px; } }
+@media (max-width: 767px) { .kh-grid { grid-template-columns: 1fr; } }
+@media (max-width: 575px) {
+    .kh-card { flex-direction: column; gap: 16px; padding: 28px 22px; }
+    .kh-ico { flex-basis: 54px; width: 54px; height: 54px; font-size: 21px; }
+    .kh-card p { font-size: 15.5px; }
+}
+
+/* reduced motion: no movement effects */
+@media (prefers-reduced-motion: reduce) {
+    .xp-card:hover, .xp-card:hover .xp-no,
+    .kh-card:hover, .kh-card:hover .kh-ico { transform: none; }
+}
 </style>
 {% endblock %}
 {% block content %}
@@ -1081,12 +1207,13 @@ html, body { background: var(--footer-gap) !important; }
     </div>
 </div>
 
-<!-- Hero (6 slides, 6 backgrounds, 6 tabs) -->
+<!-- Hero (7 slides, 7 backgrounds, 7 tabs) -->
 <div class="hero">
     <div class="hero-section hero-bg-image bg-section dark-section">
 
         <div class="hero-bgs" aria-hidden="true">
-            <div class="hero-bg active" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
+            <div class="hero-bg active" style="background-image: url('{% static 'malabar-static/kerala-holiday.webp' %}');"></div>
+            <div class="hero-bg" style="background-image: url('{% static 'malabar-static/mr33.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/hill.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/kovalam.png' %}');"></div>
             <div class="hero-bg" style="background-image: url('{% static 'malabar-static/wls.png' %}');"></div>
@@ -1100,16 +1227,31 @@ html, body { background: var(--footer-gap) !important; }
                     <div class="hero-content">
 
                         <div class="hero-slides">
+
+                            <!-- NEW: main H1 slide with its own buttons -->
                             <div class="hero-slide active">
-                                <span class="hero-eyebrow">Alleppey, Kumarakom, Kollam</span>
+                                <span class="hero-eyebrow">Malabar &amp; All Kerala</span>
                                 <h1 class="hero-title">
-                                    <span class="hero-title-top">Houseboat</span>
-                                    <span class="hero-title-bottom">Cruises</span>
+                                    <span class="hero-title-top">Kerala Travel Agency</span>
+                                    <span class="hero-title-bottom">for Your Next Kerala Holiday</span>
                                 </h1>
-                                <p class="hero-subtitle">Drift through the backwaters on a traditional houseboat, with meals cooked on board.</p>
+                                <p class="hero-subtitle">As a Kerala travel agency, we bring a regional perspective to travel planning while assisting visitors exploring Malabar and other parts of Kerala.</p>
+                                <div class="hero-actions">
+                                    <a href="#" class="hero-btn hero-btn-fill open-booking">Plan Your Kerala Holiday <i class="fa-solid fa-arrow-right"></i></a>
+                                    <a href="{% url 'contact' %}" class="hero-btn hero-btn-line">Contact Our Team</a>
+                                </div>
                             </div>
 
                             <div class="hero-slide is-right">
+                                <span class="hero-eyebrow">Alleppey, Kumarakom, Kollam</span>
+                                <h2 class="hero-title">
+                                    <span class="hero-title-top">Houseboat</span>
+                                    <span class="hero-title-bottom">Cruises</span>
+                                </h2>
+                                <p class="hero-subtitle">Drift through the backwaters on a traditional houseboat, with meals cooked on board.</p>
+                            </div>
+
+                            <div class="hero-slide">
                                 <span class="hero-eyebrow">Munnar, Wayanad, Vagamon, Ponmudi</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Hill</span>
@@ -1118,7 +1260,7 @@ html, body { background: var(--footer-gap) !important; }
                                 <p class="hero-subtitle">Walk through tea gardens and breathe cool mountain air.</p>
                             </div>
 
-                            <div class="hero-slide">
+                            <div class="hero-slide is-right">
                                 <span class="hero-eyebrow">Kovalam, Varkala, Cherai, Bekal</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Golden</span>
@@ -1127,7 +1269,7 @@ html, body { background: var(--footer-gap) !important; }
                                 <p class="hero-subtitle">Relax on the shores along Kerala's coast, from lighthouse cliffs to quiet sands.</p>
                             </div>
 
-                            <div class="hero-slide is-right">
+                            <div class="hero-slide">
                                 <span class="hero-eyebrow">Periyar, Thekkady, Wayanad, Parambikulam</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Wildlife</span>
@@ -1136,7 +1278,7 @@ html, body { background: var(--footer-gap) !important; }
                                 <p class="hero-subtitle">Meet elephants and forest wildlife on guided safaris.</p>
                             </div>
 
-                            <div class="hero-slide">
+                            <div class="hero-slide is-right">
                                 <span class="hero-eyebrow">Kuttanad, Ashtamudi, Valiyaparamba</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Serene</span>
@@ -1145,7 +1287,7 @@ html, body { background: var(--footer-gap) !important; }
                                 <p class="hero-subtitle">Glide past palm-lined lagoons and quiet canals.</p>
                             </div>
 
-                            <div class="hero-slide is-right">
+                            <div class="hero-slide">
                                 <span class="hero-eyebrow">Kannur, Kasaragod, Malabar</span>
                                 <h2 class="hero-title">
                                     <span class="hero-title-top">Divine</span>
@@ -1155,13 +1297,15 @@ html, body { background: var(--footer-gap) !important; }
                             </div>
                         </div>
 
+                        <!-- shared buttons (hidden automatically while the H1 slide shows its own) -->
                         <div class="hero-actions">
                             <a href="#" class="hero-btn hero-btn-fill open-booking">Plan my trip <i class="fa-solid fa-arrow-right"></i></a>
                             <a href="{% url 'packages' %}" class="hero-btn hero-btn-line">View packages</a>
                         </div>
 
                         <div class="hero-dots">
-                            <button type="button" class="hero-dot active" aria-label="Houseboat Cruises"><i class="fa-solid fa-ship"></i>Houseboats</button>
+                            <button type="button" class="hero-dot active" aria-label="Kerala Travel Agency"><i class="fa-solid fa-map-location-dot"></i>Kerala</button>
+                            <button type="button" class="hero-dot" aria-label="Houseboat Cruises"><i class="fa-solid fa-ship"></i>Houseboats</button>
                             <button type="button" class="hero-dot" aria-label="Hill Stations"><i class="fa-solid fa-mountain"></i>Hill stations</button>
                             <button type="button" class="hero-dot" aria-label="Golden Beaches"><i class="fa-solid fa-umbrella-beach"></i>Beaches</button>
                             <button type="button" class="hero-dot" aria-label="Wildlife Sanctuaries"><i class="fa-solid fa-paw"></i>Wildlife</button>
@@ -1175,7 +1319,6 @@ html, body { background: var(--footer-gap) !important; }
         </div>
     </div>
 </div>
-
 <div class="flow">
 
 <!-- Torn-paper outline filter, used by every card + FAQ box (see .pk-card::before etc.).
@@ -1208,28 +1351,23 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="col-lg-6">
                 <div class="ab-collage rv">
-                    <div class="ab-photo ab-photo-1"><div class="ab-frame"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabaroutes houseboat"></div></div>
-<div class="ab-photo ab-photo-2"><div class="ab-frame"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar hills"></div></div>
+                    <div class="ab-photo ab-photo-1"><div class="ab-frame"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabar Routes houseboat"></div></div>
+                    <div class="ab-photo ab-photo-2"><div class="ab-frame"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar hills"></div></div>
                 </div>
             </div>
 
             <div class="col-lg-6">
                 <div class="rv" style="--d:.1s">
                     <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Welcome</div>
-                    <h2 class="tn-title">About Malabaroutes</h2>
-                    <p class="tn-text">Malabaroutes is a leading tour operator in Kerala with over a decade of professional expertise in the travel field. We plan tour packages across all of Kerala, covering hills, beaches, wildlife and backwaters. Our main packages include</p>
+                    <h2 class="tn-title">About Malabar Routes</h2>
+                    <h3 class="ab-sub">Your Travel Plans, Our Regional Understanding</h3>
 
-                    <div class="ab-list">
-                        <div class="ab-item"><i class="fa-solid fa-map-location-dot"></i>All Kerala tour packages</div>
-                        <div class="ab-item"><i class="fa-solid fa-compass"></i>North Kerala packages</div>
-                        <div class="ab-item"><i class="fa-solid fa-umbrella-beach"></i>South Kerala packages</div>
-                        <div class="ab-item"><i class="fa-solid fa-mountain-sun"></i>Hills, beaches and backwater packages</div>
-                        <div class="ab-item"><i class="fa-solid fa-people-roof"></i>Family and group holiday packages</div>
-                    </div>
+                    <p class="tn-text">Malabar Routes draws its identity from North Kerala, a region known for its cultural traditions, coastal communities and distinctive local character.</p>
+                    <p class="tn-text ab-p">With more than a decade of experience in the travel industry, we understand the practical details involved in arranging a trip. From coordinating transport to discussing bookings and schedules, we help travellers organise their plans with clear information and personal attention.</p>
+                    <p class="tn-text ab-p">Our services support visitors travelling across Kerala, with arrangements discussed according to individual requirements.</p>
 
                     <div class="tn-btns">
-                        <a href="{% url 'about' %}" class="tn-btn">About More <i class="fa-solid fa-arrow-right"></i></a>
-                        <a href="#" class="tn-btn tn-btn-line open-booking">Book Now <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="{% url 'about' %}" class="tn-btn">Discover Malabar Routes <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -1237,7 +1375,6 @@ html, body { background: var(--footer-gap) !important; }
         </div>
     </div>
 </section>
-
 <!-- ============ SERVICES (tan) ============ -->
 <section class="sec sec-tan">
     <div class="container">
@@ -1364,11 +1501,10 @@ html, body { background: var(--footer-gap) !important; }
         <div class="wc-wrap">
             <div class="rv">
                 <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Why choose us</div>
-                <h2 class="tn-title">Why travel with Malabaroutes</h2>
-                <p class="tn-text">With over a decade of experience in northern Kerala, we design journeys that go beyond sightseeing, from misty hill stations to quiet backwaters and golden beaches.</p>
+                <h2 class="tn-title">Why Choose Malabar Routes?</h2>
+                <h3 class="ab-sub">Travel Assistance That Starts with Your Needs</h3>
                 <div class="tn-btns">
-                    <a href="#" class="tn-btn open-booking">Book Now <i class="fa-solid fa-arrow-right"></i></a>
-                    <a href="{% url 'packages' %}" class="tn-btn tn-btn-line">Know More <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="{% url 'activities' %}" class="tn-btn">Explore Our Travel Services <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
 
                 <!-- PLANE ANIMATION: the plane flies along its dotted trail (same art as the package detail page) -->
@@ -1384,22 +1520,35 @@ html, body { background: var(--footer-gap) !important; }
                 <div class="wc-item rv" style="--d:.1s">
                     <i class="fa-solid fa-map-location-dot"></i>
                     <div>
-                        <h3>Local expertise across Malabar</h3>
-                        <p>Our team knows every hill, beach and backwater of northern Kerala, so you get hidden gems and honest advice, not just the usual tourist stops.</p>
+                        <h3>Local understanding</h3>
+                        <p>Our connection to Malabar gives us a regional perspective on travel across North Kerala and the wider state.</p>
                     </div>
                 </div>
                 <div class="wc-item rv" style="--d:.2s">
-                    <i class="fa-solid fa-suitcase-rolling"></i>
+                    <i class="fa-solid fa-sliders"></i>
                     <div>
-                        <h3>Tailor-made packages at fair prices</h3>
-                        <p>Honeymoon, family, student, Ayurveda or wellness trips: every itinerary is planned around you, with hotels, transport and guides taken care of.</p>
+                        <h3>Personalised planning</h3>
+                        <p>We consider your travel dates, group size, preferences and budget before discussing suitable arrangements.</p>
+                    </div>
+                </div>
+                <div class="wc-item rv" style="--d:.3s">
+                    <i class="fa-solid fa-route"></i>
+                    <div>
+                        <h3>Practical coordination</h3>
+                        <p>We assist with relevant travel services and help clarify booking details, applicable charges and service inclusions.</p>
+                    </div>
+                </div>
+                <div class="wc-item rv" style="--d:.4s">
+                    <i class="fa-solid fa-comments"></i>
+                    <div>
+                        <h3>Clear communication</h3>
+                        <p>We want you to understand your arrangements before confirming a booking, so you can plan with realistic expectations.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 {% if destinations %}
 <!-- ============ POPULAR DESTINATIONS (cream) ============ -->
 <section class="sec sec-cream">
@@ -1438,7 +1587,84 @@ html, body { background: var(--footer-gap) !important; }
     </div>
 </section>
 {% endif %}
+<!-- ============ EXPERIENCE (tan): numbered torn-paper cards ============ -->
+<section class="sec sec-tan">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Our Approach</div>
+            <h2 class="tn-title">Experience, Local Knowledge and Clear Travel Information</h2>
+            <p class="tn-text">Choosing a travel company requires confidence in the people handling your arrangements. Malabar Routes brings more than a decade of travel-industry experience and a regional connection to North Kerala.</p>
+        </div>
 
+        <div class="xp-grid">
+            <div class="xp-card rv">
+                <span class="xp-no">01</span>
+                <span class="xp-ico"><i class="fa-solid fa-award"></i></span>
+                <h3>Experience</h3>
+                <p>Our background in travel planning informs how we approach bookings, transportation coordination and customer communication.</p>
+            </div>
+            <div class="xp-card rv" style="--d:.08s">
+                <span class="xp-no">02</span>
+                <span class="xp-ico"><i class="fa-solid fa-map-location-dot"></i></span>
+                <h3>Regional knowledge</h3>
+                <p>Our roots in Malabar connect our work to North Kerala's cultural identity, while our services support travel planning across Kerala.</p>
+            </div>
+            <div class="xp-card rv" style="--d:.16s">
+                <span class="xp-no">03</span>
+                <span class="xp-ico"><i class="fa-solid fa-file-contract"></i></span>
+                <h3>Transparent information</h3>
+                <p>We encourage travellers to review applicable prices, inclusions, exclusions and booking conditions before confirming services.</p>
+            </div>
+            <div class="xp-card xp-wide rv" style="--d:.1s">
+                <span class="xp-no">04</span>
+                <span class="xp-ico"><i class="fa-solid fa-user-check"></i></span>
+                <h3>Customer-focused planning</h3>
+                <p>We consider each traveller's requirements rather than assuming one arrangement will suit everyone.</p>
+            </div>
+            <div class="xp-card xp-wide rv" style="--d:.18s">
+                <span class="xp-no">05</span>
+                <span class="xp-ico"><i class="fa-solid fa-leaf"></i></span>
+                <h3>Responsible travel</h3>
+                <p>We encourage respect for local traditions, communities and the places visitors come to experience.</p>
+            </div>
+        </div>
+
+        <p class="xp-aim rv">Our aim is to give travellers clear information and practical assistance so they can make informed decisions about their plans.</p>
+        <div class="tn-center" style="margin-top:28px"><a href="{% url 'about' %}" class="tn-btn">Learn More About Us <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+</section>
+
+<!-- ============ PLAN YOUR KERALA HOLIDAY (cream): torn-paper cards ============ -->
+<section class="sec sec-cream">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Plan Your Trip</div>
+            <h2 class="tn-title">Plan Your Kerala Holiday</h2>
+            <h3 class="ab-sub">Find Travel Arrangements That Suit You</h3>
+        </div>
+
+        <div class="kh-grid">
+            <div class="kh-card rv">
+                <span class="kh-ico"><i class="fa-solid fa-suitcase-rolling"></i></span>
+                <p>Choosing among <strong>Kerala tour packages</strong> and <strong>Kerala travel packages</strong> starts with understanding the itinerary, travel time and services included. When comparing a <strong>kerala trip package</strong> with different <strong>kerala vacation packages</strong>, consider your schedule, budget and travel preferences.</p>
+            </div>
+            <div class="kh-card rv" style="--d:.08s">
+                <span class="kh-ico"><i class="fa-solid fa-people-roof"></i></span>
+                <p>Families researching <strong>kerala family vacation packages</strong> may prioritise convenient transport and a manageable itinerary, while couples comparing <strong>kerala tour packages for couple</strong> may have different accommodation and scheduling preferences.</p>
+            </div>
+            <div class="kh-card rv" style="--d:.16s">
+                <span class="kh-ico"><i class="fa-solid fa-scale-balanced"></i></span>
+                <p>When looking for the <strong>best kerala trip package</strong>, review the complete arrangements rather than comparing prices alone. You can also enquire about <strong>kerala tours and packages</strong> to understand which travel services fit your requirements.</p>
+            </div>
+            <div class="kh-card rv" style="--d:.24s">
+                <span class="kh-ico"><i class="fa-solid fa-earth-asia"></i></span>
+                <p>For visitors planning <strong>holidays to kerala india</strong>, Malabar Routes provides a starting point for discussing travel arrangements across the state.</p>
+            </div>
+        </div>
+
+        <div class="tn-center"><a href="{% url 'contact' %}" class="tn-btn">Discuss Your Travel Requirements <i class="fa-solid fa-arrow-right"></i></a></div>
+    </div>
+</section>
 {% if testimonials %}
 <!-- ============ TESTIMONIALS (tan) ============ -->
 <section class="sec sec-tan">
@@ -1606,8 +1832,8 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="fq-left rv">
                 <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Question &amp; Answer</div>
-                <h2 class="tn-title">Frequently Asked Questions</h2>
-                <p class="tn-text">Answers to the things guests most often ask before booking a trip with Malabaroutes.</p>
+                <h2 class="tn-title">Frequently Asked Questions About Malabar Routes</h2>
+                <p class="tn-text">Answers to the things travellers most often ask before planning a Kerala trip with Malabar Routes.</p>
                 <div class="tn-btns"><a href="{% url 'contact' %}" class="tn-btn">Ask a Question <i class="fa-solid fa-arrow-right"></i></a></div>
 
                 <div class="g-badge" aria-label="Rated 4.4 out of 5 on Google">
@@ -1622,40 +1848,36 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="fq-list" id="fqList">
                 <div class="fq-item open">
-                    <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What does Malabaroutes offer?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Malabaroutes is a tour operator specialising in northern Kerala (Malabar). We arrange holiday packages, Ayurveda and wellness trips, honeymoon and student packages, and also help with visas, passports, tickets, taxis, car rentals, houseboats and travel guides.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What does Malabar Routes offer as a Kerala tour operator?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes is a Kerala tour operator offering holiday planning and travel arrangements across Kerala, including Munnar, Thekkady, Alleppey, Vagamon, Vattavada, Wayanad, Kovalam and Kasaragod. Travellers can explore short trips, multi-destination holidays, honeymoon stays, houseboat experiences and customized itineraries based on their requirements.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">How do I book a package?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Click any Book Now button, share your name, phone number, travel dates and number of guests, and our team will get back to you. Your booking is confirmed once we send a written confirmation after receiving the agreed payment.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">Why choose Malabar Routes as your Kerala travel agency?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes helps travellers coordinate important holiday arrangements through one point of contact. As a Kerala travel agency connected to the Malabar region, it assists with travel planning, transportation, ticket bookings, car rentals and selected accommodation and houseboat arrangements, subject to availability and booking confirmation.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">Can a package be customised for me?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. Honeymoon, family, student, Ayurveda or wellness trips can all be planned around you, with hotels, transport and guides taken care of.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">What types of Kerala tour packages are available?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes offers Kerala tour packages for different travel needs, including budget holidays, family trips, couple and honeymoon stays, premium holidays, hotel and resort arrangements, houseboat experiences and packages with meals included. Kerala travel packages can also be customized according to travel dates, destination preferences, group size and budget.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">What is included in the price?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Your itinerary or invoice lists the trip price, the included services, the exclusions and the payment due dates, so you know exactly what you are paying for.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">Can I customize my Kerala trip package according to my budget?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. You can request a customized kerala trip package by providing your preferred destination, travel dates, number of adults and children, trip duration, hotel category, vehicle requirement, meal preference, pickup and drop details, and approximate budget. Malabar Routes can use these details to discuss suitable arrangements and provide a quotation based on availability.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">What is your cancellation and refund policy?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send any change or cancellation request in writing.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">How can I choose the best Kerala trip package for my family or partner?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>The best kerala trip package depends on your budget, travel duration and preferred experiences. Travellers comparing kerala family vacation packages can consider accommodation, journey times, meals and convenient transportation. Couples exploring kerala tour packages for couple can discuss honeymoon arrangements, accommodation preferences and a suitable itinerary with Malabar Routes.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">Can the itinerary change during the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Weather, road conditions, safety issues or local restrictions can sometimes affect a route or activity. If that happens, we will share updates and the available alternatives.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">What is included in Malabar Routes Kerala vacation packages?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Inclusions depend on the selected package and confirmed quotation. Available arrangements may include a private car with driver, pickup and drop, hotel or resort accommodation, breakfast, lunch and dinner, sightseeing and houseboat cruises. Before booking Kerala vacation packages, check the individual inclusions and exclusions, meal plan, vehicle type, hotel category and any additional charges.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">Do you help with visas, passports and tickets?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. We help with visa processing, passport applications, renewals and replacements, and we take care of tickets at the lowest cost available.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">Does Malabar Routes offer Kasaragod heritage tours and Theyyam experiences?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. The proposed Kasaragod offerings include a 3-night/4-day Heritage &amp; Nature Escape featuring a Nileshwaram backwater cruise, Bekal Fort, Bekal Beach and Ranipuram Hill Station. A separate 1-night/2-day Theyyam experience can include accommodation, breakfast and agreed transportation. Theyyam performances depend on the actual temple or Kavu schedule, travel dates and local permissions; venue and timing must be confirmed before booking.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">Can you arrange taxis, car rentals and houseboats?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. We can arrange taxis, rental cars and Kerala backwater houseboat cruises, so you do not have to search for them yourself.</p></div></div>
-                </div>
-                <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">9.</span><span class="fq-qt">What should I carry for the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Carry valid travel documents and any personal health essentials, and follow local guidelines. We also recommend suitable travel insurance and keeping your belongings secure throughout the journey.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">How can I book Kerala tours and packages with Malabar Routes?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>To enquire about kerala tours and packages or plan holidays to Kerala, India, share your preferred destinations, dates, group size and budget with Malabar Routes. You can request a quotation, discuss available arrangements and contact the team by phone or WhatsApp at <a href="tel:+918848333382"><strong>+91 88483 33382</strong></a> or <a href="tel:+919526220085"><strong>+91 95262 20085</strong></a>. The team can help you review options for your planned kerala holiday before you confirm the booking.</p></div></div>
                 </div>
             </div>
 
@@ -1726,11 +1948,14 @@ html, body { background: var(--footer-gap) !important; }
         if (!slides.length) return;
         var current = 0, timer;
 
-        function applySide() {
-            var right = slides[current].classList.contains('is-right');
-            if (section) section.classList.toggle('text-right', right);
-            if (content) content.classList.toggle('is-right', right);
-        }
+       function applySide() {
+    var right = slides[current].classList.contains('is-right');
+    if (section) section.classList.toggle('text-right', right);
+    if (content) {
+        content.classList.toggle('is-right', right);
+        content.classList.toggle('has-own-actions', !!slides[current].querySelector('.hero-actions'));
+    }
+}
         function show(i) {
             slides[current].classList.remove('active');
             if (dots[current]) dots[current].classList.remove('active');

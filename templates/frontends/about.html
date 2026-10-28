@@ -2,35 +2,18 @@
 {% load static %}
 {% load image_tags %}
 {% load package_tags %}
-{% block title %}About Us | Malabar{% endblock %}
+{% block title %}Kerala Best Travel Agency | About Malabar Routes{% endblock %}
+
+{% block meta_description %}Looking for Kerala's best travel agency? Meet Malabar Routes, with roots in North Kerala and travel options across the state's hills, beaches, backwaters.{% endblock %}
+
+{% block meta_keywords %}Kerala travel agency, best travel agency in Kerala, about Malabar Routes, North Kerala tour operator, Malabar travel agency{% endblock %}
 
 {% comment %}
-    ABOUT PAGE: same torn-paper design as the Home, Packages and Package-detail pages.
-    - HERO is unchanged (centred title + breadcrumb, cross-fading backgrounds, torn bottom edge).
-    - Every section after it is a flat colour band with a torn-paper top edge and scattered-dot texture.
-      Colours ALTERNATE: cream (Our Story) -> tan (Services) -> cream (Packages)
-      -> tan (Terms) -> cream (Testimonials) -> tan (FAQ)
-    - Needs `featured_packages` and `testimonials` in the about view's context.
-    - If a section is hidden by {% if %}, two bands of the same colour may touch: swap sec-cream / sec-tan on the next one.
-
-    SAME UPDATE AS THE HOME PAGE
-    - SOFT TORN EDGE: the shared #paperTorn filter now uses slow, wide waves + a little blur (curvy, not spiky).
-      Rounder / squarer cards: change the border-radius of .pk-card / .tm-card / .fq-item.
-      Rougher / smoother edge: change scale="22" or stdDeviation="1.3" in the #paperTorn filter.
-    - ABOUT PHOTOS: torn outline with a paper rim in the band colour (#photoTorn filter), no 3D shadow, so they melt into the background.
-    - GOOGLE BADGE: no box. Dotted gold route line on each side, Google brand colours kept.
-      (Testimonials = centred, line on both sides. FAQ = left aligned, line on the right only.)
-
-    ART ON THIS PAGE (the compass is gone)
-    - BOAT  : the houseboat / palm sketch (p1.png), styled exactly like on the Packages page:
-              Services  -> right side of the heading band (desktop), centered above the heading on tablet / mobile
-              FAQ       -> centered at the end of the band
-    - PLANE : the flying plane + dotted trail from the Package-detail page (p4-trail.png + p4-plane.png):
-              Our Story -> under the photo collage
-              Terms     -> left side of the heading band (desktop), centered above the heading on tablet / mobile
-              The trail draws itself and the plane flies along it every time it scrolls into view.
-    - EVERY SECTION fades + slides in when you scroll to it and fades out when you leave (replays every time).
-
+    ABOUT PAGE: torn-paper design (same as Home, Packages, Package-detail).
+    Band colours ALTERNATE: cream (Our Story) -> tan (Services) -> cream (Packages)
+      -> tan (What Guides Our Work) -> cream (North Kerala Roots) -> tan (Terms)
+      -> cream (Testimonials) -> tan (FAQ)
+    If Packages or Testimonials are hidden by {% if %}, two same-colour bands may touch: swap sec-cream / sec-tan on the next one.
     FILES in static/malabar-static/ :  p1.png (houseboat)   p4-trail.png   p4-plane.png
 {% endcomment %}
 
@@ -44,7 +27,7 @@
     --pat-brown: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cg fill='%238b6b2e' opacity='.42'%3E%3Ccircle cx='43' cy='148' r='1.9'/%3E%3Ccircle cx='106' cy='53' r='2.2'/%3E%3Ccircle cx='172' cy='112' r='1.6'/%3E%3Ccircle cx='168' cy='13' r='2.2'/%3E%3Ccircle cx='18' cy='210' r='2.2'/%3E%3Ccircle cx='105' cy='175' r='1.6'/%3E%3Ccircle cx='196' cy='59' r='1.6'/%3E%3Ccircle cx='190' cy='202' r='2.2'/%3E%3Ccircle cx='60' cy='89' r='1.9'/%3E%3Ccircle cx='20' cy='38' r='2.2'/%3E%3Ccircle cx='111' cy='120' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* ===================== HERO (unchanged About hero) ===================== */
+/* ===================== HERO ===================== */
 .ah-wrap { position: relative; background: var(--paper) var(--pat-brown) 0 0 / 220px 220px; }
 
 .page-header.page-hero {
@@ -62,9 +45,12 @@
 @media (prefers-reduced-motion: reduce) { .page-hero .ah-bg.active { animation: none; } }
 .page-header.page-hero > .container { position: relative; z-index: 2; }
 .page-hero .page-header-box { text-align: center; }
-.page-header.page-hero h1 {
-    font-family: 'Cinzel', serif !important; font-weight: 700 !important; font-size: 80px; letter-spacing: 6px;
-    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35); margin-bottom: 20px;
+/* long H1: smaller than the old 80px so it fits on 2 to 3 lines */
+.page-header.page-hero .page-title {
+    font-family: 'Cinzel', serif !important; font-weight: 700 !important;
+    font-size: 80px; letter-spacing: 6px; line-height: 1.1;
+    margin: 0 0 20px;
+    color: #fff !important; text-transform: none !important; text-shadow: 0 2px 10px rgba(0,0,0,.35);
 }
 .page-hero .breadcrumb { justify-content: center; margin: 0; }
 .page-hero .breadcrumb-item, .page-hero .breadcrumb-item a, .page-hero .breadcrumb-item + .breadcrumb-item::before { color: #fff !important; text-transform: capitalize; }
@@ -88,11 +74,14 @@
 }
 @media (max-width: 991px) {
     .page-header.page-hero { min-height: 56vh; padding-top: 150px !important; }
-    .page-header.page-hero h1 { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+    .page-header.page-hero h1 { font-size: 26px !important; letter-spacing: 1.5px !important; margin-bottom: 14px !important; }
     .page-hero .breadcrumb { font-size: 14px; }
 }
-@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 28px !important; letter-spacing: 1.5px !important; } }
-
+@media (max-width: 575px) { .page-header.page-hero h1 { font-size: 22px !important; letter-spacing: 1px !important; } }
+@media (max-width: 991px) {
+    .page-header.page-hero .page-title { font-size: 34px !important; letter-spacing: 2px !important; margin-bottom: 14px !important; }
+}
+@media (max-width: 575px) { .page-header.page-hero .page-title { font-size: 28px !important; letter-spacing: 1.5px !important; } }
 /* ===================== TORN-PAPER PAGE (everything after the hero) ===================== */
 .flow {
     --cream: #f2e2c6; --tan: #e8d3b0;
@@ -142,15 +131,12 @@
 .tn-btns { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
 .tn-center { text-align: center; margin-top: 48px; }
 
-/* ===================== FADE-IN ON EVERY SCROLL =====================
-   JS adds .rv-ready to <body> (only if the browser supports IntersectionObserver), and toggles .in on each element
-   when it enters / leaves the screen, so the animation replays every time you scroll past.                      */
+/* ===================== FADE-IN ON EVERY SCROLL ===================== */
 .rv-ready .rv { opacity: 0; transform: translateY(46px); transition: opacity .3s ease, transform .3s ease; }
 .rv-ready .rv.rv-l { transform: translateX(-64px); }
 .rv-ready .rv.rv-r { transform: translateX(64px); }
 .rv-ready .rv.in { opacity: 1; transform: none; transition: opacity .8s ease var(--d, 0s), transform .95s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
 
-/* stagger: children of .rv-st appear one after another */
 .rv-ready .rv-st > * { opacity: 0; transform: translateY(34px); transition: opacity .3s ease, transform .3s ease; }
 .rv-ready .rv-st.in > * { opacity: 1; transform: none; transition: opacity .7s ease calc(var(--i, 0) * .08s), transform .85s cubic-bezier(.2,.7,.2,1) calc(var(--i, 0) * .08s); }
 .rv-st > :nth-child(1) { --i: 0; } .rv-st > :nth-child(2) { --i: 1; } .rv-st > :nth-child(3) { --i: 2; }
@@ -158,15 +144,10 @@
 .rv-st > :nth-child(7) { --i: 6; } .rv-st > :nth-child(8) { --i: 7; } .rv-st > :nth-child(9) { --i: 8; }
 .rv-st > :nth-child(10) { --i: 9; }
 
-/* WHOLE-SECTION FADE: the content of every band fades + slides up when the band enters the screen and
-   fades out when it leaves (replays on every scroll, up or down). The band colour itself stays put,
-   so the torn edges never open gaps. JS toggles .sec-in on each .sec. */
 .rv-ready .sec > .container { opacity: 0; transform: translateY(70px); transition: opacity .35s ease, transform .35s ease; }
 .rv-ready .sec.sec-in > .container { opacity: 1; transform: none; transition: opacity 1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); }
 
-/* ===================== BOAT ART (same as the Packages page: p1.png) =====================
-   Sits inside the .container, as the FIRST child of the section (before the heading).
-   Tablet / mobile: centered above the heading.  Desktop: pinned to the right, beside the centered heading. */
+/* ===================== BOAT ART (p1.png) ===================== */
 .bt-art {
     display: block; height: auto; opacity: .92; mix-blend-mode: multiply;
     pointer-events: none; user-select: none; -webkit-user-drag: none;
@@ -177,7 +158,6 @@
 }
 @media (min-width: 1400px) { .bt-art { right: -40px; } }
 @media (min-width: 1700px) { .bt-art { right: -110px; width: 430px; } }
-/* fade-in on scroll (replays each time it enters the screen): slides in from the right on desktop, up on mobile */
 .bt-art {
     opacity: 0; transform: translateX(150px) scale(.9); filter: blur(10px);
     transition: opacity 1.8s ease, transform 2s cubic-bezier(.16,.8,.24,1), filter 1.8s ease;
@@ -185,25 +165,18 @@
 }
 .bt-art.in-view { opacity: .92; transform: none; filter: blur(0); }
 @media (max-width: 1199px) { .bt-art { transform: translateY(60px) scale(.92); } .bt-art.in-view { transform: none; } }
-
-/* boat at the END of the FAQ band: centered, below the questions */
 .bt-art.bt-art-end { position: static; width: min(420px, 82%); margin: 46px auto 0; transform: translateY(60px) scale(.94); }
 .bt-art.bt-art-end.in-view { transform: none; }
 @media (min-width: 1200px) { .bt-art.bt-art-end { width: clamp(340px, 30vw, 500px); } }
 
-/* ===================== PLANE ART (same as the Package-detail page: p4-trail.png + p4-plane.png) =====================
-   Two layers: the trail draws itself, the plane flies along it (banking as it climbs) and then hovers.
-   Plays every time the art scrolls into view. */
+/* ===================== PLANE ART (p4-trail.png + p4-plane.png) ===================== */
 .ad-art-wrap { width: 100%; }
 .ad-art { position: relative; width: 100%; max-width: 520px; margin: 0 auto 10px; opacity: .92; pointer-events: none; user-select: none; }
 .ad-art img { display: block; width: 100%; height: auto; -webkit-user-drag: none; }
-.ad-art .ad-art-plane { position: absolute; inset: 0; height: 100%; transform-origin: 90.7% 18.4%; opacity: 0; }  /* origin = the plane's own centre */
+.ad-art .ad-art-plane { position: absolute; inset: 0; height: 100%; transform-origin: 90.7% 18.4%; opacity: 0; }
 .ad-art .ad-art-trail { clip-path: inset(0 100% 0 0); }
-
 .ad-art-wrap.in-view .ad-art-trail { animation: adTrail 2.2s linear .1s forwards; }
-.ad-art-wrap.in-view .ad-art-plane {
-    animation: adPlane 1.24s linear .78s forwards, adHover 3s ease-in-out 2.1s infinite alternate;
-}
+.ad-art-wrap.in-view .ad-art-plane { animation: adPlane 1.24s linear .78s forwards, adHover 3s ease-in-out 2.1s infinite alternate; }
 @keyframes adTrail {
     0%      { clip-path: inset(0 100% 0 0); }
     30.8%   { clip-path: inset(0 64.8% 0 0); }
@@ -227,12 +200,10 @@
 }
 @keyframes adHover { from { translate: 0 0; rotate: 0deg; } to { translate: 5px -7px; rotate: -1.2deg; } }
 
-/* plane under the Our Story collage */
 .as-art { margin-top: 34px; }
 .as-art .ad-art { max-width: 400px; }
 @media (max-width: 991px) { .as-art { margin-top: 10px; margin-bottom: 30px; } .as-art .ad-art { max-width: 300px; } }
 
-/* plane in the Terms band: centered above the heading on tablet / mobile, left side on desktop */
 .tc-art .ad-art { max-width: 300px; margin: -10px auto 18px; }
 @media (min-width: 1200px) {
     .tc-art { position: absolute; z-index: 0; top: -22px; left: -12px; width: clamp(250px, 21vw, 360px); }
@@ -241,23 +212,21 @@
 @media (min-width: 1400px) { .tc-art { left: -40px; } }
 @media (min-width: 1700px) { .tc-art { left: -110px; width: 380px; } }
 
-/* ===================== TORN-PAPER CARDS (Packages, Testimonials, FAQ) =====================
-   SOFT TORN EDGE: the outline follows each card's own rounded corners (border-radius: inherit)
-   and is run through the soft #paperTorn filter (curvy, not spiky). */
-.pk-card, .tm-card, .fq-item { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; }
-.pk-card::before, .tm-card::before, .fq-item::before {
+/* ===================== TORN-PAPER CARDS (Packages, Testimonials, FAQ, Guides, Roots) ===================== */
+.pk-card, .tm-card, .fq-item, .gd-card, .rt-card { position: relative; isolation: isolate; background: transparent !important; box-shadow: none !important; border: 0 !important; -webkit-tap-highlight-color: transparent; }
+.pk-card::before, .tm-card::before, .fq-item::before, .gd-card::before, .rt-card::before {
     content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background: transparent;
     box-shadow: inset 0 0 0 3px rgba(255,252,244,.3), inset 0 0 12px 3px rgba(255,252,244,.18);
     -webkit-filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08)); filter: url(#paperTorn) drop-shadow(0 1px 2px rgba(90,60,20,.08));
     transition: box-shadow .35s ease, background-color .35s ease;
 }
-.pk-card:hover::before, .tm-card:hover::before, .fq-item:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
-.pk-card::after, .tm-card::after, .fq-item::after {
+.pk-card:hover::before, .tm-card:hover::before, .fq-item:hover::before, .gd-card:hover::before, .rt-card:hover::before { background-color: var(--sand-hover); box-shadow: inset 0 0 0 3px rgba(255,252,244,.5), inset 0 0 12px 3px rgba(255,252,244,.3); }
+.pk-card::after, .tm-card::after, .fq-item::after, .gd-card::after, .rt-card::after {
     content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
     background: radial-gradient(circle 260px at var(--mx, 50%) var(--my, 50%), rgba(255,252,244,.8), rgba(255,252,244,0) 70%);
     -webkit-filter: url(#paperTorn); filter: url(#paperTorn); opacity: 0; transition: opacity .35s ease;
 }
-.pk-card:hover::after, .tm-card:hover::after, .fq-item:hover::after { opacity: 1; }
+.pk-card:hover::after, .tm-card:hover::after, .fq-item:hover::after, .gd-card:hover::after, .rt-card:hover::after { opacity: 1; }
 
 /* ===================== CAROUSEL ===================== */
 .cs { --cs-gap: 34px; --cs-pad: 26px; position: relative; }
@@ -277,20 +246,16 @@
 @media (max-width: 575px) { .cs { --cs-gap: 18px; --cs-pad: 12px; } .cs-track > * { flex-basis: 100%; } }
 @media (prefers-reduced-motion: reduce) { .cs-track { scroll-behavior: auto; } }
 
-/* ===================== OUR STORY (cream) =====================
-   PHOTOS: torn outline (#photoTorn filter) with a paper rim in the band colour, flat (no 3D shadow),
-   so they melt into the background. Rim thickness = padding on .ab-photo img. */
+/* ===================== OUR STORY (cream) ===================== */
 .ab-collage { position: relative; max-width: 560px; margin: 0 auto; aspect-ratio: 1 / .78; }
 .ab-photo {
     position: absolute; background: transparent; padding: 0; box-shadow: none;
-    filter: drop-shadow(0 1px 1.5px rgba(139, 107, 46, .55));   /* hairline edge only (change .55 to make it fainter / stronger) */
+    filter: drop-shadow(0 1px 1.5px rgba(139, 107, 46, .55));
     transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
 .ab-photo img {
     width: 100%; height: 100%; display: block; object-fit: cover;
-    box-sizing: border-box; padding: 16px;          /* paper rim around the photo */
-    border-radius: 22px;                            /* rounded outer corners */
-    background: var(--cream);                       /* SAME colour as the band, so the rim melts into the background */
+    box-sizing: border-box; padding: 16px; border-radius: 22px; background: var(--cream);
     -webkit-filter: url(#photoTorn); filter: url(#photoTorn);
 }
 .ab-photo-1 { left: 0; top: 0; width: 80%; height: 76%; }
@@ -301,19 +266,14 @@
     .ab-collage:hover .ab-photo-2 { transform: rotate(2.2deg) translate(6px, 6px); }
 }
 .st-text { margin: 0; color: var(--text); font-size: 16px; line-height: 1.75; }
-.st-text.collapsed { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.st-p { margin-top: 14px; }
+.st-extra { display: none; }
+.st-extra.open { display: block; }
 .st-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 0; background: none; border: 0; cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--gold); }
 .st-more i { font-size: 11px; transition: transform .3s ease; }
 .st-more.open i { transform: rotate(180deg); }
 .st-more:hover { color: var(--green); }
-.ab-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin-top: 26px; }
-.ab-item { display: flex; align-items: center; gap: 12px; }
-.ab-item i { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f7ecd5; color: var(--gold); font-size: 17px; transition: all .35s ease; }
-.ab-item:hover i { background: var(--gold); color: var(--btn-ink); transform: translateY(-3px); }
-.ab-item h4 { margin: 0 0 2px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 18px; text-transform: none; color: var(--ink); }
-.ab-item p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--text); }
 @media (max-width: 991px) { .ab-collage { margin-bottom: 40px; } }
-@media (max-width: 575px) { .ab-list { grid-template-columns: 1fr; } .st-text.collapsed { -webkit-line-clamp: 5; } }
 
 /* ===================== SERVICES (tan): icon columns ===================== */
 .sv-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
@@ -376,6 +336,55 @@
     .pk-btn span.pk-ic { flex-basis: 32px; width: 32px; height: 32px; }
 }
 
+/* ===================== WHAT GUIDES OUR WORK (tan): 4 torn-paper cards in a row ===================== */
+.gd-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px; }
+.gd-card {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 40px 26px 34px; border-radius: 16px;
+    transition: transform .4s cubic-bezier(.2,.7,.2,1);
+}
+.gd-card:hover { transform: translateY(-8px); }
+.gd-no {
+    position: absolute; top: 12px; right: 18px;
+    font-family: 'EB Garamond', serif; font-weight: 800; font-size: 46px; line-height: 1;
+    color: transparent; -webkit-text-stroke: 1.5px rgba(169,122,20,.5);
+    transition: -webkit-text-stroke-color .35s ease;
+}
+.gd-card:hover .gd-no { -webkit-text-stroke-color: var(--gold-deep); }
+.gd-ico {
+    width: 72px; height: 72px; margin-bottom: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #f7ecd5; color: var(--gold); font-size: 27px; transition: all .35s ease;
+}
+.gd-card:hover .gd-ico { background: var(--gold); color: var(--btn-ink); transform: translateY(-4px) rotate(-6deg); }
+.gd-card h3 { margin: 0 0 10px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 23px; line-height: 1.2; text-transform: none; color: var(--ink); }
+.gd-card p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--text); }
+@media (max-width: 1199px) { .gd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; } }
+@media (max-width: 575px) { .gd-grid { grid-template-columns: 1fr; } .gd-card { padding: 34px 22px 28px; } }
+
+/* ===================== NORTH KERALA ROOTS (cream): sticky intro + 2x2 cards ===================== */
+.rt-wrap { display: grid; grid-template-columns: 1fr 1.5fr; gap: 56px; align-items: start; }
+.rt-left { position: sticky; top: 120px; }
+.rt-close { margin: 18px 0 0; padding-left: 18px; border-left: 3px solid var(--gold); font-family: 'EB Garamond', serif; font-style: italic; font-size: 21px; line-height: 1.5; color: var(--gold-deep); }
+.rt-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.rt-card {
+    display: flex; flex-direction: column; padding: 32px 28px 30px; border-radius: 16px;
+    transition: transform .4s cubic-bezier(.2,.7,.2,1);
+}
+.rt-card:hover { transform: translateY(-8px); }
+.rt-ico {
+    width: 54px; height: 54px; margin-bottom: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gold); color: var(--btn-ink); font-size: 20px;
+    transition: transform .6s cubic-bezier(.2,.7,.2,1), background-color .35s ease, color .35s ease;
+}
+.rt-card:hover .rt-ico { transform: rotate(360deg) scale(1.08); background: var(--btn-ink); color: var(--gold); }
+.rt-card h3 { margin: 0 0 8px; font-family: 'EB Garamond', serif; font-variant: small-caps; font-weight: 800; letter-spacing: 1px; font-size: 22px; line-height: 1.22; text-transform: none; color: var(--ink); transition: color .35s ease; }
+.rt-card:hover h3 { color: var(--gold-deep); }
+.rt-card p { margin: 0; font-size: 15px; line-height: 1.7; color: var(--text); }
+@media (max-width: 991px) { .rt-wrap { grid-template-columns: 1fr; gap: 36px; } .rt-left { position: static; } }
+@media (max-width: 575px) { .rt-grid { grid-template-columns: 1fr; gap: 22px; } .rt-card { padding: 28px 22px 26px; } .rt-close { font-size: 19px; } }
+
 /* ===================== TERMS (tan): icon columns ===================== */
 .tc-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 30px; }
 .tc-item { text-align: center; }
@@ -387,16 +396,12 @@
 @media (max-width: 575px) { .tc-grid { grid-template-columns: 1fr; } }
 
 /* ===================== TESTIMONIALS (cream) ===================== */
-/* GOOGLE BADGE: no box, no fill, no shadow. Dotted gold route line on each side; Google brand colours kept. */
 .g-badge {
     display: flex; align-items: center; justify-content: center; gap: 14px;
     width: min(100%, 440px); margin: 22px auto 0; padding: 0;
     background: none; box-shadow: none; border-radius: 0;
 }
-.g-badge::before, .g-badge::after {
-    content: ""; flex: 1 1 0; min-width: 18px;
-    border-top: 2px dotted rgba(201, 151, 43, .9);       /* line colour: lower .9 for fainter */
-}
+.g-badge::before, .g-badge::after { content: ""; flex: 1 1 0; min-width: 18px; border-top: 2px dotted rgba(201, 151, 43, .9); }
 .g-logo { font-size: 22px; font-weight: 600; line-height: 1; letter-spacing: -.5px; }
 .g-logo b { font-weight: inherit; }
 .g-logo b:nth-child(1), .g-logo b:nth-child(4) { color: #4285f4; }
@@ -406,7 +411,7 @@
 .g-score { font-size: 20px; font-weight: 700; color: var(--ink); line-height: 1; }
 .g-stars { position: relative; display: inline-block; font-size: 17px; line-height: 1; white-space: nowrap; letter-spacing: 3px; }
 .g-base { color: rgba(139, 107, 46, .3); }
-.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }   /* template gold: var(--gold) */
+.g-fill { position: absolute; left: 0; top: 0; width: var(--pct, 100%); overflow: hidden; color: #fbbc05; }
 
 .tm-card { --edge-r: 10px; display: flex; flex-direction: column; text-align: left; padding: 26px 26px 30px; border-radius: 16px; transition: transform .4s cubic-bezier(.2,.7,.2,1); will-change: transform; }
 .tm-card:hover { transform: translateY(-10px) rotate(-.7deg); }
@@ -452,7 +457,6 @@
 /* ===================== FAQ (tan) ===================== */
 .fq-wrap { display: grid; grid-template-columns: 1fr 1.6fr; gap: 56px; align-items: start; }
 .fq-left { position: sticky; top: 120px; }
-/* FAQ column is left-aligned: Google badge has its dotted line on the right side only */
 .fq-left .g-badge { margin: 22px 0 0; width: min(100%, 400px); justify-content: flex-start; }
 .fq-left .g-badge::before { display: none; }
 .fq-list { display: flex; flex-direction: column; gap: 22px; }
@@ -475,13 +479,16 @@
 .fq-item.open .fq-a { grid-template-rows: 1fr; }
 .fq-a > div { overflow: hidden; }
 .fq-a p { margin: 0; padding: 0 24px 24px 58px; font-size: 15.5px; line-height: 1.75; color: var(--text); }
+.fq-a a { color: var(--gold-deep); text-decoration: none; }
+.fq-a a:hover { text-decoration: underline; }
 @media (max-width: 991px) { .fq-wrap { grid-template-columns: 1fr; gap: 34px; } .fq-left { position: static; } }
 @media (max-width: 575px) { .fq-q { padding: 18px 16px; font-size: 18px; } .fq-a p { padding: 0 16px 20px; } }
 
-/* ===================== REDUCED MOTION: everything just shows, nothing moves ===================== */
+/* ===================== REDUCED MOTION ===================== */
 @media (prefers-reduced-motion: reduce) {
-    .pk-card:hover, .tm-card:hover { transform: none; }
+    .pk-card:hover, .tm-card:hover, .gd-card:hover, .rt-card:hover { transform: none; }
     .pk-card:hover .pk-media, .pk-card:hover .pk-body, .tm-card:hover .tm-stars i { transform: none; }
+    .gd-card:hover .gd-ico, .rt-card:hover .rt-ico { transform: none; }
     .tm-card:hover .tm-wave path { animation: none; }
     .tm-card:hover .tm-pin { left: 50%; }
     .rv-ready .cs.in .tm-card { animation: none; }
@@ -494,7 +501,7 @@
 }
 
 /* ===================== FOOTER: torn-paper top edge ===================== */
-:root { --footer-gap: #e8d3b0; } /* matches the last band (FAQ = tan). If you change the last band, change this too */
+:root { --footer-gap: #e8d3b0; } /* matches the last band (FAQ = tan) */
 html, body { background: var(--footer-gap) !important; }
 .footer-main {
     --torn-h: 70px; position: relative; border-radius: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; overflow: visible !important; z-index: 2;
@@ -513,6 +520,7 @@ html, body { background: var(--footer-gap) !important; }
                 mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 110' preserveAspectRatio='none'%3E%3Cfilter id='t' x='-5%25' y='-60%25' width='110%25' height='220%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.08' numOctaves='3' seed='9' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='40' xChannelSelector='R' yChannelSelector='G' result='d'/%3E%3CfeGaussianBlur in='d' stdDeviation='0.7'/%3E%3C/filter%3E%3Cg transform='translate(0,110) scale(1,-1)'%3E%3Crect x='-100' y='-60' width='2120' height='120' fill='white' filter='url(%23t)'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(#000, #000) !important;
     }
 }
+
 /* ---- Mobile / tablet: hero title + breadcrumb ALWAYS centered ---- */
 @media (max-width: 991px) {
     .page-header.page-hero { justify-content: center; text-align: center !important; }
@@ -522,40 +530,18 @@ html, body { background: var(--footer-gap) !important; }
     .page-hero .page-header-box { width: 100%; text-align: center !important; margin-left: auto; margin-right: auto; }
     .page-header.page-hero h1,
     .page-header.page-hero h1 * { text-align: center !important; }
-    .page-header.page-hero h1 {
-        display: block; width: 100%; margin-left: auto !important; margin-right: auto !important;
-        padding-left: 12px; padding-right: 12px;
-    }
+    .page-header.page-hero h1 { display: block; width: 100%; margin-left: auto !important; margin-right: auto !important; padding-left: 12px; padding-right: 12px; }
     .page-hero .breadcrumb { justify-content: center !important; padding-left: 0 !important; text-align: center !important; }
 }
-/* ===================== FAQ END: boat + heading (2 lines) + button, ALL IN ONE LINE ===================== */
-.fq-end {
-    display: flex; flex-direction: row; flex-wrap: nowrap;
-    align-items: center; justify-content: center;
-    gap: 20px; margin-top: 56px;
-}
-.fq-end .bt-art.bt-art-end {
-    position: static; flex: 0 0 auto;
-    width: clamp(200px, 20vw, 300px); max-width: none; margin: 0;
-}
-.fq-end-text {
-    display: flex; flex-direction: row; flex-wrap: nowrap;
-    align-items: center; gap: 16px;
-}
-.fq-end-text .tn-title {
-    margin: 0;
-    white-space: normal;                 /* was nowrap: allows two lines */
-    font-size: clamp(28px, 3vw, 46px);   /* a little bigger, since it has two lines */
-    line-height: 1.1;
-    text-align: left;
-}
-.fq-end-text .tn-btns { margin: 0; flex: 0 0 auto; }
-.fq-end-text .tn-btn {
-    padding: 16px 34px; font-size: 15px; letter-spacing: 2px; gap: 12px; white-space: nowrap;
-}
-.fq-end-text .tn-btn i { font-size: 14px; }
 
-/* tablet / mobile only: stack everything */
+/* ===================== FAQ END: boat + heading + button ===================== */
+.fq-end { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: center; gap: 20px; margin-top: 56px; }
+.fq-end .bt-art.bt-art-end { position: static; flex: 0 0 auto; width: clamp(200px, 20vw, 300px); max-width: none; margin: 0; }
+.fq-end-text { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 16px; }
+.fq-end-text .tn-title { margin: 0; white-space: normal; font-size: clamp(28px, 3vw, 46px); line-height: 1.1; text-align: left; }
+.fq-end-text .tn-btns { margin: 0; flex: 0 0 auto; }
+.fq-end-text .tn-btn { padding: 16px 34px; font-size: 15px; letter-spacing: 2px; gap: 12px; white-space: nowrap; }
+.fq-end-text .tn-btn i { font-size: 14px; }
 @media (max-width: 1199px) {
     .fq-end, .fq-end-text { flex-wrap: wrap; justify-content: center; text-align: center; }
     .fq-end .bt-art.bt-art-end { width: min(300px, 80%); }
@@ -565,12 +551,19 @@ html, body { background: var(--footer-gap) !important; }
     .fq-end-text .tn-title { font-size: 26px; }
     .fq-end-text .tn-btn { padding: 14px 28px; font-size: 14px; }
 }
+/* Our Story: long H1 + H2 subheading */
+.st-h1 { font-size: clamp(28px, 3.2vw, 42px); }
+.st-sub {
+    margin: 0 0 18px; color: var(--gold-deep);
+    font-family: 'EB Garamond', serif; font-weight: 700;
+    font-size: clamp(20px, 2vw, 26px); line-height: 1.3; text-transform: none;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- Hero (unchanged) -->
+<!-- Hero -->
 <div class="ah-wrap">
 <div class="page-header page-hero">
     <div class="ah-bgs" aria-hidden="true">
@@ -582,7 +575,7 @@ html, body { background: var(--footer-gap) !important; }
     </div>
     <div class="container"><div class="row"><div class="col-lg-12">
         <div class="page-header-box">
-            <h1 class="text-anime-style-3" data-cursor="-opaque">About Us</h1>
+            <p class="page-title text-anime-style-3" data-cursor="-opaque">About Us</p>
             <nav class="wow fadeInUp" data-wow-delay="0.3s"><ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">about us</li>
@@ -594,16 +587,11 @@ html, body { background: var(--footer-gap) !important; }
 
 <div class="flow">
 
-<!-- Torn-paper filters.
-     #paperTorn : soft curvy outline for cards + FAQ. Rougher: raise scale (22). Smoother line: raise stdDeviation (1.3).
-     #photoTorn : torn outline for the About photos (only the outline is roughened, the picture is not distorted). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
     <defs>
         <filter id="paperTorn" x="-8%" y="-25%" width="116%" height="150%" color-interpolation-filters="sRGB">
-            <!-- slow, wide waves only (numOctaves=1 = no small teeth) -->
             <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="1" seed="11" result="big"/>
             <feDisplacementMap in="SourceGraphic" in2="big" scale="22" xChannelSelector="R" yChannelSelector="G" result="d1"/>
-            <!-- softens the line so it curves instead of cutting sharp -->
             <feGaussianBlur in="d1" stdDeviation="1.3"/>
         </filter>
 
@@ -626,11 +614,10 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="col-lg-6">
                 <div class="ab-collage rv rv-l">
-                    <div class="ab-photo ab-photo-1"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabaroutes"></div>
-                    <div class="ab-photo ab-photo-2"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar travel"></div>
+                    <div class="ab-photo ab-photo-1"><img src="{% static 'malabar-static/mr33.png' %}" alt="Malabar Routes houseboat in Kerala"></div>
+                    <div class="ab-photo ab-photo-2"><img src="{% static 'malabar-static/hill.png' %}" alt="Malabar hills in North Kerala"></div>
                 </div>
 
-                <!-- plane flies along its dotted trail under the photos (same art as the package detail page) -->
                 <div class="ad-art-wrap as-art">
                     <div class="ad-art" aria-hidden="true">
                         <img class="ad-art-trail" src="{% static 'malabar-static/p4-trail.png' %}" alt="" loading="lazy" decoding="async">
@@ -641,24 +628,25 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="col-lg-6">
                 <div class="rv rv-r" style="--d:.1s">
-                    <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>About Us</div>
-                    <h2 class="tn-title">Our Story</h2>
+                    <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Our Story</div>
+<h1 class="tn-title st-h1">Kerala Best Travel Agency for Exploring North and South Kerala</h1>
+<h2 class="st-sub">A Story That Begins in Malabar</h2>
 
-                    <p class="st-text collapsed" id="stText">We cater to the domestic travel enthusiasts in Kerala, mainly focusing on north Kerala who wishes to travel to places abroad or to unexplored destinations in Malabar region. Our main packages include All Kerala tour packages, North Kerala packages, South Kerala packages, hills, beaches and backwater packages, and family and group holiday packages. We are committed to offering travel services of the highest quality, combining our energy and enthusiasm, with our years of experience. Our greatest satisfaction comes in serving large numbers of satisfied clients who have experienced the joys and inspiration of travel. Knowledge of our field paired with excellence in customer service is our mantra. Our goal is to exceed your expectations every time with outstanding service. We are led by an experienced management team. We will be there for you if anything unexpected occurs on your trip. We have the education and the experience to ensure you enjoy exceptional travel experiences throughout your lifetime. “when traveling with us &amp; explore the other sides of gods own country”.</p>
-                    <button type="button" class="st-more" id="stMore" aria-expanded="false" aria-controls="stText">
+                    <p class="st-text">Malabar Routes started with a focus on North Kerala and its distinctive cultural identity. The region has plenty to offer beyond its familiar stops, from historic landmarks and local traditions to quieter destinations that reward a little more time.</p>
+                    <p class="st-text st-p">As the business developed, its travel offering expanded beyond Malabar to cover destinations across Kerala. Today, travellers can enquire about trips across the northern and southern regions of the state, with options suited to different travel interests. That background continues to shape our approach to planning, communication and helping travellers understand their arrangements before booking.</p>
+
+                    <div class="st-extra" id="stExtra">
+                        <p class="st-text st-p">We know that a holiday can involve several moving parts. An itinerary may look straightforward on paper, but travel times, arrival schedules and the distance between destinations can make a difference to the experience. We encourage travellers to discuss these details before confirming their plans.</p>
+                        <p class="st-text st-p">For people comparing kerala tour companies, the details matter more than the promises. Understanding the proposed itinerary, the responsibilities of the travel provider and the booking conditions gives you a clearer basis for choosing a company that suits your needs.</p>
+                        <p class="st-text st-p">Malabar Routes brings its regional roots to a wider range of destinations, helping travellers discover more of Kerala with a clearer idea of what their trip involves.</p>
+                    </div>
+
+                    <button type="button" class="st-more" id="stMore" aria-expanded="false" aria-controls="stExtra">
                         <span>Read more</span> <i class="fa-solid fa-chevron-down"></i>
                     </button>
 
-                    <div class="ab-list rv-st">
-                        <div class="ab-item"><i class="fa-solid fa-award"></i><div><h4>Top quality</h4><p>Travel services of the highest quality</p></div></div>
-                        <div class="ab-item"><i class="fa-solid fa-headset"></i><div><h4>Great service</h4><p>Excellence in customer service is our mantra</p></div></div>
-                        <div class="ab-item"><i class="fa-solid fa-user-tie"></i><div><h4>Expert team</h4><p>Led by an experienced management team</p></div></div>
-                        <div class="ab-item"><i class="fa-solid fa-shield-heart"></i><div><h4>Always with you</h4><p>We are there if anything unexpected occurs on your trip</p></div></div>
-                    </div>
-
                     <div class="tn-btns">
-                        <a href="{% url 'contact' %}" class="tn-btn">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
-                        <a href="#" class="tn-btn tn-btn-line open-booking">Book Now <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="{% url 'contact' %}" class="tn-btn">Contact Our Team <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -671,7 +659,6 @@ html, body { background: var(--footer-gap) !important; }
 <section class="sec sec-tan">
     <div class="container">
 
-        <!-- houseboat sketch (same as the Packages page): right side on desktop, centered above the heading on tablet / mobile -->
         <img class="bt-art" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
 
         <div class="tn-head rv">
@@ -789,11 +776,89 @@ html, body { background: var(--footer-gap) !important; }
 </section>
 {% endif %}
 
+<!-- ============ WHAT GUIDES OUR WORK (tan): 4 torn-paper cards ============ -->
+<section class="sec sec-tan">
+    <div class="container">
+        <div class="tn-head rv">
+            <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Our Values</div>
+            <h2 class="tn-title">What Guides Our Work</h2>
+        </div>
+
+        <div class="gd-grid">
+            <div class="gd-card rv">
+                <span class="gd-no">01</span>
+                <span class="gd-ico"><i class="fa-solid fa-award"></i></span>
+                <h3>Top Quality</h3>
+                <p>We pay attention to the details that affect your travel plans, including the proposed itinerary, travel dates and arrangements confirmed before departure.</p>
+            </div>
+            <div class="gd-card rv" style="--d:.08s">
+                <span class="gd-no">02</span>
+                <span class="gd-ico"><i class="fa-solid fa-headset"></i></span>
+                <h3>Great Service</h3>
+                <p>Clear communication makes planning easier. We aim to explain the available options and booking requirements so you know what to expect.</p>
+            </div>
+            <div class="gd-card rv" style="--d:.16s">
+                <span class="gd-no">03</span>
+                <span class="gd-ico"><i class="fa-solid fa-user-tie"></i></span>
+                <h3>An Experienced Team</h3>
+                <p>Our background in the travel field and our roots in North Kerala shape the way we approach trips across the state.</p>
+            </div>
+            <div class="gd-card rv" style="--d:.24s">
+                <span class="gd-no">04</span>
+                <span class="gd-ico"><i class="fa-solid fa-shield-heart"></i></span>
+                <h3>Support When Plans Change</h3>
+                <p>Unexpected situations can affect travel. If a road condition, weather issue or local restriction changes your plans, contact our team to discuss the available updates and alternatives under your booking terms.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ NORTH KERALA ROOTS (cream): sticky intro + 2x2 cards ============ -->
+<section class="sec sec-cream">
+    <div class="container">
+        <div class="rt-wrap">
+
+            <div class="rt-left rv rv-l">
+                <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Where We Come From</div>
+                <h2 class="tn-title">North Kerala Roots. Travel Across Kerala.</h2>
+                <p class="tn-text">A travel company should know more than the names of places on a map. It should understand how a destination fits into a practical trip and why travellers may choose one region over another.</p>
+                <p class="rt-close">This combination of regional roots, wider Kerala coverage and attention to practical planning is central to the Malabar Routes identity.</p>
+                <div class="tn-btns">
+                    <a href="{% url 'contact' %}" class="tn-btn">Get in Touch <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <div class="rt-grid">
+                <div class="rt-card rv">
+                    <span class="rt-ico"><i class="fa-solid fa-map-location-dot"></i></span>
+                    <h3>Regional Knowledge with a Wider Reach</h3>
+                    <p>Malabar Routes began with North Kerala, a region with its own cultural traditions, historic places and local experiences. That background remains part of the brand as its travel offering extends to other destinations across Kerala.</p>
+                </div>
+                <div class="rt-card rv" style="--d:.08s">
+                    <span class="rt-ico"><i class="fa-solid fa-route"></i></span>
+                    <h3>More Than One Way to Experience Kerala</h3>
+                    <p>A trip to the hill stations has a different rhythm from a coastal break or a visit built around cultural experiences. Our wider destination coverage lets travellers discuss different routes according to their time, interests and preferred pace.</p>
+                </div>
+                <div class="rt-card rv" style="--d:.16s">
+                    <span class="rt-ico"><i class="fa-solid fa-clipboard-check"></i></span>
+                    <h3>Clearer Planning Before You Book</h3>
+                    <p>Good planning starts with the details. Discuss your travel dates, preferred stops and expectations before committing to an itinerary. Ask about travel time, confirmed arrangements and booking conditions so you can make an informed decision.</p>
+                </div>
+                <div class="rt-card rv" style="--d:.24s">
+                    <span class="rt-ico"><i class="fa-solid fa-handshake-angle"></i></span>
+                    <h3>Support Beyond the First Enquiry</h3>
+                    <p>The original Malabar Routes website describes its commitment to helping travellers when unexpected issues arise during a trip. Keeping communication open gives travellers a point of contact when they need clarification about their arrangements.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 <!-- ============ TERMS & CONDITIONS (tan) ============ -->
 <section class="sec sec-tan">
     <div class="container">
 
-        <!-- plane flies along its dotted trail (same art as the package detail page): left side on desktop, centered above the heading on tablet / mobile -->
         <div class="ad-art-wrap tc-art">
             <div class="ad-art" aria-hidden="true">
                 <img class="ad-art-trail" src="{% static 'malabar-static/p4-trail.png' %}" alt="" loading="lazy" decoding="async">
@@ -861,7 +926,6 @@ html, body { background: var(--footer-gap) !important; }
             <h2 class="tn-title">Malabar, remembered</h2>
             <p class="tn-text">Words from travellers who explored Kerala with us.</p>
 
-            <!-- Google rating badge: change the number and --pct (rating / 5 x 100) to update -->
             <div class="g-badge" aria-label="Rated 4.4 out of 5 on Google">
                 <span class="g-logo" aria-hidden="true"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span>
                 <span class="g-score">4.4</span>
@@ -916,8 +980,8 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="fq-left rv rv-l">
                 <div class="tn-eyebrow"><i class="fa-solid fa-crown"></i>Question &amp; Answer</div>
-                <h2 class="tn-title">Frequently Asked Questions</h2>
-                <p class="tn-text">Answers to the things guests most often ask before booking a trip with Malabaroutes.</p>
+                <h2 class="tn-title">Frequently Asked Questions About Malabar Routes</h2>
+                <p class="tn-text">Answers to the things travellers most often ask before planning a Kerala trip with Malabar Routes.</p>
                 <div class="tn-btns"><a href="{% url 'contact' %}" class="tn-btn">Ask a Question <i class="fa-solid fa-arrow-right"></i></a></div>
 
                 <div class="g-badge" aria-label="Rated 4.4 out of 5 on Google">
@@ -932,58 +996,51 @@ html, body { background: var(--footer-gap) !important; }
 
             <div class="fq-list rv-st" id="fqList">
                 <div class="fq-item open">
-                    <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What does Malabaroutes offer?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Malabaroutes is a tour operator specialising in northern Kerala (Malabar). We arrange holiday packages, Ayurveda and wellness trips, honeymoon and student packages, and also help with visas, passports, tickets, taxis, car rentals, houseboats and travel guides.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="true"><span class="fq-no">1.</span><span class="fq-qt">What is Malabar Routes, and what travel services does it offer?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes is a travel company focused on Kerala holidays, with roots in the Malabar region of North Kerala. As a Kerala tour operator, it assists travellers with holiday planning, ticket bookings, transportation, car rentals and selected accommodation and houseboat arrangements. Its services support trips across Kerala according to individual travel requirements.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">How do I book a package?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Click any Book Now button, share your name, phone number, travel dates and number of guests, and our team will get back to you. Your booking is confirmed once we send a written confirmation after receiving the agreed payment.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">2.</span><span class="fq-qt">Why choose Malabar Routes as your Kerala travel agency?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes combines a regional connection to Malabar with travel-planning experience and assistance with practical booking arrangements. As a Kerala travel agency, it helps customers discuss their travel dates, budget, accommodation preferences and transportation needs before reviewing suitable options. The aim is to make holiday arrangements clear and easier to manage.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">Can a package be customised for me?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. Honeymoon, family, student, Ayurveda or wellness trips can all be planned around you, with hotels, transport and guides taken care of.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">3.</span><span class="fq-qt">Which destinations can travellers explore through Malabar Routes?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes assists with travel arrangements for Munnar, Thekkady, Alleppey, Vagamon, Vattavada, Wayanad, Kovalam and Kasaragod. Travellers interested in North Kerala can also explore places such as Bekal Fort, Bekal Beach, Ranipuram Hills, Chandragiri Fort and Valiyaparamba Backwaters, depending on their chosen itinerary.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">What is included in the price?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Your itinerary or invoice lists the trip price, the included services, the exclusions and the payment due dates, so you know exactly what you are paying for.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">4.</span><span class="fq-qt">What types of Kerala tour packages are available?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Malabar Routes offers a range of travel options, including Kerala holiday packages, family holidays, couple and honeymoon trips, budget travel, premium stays and customized itineraries. Travellers can enquire about Kerala travel packages, houseboat arrangements, hotel and resort stays, and options with meals included. Availability and inclusions depend on the selected package.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">What is your cancellation and refund policy?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Cancellation charges and refund eligibility follow the terms shared with you before confirmation. Please send any change or cancellation request in writing.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">5.</span><span class="fq-qt">Can Malabar Routes customize a Kerala trip package for individual travellers?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. Travellers can request a customized Kerala trip package by sharing their preferred destinations, travel dates, number of adults and children, number of nights, hotel category, vehicle requirements, meal preferences and approximate budget. Malabar Routes can review these details and discuss suitable arrangements based on availability and the agreed quotation.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">Can the itinerary change during the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Weather, road conditions, safety issues or local restrictions can sometimes affect a route or activity. If that happens, we will share updates and the available alternatives.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">6.</span><span class="fq-qt">How can I compare the best Kerala trip package and Kerala tour package cost?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>When comparing the best Kerala trip package, review the itinerary, accommodation category, transportation, meals, sightseeing and booking conditions. The Kerala tour package cost and kerala trip package price can vary according to travel dates, group size and selected services. Request a detailed quotation and check the inclusions and exclusions before confirming your booking.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">Do you help with visas, passports and tickets?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. We help with visa processing, passport applications, renewals and replacements, and we take care of tickets at the lowest cost available.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">7.</span><span class="fq-qt">Does Malabar Routes offer Kerala family vacation packages and honeymoon packages for couples?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>Yes. Travellers can enquire about Kerala family vacation packages and kerala tour packages for couple, with arrangements discussed according to their requirements. Families can specify room requirements, children's ages and transport preferences, while couples can discuss accommodation and itinerary preferences. The final options depend on availability, budget and the services selected.</p></div></div>
                 </div>
                 <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">Can you arrange taxis, car rentals and houseboats?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Yes. We can arrange taxis, rental cars and Kerala backwater houseboat cruises, so you do not have to search for them yourself.</p></div></div>
-                </div>
-                <div class="fq-item">
-                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">9.</span><span class="fq-qt">What should I carry for the trip?</span><span class="fq-ico" aria-hidden="true"></span></button>
-                    <div class="fq-a"><div><p>Carry valid travel documents and any personal health essentials, and follow local guidelines. We also recommend suitable travel insurance and keeping your belongings secure throughout the journey.</p></div></div>
+                    <button type="button" class="fq-q" aria-expanded="false"><span class="fq-no">8.</span><span class="fq-qt">How can I book Kerala tours and packages with Malabar Routes?</span><span class="fq-ico" aria-hidden="true"></span></button>
+                    <div class="fq-a"><div><p>To enquire about Kerala tours and packages or plan holidays to Kerala, India, share your destination preferences, travel dates, group size and budget with the Malabar Routes team. You can request details about available Kerala vacation packages and Kerala holiday packages from India, including applicable prices and inclusions. For enquiries, call <a href="tel:+918848333382"><strong>+91 88483 33382</strong></a> or <a href="tel:+919526220085"><strong>+91 95262 20085</strong></a>. You can also ask about Kasaragod heritage tours and seasonal Theyyam experiences, which require confirmation of the actual performance schedule and venue.</p></div></div>
                 </div>
             </div>
 
         </div>
 
-        <!-- houseboat sketch (same as the Packages page) at the end of the page -->
-<div class="fq-end">
-    <img class="bt-art bt-art-end" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
+        <div class="fq-end">
+            <img class="bt-art bt-art-end" src="{% static 'malabar-static/p1.png' %}" alt="" aria-hidden="true" decoding="async">
 
-    <div class="fq-end-text rv rv-r">
-        
-        <h3 class="tn-title">Ready to explore<br>Kerala with us?</h3>
-       
-        <div class="tn-btns">
-            <a href="{% url 'contact' %}" class="tn-btn">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="fq-end-text rv rv-r">
+                <h3 class="tn-title">Ready to explore<br>Kerala with us?</h3>
+                <div class="tn-btns">
+                    <a href="{% url 'contact' %}" class="tn-btn">Contact Us <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
     </div>
 </section>
 
@@ -1009,28 +1066,19 @@ html, body { background: var(--footer-gap) !important; }
 <!-- Our Story: Read more / Read less -->
 <script>
     (function () {
-        var text = document.getElementById('stText');
-        var btn  = document.getElementById('stMore');
-        if (!text || !btn) return;
-        function check() {
-            if (!text.classList.contains('collapsed')) return;
-            btn.style.display = (text.scrollHeight <= text.clientHeight + 2) ? 'none' : '';
-        }
+        var extra = document.getElementById('stExtra');
+        var btn   = document.getElementById('stMore');
+        if (!extra || !btn) return;
         btn.addEventListener('click', function () {
-            var open = text.classList.toggle('collapsed') === false;
+            var open = extra.classList.toggle('open');
             btn.classList.toggle('open', open);
             btn.setAttribute('aria-expanded', open ? 'true' : 'false');
             btn.querySelector('span').textContent = open ? 'Read less' : 'Read more';
         });
-        window.addEventListener('load', check);
-        window.addEventListener('resize', check);
-        check();
     })();
 </script>
 
-<!-- Fade-in on EVERY scroll: .in is added when an element enters the screen and removed when it leaves,
-     so headings, cards and lists animate again each time you scroll past them (down or up).
-     Also toggles .sec-in on every section band so the WHOLE section fades in / out. -->
+<!-- Fade-in on EVERY scroll -->
 <script>
     (function () {
         var items = document.querySelectorAll('.rv, .rv-st');
@@ -1056,7 +1104,7 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Art: houseboat (fades in from the right) + plane (flies along its trail). Replays every time it scrolls into view. -->
+<!-- Art: houseboat + plane -->
 <script>
     (function () {
         var boats  = document.querySelectorAll('.bt-art');
@@ -1082,7 +1130,7 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Carousels: Packages, Testimonials (index-based sliding, always lands on a card) -->
+<!-- Carousels: Packages, Testimonials -->
 <script>
     (function () {
         var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1195,11 +1243,11 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Interactive cards: tells the CSS where the mouse / finger is inside each card -->
+<!-- Interactive cards: mouse / finger position for glare + tilt -->
 <script>
     (function () {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.fq-item', 0]];
+        var groups = [['.pk-card', 9], ['.tm-card', 6], ['.fq-item', 0], ['.gd-card', 0], ['.rt-card', 0]];
 
         groups.forEach(function (g) {
             var max = g[1];

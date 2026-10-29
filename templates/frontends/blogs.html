@@ -8,8 +8,8 @@
     BLOG LIST PAGE: same torn-paper design as Home / About / Packages.
     - Hero: same as the Packages hero (rotating backgrounds, torn bottom edge).
     - One cream band: heading, search, then a grid of image cards (text sits on the photo).
-    - The grid shows 2 cards per row (1 per row on mobile).
-    - The newest article is the FEATURED card (full width, with a "Featured" pill) when no search is active.
+    - The grid shows 2 equal cards per row (1 per row on mobile).
+    - The newest article gets a "Featured" pill (same size as the others) when no search is active.
     - No pagination: every article is listed.
     - All CSS is inside this template (no separate CSS file).
 {% endcomment %}
@@ -210,29 +210,16 @@ html, body { background: var(--footer-gap) !important; }
 .bl-result b { color: var(--gold-deep); }
 .bl-result a { color: var(--gold-deep); margin-left: 8px; text-decoration: underline; }
 
-/* grid: 2 cards per row */
+/* grid: 2 equal cards per row */
 .bl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px; padding: 44px 0 10px; }
 .bl-col { min-width: 0; display: block; }   /* block (not flex): a flex parent collapsed the card height to 0 */
 .bl-col .bg-card { width: 100%; }
 
-/* featured (newest) card takes the full first row */
-.bl-col-lg { grid-column: span 2; }
-.bl-col-lg .bg-card { aspect-ratio: 21 / 9; }
-.bl-col-lg .bg-card-body { padding: 36px 38px 32px; }
-.bl-col-lg .bg-card-title { font-size: 34px; -webkit-line-clamp: 3; }
-.bl-col-lg .bg-card-tag { font-size: 12px; }
-
 @media (max-width: 1199px) {
     .bl-grid { gap: 26px; }
-    .bl-col-lg .bg-card { aspect-ratio: 16 / 9; }
-    .bl-col-lg .bg-card-title { font-size: 28px; }
 }
 @media (max-width: 767px) {
     .bl-grid { grid-template-columns: 1fr; }
-    .bl-col-lg { grid-column: auto; }
-    .bl-col-lg .bg-card { aspect-ratio: 4 / 3.3; }
-    .bl-col-lg .bg-card-body { padding: 20px 18px 18px; }
-    .bl-col-lg .bg-card-title { font-size: 22px; }
 }
 
 /* scroll reveal (replays) */
@@ -296,7 +283,7 @@ html, body { background: var(--footer-gap) !important; }
         {% if blogs %}
         <div class="bl-grid">
             {% for blog in blogs %}
-            <div class="bl-col{% if forloop.first and not query %} bl-col-lg{% endif %}">
+            <div class="bl-col">
                 <a href="{% url 'blog_detail' blog.slug %}" class="bg-card" draggable="false">
                     {% if blog.image %}
                     <img class="bg-card-img" src="{{ blog.image.url }}"

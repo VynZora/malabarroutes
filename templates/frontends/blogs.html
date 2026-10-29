@@ -8,7 +8,8 @@
     BLOG LIST PAGE: same torn-paper design as Home / About / Packages.
     - Hero: same as the Packages hero (rotating backgrounds, torn bottom edge).
     - One cream band: heading, search, then a grid of image cards (text sits on the photo).
-    - The newest article is the FEATURED card (wide, with a "Featured" pill) when no search is active.
+    - The grid shows 2 cards per row (1 per row on mobile).
+    - The newest article is the FEATURED card (full width, with a "Featured" pill) when no search is active.
     - No pagination: every article is listed.
     - All CSS is inside this template (no separate CSS file).
 {% endcomment %}
@@ -209,20 +210,20 @@ html, body { background: var(--footer-gap) !important; }
 .bl-result b { color: var(--gold-deep); }
 .bl-result a { color: var(--gold-deep); margin-left: 8px; text-decoration: underline; }
 
-/* grid */
-.bl-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 34px; padding: 44px 0 10px; }
+/* grid: 2 cards per row */
+.bl-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 34px; padding: 44px 0 10px; }
 .bl-col { min-width: 0; display: block; }   /* block (not flex): a flex parent collapsed the card height to 0 */
 .bl-col .bg-card { width: 100%; }
-@media (min-width: 1200px) {
-    .bl-col-lg { grid-column: span 2; }
-    .bl-col-lg .bg-card { aspect-ratio: 5 / 2; }
-    .bl-col-lg .bg-card-body { padding: 36px 38px 32px; }
-    .bl-col-lg .bg-card-title { font-size: 34px; -webkit-line-clamp: 3; }
-    .bl-col-lg .bg-card-tag { font-size: 12px; }
-}
+
+/* featured (newest) card takes the full first row */
+.bl-col-lg { grid-column: span 2; }
+.bl-col-lg .bg-card { aspect-ratio: 21 / 9; }
+.bl-col-lg .bg-card-body { padding: 36px 38px 32px; }
+.bl-col-lg .bg-card-title { font-size: 34px; -webkit-line-clamp: 3; }
+.bl-col-lg .bg-card-tag { font-size: 12px; }
+
 @media (max-width: 1199px) {
-    .bl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; }
-    .bl-col-lg { grid-column: span 2; }
+    .bl-grid { gap: 26px; }
     .bl-col-lg .bg-card { aspect-ratio: 16 / 9; }
     .bl-col-lg .bg-card-title { font-size: 28px; }
 }
@@ -230,6 +231,7 @@ html, body { background: var(--footer-gap) !important; }
     .bl-grid { grid-template-columns: 1fr; }
     .bl-col-lg { grid-column: auto; }
     .bl-col-lg .bg-card { aspect-ratio: 4 / 3.3; }
+    .bl-col-lg .bg-card-body { padding: 20px 18px 18px; }
     .bl-col-lg .bg-card-title { font-size: 22px; }
 }
 
@@ -299,7 +301,7 @@ html, body { background: var(--footer-gap) !important; }
                     {% if blog.image %}
                     <img class="bg-card-img" src="{{ blog.image.url }}"
                          srcset="{{ blog.image|srcset }}"
-                         sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 33vw"
+                         sizes="(max-width: 767px) 100vw, 50vw"
                          alt="{{ blog.title }}" draggable="false" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async">
                     {% else %}
                     <img class="bg-card-img" src="{% static 'malabar-static/mr5.webp' %}" alt="{{ blog.title }}" draggable="false" loading="lazy" decoding="async">

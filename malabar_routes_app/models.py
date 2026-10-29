@@ -293,7 +293,7 @@ class Blog(OptimizedImageModel):
     image_fields = ["image"]
 
     image = models.ImageField(upload_to="blogs/")
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1705,12 +1705,139 @@ def booking_packages(request):
     }
 
 
+import re
+
+from django.shortcuts import render
+from django.utils.html import strip_tags
+from django.utils.text import slugify
+
+from .models import Destination
+
+
+# ============================================================
+# DESTINATION CATEGORIES  (no extra DB column needed)
+# A destination gets a category when its NAME or DESCRIPTION contains
+# one of the keywords. Edit the lists any time, no migration needed.
+# ============================================================
+DESTINATION_CATEGORIES = [
+    {
+        "key": "beach",
+        "label": "Beaches",
+        "icon": "fa-umbrella-beach",
+        "keywords": [
+            "beach", "seashore", "sea shore", "shoreline", "coastline",
+            "ബീച്ച്", "കടൽത്തീരം", "കടപ്പുറം",
+        ],
+    },
+    {
+        "key": "backwaters",
+        "label": "Backwaters",
+        "icon": "fa-water",
+        "keywords": [
+            "backwater", "lagoon", "mangrove", "estuary", "houseboat", "kayak",
+            "കായൽ", "കണ്ടൽ",
+        ],
+    },
+    {
+        "key": "hills",
+        "label": "Hills",
+        "icon": "fa-mountain",
+        "keywords": [
+            "hill", "mountain", "trek", "peak", "valley", "viewpoint",
+            "മല", "കുന്ന്",
+        ],
+    },
+    {
+        "key": "temples",
+        "label": "Temples & Heritage",
+        "icon": "fa-vihara",
+        "keywords": [
+            "temple", "mutt", "ashram", "shrine", "mosque", "church",
+            "pilgrim", "heritage", "deity",
+            "ക്ഷേത്രം", "പള്ളി", "മസ്ജിദ്",
+        ],
+    },
+    {
+        "key": "forts",
+        "label": "Forts",
+        "icon": "fa-chess-rook",
+        "keywords": [
+            "fort", "fortress", "citadel", "bastion",
+            "കോട്ട",
+        ],
+    },
+    {
+        "key": "nature",
+        "label": "Nature & Forest",
+        "icon": "fa-tree",
+        "keywords": [
+            "forest", "lake", "river", "waterfall", "wildlife",
+            "national park", "forest park", "nature", "garden",
+            "വനം", "തടാകം", "പുഴ",
+        ],
+    },
+    {
+        "key": "city",
+        "label": "City & Leisure",
+        "icon": "fa-city",
+        "keywords": [
+            "marine drive", "promenade", "waterfront", "sunset", "market",
+            "shopping", "mall", "museum", "cafe", "café", "city", "walkway",
+            "boardwalk", "bridge", "street",
+        ],
+    },
+]
+
+# Destinations that match NO keyword above are never lost: they go here.
+FALLBACK_CATEGORY = {"key": "other", "label": "More Places", "icon": "fa-location-dot"}
+
+# A keyword must START at a word boundary: "fort" matches "Fort" / "Forts"
+# but not "comfortable". Malayalam keywords match anywhere.
+for _c in DESTINATION_CATEGORIES:
+    _c["re"] = re.compile(
+        r"(?<![A-Za-z])(?:" + "|".join(re.escape(k) for k in _c["keywords"]) + ")",
+        re.I,
+    )
+
+
+# A keyword in the NAME is worth this many keyword hits in the description,
+# so "Fort Kochi" is a Fort even if its description also mentions heritage or beaches.
+NAME_WEIGHT = 10
+
+
+def _destination_categories(d):
+    """
+    Return ONE category key for a destination (as a list, so the template stays the same).
+
+    Score per category = NAME_WEIGHT x keyword hits in the name + keyword hits in the description.
+    The highest score wins. On a tie, the category listed first in DESTINATION_CATEGORIES wins.
+    No keyword found at all -> the fallback category "More Places".
+    """
+    name = strip_tags(d.name or "")
+    desc = strip_tags(d.description or "")
+
+    best_key, best_score = None, 0
+    for c in DESTINATION_CATEGORIES:
+        score = NAME_WEIGHT * len(c["re"].findall(name)) + len(c["re"].findall(desc))
+        if score > best_score:
+            best_key, best_score = c["key"], score
+
+    return [best_key or FALLBACK_CATEGORY["key"]]
+
+
 def destinations(request):
     items = Destination.objects.order_by("-created_at")
 
     grouped = {}
     other = []
+    cat_count = {c["key"]: 0 for c in DESTINATION_CATEGORIES + [FALLBACK_CATEGORY]}
+
     for d in items:
+        # categories for the filter (written into data-cats by the template)
+        keys = _destination_categories(d)
+        d.f_cats = " ".join(keys)
+
+        # group by location (unchanged)
         name = " ".join((d.location or "").split())
         if not name:
             other.append(d)
@@ -1730,9 +1857,31 @@ def destinations(request):
     if selected:
         groups = [g for g in groups if g["value"] == selected]
 
+    # count categories only for the destinations that are really on the page
+    # (so the numbers match what the visitor sees when ?location=... is used)
+    for g in groups:
+        for d in g["destinations"]:
+            for k in d.f_cats.split():
+                cat_count[k] += 1
+
+    # All keyword categories are always shown (a chip with 0 is dimmed, so "Beaches"
+    # never disappears). The "More Places" fallback only shows when something needs it.
+    filter_categories = [
+        {"key": c["key"], "label": c["label"], "icon": c["icon"], "count": cat_count[c["key"]]}
+        for c in DESTINATION_CATEGORIES
+    ]
+    if cat_count[FALLBACK_CATEGORY["key"]] > 0:
+        filter_categories.append({
+            "key": FALLBACK_CATEGORY["key"],
+            "label": FALLBACK_CATEGORY["label"],
+            "icon": FALLBACK_CATEGORY["icon"],
+            "count": cat_count[FALLBACK_CATEGORY["key"]],
+        })
+
     return render(request, "frontends/destinations.html", {
         "groups": groups,
         "selected": selected,
+        "filter_categories": filter_categories,
     })
 def destination_detail(request, slug):
     destination = get_object_or_404(Destination, slug=slug)

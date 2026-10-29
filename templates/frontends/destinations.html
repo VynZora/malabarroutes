@@ -1,23 +1,26 @@
 {% extends "frontends/base.html" %}
 {% load static image_tags %}
 
-{% block title %}Destinations | Malabar{% endblock %}
-{% block meta_description %}Explore our travel destinations.{% endblock %}
+{% block title %}Destinations in North Kerala | Malabar Routes{% endblock %}
+{% block meta_description %}Explore places to visit in North Kerala, from Kasaragod beaches and historic forts to scenic hills and peaceful backwaters. Plan your trip with Malabar Routes.{% endblock %}
 
 {% comment %}
     DESTINATIONS PAGE: same torn-paper design as the Packages page.
     - HERO: full-bleed, rotating backgrounds, torn bottom edge (same as Packages / About).
-    - First band (cream): heading + filter bar (location chips with counts + search) + result count.
+    - First band (cream): heading + filter bar (location chips with counts + search)
+      + CATEGORY chips (Beaches, Backwaters, Hills, Temples, Forts, Nature) + result count.
+      Categories are NOT a database column: the view tags each destination from the keywords
+      found in its name / description (see DESTINATION_CATEGORIES in views.py).
       A houseboat sketch sits on the RIGHT on desktop, centered above the heading on tablet / mobile.
     - Then ONE BAND PER LOCATION. Colours alternate (tan, cream, tan ...) and are re-assigned by the
       script whenever the filter hides / shows a location, so two same-colour bands never touch.
       The footer gap colour follows the last visible band.
     - CARDS: same destination card layout (image, bottom panel, hover / tap opens details).
-      The card is a torn sheet of cream paper (torn mask on all four edges); the photo and the name panel
-      sit inside it with a paper rim, so the border blends into the background like the Packages cards.
-    - ?location=<slug> still works (navbar dropdown), ids stay loc-<slug>.
+    - ?location=<slug> and ?category=<key> both work, ids stay loc-<slug>.
     - Book Now opens the booking modal from base.html (.open-booking + data-package).
-    Context needed: `groups` -> each has .value (slug), .label, .destinations (unchanged).
+    Context needed:
+      `groups`            -> each has .value (slug), .label, .destinations (each destination has .f_cats)
+      `filter_categories` -> list of {key, label, icon, count}
 
     IMAGE: static/malabar-static/p1.png (houseboat art, same as the Packages page)
 {% endcomment %}
@@ -199,6 +202,23 @@
 .dest-clear:hover { background: var(--gold); color: var(--btn-ink); }
 .dest-search.has-text .dest-clear { display: flex; }
 
+/* ---- category chips (second row under the filter bar) ---- */
+.dest-cats { position: relative; z-index: 30; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 1100px; margin: 16px auto 0; }
+.dest-cat {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 40px;
+    border: 1.5px solid var(--edge); background: rgba(255,252,244,.55); color: var(--btn-ink);
+    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 14px; line-height: 1; cursor: pointer; white-space: nowrap;
+    transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+.dest-cat i { color: var(--gold-deep); font-size: 13px; transition: color .3s ease; }
+.dest-cat em { font-style: normal; font-size: 12px; min-width: 22px; padding: 3px 6px; border-radius: 20px; text-align: center; background: rgba(169,122,20,.2); }
+@media (hover: hover) { .dest-cat:hover { background: var(--gold); border-color: var(--gold); } }
+.dest-cat.active, .dest-cat.active:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; }
+.dest-cat.active i { color: #fff; }
+.dest-cat.active em { background: var(--btn-ink); color: #fff; }
+.dest-cat:focus-visible { outline: 2px solid var(--gold-deep); outline-offset: 2px; }
+.dest-cat.is-empty:not(.active) { opacity: .55; }
+
 .dest-result { text-align: center; margin: 22px 0 0; font-size: 15px; font-weight: 600; color: var(--ink); }
 .dest-result b { color: var(--gold-deep); }
 .dest-result:empty { display: none; }
@@ -217,6 +237,9 @@
 }
 @media (max-width: 575px) {
     .dest-search input { font-size: 16px; padding: 9px 36px 9px 38px; } /* stops iOS zoom on focus */
+    .dest-cats { gap: 6px; }
+    .dest-cat { padding: 8px 12px; font-size: 13px; gap: 6px; }
+    .dest-cat em { min-width: 20px; padding: 3px 5px; font-size: 11px; }
 }
 
 /* ===================== DESTINATION CARDS (torn sheet of paper) ===================== */
@@ -435,13 +458,27 @@ html, body { background: var(--footer-gap) !important; }
             </label>
         </div>
 
+        {% if filter_categories %}
+        <!-- CATEGORY FILTER (Beaches, Backwaters, Hills, Temples, Forts, Nature) -->
+        <div class="dest-cats" id="destCats" role="group" aria-label="Filter by category">
+            <button type="button" class="dest-cat active" data-cat="all" aria-pressed="true">
+                <i class="fa-solid fa-earth-asia" aria-hidden="true"></i> All types <em class="dest-cat-n"></em>
+            </button>
+            {% for c in filter_categories %}
+            <button type="button" class="dest-cat{% if c.count == 0 %} is-empty{% endif %}" data-cat="{{ c.key }}" aria-pressed="false">
+                <i class="fa-solid {{ c.icon }}" aria-hidden="true"></i> {{ c.label }} <em class="dest-cat-n">{{ c.count }}</em>
+            </button>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <p class="dest-result" id="destResult" role="status" aria-live="polite"></p>
 
         <!-- shown when search / filter finds nothing -->
         <div class="dest-empty" id="destNone">
             <i class="fa-solid fa-magnifying-glass-location"></i>
             <h4>No Destinations Found</h4>
-            <p>Try a different name, or show all locations.</p>
+            <p>Try a different name, or show all destinations.</p>
             <button type="button" id="destReset">Show all destinations</button>
         </div>
         {% endif %}
@@ -462,7 +499,7 @@ html, body { background: var(--footer-gap) !important; }
 
         <div class="dest-grid">
             {% for d in group.destinations %}
-            <div class="dest-item" data-name="{{ d.name|lower }}">
+            <div class="dest-item" data-name="{{ d.name|lower }}" data-cats="{{ d.f_cats }}">
                 <div class="dest-card" tabindex="0" role="group" aria-label="{{ d.name }}">
                     {% if d.image %}
                     <div class="dest-media">
@@ -608,7 +645,7 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Filter chips + search + ?location=<slug> + band colours + back to top -->
+<!-- Filter chips + category chips + search + ?location=<slug> & ?category=<key> + band colours + back to top -->
 <script>
     (function () {
         var chipsBox = document.getElementById('destChips');
@@ -616,6 +653,7 @@ html, body { background: var(--footer-gap) !important; }
         if (!chipsBox || !groups.length) return;
 
         var chips = Array.prototype.slice.call(chipsBox.querySelectorAll('.dest-chip'));
+        var catChips = Array.prototype.slice.call(document.querySelectorAll('.dest-cat'));
         var search = document.getElementById('destSearch');
         var searchBox = document.getElementById('destSearchBox');
         var clearBtn = document.getElementById('destClear');
@@ -624,7 +662,7 @@ html, body { background: var(--footer-gap) !important; }
         var resetBtn = document.getElementById('destReset');
         var topBtn = document.getElementById('destTop');
 
-        var state = { loc: 'all', q: '' };
+        var state = { loc: 'all', cat: 'all', q: '' };
 
         /* total count on the "All" chip */
         var totalEl = chipsBox.querySelector('[data-total]');
@@ -650,7 +688,9 @@ html, body { background: var(--footer-gap) !important; }
                 var locOk = state.loc === 'all' || g.getAttribute('data-loc') === state.loc;
                 var n = 0;
                 g.querySelectorAll('.dest-item').forEach(function (it) {
-                    var ok = locOk && (!q || (it.getAttribute('data-name') || '').indexOf(q) > -1);
+                    var catOk = state.cat === 'all' ||
+                        (' ' + (it.getAttribute('data-cats') || '') + ' ').indexOf(' ' + state.cat + ' ') > -1;
+                    var ok = locOk && catOk && (!q || (it.getAttribute('data-name') || '').indexOf(q) > -1);
                     it.hidden = !ok;
                     if (ok) n++;
                 });
@@ -660,13 +700,33 @@ html, body { background: var(--footer-gap) !important; }
                 shown += n;
             });
 
+            /* live counts on the category chips: they follow the selected location + search,
+               so the number on a chip always matches what you get when you click it */
+            var counts = { all: 0 };
+            groups.forEach(function (g) {
+                if (state.loc !== 'all' && g.getAttribute('data-loc') !== state.loc) return;
+                g.querySelectorAll('.dest-item').forEach(function (it) {
+                    if (q && (it.getAttribute('data-name') || '').indexOf(q) === -1) return;
+                    counts.all++;
+                    (it.getAttribute('data-cats') || '').split(' ').forEach(function (k) {
+                        if (k) counts[k] = (counts[k] || 0) + 1;
+                    });
+                });
+            });
+            catChips.forEach(function (c) {
+                var n = counts[c.getAttribute('data-cat')] || 0;
+                var em = c.querySelector('.dest-cat-n');
+                if (em) em.textContent = n;
+                c.classList.toggle('is-empty', n === 0);
+            });
+
             recolor();
 
             none.classList.toggle('show', shown === 0);
             searchBox.classList.toggle('has-text', q.length > 0);
 
             if (shown === 0) result.innerHTML = '';
-            else if (q || state.loc !== 'all') result.innerHTML = 'Showing <b>' + shown + '</b> ' + (shown === 1 ? 'destination' : 'destinations');
+            else if (q || state.loc !== 'all' || state.cat !== 'all') result.innerHTML = 'Showing <b>' + shown + '</b> ' + (shown === 1 ? 'destination' : 'destinations');
             else result.innerHTML = '';
 
             if (scrollToGroup) {
@@ -690,17 +750,37 @@ html, body { background: var(--footer-gap) !important; }
             });
         }
 
+        function setCat(cat) {
+            var found = catChips.some(function (c) { return c.getAttribute('data-cat') === cat; });
+            state.cat = found ? cat : 'all';
+            catChips.forEach(function (c) {
+                var on = c.getAttribute('data-cat') === state.cat;
+                c.classList.toggle('active', on);
+                c.setAttribute('aria-pressed', on ? 'true' : 'false');
+            });
+        }
+
         function updateUrl() {
             if (!window.history || !history.replaceState) return;
             var url = new URL(window.location.href);
             if (state.loc === 'all') url.searchParams.delete('location');
             else url.searchParams.set('location', state.loc);
+            if (state.cat === 'all') url.searchParams.delete('category');
+            else url.searchParams.set('category', state.cat);
             history.replaceState(null, '', url.toString());
         }
 
         chips.forEach(function (c) {
             c.addEventListener('click', function () {
                 setChip(c.getAttribute('data-filter'));
+                updateUrl();
+                apply(true);
+            });
+        });
+
+        catChips.forEach(function (c) {
+            c.addEventListener('click', function () {
+                setCat(c.getAttribute('data-cat'));
                 updateUrl();
                 apply(true);
             });
@@ -717,11 +797,14 @@ html, body { background: var(--footer-gap) !important; }
         });
         resetBtn.addEventListener('click', function () {
             search.value = ''; state.q = '';
-            setChip('all'); updateUrl(); apply(true);
+            setChip('all'); setCat('all'); updateUrl(); apply(true);
         });
 
-        /* navbar dropdown links: /destinations/?location=<slug> */
-        var param = new URLSearchParams(window.location.search).get('location');
+        /* navbar dropdown links: /destinations/?location=<slug>  and  ?category=<key> */
+        var params = new URLSearchParams(window.location.search);
+        var param = params.get('location');
+        var catParam = params.get('category');
+        if (catParam) setCat(catParam);
         if (param) {
             setChip(param);
             apply(false);

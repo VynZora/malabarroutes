@@ -141,7 +141,12 @@
 .rv-ready .rv-left, .rv-ready .rv-right { transition: opacity 1s ease var(--d, 0s), transform 1.2s cubic-bezier(.16,.8,.24,1) var(--d, 0s); }
 @media (max-width: 767px) { .rv-ready .rv-left { transform: translateX(-60px); } .rv-ready .rv-right { transform: translateX(60px); } }
 @media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
-
+/* Never hide content on mobile/tablet */
+@media (max-width: 991px) {
+    .rv-ready .rv,
+    .rv-ready .rv-left,
+    .rv-ready .rv-right { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
 /* ===================== MAIN COLUMN ===================== */
 .ad-stack { display: flex; flex-direction: column; gap: 38px; }
 .ad-title { margin: 0; }
@@ -489,21 +494,22 @@ html, body { background: var(--footer-gap) !important; }
                 if (en.isIntersecting) en.target.classList.add('in-view');
                 else en.target.classList.remove('in-view');
             });
-        }, { threshold: 0.5, rootMargin: '0px 0px -12% 0px' }).observe(art);
+        }, { threshold: 0.2, rootMargin: '0px 0px -5% 0px' }).observe(art);
     })();
 </script>
 
-<!-- Scroll reveal -->
+<!-- Scroll reveal (desktop only; mobile/tablet always shows content) -->
 <script>
     (function () {
         var items = document.querySelectorAll('.rv');
         if (!items.length || !('IntersectionObserver' in window)) return;
+        if (window.matchMedia('(max-width: 991px)').matches) return;
         document.body.classList.add('rv-ready');
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (en) {
                 if (en.isIntersecting) en.target.classList.add('in'); else en.target.classList.remove('in');
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+        }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
         items.forEach(function (el) { io.observe(el); });
     })();
 </script>

@@ -12,6 +12,7 @@
     - Band 2 (tan): "Ready to visit" call to action (airplane flying along its dotted trail above the heading).
     - Sidebar boxes are torn-paper cards (no fill, hand-torn outline, sand hover); the Book card is solid gold.
     - Book Now buttons open the booking modal from base.html (.open-booking + data-package).
+    - Scroll-reveal (fade / slide in) runs on desktop only (min-width: 768px); on mobile everything is shown instantly.
 
     IMAGES (already used by the package page): p4-trail.png and p4-plane.png in static/malabar-static/
 {% endcomment %}
@@ -131,13 +132,14 @@
 .tn-btn-light { background: var(--btn-ink); border-color: var(--btn-ink); color: var(--gold) !important; width: 100%; justify-content: center; }
 .tn-btn-light:hover { background: #fff; border-color: #fff; color: var(--btn-ink) !important; }
 
-/* scroll reveal */
-.rv-ready .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
-.rv-ready .rv.in { opacity: 1; transform: none; }
-.rv-ready .rv-left  { transform: translateX(-110px); }
-.rv-ready .rv-right { transform: translateX(110px); }
-.rv-ready .rv-left, .rv-ready .rv-right { transition: opacity 1s ease var(--d, 0s), transform 1.2s cubic-bezier(.16,.8,.24,1) var(--d, 0s); }
-@media (max-width: 767px) { .rv-ready .rv-left { transform: translateX(-60px); } .rv-ready .rv-right { transform: translateX(60px); } }
+/* scroll reveal: DESKTOP / TABLET-LANDSCAPE ONLY (768px and up). On mobile everything is visible immediately, no fade or slide. */
+@media (min-width: 768px) {
+    .rv-ready .rv { opacity: 0; transform: translateY(34px); transition: opacity .8s ease var(--d, 0s), transform .9s cubic-bezier(.2,.7,.2,1) var(--d, 0s); }
+    .rv-ready .rv.in { opacity: 1; transform: none; }
+    .rv-ready .rv-left  { transform: translateX(-110px); }
+    .rv-ready .rv-right { transform: translateX(110px); }
+    .rv-ready .rv-left, .rv-ready .rv-right { transition: opacity 1s ease var(--d, 0s), transform 1.2s cubic-bezier(.16,.8,.24,1) var(--d, 0s); }
+}
 @media (prefers-reduced-motion: reduce) { .rv-ready .rv { opacity: 1; transform: none; transition: none; } }
 
 /* ===================== MAIN COLUMN ===================== */
@@ -478,11 +480,12 @@ html, body { background: var(--footer-gap) !important; }
     })();
 </script>
 
-<!-- Scroll reveal -->
+<!-- Scroll reveal (desktop only: skipped on mobile so content is shown instantly, no fade-in) -->
 <script>
     (function () {
         var items = document.querySelectorAll('.rv');
         if (!items.length || !('IntersectionObserver' in window)) return;
+        if (window.matchMedia && window.matchMedia('(max-width: 767px)').matches) return;
         document.body.classList.add('rv-ready');
         var io = new IntersectionObserver(function (entries) {
             entries.forEach(function (en) {

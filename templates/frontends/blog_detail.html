@@ -489,7 +489,7 @@ html, body { background: var(--footer-gap) !important; }
             entries.forEach(function (en) {
                 if (en.isIntersecting) en.target.classList.add('in'); else en.target.classList.remove('in');
             });
-        }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+        }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });  /* threshold 0: a very tall article can never reach 15% visible, so it stayed hidden */
         items.forEach(function (el) { io.observe(el); });
     })();
 </script>
